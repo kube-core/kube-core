@@ -1,0 +1,23 @@
+{{- range $namespace := (((.Values.stores).kubernetes).namespaces) }}
+apiVersion: external-secrets.io/v1beta1
+kind: ClusterSecretStore
+metadata:
+  name: k8s-{{ $namespace }}
+spec:
+  provider:
+    kubernetes:
+      server:
+        caProvider:
+          namespace: {{ $.Release.Namespace }}
+          type: Secret
+          name: {{ include "external-secrets.stores.kubernetes.serviceAccountName" $ }}
+          key: ca.crt
+      auth:
+        token:
+          bearerToken:
+            name: {{ include "external-secrets.stores.kubernetes.serviceAccountName" $ }}
+            key: token
+            namespace: {{ $.Release.Namespace }}
+      remoteNamespace: {{ $namespace }}
+---
+{{- end }}

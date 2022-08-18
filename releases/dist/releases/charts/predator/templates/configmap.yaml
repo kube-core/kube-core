@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app: {{ template "predator.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+  name: {{ include "predator.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+data:
+  DATABASE_TYPE: {{ .Values.database.type }}
+{{if ne .Values.database.type "SQLITE"}}
+  DATABASE_NAME: {{ .Values.database.name }}
+  DATABASE_ADDRESS: {{ .Values.database.address }}
+{{end}}
+{{if eq .Values.database.type "SQLITE"}}
+  SQLITE_STORAGE: {{ .Values.database.sqlite.storage }}
+{{end}}
+  JOB_PLATFORM: {{ .Values.jobPlatform }}
+  KUBERNETES_URL: {{ .Values.kubernetesUrl }}
+  KUBERNETES_NAMESPACE: {{ .Release.Namespace }}
+  INTERNAL_ADDRESS: http://{{ include "predator.fullname" . }}.{{ .Release.Namespace }}:{{ .Values.service.port }}/{{ .Values.apiVersion }}
+  PORT: {{ .Values.port | quote }}
+  DELAY_RUNNER_MS:  {{ .Values.delayRunnerMs | quote }}
+  RUNNER_DOCKER_IMAGE: {{ .Values.runnerDockerImage }}
+  RUNNER_CPU:  {{ .Values.runnerCpu | quote }}
+  RUNNER_MEMORY:  {{ .Values.runnerMemory | quote }}
+  INTERVAL_CLEANUP_FINISHED_CONTAINERS_MS: {{ .Values.intervalCleanupFinishedContainers | quote }}
+{{ if .Values.customRunnerDefinition }}
+  CUSTOM_RUNNER_DEFINITION: {{ .Values.customRunnerDefinition | toPrettyJson }}
+{{ end }}
+  ALLOW_INSECURE_TLS: {{ .Values.allowInsecureTls | quote }}
+  SKIP_INTERNAL_ADDRESS_CHECK: {{ .Values.skipInternalAddressCheck | quote }}
+{{ if .Values.streaming.platform }}
+  STREAMING_PLATFORM: {{ .Values.streaming.platform }}
+  STREAMING_PLATFORM_HEALTH_CHECK_TIMEOUT_MS: {{ .Values.streaming.platformHealthCheckTimeoutMs | quote }}
+{{ end }}
+{{ if .Values.streaming.excludedAttributes }}
+STREAMING_EXCLUDED_ATTRIBUTES: {{ .Values.streaming.excludedAttributes }}
+{{ end }}
+{{ if .Values.streaming.kafka.brokers }}
+  KAFKA_BROKERS: {{ .Values.streaming.kafka.brokers }}
+  KAFKA_CLIENT_ID: {{ .Values.streaming.kafka.clientId }}
+  KAFKA_TOPIC: {{ .Values.streaming.kafka.topic }}
+  KAFKA_ALLOW_AUTO_TOPIC_CREATION: {{ .Values.streaming.kafka.autoTopicCreation | quote }}
+  KAFKA_ADMIN_RETRIES: {{ .Values.streaming.kafka.adminRetries | quote }}
+{{ end }}

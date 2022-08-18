@@ -1,0 +1,33 @@
+{{- range .Values.externalService }}
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: {{ .name }}
+  namespace: {{ $.Release.Namespace }}
+spec:
+  hosts:
+  {{- if .host }}
+  - {{ .host }}
+  {{- end }}
+  {{- if .hosts }}
+    {{- range .hosts }}
+    - {{ . }}
+    {{- end }}
+  {{- end }}
+  location: MESH_EXTERNAL
+  ports:
+  - number: {{ default "80" .httpPort }}
+    name: {{ default "http-port" .defaultPortName }}
+    protocol: {{ default "HTTP" .defaultPortProtocol }}
+  {{- if not .httpOnly }}
+  - number: {{ default "1443" .tlsOriginationPort }}
+    name: http-port-for-tls-origination
+    protocol: HTTP
+    targetPort: {{ default "443" .httpsPort }}
+  - number: {{ default "443" .httpsPort }}
+    name: https-port
+    protocol: HTTPS
+  {{- end }}
+  resolution: {{ default "DNS" .resolution }}
+{{- end }}

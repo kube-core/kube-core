@@ -1,0 +1,95 @@
+#!/bin/bash
+set -eou pipefail
+
+## Header Start
+
+# Current Script
+currentScript=${BASH_SOURCE[0]}
+currentScriptPath="$( cd "$( dirname "${currentScript}" )" >/dev/null 2>&1 && pwd )"
+currentScriptShortPath=$(echo "${currentScriptPath}" | awk '{split($0, a, "/scripts/"); print a[2]}')
+
+# Cluster Config
+if [[ ! -z $(find ./cluster-config.yaml 2> /dev/null) ]]; then
+    clusterConfigPath=$(echo ./cluster-config.yaml | head -n 1 | xargs realpath 2> /dev/null)
+else
+    clusterConfigPath=$(eval find ./$(printf "{$(echo %{1..7}q,)}" | sed 's/ /\.\.\//g') -maxdepth 1 -name cluster-config.yaml | head -n 1 | xargs realpath 2> /dev/null) || true
+fi
+if [[ -z "${clusterConfigPath}" ]] ; then
+    echo "Stopping ${currentScript}"
+    echo "This script requires to be in a cluster context, but cluster-config.yaml not found in parent directories"
+    exit 0
+fi
+
+clusterConfigDirPath=$(dirname ${clusterConfigPath} | xargs realpath)
+helmfilePath="${clusterConfigDirPath}/helmfile.yaml"
+tmpFolder="${clusterConfigDirPath}/.kube-core/.tmp"
+
+# Cluster Scripts
+if [[ ! -z $(find ${currentScriptPath}/scripts-config.yaml 2> /dev/null) ]]; then
+    scriptsConfigPath=$(echo ${currentScriptPath}/scripts-config.yaml | head -n 1 | xargs realpath 2> /dev/null)
+else
+    scriptsConfigPath=$(eval find "${currentScriptPath}"/$(printf "{$(echo %{1..7}q,)}" | sed 's/ /\.\.\//g') -maxdepth 1 -name scripts-config.yaml | head -n 1 | xargs realpath)
+fi
+scriptsConfigDirPath=$(dirname ${scriptsConfigPath} | xargs realpath)
+
+defaultClusterConfigPath=${scriptsConfigDirPath}/default-cluster-config.yaml
+corePath=$(echo ${scriptsConfigDirPath}/.. | xargs realpath)
+coreTmpFolder="${corePath}/.kube-core/.tmp"
+
+# Loading scripts
+eval "$(${scriptsConfigDirPath}/src/includes.sh)"
+
+# Loading default-cluster-config.yaml
+clusterConfigVars=$(parse_yaml ${defaultClusterConfigPath})
+clusterConfigVars=$(echo "${clusterConfigVars}" | sed "s|\./|${clusterConfigDirPath}/|")
+eval "${clusterConfigVars}"
+
+# Loading cluster-config.yaml
+clusterConfigVars=$(parse_yaml ${clusterConfigPath})
+clusterConfigVars=$(echo "${clusterConfigVars}" | sed "s|\./|${clusterConfigDirPath}/|")
+eval "${clusterConfigVars}"
+
+# Loading scripts-config.yaml
+paths=$(parse_yaml ${scriptsConfigPath})
+absolutePaths=$(echo "${paths}" | sed "s|\./|${scriptsConfigDirPath}/|")
+eval "${absolutePaths}"
+
+check_requirements
+prepare_workspace
+check_context "${cluster_config_context}"
+# check_args "$@"
+## Header End
+
+
+log_debug "${project_name} - Verify Istio"
+
+namespace=$1
+container=$2
+valuesFile=$3 
+targetHost=$4
+# ../values/istio-rules-external-services.yaml
+
+pod=$(kubectl -n ${namespace} get pods -o=custom-columns=NAME:.metadata.name | grep ${container})
+kubectl -n ${namespace} exec ${pod} -c ${container} -- apk add curl
+
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+grep 'host:' ${valuesFile} | awk '{print $2}' | while read externalHostname; do
+    echo
+    echo "= ${externalHostname}"
+    httpCode=$(kubectl -n ${namespace} exec ${pod} -c ${container} -- curl -so /dev/null -w "%{http_code}" http://${externalHostname}:80)
+    httpsPort=443
+    if [ "${externalHostname}" == "${targetHost}" ]; then
+        httpsPort=8443
+    fi
+    httpsCode=$(kubectl -n ${namespace} exec ${pod} -c ${container} -- curl -so /dev/null -w "%{http_code}" https://${externalHostname}:${httpsPort})
+    httpOriginationCode=$(kubectl -n ${namespace} exec ${pod} -c ${container} -- curl -so /dev/null -w "%{http_code}" http://${externalHostname}:1443)
+    echo "http  ____________ ${httpCode}"
+    echo "https ____________ ${httpsCode}"
+    echo "tls-origination __ ${httpOriginationCode}"
+    if [ "${httpsCode}" !=  "${httpOriginationCode}" ]; then
+        printf "${RED}WARNING:${NC} httpsCode is not the same as httpOriginationCode\n"
+    fi
+done
+

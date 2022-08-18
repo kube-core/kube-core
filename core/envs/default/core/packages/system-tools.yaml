@@ -1,0 +1,5 @@
+releases:
+  system-jobs:
+    labels:
+      package: system-tools
+    enabled: true

@@ -1,0 +1,27 @@
+replicaCount: {{ (index .Values.releases .Release.Name "config" "replicaCount") }}
+cloneStaticSiteFromGit:
+  enabled: true
+  repository: "{{ (index .Values.releases .Release.Name "config" "repository") }}"
+  branch: "{{ (index .Values.releases .Release.Name "config" "branch") }}"
+ingress:
+  enabled: true
+  pathType: ImplementationSpecific
+  hostname: nginx.core.{{ .Values.cluster.config.domain }}
+  path: /
+  annotations: {{ toYaml .Values.cluster.common.defaultIngressAnnotations | nindent 4 }}
+  tls: true
+resources:
+  limits:
+     cpu: 100m
+     memory: 128Mi
+  requests:
+     cpu: 100m
+     memory: 128Mi
+service:
+  type: ClusterIP
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+  prometheusRule:
+    enabled: false

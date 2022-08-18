@@ -1,0 +1,377 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: garden-release-single
+spec:
+  params:
+  - name: cluster-name
+    description: The name of the cluster to deploy
+    type: string
+    default: dev
+
+  - name: cluster-repository
+    description: The repository of the cluster to deploy
+    type: string
+
+  - name: cluster-branch
+    description: The branch of the cluster repository to checkout
+    type: string
+    default: develop
+
+  - name: garden-branch
+    description: The branch of the garden repository to checkout
+    type: string
+    default: develop
+
+  - name: garden-user
+    description: The branch of the garden repository to checkout
+    type: string
+    default: tekton
+
+  - name: apps-branch
+    description: The branch of the apps to checkout
+    type: string
+    default: develop
+
+  - name: app-name
+    description: The app to release
+    type: string
+
+  - name: garden-env
+    description: The env to use in garden
+    type: string
+    default: dev
+
+  - name: garden-args
+    description: The args to use in garden
+    type: string
+    default: ""
+
+  - name: pr-git-repo
+    description: The git repo that triggered a PR
+    type: string
+    default: ""
+
+  - name: pr-url
+    description: The URL of the PR
+    type: string
+    default: ""
+
+  - name: new-pr-url
+    description: The URL of the PR after processing
+    type: string
+    default: ""
+
+  - name: pr-source-branch
+    description: The source branch of the PR
+    type: string
+    default: ""
+
+  - name: pr-target-branch
+    description: The target branch of the PR
+    type: string
+    default: ""
+
+  - name: pr-command
+    description: A command to retrieve data for building a comment
+    type: string
+    default: "$(kubectl get ingress -n pr-${branch} | grep ${app} | awk '{print $2}')"
+
+  - name: pr-message
+    description: A message for the PR
+    type: string
+    default: "Preview App deployed at : http://${commandResult}"
+
+  - name: notif-command
+    description: A command to retrieve data for building a comment
+    type: string
+    default: ""
+
+  - name: notif-message
+    description: A message for the notif
+    type: string
+    default: ""
+
+  - name: init-project
+    description: A message for the notif
+    type: string
+    default: "true"
+
+  - name: sleep
+    description: A message for the notif
+    type: string
+    default: "false"
+
+  - name: backup-database
+    description: Perform a database backup before deployement
+    type: string
+    default: "false"
+
+  - name: release-version
+    description: The PR URL
+    type: string
+    default: latest
+
+  workspaces:
+  - name: ws
+  tasks:
+
+  # - name: pr-deploy-start
+  #   when:
+  #     - input: "$(params.pr-git-repo)"
+  #       operator: notin
+  #       values: [""]
+  #   taskRef:
+  #     name: pr-write-comment
+  #   params:
+  #     - name: app-repository
+  #       value: $(params.pr-git-repo)
+  #     - name: pr-url
+  #       value: $(params.new-pr-url)
+  #     - name: command
+  #       value: "Deployment started."
+
+  - name: git-clone-cluster
+    taskRef:
+      name: git-clone-branch
+    params:
+      - name: repository
+        value: $(params.cluster-repository)
+      - name: branch
+        value: $(params.cluster-branch)
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+
+  - name: garden-setup
+    runAfter:
+      - git-clone-cluster
+    taskRef:
+      name: garden-setup
+    params:
+      - name: cluster-repository
+        value: $(params.cluster-repository)
+      - name: cluster-branch
+        value: $(params.cluster-branch)
+      - name: garden-branch
+        value: $(params.garden-branch)
+      - name: apps-branch
+        value: $(params.apps-branch)
+      - name: garden-env
+        value: $(params.garden-env)
+      - name: garden-args
+        value: $(params.garden-args)
+      - name: garden-user
+        value: $(params.garden-user)
+      - name: garden-command
+        value: deploy
+      - name: init-project
+        value: $(params.init-project)
+      - name: sleep
+        value: $(params.sleep)
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+
+  - name: garden-release-single
+    runAfter:
+      - garden-setup
+    taskRef:
+      name: garden-release-single
+    params:
+      - name: cluster-repository
+        value: $(params.cluster-repository)
+      - name: cluster-branch
+        value: $(params.cluster-branch)
+      - name: garden-branch
+        value: $(params.garden-branch)
+      - name: apps-branch
+        value: $(params.apps-branch)
+      - name: app-name
+        value: $(params.app-name)
+      - name: garden-env
+        value: $(params.garden-env)
+      - name: garden-args
+        value: $(params.garden-args)
+      - name: garden-user
+        value: $(params.garden-user)
+      - name: garden-command
+        value: deploy
+      - name: init-project
+        value: $(params.init-project)
+      - name: release-version
+        value: $(params.release-version)
+      - name: sleep
+        value: $(params.sleep)
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+
+  - name: release-errors
+    runAfter:
+      - garden-release-single
+    taskRef:
+      name: devops-tools
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+    params:
+      - name: script
+        value: |
+          cat $(workspaces.output.path)/garden-release-single-errors
+
+  - name: release-logs
+    runAfter:
+      - garden-release-single
+    taskRef:
+      name: devops-tools
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+    params:
+      - name: script
+        value: |
+          cat $(workspaces.output.path)/garden-release-single-logs
+
+  - name: release-outputs
+    runAfter:
+      - garden-release-single
+    taskRef:
+      name: devops-tools
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+    params:
+      - name: script
+        value: |
+          cat $(workspaces.output.path)/garden-release-single-outputs
+
+  - name: release-end
+    runAfter:
+      - garden-release-single
+      - release-errors
+      - release-logs
+      - release-outputs
+    taskRef:
+      name: devops-tools
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+    params:
+      - name: script
+        value: |     
+          if [[ -s "$(workspaces.output.path)/garden-release-single-errors" ]]
+          then
+            echo "Deploy failed"
+            cat $(workspaces.output.path)/garden-release-single-errors
+            exit 1
+          fi
+
+  - name: sleep
+    runAfter:
+      - garden-release-single
+    taskRef:
+      name: sleep
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+        
+  # - name: pr-write-comment
+  #   runAfter:
+  #     - garden-release-single
+  #   when:
+  #     - input: "$(params.pr-git-repo)"
+  #       operator: notin
+  #       values: [""]
+  #   taskRef:
+  #     name: pr-write-comment
+  #   params:
+  #     - name: app-repository
+  #       value: $(params.pr-git-repo)
+  #     - name: pr-url
+  #       value: $(params.new-pr-url)
+  #     - name: command
+  #       value: "cat $(workspaces.output.path)/garden-outputs | jq -r '.results[]'"
+  #     - name: message
+  #       value: "${commandResult}"
+
+  #   workspaces:
+  #     - name: input
+  #       workspace: ws
+  #     - name: output
+  #       workspace: ws
+  #     - name: source
+  #       workspace: ws
+  #     - name: data
+  #       workspace: ws
+
+  # - name: notify
+  #   runAfter:
+  #     - garden-release-single
+  #   # when:
+  #   #   - input: "$(params.notif-message)"
+  #   #     operator: notin
+  #   #     values: [""]
+  #   taskRef:
+  #     name: notify-slack
+  #   params:
+  #     - name: message
+  #       value: "test"
+  #   workspaces:
+  #     - name: input
+  #       workspace: ws
+  #     - name: output
+  #       workspace: ws
+  #     - name: source
+  #       workspace: ws
+  #     - name: data
+  #       workspace: ws
+

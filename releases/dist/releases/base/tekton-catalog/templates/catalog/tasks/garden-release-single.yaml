@@ -1,0 +1,198 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: garden-release-single
+  labels:
+    app.kubernetes.io/version: "0.0.1"
+  annotations:
+    tekton.dev/pipelines.minVersion: "0.12.1"
+    tekton.dev/tags: garden, deploy
+    tekton.dev/displayName: "garden deploy"
+spec:
+  description: >-
+    Deploys a garden app
+  workspaces:
+    - name: input
+    - name: output
+    - name: source
+    - name: data
+  volumes:
+    - name: kubeconfig-internal-gcloud
+      secret:
+        secretName: kubeconfig-internal-gcloud
+    - name: tekton
+      secret:
+        secretName: tekton
+    - name: npmrc-reader
+      configMap:
+        name: npmrc-reader
+    - name: npmrc-publisher
+      configMap:
+        name: npmrc-publisher
+  params:
+    - name: cluster-name
+      description: The cluster name
+      type: string
+      default: "dev"
+
+    - name: cluster-repository
+      description: The repository to clone
+      type: string
+
+    - name: cluster-branch
+      description: The branch to checkout
+      type: string
+      default: "develop"
+
+    - name: garden-branch
+      description: The branch to checkout
+      type: string
+      default: "develop"
+
+    - name: garden-user
+      description: The branch to checkout
+      type: string
+      default: "tekton"
+
+    - name: image
+      description: The image used by the task
+      type: string
+      default: neo9sas/devops-tools:v1.5.0
+      
+
+    - name: apps-branch
+      description: The cluster name
+      type: string
+      default: "develop"
+
+    - name: app-name
+      description: The app to release
+      type: string
+
+    - name: garden-env
+      description: The PR URL
+      type: string
+      default: dev
+
+    - name: init-project
+      description: The PR URL
+      type: string
+      default: "false"
+
+    - name: garden-command
+      description: The PR URL
+      type: string
+      default: "scan"
+
+    - name: garden-args
+      description: The PR URL
+      type: string
+      default: ""
+
+    - name: sleep
+      description: The PR URL
+      type: string
+      default: "false"
+
+    - name: sleep-time
+      description: The PR URL
+      type: string
+      default: "600"
+
+    - name: release-version
+      description: The PR URL
+      type: string
+      default: latest
+
+
+  results:
+  - name: garden-command
+    description: The garden command
+  steps:
+    - name: garden-version
+      image: $(params.image)
+      script: |
+        #!/usr/bin/env bash
+        echo "Init - Checking stuff"
+
+        echo "Checking garden.io version ..."
+        garden_version=$(garden version)
+        echo "Using garden ${garden_version}"
+
+    - name: garden-release-single
+      image: $(params.image)
+      imagePullPolicy: Always
+      command: ["/bin/bash"]
+      volumeMounts:
+        - name: kubeconfig-internal-gcloud
+          mountPath: /tmp/kubeconfig-internal-gcloud
+        - name: tekton
+          mountPath: /tmp/tekton
+        - name: npmrc-reader
+          mountPath: /tmp/npmrc-reader
+        - name: npmrc-publisher
+          mountPath: /tmp/npmrc-publisher
+      env:
+        - name: GARDEN_LOGGER_TYPE
+          value: basic
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /tmp/tekton/tekton.json
+        - name: KUBECONFIG
+          value: /tmp/kubeconfig-internal-gcloud/kubeconfig-internal-gcloud.yaml
+      args:
+        - -c
+        - |
+          #!/usr/bin/env bash
+
+          # Copy SSH keys injected by Tekton
+          cp -rfp ~/.ssh /root
+
+          # Variables
+          rootPath=$(workspaces.source.path)/$(params.cluster-name)
+          clusterPath=${rootPath}/cluster
+          gardenPath=${rootPath}/garden
+          terraformPath=${rootPath}/terraform
+          gardenCommand="$(params.garden-command)"
+          gardenEnv="$(params.garden-env)"
+          releaseVersion="$(params.release-version)"
+          appName="$(params.app-name)"
+
+          # TODO: See if we really need to be root
+          userHome=/root
+
+          # Setup required/optional env vars
+          export user=$(params.garden-user)
+          gardenUser=$(params.garden-user)
+          apps_branch=$(params.apps-branch)
+
+          # Slugify branch to DNS
+          export branch=$( echo "$apps_branch" | sed -r s/[^a-zA-Z0-9]+/-/g | sed -r s/^-+\|-+$//g | tr A-Z a-z)
+
+          if [[ "$(params.sleep)" == "true" ]]
+          then
+            sleep $(params.sleep-time)
+          fi
+
+          cd ${gardenPath}
+
+          git config --global user.name "Tekton"
+          git config --global user.email n9-jenkins@outlook.com
+
+          cp -f /tmp/npmrc-reader/npmrc-reader ./.npmrc
+          cp -f /tmp/npmrc-reader/npmrc-reader ${userHome}/.npmrc
+
+          # TODO: move it in base image
+          apk --no-cache --update-cache add make gcc python python-dev g++ maven openjdk11
+
+          # TODO: Remove this and get it from base image
+          npm install -g release-it
+
+          # TODO: Remove this and get it from base image
+          wget https://github.com/git-chglog/git-chglog/releases/download/v0.14.2/git-chglog_0.14.2_linux_386.tar.gz
+          tar xvf git-chglog_0.14.2_linux_386.tar.gz
+          chmod a+x git-chglog
+          mv git-chglog /usr/bin
+
+          ./scripts/release_one_app.sh ${appName} ${releaseVersion}
+
+          echo "Done !"

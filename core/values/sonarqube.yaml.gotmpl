@@ -1,0 +1,63 @@
+image:
+  repository: sonarqube
+  tag: 8.5.1-community
+  pullPolicy: IfNotPresent
+
+ingress:
+  enabled: true
+  annotations:
+    {{ if .Values.cluster.common.defaultIngressAnnotations }}
+      {{ toYaml .Values.cluster.common.defaultIngressAnnotations | nindent 4 }}
+    {{- end }}
+    {{- if (index .Values.releases .Release.Name "config" "ingress" "annotations") }}
+      {{ toYaml (index .Values.releases .Release.Name "config" "ingress" "annotations") | nindent 4 }}
+    {{- end }}
+  labels:
+    {{ if .Values.cluster.common.defaultIngressLabels }}
+      {{ toYaml .Values.cluster.common.defaultIngressLabels | nindent 4 }}
+    {{- end }}
+    {{- if (index .Values.releases .Release.Name "config" "ingress" "labels") }}
+      {{ toYaml (index .Values.releases .Release.Name "config" "ingress" "labels") | nindent 4 }}
+    {{- end }}
+  hosts:
+    - name: {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
+      path: /
+  tls:
+    - secretName: {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") | replace "." "-"}}-tls
+      hosts:
+        - {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
+
+service:
+  type: ClusterIP
+  externalPort: 9000
+  internalPort: 9000
+plugins:
+  install:
+    {{- if (index .Values.releases .Release.Name "config" "plugins" "install") }}
+      {{ toYaml (index .Values.releases .Release.Name "config" "plugins" "install") | nindent 4 }}
+    {{- end }}
+  lib:
+    {{- if (index .Values.releases .Release.Name "config" "plugins" "lib") }}
+      {{ toYaml (index .Values.releases .Release.Name "config" "plugins" "lib") | nindent 4 }}
+    {{- end }}
+account:
+  {{- if (index .Values.releases .Release.Name "config" "initAdminPassword") }}
+  adminPassword: {{ toYaml (index .Values.releases .Release.Name "config" "initAdminPassword") | nindent 4 }}
+  {{- end }}
+
+persistence:
+  enabled: true
+
+replicaCount: 1
+
+# https://github.com/Oteemo/charts/issues/255
+extraInitContainers:
+  - name: "bootstrap-plugin-folder"
+    image: "busybox"
+    imagePullPolicy: "IfNotPresent"
+    command: ["install", "-d", "-m", "0755", "-o", "1000", "-g", "1000", "/tmp/sonarqube/extensions/plugins"]
+    volumeMounts:
+      - mountPath: /tmp/sonarqube/extensions
+        name: sonarqube
+        subPath: extensions
+

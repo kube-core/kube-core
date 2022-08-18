@@ -1,0 +1,37 @@
+# Define the generic prefix to apply before each bucket name.
+#
+# NOTE: You should probably set this prefix to a short, descriptive, cluster name/environment.
+
+prefix: "project-name"
+
+# Allow to control metadata of the published secrets
+outputSecretMetadata:
+  annotations:
+    replicator.v1.mittwald.de/replication-allowed: "true"
+    replicator.v1.mittwald.de/replication-allowed-namespaces: "*"
+
+# Define a custom list of service accounts.
+serviceAccounts:
+- default # Force creation of the default service account (even if not used).
+# - my-custom-service-account
+
+# Define the list of buckets to create.
+#
+# NOTE: If `prefix` is empty or true, the bucket name will be prefixed by the `.Values.prefix`. When you want to refer
+# NOTE: to the bucket name, you have to prefix it with the `.Values.prefix` into application configuration.
+
+buckets: []
+# - name: my-bucket                           # Name of the bucket. If `hasPrefix = true`, the name will be prefixed by the project short name.
+#   hasPrefix: true                           # Should the name be prefixed by `.Values.prefix` ? (optional, default: true)
+#   deletionPolicy: Orphan                    # (optional, default: "Orphan")
+#   uniformPolicy: true                       # (optional, default: true)
+#   location: "EU"                            # (optional, default: "EU")
+#   serviceAccount: my-custom-service-account # (optional)
+#   labels: []                                # (optional)
+#   roles:                                    # (optional, by default, the service account will be granted by admin role)
+#     - role: roles/storage.view
+#       serviceAccounts:
+#         - my-custom-service-account
+#     - role: roles/storage.admin
+#       serviceAccounts:
+#         - default # Add role for the default service account.

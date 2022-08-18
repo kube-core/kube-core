@@ -1,0 +1,15 @@
+useCertManager: true
+
+clusterOperator:
+  metrics:
+    enabled: {{ index .Values.releases "kps" "enabled" }}
+    serviceMonitor:
+      enabled: true
+      namespace: {{ index .Values.releases "kps" "release" "namespace" }}
+
+msgTopologyOperator:  
+  metrics:
+    enabled: {{ index .Values.releases "kps" "enabled" }}
+    serviceMonitor:
+      enabled: true
+      namespace: {{ index .Values.releases "kps" "release" "namespace" }}

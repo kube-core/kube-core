@@ -1,0 +1,169 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: core-tag
+spec:
+  params:
+  - name: git-project-name
+    description: The git project name which is at the origin of the push
+    type: string
+    default: ""
+  - name: git-sha
+    description: The git sha which is at the origin of the push
+    type: string
+    default: ""
+  - name: git-url
+    description: The repository url
+    type: string
+    default: ""
+  - name: git-tag
+    description: The repository tag at the origin of the push
+    type: string
+    default: ""
+  - name: project-id
+    description: The project id on gitlab
+    type: string
+    default: ""
+  - name: container-images-repository
+    description: Container images repository url
+    type: string
+    default: ""
+  - name: git-api-endpoint
+    description: Git provider API endpoint
+    type: string
+    default: ""
+
+  - name: cluster-repository-name
+    description: Git repository for the cluster
+    type: string
+    default: ""
+
+  - name: cluster-repository-url
+    description: Git repository for the cluster
+    type: string
+    default: ""
+
+  - name: cluster-repository-ref
+    description: Reference to fetch on the repository
+    type: string
+    default: "main"
+
+  - name: cluster-repository-path
+    description: Subpath in the cluster repository
+    type: string
+    default: "/cluster"
+
+  workspaces:
+  - name: ws
+  
+  tasks:
+
+  - name: init
+    taskRef:
+      name: devops-tools
+    params:
+      - name: script
+        value: |
+          #!/usr/bin/env bash
+          echo git-project-name: $(params.git-project-name)
+          echo git-sha: $(params.git-sha)
+          echo git-url: $(params.git-url)
+          echo git-tag: $(params.git-tag)
+          echo project-id: $(params.project-id)
+          echo container-images-repository: $(params.container-images-repository)
+          echo git-api-endpoint: $(params.git-api-endpoint)
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+
+  # TODO: Reimplement notify on cluster repository
+  # - name: notify-build-running
+  #   taskRef:
+  #     name: gitlab-notify-build
+  #   params:
+  #     - name: git-sha
+  #       value: $(params.git-sha)
+  #     - name: project-id
+  #       value: $(params.project-id)
+  #     - name: gitlab-url
+  #       value: $(params.git-api-endpoint)
+  #   workspaces:
+  #       - name: input
+  #         workspace: ws
+  #       - name: output
+  #         workspace: ws
+  #       - name: source
+  #         workspace: ws
+  #       - name: data
+  #         workspace: ws
+
+  - name: clone-projet
+    taskRef:
+      name: git-clone
+    workspaces:
+    - name: output
+      workspace: ws
+    params:
+    - name: url
+      value: $(params.cluster-repository-url)
+    - name: subdirectory
+      value: $(params.cluster-repository-name)
+    - name: revision
+      value: $(params.cluster-repository-ref)
+      
+  - name: core-update
+    runAfter:
+    - clone-projet
+    taskRef:
+      name: devops-tools
+    params:
+      - name: script
+        value: |
+          #!/usr/bin/env bash
+
+          coreTag=$(params.git-tag)
+          sourceBranch=$(params.cluster-repository-ref)
+
+          cd $(workspaces.source.path)/$(params.cluster-repository-name)$(params.cluster-repository-path)/scripts
+
+          ENV=ci ./src/gitops/ci/auto-core-updates.sh "${coreTag}" "${sourceBranch}"
+
+    workspaces:
+        - name: input
+          workspace: ws
+        - name: output
+          workspace: ws
+        - name: source
+          workspace: ws
+        - name: data
+          workspace: ws
+          
+  # TODO: Reimplement notify on cluster repository
+  # finally:
+  #     - name: notify-build-status
+  #       taskRef:
+  #         name: gitlab-notify-build
+  #       params:
+  #         - name: git-sha
+  #           value: $(params.git-sha)
+  #         - name: aggregateStatus
+  #           value: "$(tasks.status)"
+  #         - name: project-id
+  #           value: $(params.project-id)
+  #         - name: gitlab-url
+  #           value: $(params.git-api-endpoint)
+  #       workspaces:
+  #         - name: input
+  #           workspace: ws
+  #         - name: output
+  #           workspace: ws
+  #         - name: source
+  #           workspace: ws
+  #         - name: data
+  #           workspace: ws

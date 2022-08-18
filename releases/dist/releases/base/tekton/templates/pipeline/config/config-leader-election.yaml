@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-leader-election
+  namespace: tekton-pipelines
+  labels:
+    {{- include "tekton.labels" . | nindent 4 }}
+data:
+  # An inactive but valid configuration follows; see example.
+  leaseDuration: "60s"
+  renewDeadline: "40s"
+  retryPeriod: "10s"

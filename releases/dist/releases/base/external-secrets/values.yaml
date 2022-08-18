@@ -1,0 +1,42 @@
+# Define the list of available stores.
+#
+# WARN: At now, this chart only supports Kubernetes stores. More will come soon.
+stores:
+  # Support Kubernetes stores.
+  #
+  # By default and for each namespace, we will create a `ClusterSecretStore` because of we need to read secrets from
+  # an external namespace (`.Release.Namespace` -> kubernetes namespace).
+  #
+  #                   +-------------------------+                
+  #                   |                         |                
+  #                   |     External-secret     |                
+  #                   |                         |                
+  #                   +-------------------------+                
+  #                                |                             
+  #                                |                             
+  #                   +------------v------------+                
+  #                   |                         |                
+  #        +--------- |    ClusterSecretStore   |-----------+      
+  #        |          |                         |           |      
+  #        |          +-------------------------+           |      
+  # +-------------------------+          +-------------------------+
+  # |                         |          |                         |
+  # |     k8s-integration     |          |      k8s-validation     |
+  # |                         |          |                         |
+  # +-------------------------+          +-------------------------+
+  #
+  # @link https://external-secrets.io/v0.5.3/api-clustersecretstore/
+  kubernetes:
+    # We need a `ServiceAccount` to fetch secrets from K8S.
+    serviceAccount:
+      create: true
+      name: external-secrets-kubernetes-store
+
+    # List of namespaces to generate a `ClusterSecretStore`.
+    namespaces:
+      # - integration # Will generate a `ClusterSecretStore` called `k8s-integration`.
+      # - validation  # Will generate a `ClusterSecretStore` called `k8s-validation`.
+
+# Configure external-secrets directly.
+# external-secrets:
+  # ...

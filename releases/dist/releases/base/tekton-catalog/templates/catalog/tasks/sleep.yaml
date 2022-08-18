@@ -1,0 +1,67 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: sleep
+  labels:
+    app.kubernetes.io/version: "0.0.1"
+  annotations:
+    tekton.dev/pipelines.minVersion: "0.12.1"
+    tekton.dev/tags: sleep, debug, dev, tools
+    tekton.dev/displayName: "sleep"
+spec:
+  description: >-
+    This task makes the pipeline sleep, allowing to exec in and debug
+    the pipeline
+  workspaces:
+    - name: input
+    - name: output
+    - name: source
+    - name: data
+  volumes:
+    - name: kubeconfig-internal-gcloud
+      secret:
+        secretName: kubeconfig-internal-gcloud
+    - name: tekton
+      secret:
+        secretName: tekton
+  params:
+    - name: duration
+      description: The time to sleep
+      type: string
+      default: "600"
+    - name: image
+      description: The image used by the task
+      type: string
+      default: neo9sas/devops-tools:v1.5.0
+      # default: neo9sas/devops-tools:v1.5.0
+  steps:
+    - name: initialize
+      image: $(params.image)
+      script: |
+        #!/usr/bin/env bash
+        echo "I am supposed to sleep for $(params.duration) seconds!"
+    - name: sleep
+      image: $(params.image)
+      volumeMounts:
+        - name: kubeconfig-internal-gcloud
+          mountPath: /tmp/kubeconfig-internal-gcloud
+        - name: tekton
+          mountPath: /tmp/tekton
+      env:
+      - name: GOOGLE_APPLICATION_CREDENTIALS
+        value: /tmp/tekton/tekton.json
+      - name: KUBECONFIG
+        value: /tmp/kubeconfig-internal-gcloud/kubeconfig-internal-gcloud.yaml
+      - name: POD_NAME
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.name
+      - name: POD_NAMESPACE
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.namespace
+        # valueFrom:
+        #   secretKeyRef:
+        #     name: gl-token
+        #     key: token
+      command: ["sleep","$(params.duration)"]

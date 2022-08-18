@@ -1,0 +1,2 @@
+externalService:
+  {{ toYaml (index .Values.releases .Release.Name "config" "externalServices") | nindent 2 }}

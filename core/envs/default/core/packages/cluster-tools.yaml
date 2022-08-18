@@ -1,0 +1,27 @@
+### Cluster Tools Package
+## This pack contains some cluster-wide tools and configuration that we always need.
+## Use it on every
+###
+
+releases:
+  # Cluster Tools
+  sealed-secrets:
+    labels:
+      package: cluster-tools
+    enabled: true
+  reloader:
+    labels:
+      package: cluster-tools
+    enabled: true
+  replicator:
+    labels:
+      package: cluster-tools
+    enabled: true
+  system-config:
+    labels:
+      package: cluster-tools
+    enabled: true
+  priority-class:
+    labels:
+      package: cluster-tools
+    enabled: true

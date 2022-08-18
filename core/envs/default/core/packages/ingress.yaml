@@ -1,0 +1,27 @@
+### Ingress Package
+## This pack contains all the ingress related releases.
+## Use it for clusters that need to expose applications to the web.
+###
+
+releases:
+  # Ingress
+  nginx-ingress-controller:
+    labels:
+      package: ingress
+    enabled: true
+  ingress-access-operator:
+    labels:
+      package: ingress
+    enabled: true
+  external-dns:
+    labels:
+      package: ingress
+    enabled: true
+  cert-manager:
+    labels:
+      package: ingress
+    enabled: true
+  cluster-issuers:
+    labels:
+      package: ingress
+    enabled: true

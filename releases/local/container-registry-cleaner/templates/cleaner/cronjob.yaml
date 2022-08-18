@@ -1,0 +1,34 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: container-registry-cleaner
+spec:
+  schedule: {{ .Values.schedule }}
+  concurrencyPolicy: {{ .Values.concurrencyPolicy }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: {{ .Values.concurrencyPolicy }}
+          containers:
+            - name: container-registry-cleaner
+              image: neo9sas/container-registry-cleaner:v0.1.0
+              env:
+                - name: CONF_FILE
+                  value: /conf/config.json
+                - name: CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE
+                  value: /auth/{{.Values.secretName }}.json
+              command: ["container-registry-cleaner"]
+              args: ["--format=json", "-r=gcr", "-S"]
+              volumeMounts:
+                - name: container-registry-cleaner-config
+                  mountPath: /conf
+                - name: container-registry-cleaner-auth
+                  mountPath: /auth
+          volumes:
+            - name: container-registry-cleaner-config
+              configMap:
+                name: container-registry-cleaner-config
+            - name: container-registry-cleaner-auth
+              secret:
+                secretName: {{.Values.secretName }}

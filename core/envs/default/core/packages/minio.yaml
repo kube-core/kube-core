@@ -1,0 +1,9 @@
+releases:
+  minio-operator:
+    labels:
+      package: minio
+    enabled: true
+  minio-tenants:
+    labels:
+      package: minio
+    enabled: true

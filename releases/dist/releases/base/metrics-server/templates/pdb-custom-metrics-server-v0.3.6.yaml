@@ -1,0 +1,15 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  annotations:
+  labels:
+    k8s-app: metrics-server
+    version: v0.3.6
+    app: custom-metrics-server
+  name: custom-metrics-server-v0.3.6
+  namespace: kube-system
+spec:
+  minAvailable: 2 
+  selector:
+    matchLabels:
+      app: custom-metrics-server

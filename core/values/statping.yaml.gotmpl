@@ -1,0 +1,84 @@
+image:
+  # -- image repository
+  repository: statping/statping
+  # -- image tag
+  tag: "v0.90.74"
+  # -- image pull policy
+  pullPolicy: IfNotPresent
+
+env:
+  # -- Name of the Statping instance
+  NAME: {{ .Values.project.name }}-statping
+  # -- Description of the Statping instance
+  DESCRIPTION: This is a Statping instance on {{ .Values.project.name }}
+{{/*
+  # -- Set the container timezone
+  TZ: UTC
+  # -- External URL you use to connect to the statping (the one you enter in your browser)
+  VIRTUAL_HOST: ""
+  # -- Type of database to use
+  DB_CONN: postgres
+  # -- Postgres database hostname
+  # @default -- internal postgresql URL
+  DB_HOST: '{{ include "common.names.fullname" .}}-postgresql'
+  # -- Enable ssl_mode for postgres (To enable use `require`)
+  POSTGRES_SSLMODE: "disable"
+  # -- Postgres database user name
+  DB_USER: "{{ .Values.postgresql.postgresqlUsername }}"
+  # -- Postgres database password
+  DB_PASS: "{{ .Values.postgresql.postgresqlPassword }}"
+  # -- Postgres database name
+  DB_DATABASE: "{{ .Values.postgresql.postgresqlDatabase }}"
+  # -- Use CDN for static context from third-parties
+  USE_CDN: false
+  # -- Disable logs from appearing and writing to disk
+  DISABLE_LOGS: false
+  # -- dashboard admin user (needed to edit)
+  # ADMIN_USER: admin
+  # -- dashboard admin password (needed to edit)
+  # ADMIN_PASSWORD: admin
+  # -- dashboard admin email
+  # ADMIN_EMAIL: info@example.com
+*/}}
+
+postgresql:
+  enabled: true
+  postgresqlUsername: postgres
+  postgresqlPassword: "changeme"
+  postgresqlDatabase: postgres
+  persistence:
+    enabled: false
+    # storageClass: ""
+    # size: 8Gi
+
+service:
+  main:
+    ports:
+      http:
+        port: 8080
+
+ingress:
+  main:
+    enabled: true
+    annotations:
+    {{ if .Values.cluster.common.defaultIngressAnnotations }}
+        {{ toYaml .Values.cluster.common.defaultIngressAnnotations | nindent 6 }}
+    {{- end }}
+    {{- if (index .Values.releases .Release.Name "config" "ingress" "annotations") }}
+        {{ toYaml (index .Values.releases .Release.Name "config" "ingress" "annotations") | nindent 6 }}
+    {{- end }}
+    labels:
+    {{ if .Values.cluster.common.defaultIngressLabels }}
+        {{ toYaml .Values.cluster.common.defaultIngressLabels | nindent 6 }}
+    {{- end }}
+    {{- if (index .Values.releases .Release.Name "config" "ingress" "labels") }}
+        {{ toYaml (index .Values.releases .Release.Name "config" "ingress" "labels") | nindent 6 }}
+    {{- end }}
+    hosts:
+      - host: {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
+        paths:
+          - path: /
+    tls:
+      - secretName: {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") | replace "." "-"}}-tls
+        hosts:
+          - {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}

@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minio-operator
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      name: minio-operator
+  template:
+    metadata:
+      labels:
+        name: minio-operator
+    spec:
+      # affinity:
+      #   podAntiAffinity:
+      #     preferredDuringSchedulingIgnoredDuringExecution:
+      #     - labelSelector:
+      #         matchExpressions:
+      #         - key: name
+      #           operator: In
+      #           values:
+      #           - minio-operator
+      #       topologyKey: kubernetes.io/hostname
+      containers:
+      - env:
+        - name: CLUSTER_DOMAIN
+          value: cluster.local
+        - name: WATCHED_NAMESPACE
+        image: minio/operator:v4.3.7
+        imagePullPolicy: IfNotPresent
+        name: minio-operator
+        resources:
+          requests:
+            cpu: 200m
+            ephemeral-storage: 500Mi
+            memory: 256Mi
+        securityContext:
+          runAsGroup: 1000
+          runAsNonRoot: true
+          runAsUser: 1000
+      serviceAccountName: minio-operator

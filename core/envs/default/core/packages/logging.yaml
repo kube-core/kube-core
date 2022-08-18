@@ -1,0 +1,5 @@
+releases:
+  efk:
+    labels:
+      package: logging
+    enabled: true

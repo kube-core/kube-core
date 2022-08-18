@@ -1,0 +1,833 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: garden-deploy
+spec:
+  params:
+  - name: cluster-name
+    description: The name of the cluster to deploy
+    type: string
+    default: dev
+
+  - name: cluster-repository
+    description: The repository of the cluster to deploy
+    type: string
+
+  - name: cluster-branch
+    description: The branch of the cluster repository to checkout
+    type: string
+    default: develop
+
+  - name: garden-branch
+    description: The branch of the garden repository to checkout
+    type: string
+    default: develop
+
+  - name: garden-user
+    description: The branch of the garden repository to checkout
+    type: string
+    default: tekton
+
+  - name: apps-branch
+    description: The branch of the apps to checkout
+    type: string
+    default: develop
+
+  - name: garden-env
+    description: The env to use in garden
+    type: string
+    default: dev
+
+  - name: garden-args
+    description: The args to use in garden
+    type: string
+    default: ""
+
+  - name: pr-git-repo
+    description: The git repo that triggered a PR
+    type: string
+    default: ""
+
+  - name: pr-url
+    description: The URL of the PR
+    type: string
+    default: ""
+
+  - name: new-pr-url
+    description: The URL of the PR after processing
+    type: string
+    default: ""
+
+  - name: pr-source-branch
+    description: The source branch of the PR
+    type: string
+    default: ""
+
+  - name: pr-target-branch
+    description: The target branch of the PR
+    type: string
+    default: ""
+
+  - name: pr-command
+    description: A command to retrieve data for building a comment
+    type: string
+    default: "$(kubectl get ingress -n pr-${branch} | grep ${app} | awk '{print $2}')"
+
+  - name: pr-message
+    description: A message for the PR
+    type: string
+    default: "Preview App deployed at : http://${commandResult}"
+
+  - name: notif-command
+    description: A command to retrieve data for building a comment
+    type: string
+    default: ""
+
+  - name: notif-message
+    description: A message for the notif
+    type: string
+    default: ""
+
+  - name: init-project
+    description: A message for the notif
+    type: string
+    default: "true"
+
+  - name: sleep
+    description: A message for the notif
+    type: string
+    default: "false"
+
+  - name: backup-database
+    description: Perform a database backup before deployement
+    type: string
+    default: "false"
+
+  - name: git-url
+    description: Init git url
+    type: string
+    default: ""
+
+  - name: git-project-name
+    description: Init git project name
+    type: string
+    default: ""
+
+  - name: git-commit
+    description: Init git commit
+    type: string
+    default: ""
+
+  - name: git-api-endpoint
+    description: Git provider API endpoint
+    type: string
+    default: ""
+
+  - name: project-id
+    description: The project id on gitlab
+    type: string
+    default: ""
+
+  - name: tekton-url
+    type: string
+    description: "The tekton url"
+
+  - name: use-vendir
+    description: Use vendir to retreive repositories
+    type: string
+    default: "false"
+
+  - name: skip-yalc
+    description: Skip yalc phase
+    type: string
+    default: "false"
+
+  - name: garden-repo-subpath
+    description: The garden repository subpath
+    type: string
+    default: "garden"
+  - name: sonar-url
+    description: Sonarqube Url
+    type: string
+
+  - name: build-tool
+    description: Build tool override
+    type: string
+
+  workspaces:
+  - name: ws
+  tasks:
+
+  # - name: pr-deploy-start
+  #   when:
+  #     - input: "$(params.pr-git-repo)"
+  #       operator: notin
+  #       values: [""]
+  #   taskRef:
+  #     name: pr-write-comment
+  #   params:
+  #     - name: app-repository
+  #       value: $(params.pr-git-repo)
+  #     - name: pr-url
+  #       value: $(params.new-pr-url)
+  #     - name: command
+  #       value: "Deployment started."
+  - name: notify-build-running
+    when:
+    - input: "$(params.git-api-endpoint)"
+      operator: notin
+      values: [""]
+    taskRef:
+      name: gitlab-notify-build
+    params:
+      - name: git-sha
+        value: $(params.git-commit)
+      - name: project-id
+        value: $(params.project-id)
+      - name: gitlab-url
+        value: $(params.git-api-endpoint)
+      - name: tekton-url
+        value: $(params.tekton-url)
+      - name: ref
+        value: $(params.apps-branch)
+    workspaces:
+        - name: input
+          workspace: ws
+        - name: output
+          workspace: ws
+        - name: source
+          workspace: ws
+        - name: data
+          workspace: ws
+
+  - name: git-clone-cluster
+    taskRef:
+      name: git-clone-branch
+    params:
+      - name: repository
+        value: $(params.cluster-repository)
+      - name: branch
+        value: $(params.cluster-branch)
+      - name: use-vendir
+        value: $(params.use-vendir)
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+
+  # - name: perform-database-backup
+  #   when:
+  #     - input: "$(params.backup-database)"
+  #       operator: in
+  #       values: ["true"]
+  #   taskRef:
+  #     name: run-job-from-cronjob
+  #   params:
+  #     - name: run-task
+  #       value: $(params.backup-database)
+  #     - name: cronjob-source-namespace
+  #       value: mongodb-backups
+  #     - name: cronjob-source-name
+  #       value: mongodb-backups-$(params.garden-env)
+  #     - name: job-name-prefix
+  #       value: mongodb-backups-$(params.garden-env)-$(params.garden-user)
+  #     - name: wait-for-job-to-be-finished
+  #       value: "true"
+  #     - name: job-timeout
+  #       value: "300s"
+
+  - name: garden-setup
+    runAfter:
+      - git-clone-cluster
+    taskRef:
+      name: garden-setup
+    params:
+      - name: cluster-repository
+        value: $(params.cluster-repository)
+      - name: cluster-branch
+        value: $(params.cluster-branch)
+      - name: garden-branch
+        value: $(params.garden-branch)
+      - name: apps-branch
+        value: $(params.apps-branch)
+      - name: garden-env
+        value: $(params.garden-env)
+      - name: garden-args
+        value: $(params.garden-args)
+      - name: garden-user
+        value: $(params.garden-user)
+      - name: garden-command
+        value: deploy
+      - name: init-project
+        value: $(params.init-project)
+      - name: sleep
+        value: $(params.sleep)
+      - name: skip-yalc
+        value: $(params.skip-yalc)
+      - name: garden-repo-subpath
+        value: $(params.garden-repo-subpath)
+      - name: cluster-name
+        value: $(params.cluster-name)
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+
+  - name: extract-build-config-from-source
+    runAfter:
+      - garden-setup
+    taskRef:
+      name: extract-build-config-from-source
+    workspaces:
+    - name: source
+      workspace: ws
+    params:
+    - name: directory
+      value: dev/garden/apps/$(params.git-project-name)
+    - name: branch-override
+      value: $(params.apps-branch)
+    - name: build-tool-override
+      value: $(params.build-tool)
+
+  - name: garden-test
+    when:
+    - input: "$(tasks.garden-setup.results.garden-command)"
+      operator: in
+      values: ["deploy", "test"]
+    runAfter:
+      - garden-setup
+    taskRef:
+      name: garden-test
+    params:
+      - name: cluster-repository
+        value: $(params.cluster-repository)
+      - name: cluster-branch
+        value: $(params.cluster-branch)
+      - name: garden-branch
+        value: $(params.garden-branch)
+      - name: apps-branch
+        value: $(params.apps-branch)
+      - name: garden-env
+        value: $(params.garden-env)
+      - name: garden-args
+        value: $(params.garden-args)
+      - name: garden-user
+        value: $(params.garden-user)
+      - name: garden-command
+        value: test
+      - name: init-project
+        value: $(params.init-project)
+      - name: sleep
+        value: $(params.sleep)
+      - name: trigger-git-url
+        value: $(params.git-url)
+      - name: trigger-git-project-name
+        value: $(params.git-project-name)
+      - name: trigger-git-commit
+        value: $(params.git-commit)
+      - name: garden-repo-subpath
+        value: $(params.garden-repo-subpath)
+      - name: cluster-name
+        value: $(params.cluster-name)
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+
+  # - name: test-errors
+  #   runAfter:
+  #     - garden-test
+  #   taskRef:
+  #     name: devops-tools
+  #   workspaces:
+  #     - name: input
+  #       workspace: ws
+  #     - name: output
+  #       workspace: ws
+  #     - name: source
+  #       workspace: ws
+  #     - name: data
+  #       workspace: ws
+  #   params:
+  #     - name: script
+  #       value: |
+  #         cat $(workspaces.output.path)/garden-test-errors
+
+  # - name: test-notify-results
+  #   runAfter:
+  #     - garden-test
+  #   taskRef:
+  #     name: notify-slack
+  #   params:
+  #     - name: channel
+  #       value : "#notifications"
+  #     - name: messageFromFileName
+  #       value: "full-test-log"
+  #     - name: messageLevel
+  #       value: $(tasks.garden-test.results.garden-test-raw-status)
+  #   workspaces:
+  #     - name: input
+  #       workspace: ws
+  #     - name: output
+  #       workspace: ws
+  #     - name: source
+  #       workspace: ws
+  #     - name: data
+  #       workspace: ws
+
+  # # - name: test-results
+  # #   runAfter:
+  # #     - garden-test
+  # #   taskRef:
+  # #     name: devops-tools
+  # #   workspaces:
+  # #     - name: input
+  # #       workspace: ws
+  # #     - name: output
+  # #       workspace: ws
+  # #     - name: source
+  # #       workspace: ws
+  # #     - name: data
+  # #       workspace: ws
+  # #   params:
+  # #     - name: script
+  # #       value: |
+  # #         cat $(workspaces.output.path)/garden-test-results
+
+  # - name: test-logs
+  #   runAfter:
+  #     - garden-test
+  #   taskRef:
+  #     name: devops-tools
+  #   workspaces:
+  #     - name: input
+  #       workspace: ws
+  #     - name: output
+  #       workspace: ws
+  #     - name: source
+  #       workspace: ws
+  #     - name: data
+  #       workspace: ws
+  #   params:
+  #     - name: script
+  #       value: |
+  #         cat $(workspaces.output.path)/garden-test-logs
+
+  # - name: test-end
+  #   runAfter:
+  #     - garden-test
+  #     - test-errors
+  #     - test-logs
+  #   taskRef:
+  #     name: devops-tools
+  #   workspaces:
+  #     - name: input
+  #       workspace: ws
+  #     - name: output
+  #       workspace: ws
+  #     - name: source
+  #       workspace: ws
+  #     - name: data
+  #       workspace: ws
+  #   params:
+  #     - name: script
+  #       value: |
+  #         if [[ -s "$(workspaces.output.path)/garden-test-errors" ]]
+  #         then
+  #           echo "Tests failed"
+  #           exit 1
+  #         fi
+
+  - name: garden-deploy
+    when:
+    - input: "$(tasks.garden-setup.results.garden-command)"
+      operator: in
+      values: ["deploy"]
+    - input: $(params.apps-branch)
+      operator: in
+      values:
+      - "develop"
+    runAfter:
+      - garden-test
+    taskRef:
+      name: garden-deploy
+    params:
+      - name: cluster-repository
+        value: $(params.cluster-repository)
+      - name: cluster-branch
+        value: $(params.cluster-branch)
+      - name: garden-branch
+        value: $(params.garden-branch)
+      - name: apps-branch
+        value: $(params.apps-branch)
+      - name: garden-env
+        value: $(params.garden-env)
+      - name: garden-args
+        value: $(params.garden-args)
+      - name: garden-user
+        value: $(params.garden-user)
+      - name: garden-command
+        value: deploy
+      - name: init-project
+        value: $(params.init-project)
+      - name: sleep
+        value: $(params.sleep)
+      - name: trigger-git-project-name
+        value: $(params.git-project-name)
+      - name: garden-repo-subpath
+        value: $(params.garden-repo-subpath)
+      - name: cluster-name
+        value: $(params.cluster-name)
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+
+  - name: run-test-npm
+    taskRef:
+      name: devops-tools
+    runAfter:
+      - extract-build-config-from-source
+    when:
+      - input: $(tasks.extract-build-config-from-source.results.BUILD_TOOL)
+        operator: in
+        values:
+        - npm
+    params:
+      - name: image
+        value: "node:14.15.4"
+      - name: script
+        value: |
+          cd $(workspaces.source.path)/dev/garden/apps/$(params.git-project-name)
+          if [ -f karma.conf.js ]; then
+            echo "installing chrome ..."
+            wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+            echo "deb http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google.list && \
+            apt-get -qq update && \
+            apt-get install -qq -y google-chrome-stable && \
+            rm -rf /var/lib/apt/lists/* && \
+            export CHROME_BIN=/usr/bin/google-chrome
+          fi
+          yarn install && \
+          npm test --if-present -- --watch=false && \
+          npm run code-coverage --if-present && \
+          exit $?
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+
+  - name: run-test-maven
+    taskRef:
+      name: maven
+    runAfter:
+      - extract-build-config-from-source
+    when:
+      - input: $(tasks.extract-build-config-from-source.results.BUILD_TOOL)
+        operator: in
+        values:
+        - maven
+    workspaces:
+    - name: source
+      workspace: ws
+    - name: maven-settings
+      workspace: ws
+    params:
+    - name: CONTEXT_DIR
+      value: dev/garden/apps/$(params.git-project-name)
+    - name: GOALS
+      value: ["clean", "verify"]
+
+  - name: code-analysis-npm
+    taskRef:
+      name: sonarqube-scanner-edited
+    runAfter:
+      - run-test-npm
+    when:
+      - input: $(tasks.extract-build-config-from-source.results.BUILD_TOOL)
+        operator: in
+        values:
+        - npm
+    params:
+      - name: SONAR_HOST_URL
+        value: $(params.sonar-url)
+      - name: SONAR_PROJECT_KEY
+        value: $(params.git-project-name)
+      - name: DIRECTORY
+        value: dev/garden/apps/$(params.git-project-name)
+      - name: BRANCH
+        value: $(params.apps-branch)
+    workspaces:
+      - name: source-dir
+        workspace: ws
+      - name: sonar-settings
+        workspace: ws
+
+  - name: code-analysis-maven
+    taskRef:
+      name: sonarqube-scanner-edited
+    when:
+      - input: $(tasks.extract-build-config-from-source.results.BUILD_TOOL)
+        operator: in
+        values:
+        - maven
+    runAfter:
+      - run-test-maven
+    params:
+      - name: SONAR_HOST_URL
+        value: $(params.sonar-url)
+      - name: SONAR_PROJECT_KEY
+        value: $(params.git-project-name)
+      - name: DIRECTORY
+        value: dev/garden/apps/$(params.git-project-name)
+      - name: BRANCH
+        value: $(params.apps-branch)
+    workspaces:
+      - name: source-dir
+        workspace: ws
+      - name: sonar-settings
+        workspace: ws
+
+  # - name: deploy-errors
+  #   runAfter:
+  #     - garden-deploy
+  #   taskRef:
+  #     name: devops-tools
+  #   workspaces:
+  #     - name: input
+  #       workspace: ws
+  #     - name: output
+  #       workspace: ws
+  #     - name: source
+  #       workspace: ws
+  #     - name: data
+  #       workspace: ws
+  #   params:
+  #     - name: script
+  #       value: |
+  #         cat $(workspaces.output.path)/garden-deploy-errors
+
+  # - name: deploy-logs
+  #   runAfter:
+  #     - garden-deploy
+  #   taskRef:
+  #     name: devops-tools
+  #   workspaces:
+  #     - name: input
+  #       workspace: ws
+  #     - name: output
+  #       workspace: ws
+  #     - name: source
+  #       workspace: ws
+  #     - name: data
+  #       workspace: ws
+  #   params:
+  #     - name: script
+  #       value: |
+  #         cat $(workspaces.output.path)/garden-deploy-logs
+
+  # - name: deploy-outputs
+  #   runAfter:
+  #     - garden-deploy
+  #   taskRef:
+  #     name: devops-tools
+  #   workspaces:
+  #     - name: input
+  #       workspace: ws
+  #     - name: output
+  #       workspace: ws
+  #     - name: source
+  #       workspace: ws
+  #     - name: data
+  #       workspace: ws
+  #   params:
+  #     - name: script
+  #       value: |
+  #         cat $(workspaces.output.path)/garden-deploy-outputs
+
+  # - name: deploy-ingress
+  #   runAfter:
+  #     - garden-deploy
+  #   taskRef:
+  #     name: devops-tools
+  #   workspaces:
+  #     - name: input
+  #       workspace: ws
+  #     - name: output
+  #       workspace: ws
+  #     - name: source
+  #       workspace: ws
+  #     - name: data
+  #       workspace: ws
+  #   params:
+  #     - name: script
+  #       value: |
+  #         cat $(workspaces.output.path)/garden-deploy-env-ingresses
+
+  # - name: deploy-end
+  #   runAfter:
+  #     - garden-deploy
+  #     - deploy-errors
+  #     - deploy-logs
+  #     - deploy-outputs
+  #     - deploy-ingress
+  #   taskRef:
+  #     name: devops-tools
+  #   workspaces:
+  #     - name: input
+  #       workspace: ws
+  #     - name: output
+  #       workspace: ws
+  #     - name: source
+  #       workspace: ws
+  #     - name: data
+  #       workspace: ws
+  #   params:
+  #     - name: script
+  #       value: |
+  #         if [[ -s "$(workspaces.output.path)/garden-deploy-errors" ]]
+  #         then
+  #           echo "Deploy failed"
+  #           cat $(workspaces.output.path)/garden-deploy-errors
+  #           exit 1
+  #         fi
+
+  # - name: sleep
+  #   runAfter:
+  #     - garden-deploy
+  #   taskRef:
+  #     name: sleep
+  #   workspaces:
+  #     - name: input
+  #       workspace: ws
+  #     - name: output
+  #       workspace: ws
+  #     - name: source
+  #       workspace: ws
+  #     - name: data
+  #       workspace: ws
+
+  # - name: pr-write-comment
+  #   runAfter:
+  #     - garden-deploy
+  #   when:
+  #     - input: "$(params.pr-git-repo)"
+  #       operator: notin
+  #       values: [""]
+  #   taskRef:
+  #     name: pr-write-comment
+  #   params:
+  #     - name: app-repository
+  #       value: $(params.pr-git-repo)
+  #     - name: pr-url
+  #       value: $(params.new-pr-url)
+  #     - name: command
+  #       value: "cat $(workspaces.output.path)/garden-outputs | jq -r '.results[]'"
+  #     - name: message
+  #       value: "${commandResult}"
+
+  #   workspaces:
+  #     - name: input
+  #       workspace: ws
+  #     - name: output
+  #       workspace: ws
+  #     - name: source
+  #       workspace: ws
+  #     - name: data
+  #       workspace: ws
+
+  # - name: notify
+  #   runAfter:
+  #     - garden-deploy
+  #   # when:
+  #   #   - input: "$(params.notif-message)"
+  #   #     operator: notin
+  #   #     values: [""]
+  #   taskRef:
+  #     name: notify-slack
+  #   params:
+  #     - name: message
+  #       value: "test"
+  #   workspaces:
+  #     - name: input
+  #       workspace: ws
+  #     - name: output
+  #       workspace: ws
+  #     - name: source
+  #       workspace: ws
+  #     - name: data
+  #       workspace: ws
+
+  finally:
+      - name: notify-build-status
+        when:
+        - input: "$(params.git-api-endpoint)"
+          operator: notin
+          values: [""]
+        taskRef:
+          name: gitlab-notify-build
+        params:
+          - name: git-sha
+            value: $(params.git-commit)
+          - name: aggregateStatus
+            value: "$(tasks.status)"
+          - name: project-id
+            value: $(params.project-id)
+          - name: gitlab-url
+            value: $(params.git-api-endpoint)
+          - name: tekton-url
+            value: $(params.tekton-url)
+          - name: ref
+            value: $(params.apps-branch)
+        workspaces:
+          - name: input
+            workspace: ws
+          - name: output
+            workspace: ws
+          - name: source
+            workspace: ws
+          - name: data
+            workspace: ws
+
+      - name: notify-slack
+        taskRef:
+          name: send-to-webhook-slack
+        when:
+        - input: "$(tasks.status)"
+          operator: in
+          values:
+          - "Failed"
+        - input: $(params.apps-branch)
+          operator: in
+          values:
+          - "develop"
+        params:
+          - name: webhook-secret
+            value: slack-webhook-secret
+          - name: message
+            value: "Pipeline for *$(params.git-project-name)* has failed. <$(params.tekton-url)/#/namespaces/tekton-pipelines/pipelineruns/$(tasks.extract-build-config-from-source.results.PIPELINERUN_NAME)|Check Pipeline>"

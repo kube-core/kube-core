@@ -1,0 +1,30 @@
+{{- $value := .Values }}
+
+- name: postgres-operator
+  chart: ../releases/dist/releases/charts/postgres-operator
+  version: 1.7.0
+  namespace: postgres-operator
+  labels:
+    app: postgres-operator
+    type: postgres-operator
+  values:
+{{ if $value.releasesCustom.postgresOperator.config.pod_env_overrides.enabled }}
+  - configKubernetes:
+      pod_environment_configmap: "postgres-operator/pod-env-overrides"
+{{ end }}
+  - {{ toYaml $value.releasesCustom.postgresOperator.values | nindent 4 }}
+
+- name: postgres-operator-overrides
+  chart: ../releases/dist/releases/charts/raw
+  namespace: postgres-operator
+{{ if $value.releasesCustom.postgresOperator.config.pod_env_overrides.enabled }}
+  installed: true
+{{ else }}
+  installed: false
+{{ end }}
+  labels:
+    app: postgres-operator
+    type: postgres-operator
+  values:
+  - manifests:
+    - {{ tpl (readFile "templates/customresources/postgres-operator/postgres-operator-cm.yaml.gotmpl") . | nindent 6 }}

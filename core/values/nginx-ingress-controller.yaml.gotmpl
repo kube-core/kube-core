@@ -1,0 +1,146 @@
+## DaemonSet or Deployment
+##
+{{ if and (index .Values.releases .Release.Name "config" "ha") (eq .Values.cloud.provider "aws") }}
+kind: DaemonSet
+daemonset:
+  useHostPort: false
+  hostPorts:
+    http: 80
+    https: 443
+{{ else }}
+kind: {{ index .Values.releases .Release.Name "config" "kind" }}
+{{ end }}
+## Number of replicas
+##
+replicaCount: {{ index .Values.releases .Release.Name "config" "replicaCount" }}
+minAvailable: {{ index .Values.releases .Release.Name "config" "minAvailable" }}
+
+autoscaling: {{ toYaml (index .Values.releases .Release.Name "config" "autoscaling") | nindent 2 }}
+
+## Required on CNI based K8s installations, since CNI and hostport don't mix yet.
+## Can be deprecated once https://github.com/kubernetes/kubernetes/issues/23920 is merged
+##
+hostNetwork: {{ index .Values.releases .Release.Name "config" "hostNetwork" }}
+
+## Optionally, change this to ClusterFirstWithHostNet in case you have 'hostNetwork: true'.
+## By default, while using host network, name resolution uses the host's DNS. If you wish nginx-controller
+## to keep resolving names inside the k8s network, use ClusterFirstWithHostNet.
+##
+dnsPolicy: {{ index .Values.releases .Release.Name "config" "dnsPolicy" }}
+
+## Required only if defaultBackend.enabled = false
+## Must be <namespace>/<service_name>
+##
+defaultBackendService: {{ index .Values.releases .Release.Name "config" "defaultBackendService" }}
+
+## Election ID to use for status update
+##
+electionID: ingress-controller-leader
+
+## Bare-metal considerations via the host network
+## ref: https://kubernetes.github.io/ingress-nginx/deploy/baremetal/#via-the-host-network
+##
+reportNodeInternalIp: false
+
+## Name of the ingress class to route through this controller
+##
+ingressClass: {{ index .Values.releases .Release.Name "config" "ingressClass" }}
+
+## Allows customization of the external service
+## the ingress will be bound to via DNS
+##
+publishService:
+  enabled: {{ index .Values.releases .Release.Name "config" "publishServiceEnabled" }}
+  ## Allows overriding of the publish service to bind to
+  ## Must be <namespace>/<service_name>
+  ##
+  pathOverride: ''
+
+service:
+  ## Service type
+  ##
+  type: {{ index .Values.releases .Release.Name "config" "serviceType" }}
+  ## Service ports
+  ##
+  ports:
+    http: 80
+    https: 443
+  ## Specify the nodePort value(s) for the LoadBalancer and NodePort service types.
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
+  ##
+  nodePorts:
+    http: ''
+    https: ''
+    tcp: {}
+    udp: {}
+
+  ## Provide any additional annotations which may be required. This can be used to
+  ## set the LoadBalancer service type to internal only.
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
+  ##
+  {{ if eq .Values.cloud.provider "aws" }}
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp
+    service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: '60'
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: 'true'
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+    service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags: |
+      Team=devops,
+      kubernetes=true,
+      Company=kube-core,
+      Environment=aws,
+      Project={{ .Values.cloud.project }}
+  {{ else }}
+  annotations: {}
+  {{ end }}
+  ## Provide any additional label which may be required.
+  ##
+  labels: {}
+
+  ## clusterIP (optional)
+  ##
+  # clusterIP:
+
+  ## List of IP addresses at which the controller services are available
+  ## Ref: https://kubernetes.io/docs/user-guide/services/#external-ips
+  ##
+  externalIPs: []
+
+  ## loadBalancerIP (optional, cloud specific)
+  ## ref: http://kubernetes.io/docs/user-guide/services/#type-loadbalancer
+  ##
+  # loadBalancerIP:
+  ## Load Balancer sources
+  ## https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/#restrict-access-for-loadbalancer-service
+  ##
+  loadBalancerSourceRanges: []
+
+  ## Set external traffic policy to: "Local" to preserve source IP on providers supporting it
+  ## Ref: https://kubernetes.io/docs/tutorials/services/source-ip/#source-ip-for-services-with-typeloadbalancer
+  ##
+  externalTrafficPolicy: {{ index .Values.releases .Release.Name "config" "externalTrafficPolicy" }}
+  healthCheckNodePort: 0
+
+
+metrics:
+  enabled: {{ index .Values.releases .Release.Name "config" "metrics" "enabled" }}
+  serviceMonitor:
+    enabled: {{ index .Values.releases .Release.Name "config" "metrics" "serviceMonitor" "enabled" }}
+    interval: 15s
+    namespace: {{ index .Values.releases "kps" "release" "namespace" }}
+
+{{ if index .Values.releases .Release.Name "config" "istioAnnotations" }}
+podAnnotations:
+  prometheus.io/port: '10254'
+  prometheus.io/scrape: 'true'
+  # Do not redirect inbound traffic to Envoy.
+  traffic.sidecar.istio.io/includeInboundPorts: ""
+  traffic.sidecar.istio.io/excludeInboundPorts: "80,443"
+  # Exclude outbound traffic to kubernetes master from redirection.
+  traffic.sidecar.istio.io/excludeOutboundIPRanges: {{ index .Values.releases .Release.Name "config" "clusterIP" }}
+  sidecar.istio.io/inject: 'true'
+{{ end }}
+
+tolerations: {{ toYaml (index .Values.releases .Release.Name "config" "tolerations") | nindent 2 }}
+nodeSelector: {{ toYaml (index .Values.releases .Release.Name "config" "nodeSelector") | nindent 2 }}
+affinity: {{ toYaml (index .Values.releases .Release.Name "config" "affinity") | nindent 2 }}

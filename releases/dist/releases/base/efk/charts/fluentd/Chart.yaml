@@ -1,0 +1,27 @@
+annotations:
+  category: Analytics
+apiVersion: v2
+appVersion: 1.14.3
+dependencies:
+- name: common
+  repository: https://charts.bitnami.com/bitnami
+  tags:
+  - bitnami-common
+  version: 1.x.x
+description: Fluentd is an open source data collector for unified logging layer
+home: https://github.com/bitnami/charts/tree/master/bitnami/fluentd
+icon: https://bitnami.com/assets/stacks/fluentd/img/fluentd-stack-220x234.png
+keywords:
+- fluentd
+- logging
+- logs
+- data
+- collector
+maintainers:
+- email: containers@bitnami.com
+  name: Bitnami
+name: fluentd
+sources:
+- https://github.com/bitnami/bitnami-docker-fluentd
+- https://www.fluentd.org/
+version: 4.4.6

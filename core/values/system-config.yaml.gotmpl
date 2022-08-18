@@ -1,0 +1,66 @@
+manifests:
+# # PriorityClass
+# TODO: Find a way to provision the same default priorityclass everywhere
+# At the moment, it already exists in clusters and cannot be patched like this
+# -
+#   apiVersion: scheduling.k8s.io/v1
+#   kind: PriorityClass
+#   metadata:
+#     name: default
+#   value: 0
+#   preemptionPolicy: Never
+#   globalDefault: true
+#   description: "PriorityClass for default"
+
+{{ if eq .Values.cloud.provider "gcp" }}
+# StorageClass
+# pd-standard
+-
+  apiVersion: storage.k8s.io/v1
+  kind: StorageClass
+  metadata:
+    name: gcp-sc-delete-wait
+  provisioner: kubernetes.io/gce-pd
+  reclaimPolicy: Delete
+  volumeBindingMode: WaitForFirstConsumer
+  allowVolumeExpansion: true
+  parameters:
+    type: pd-standard
+
+-
+  apiVersion: storage.k8s.io/v1
+  kind: StorageClass
+  metadata:
+    name: gcp-sc-retain-wait
+  provisioner: kubernetes.io/gce-pd
+  reclaimPolicy: Retain
+  volumeBindingMode: WaitForFirstConsumer
+  allowVolumeExpansion: true
+  parameters:
+    type: pd-standard
+
+# pd-ssd
+-
+  apiVersion: storage.k8s.io/v1
+  kind: StorageClass
+  metadata:
+    name: gcp-sc-delete-wait-ssd
+  provisioner: kubernetes.io/gce-pd
+  reclaimPolicy: Delete
+  volumeBindingMode: WaitForFirstConsumer
+  allowVolumeExpansion: true
+  parameters:
+    type: pd-standard
+
+-
+  apiVersion: storage.k8s.io/v1
+  kind: StorageClass
+  metadata:
+    name: gcp-sc-retain-wait-ssd
+  provisioner: kubernetes.io/gce-pd
+  reclaimPolicy: Retain
+  volumeBindingMode: WaitForFirstConsumer
+  allowVolumeExpansion: true
+  parameters:
+    type: pd-standard
+{{ end }}

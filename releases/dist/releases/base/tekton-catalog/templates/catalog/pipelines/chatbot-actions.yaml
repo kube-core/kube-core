@@ -1,0 +1,762 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: chatbot-actions
+spec:
+  params:
+  - name: git-url
+  - name: pr-url
+  - name: new-pr-url
+  - name: pr-source
+  - name: pr-target
+  - name: comment
+  - name: author-id
+  - name: username
+  - name: email
+  - name: comment-url
+
+  - name: cluster-repository
+  - name: cluster-branch
+  - name: garden-branch
+  - name: apps-branch
+  - name: garden-env
+  - name: garden-user
+  - name: init-project
+  - name: sleep
+
+  
+  workspaces:
+  - name: ws
+  tasks:
+  - name: parse-command
+    workspaces:
+    - name: pr
+      workspace: ws
+    - name: output
+      workspace: ws
+    - name: source
+      workspace: ws
+    params:
+      - name: git-url
+        value: $(params.git-url)
+      - name: pr-url
+        value: $(params.pr-url)
+      - name: new-pr-url
+        value: $(params.new-pr-url)
+      - name: pr-source
+        value: $(params.pr-source)
+      - name: pr-target
+        value: $(params.pr-target)
+      - name: comment
+        value: $(params.comment)
+      - name: author-id
+        value: $(params.author-id)
+      - name: username
+        value: $(params.username)
+      - name: email
+        value: $(params.email)
+      - name: comment-url
+        value: $(params.comment-url)
+    taskSpec:
+      results:
+      - name: parsed-command
+        description: The user command parsed
+      - name: parsed-command-trivy-image
+        description: The trivy image parsed in scan command
+      workspaces:
+      - name: source
+      - name: output
+      - name: pr
+      params:
+      - name: git-url # value: $(params.git-url)
+      - name: pr-url # value: $(params.git-url)
+      - name: new-pr-url # value: $(params.git-url)
+      - name: pr-source # value: $(params.git-url)
+      - name: pr-target # value: $(params.git-url)
+      - name: comment
+      - name: author-id
+      - name: username
+      - name: email
+      - name: comment-url
+      volumes:
+      - name: kubeconfig
+        secret:
+          secretName: kubeconfig
+      steps:
+        - name: init
+          image: neo9sas/devops-tools:v1.5.0
+          env:
+          - name: AUTH_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: gl-token
+                key: token
+          command: ["/bin/bash"]
+          args:
+            - -c
+            - |
+              echo init
+
+              echo $(params.git-url)
+              echo $(params.pr-url)
+              echo $(params.new-pr-url)
+              echo $(params.pr-source)
+              echo $(params.pr-target)
+              echo $(params.author-id)
+              echo $(params.username)
+              echo $(params.email)
+              echo $(params.comment-url)
+
+              # Get the PR number from the PR URL.
+              prurl="$(params.new-pr-url)"
+              prNum=$(echo "$prurl" | awk -F/ '{print $NF}')
+
+              comment="$(params.comment)"
+              msg=""
+              imageToScan=""
+
+              if [[ ${comment:0:1} == "/" ]]
+              then
+                echo "Parsing command..."
+              else
+                echo "No command detected, exiting."
+                echo -n "none" > $(results.parsed-command.path)
+                # TODO: Remove this
+                echo "${imageToScan}" > $(results.parsed-command-trivy-image.path)
+                exit 0
+              fi
+
+
+              case $comment in
+
+                "/deploy" )
+                  msg="Deploy command received"
+                  echo -n "deploy" > $(results.parsed-command.path)
+                  ;;
+
+                "/init" )
+                  msg="Init command received"
+                  echo -n "run workflow init-project" > $(results.parsed-command.path)
+                  ;;
+
+                "/test" )
+                  msg="Test command received"
+                  echo -n "test" > $(results.parsed-command.path)
+                  ;;
+
+
+                /scan* )
+                  msg="Scan command received"
+                  echo -n "scan" > $(results.parsed-command.path)
+
+                  rx='scan (.*)'
+                  if [[ $comment =~ $rx ]]; then
+                      imageToScan=$(echo -n "${BASH_REMATCH[1]}")
+                  fi
+                  ;;
+
+
+                "/destroy" )
+                  msg="Destroy command received"
+                  echo -n "delete env" > $(results.parsed-command.path)
+                  ;;
+
+                /* )
+                  msg="Usage: /chatbot \<command\>. Current commands are: test"
+                  echo -n "unknown" > $(results.parsed-command.path)
+                  ;;
+
+                * )
+                  msg="skipping command"
+                  echo -n "none" > $(results.parsed-command.path)
+                  ;;
+
+              esac
+
+              echo "${msg}"
+              echo $(results.parsed-command.path)
+              echo "${imageToScan}" > $(results.parsed-command-trivy-image.path)
+  - name: scan
+    workspaces:
+    - name: input
+      workspace: ws
+    - name: output
+      workspace: ws
+    - name: source
+      workspace: ws
+    - name: data
+      workspace: ws
+    when:
+    - input: "$(tasks.parse-command.results.parsed-command)"
+      operator: in
+      values: ["scan"]
+    runAfter:
+      - parse-command
+    taskRef:
+      name: trivy
+    params:
+    - name: target-image
+      value: $(tasks.parse-command.results.parsed-command-trivy-image)
+  - name: pr-scan-report
+    runAfter:
+      - scan
+    when:
+    - input: "$(tasks.parse-command.results.parsed-command)"
+      operator: in
+      values: ["scan"]
+    taskRef:
+      name: pr-write-comment
+    params:
+      - name: pr-url
+        value: $(params.new-pr-url)
+      - name: app-repository
+        value: $(params.git-url)
+      - name: command
+        value: "cat $(workspaces.output.path)/trivy-report"
+      - name: message
+        value: "${commandResult}"
+
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+  - name: pr-action-start
+    when:
+    - input: "$(params.git-url)"
+      operator: notin
+      values: [""]
+    - input: "$(tasks.parse-command.results.parsed-command)"
+      operator: notin
+      values: ["none", "unknown", ""]
+    - input: "$(tasks.parse-command.results.parsed-command)"
+      operator: in
+      values: ["deploy", "test", "delete env"]
+    runAfter:
+      - parse-command
+    taskRef:
+      name: pr-write-comment
+    params:
+      - name: pr-url
+        value: $(params.new-pr-url)
+      - name: app-repository
+        value: $(params.git-url)
+      - name: command
+        value: "echo Test"
+      - name: jqCommand
+        value: |-
+          kubectl get pods $POD_NAME -o json | jq -r '.metadata.labels[\\\"tekton.dev/pipelineRun\\\"]'
+      - name: message
+        value: |
+          Action
+          ---------
+          
+          Action started : $(tasks.parse-command.results.parsed-command)
+
+        
+          Pipeline
+          ---------
+          
+          You can follow your pipeline on the dashboard at: /#/namespaces/$POD_NAMESPACE/pipelineruns/${jqResult}
+
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+  - name: git-clone-cluster
+    when:
+    - input: "$(tasks.parse-command.results.parsed-command)"
+      operator: notin
+      values: ["none", "unknown", ""]
+    - input: "$(tasks.parse-command.results.parsed-command)"
+      operator: in
+      values: ["deploy", "test", "delete env"]
+    runAfter:
+      - parse-command
+    taskRef:
+      name: git-clone-branch
+    params:
+      - name: repository
+        value: $(params.cluster-repository)
+      - name: branch
+        value: $(params.cluster-branch)
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+  - name: garden-setup
+    runAfter:
+      - git-clone-cluster
+    when:
+    - input: "$(tasks.parse-command.results.parsed-command)"
+      operator: notin
+      values: ["none", "unknown", ""]
+    - input: "$(tasks.parse-command.results.parsed-command)"
+      operator: in
+      values: ["deploy", "test", "delete env"]
+    taskRef:
+      name: garden-setup
+    params:
+      - name: cluster-repository
+        value: $(params.cluster-repository)
+      - name: cluster-branch
+        value: $(params.cluster-branch)
+      - name: garden-branch
+        value: $(params.garden-branch)
+      - name: apps-branch
+        value: $(params.apps-branch)
+      - name: garden-env
+        value: $(params.garden-env)
+      # - name: garden-args
+      #   value: $(params.garden-args)
+      - name: garden-user
+        value: $(params.garden-user)
+      - name: garden-command
+        value: $(tasks.parse-command.results.parsed-command)
+      - name: init-project
+        value: $(params.init-project)
+      - name: sleep
+        value: $(params.sleep)
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+  - name: garden-test
+    when:
+    - input: "$(tasks.parse-command.results.parsed-command)"
+      operator: notin
+      values: ["none", "unknown", ""]
+    - input: "$(tasks.parse-command.results.parsed-command)"
+      operator: in
+      values: ["deploy", "test", "delete env"]
+    - input: "$(tasks.garden-setup.results.garden-command)"
+      operator: in
+      values: ["test"]
+    runAfter:
+      - garden-setup
+    taskRef:
+      name: garden-test
+    params:
+      - name: cluster-repository
+        value: $(params.cluster-repository)
+      - name: cluster-branch
+        value: $(params.cluster-branch)
+      - name: garden-branch
+        value: $(params.garden-branch)
+      - name: apps-branch
+        value: $(params.apps-branch)
+      - name: garden-env
+        value: $(params.garden-env)
+      # - name: garden-args
+        # value: $(params.garden-args)
+      - name: garden-user
+        value: $(params.garden-user)
+      - name: garden-command
+        value: test
+      - name: init-project
+        value: $(params.init-project)
+      - name: sleep
+        value: $(params.sleep)
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+  - name: test-errors
+    runAfter:
+      - garden-test
+    when:
+    - input: "$(tasks.parse-command.results.parsed-command)"
+      operator: notin
+      values: ["none", "unknown", ""]
+    - input: "$(tasks.parse-command.results.parsed-command)"
+      operator: in
+      values: ["deploy", "test", "delete env"]
+    - input: "$(tasks.garden-setup.results.garden-command)"
+      operator: in
+      values: ["test"]
+    taskRef:
+      name: devops-tools
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+    params:
+      - name: script
+        value: |
+          cat $(workspaces.output.path)/garden-test-errors
+  - name: test-logs
+    runAfter:
+      - garden-test
+    when:
+    - input: "$(tasks.parse-command.results.parsed-command)"
+      operator: notin
+      values: ["none", "unknown", ""]
+    - input: "$(tasks.parse-command.results.parsed-command)"
+      operator: in
+      values: ["deploy", "test", "delete env"]
+    - input: "$(tasks.garden-setup.results.garden-command)"
+      operator: in
+      values: ["test"]
+    taskRef:
+      name: devops-tools
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+    params:
+      - name: script
+        value: |
+          cat $(workspaces.output.path)/garden-test-logs
+  - name: test-end
+    runAfter:
+      - garden-test
+      - test-errors
+      - test-logs
+    when:
+    - input: "$(tasks.parse-command.results.parsed-command)"
+      operator: notin
+      values: ["none", "unknown", ""]
+    - input: "$(tasks.parse-command.results.parsed-command)"
+      operator: in
+      values: ["deploy", "test", "delete env"]
+    - input: "$(tasks.garden-setup.results.garden-command)"
+      operator: in
+      values: ["test"]
+    taskRef:
+      name: devops-tools
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+    params:
+      - name: script
+        value: |     
+          if [[ -s "$(workspaces.output.path)/garden-test-errors" ]]
+          then
+            echo "Tests failed"
+            exit 1
+          fi
+  - name: garden-deploy
+    when:
+    - input: "$(tasks.parse-command.results.parsed-command)"
+      operator: notin
+      values: ["none", "unknown", ""]
+    - input: "$(tasks.parse-command.results.parsed-command)"
+      operator: in
+      values: ["deploy", "test", "delete env"]
+    - input: "$(tasks.garden-setup.results.garden-command)"
+      operator: in
+      values: ["deploy"]
+    runAfter:
+      - garden-setup
+    taskRef:
+      name: garden-deploy
+    params:
+      - name: cluster-repository
+        value: $(params.cluster-repository)
+      - name: cluster-branch
+        value: $(params.cluster-branch)
+      - name: garden-branch
+        value: $(params.garden-branch)
+      - name: apps-branch
+        value: $(params.apps-branch)
+      - name: garden-env
+        value: $(params.garden-env)
+      # - name: garden-args
+      #   value: $(params.garden-args)
+      - name: garden-user
+        value: $(params.garden-user)
+      - name: garden-command
+        value: $(tasks.parse-command.results.parsed-command)
+      - name: init-project
+        value: $(params.init-project)
+      - name: sleep
+        value: $(params.sleep)
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+  - name: deploy-errors
+    runAfter:
+      - garden-deploy
+    when:
+    - input: "$(tasks.parse-command.results.parsed-command)"
+      operator: notin
+      values: ["none", "unknown", ""]
+    - input: "$(tasks.parse-command.results.parsed-command)"
+      operator: in
+      values: ["deploy", "test", "delete env"]
+    - input: "$(tasks.garden-setup.results.garden-command)"
+      operator: in
+      values: ["deploy"]
+    taskRef:
+      name: devops-tools
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+    params:
+      - name: script
+        value: |
+          cat $(workspaces.output.path)/garden-deploy-errors
+  - name: deploy-logs
+    runAfter:
+      - garden-deploy
+    when:
+    - input: "$(tasks.parse-command.results.parsed-command)"
+      operator: notin
+      values: ["none", "unknown", ""]
+    - input: "$(tasks.parse-command.results.parsed-command)"
+      operator: in
+      values: ["deploy", "test", "delete env"]
+    - input: "$(tasks.garden-setup.results.garden-command)"
+      operator: in
+      values: ["deploy"]
+    taskRef:
+      name: devops-tools
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+    params:
+      - name: script
+        value: |
+          cat $(workspaces.output.path)/garden-deploy-logs
+  - name: deploy-outputs
+    runAfter:
+      - garden-deploy
+    when:
+    - input: "$(tasks.parse-command.results.parsed-command)"
+      operator: notin
+      values: ["none", "unknown", ""]
+    - input: "$(tasks.parse-command.results.parsed-command)"
+      operator: in
+      values: ["deploy", "test", "delete env"]
+    - input: "$(tasks.garden-setup.results.garden-command)"
+      operator: in
+      values: ["deploy"]
+    taskRef:
+      name: devops-tools
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+    params:
+      - name: script
+        value: |
+          cat $(workspaces.output.path)/garden-deploy-outputs
+  - name: deploy-ingress
+    runAfter:
+      - garden-deploy
+    when:
+    - input: "$(tasks.parse-command.results.parsed-command)"
+      operator: notin
+      values: ["none", "unknown", ""]
+    - input: "$(tasks.parse-command.results.parsed-command)"
+      operator: in
+      values: ["deploy", "test", "delete env"]
+    - input: "$(tasks.garden-setup.results.garden-command)"
+      operator: in
+      values: ["deploy"]
+    taskRef:
+      name: devops-tools
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+    params:
+      - name: script
+        value: |
+          cat $(workspaces.output.path)/garden-deploy-env-ingresses
+  - name: deploy-end
+    runAfter:
+      - garden-deploy
+      - deploy-errors
+      - deploy-logs
+      - deploy-outputs
+      - deploy-ingress
+    when:
+    - input: "$(tasks.parse-command.results.parsed-command)"
+      operator: notin
+      values: ["none", "unknown", ""]
+    - input: "$(tasks.parse-command.results.parsed-command)"
+      operator: in
+      values: ["deploy", "test", "delete env"]
+    - input: "$(tasks.garden-setup.results.garden-command)"
+      operator: in
+      values: ["deploy"]
+    taskRef:
+      name: devops-tools
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+    params:
+      - name: script
+        value: |     
+          if [[ -s "$(workspaces.output.path)/garden-deploy-errors" ]]
+          then
+            echo "Deploy failed"
+            cat $(workspaces.output.path)/garden-deploy-errors
+            exit 1
+          fi
+  - name: sleep
+    runAfter:
+      - garden-deploy
+    when:
+    - input: "$(tasks.parse-command.results.parsed-command)"
+      operator: notin
+      values: ["none", "unknown", ""]
+    - input: "$(tasks.parse-command.results.parsed-command)"
+      operator: in
+      values: ["deploy", "test", "delete env"]
+    - input: "$(tasks.garden-setup.results.garden-command)"
+      operator: in
+      values: ["deploy"]
+    taskRef:
+      name: sleep
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+  - name: pr-action-end
+    runAfter:
+      - garden-deploy
+    when:
+      - input: "$(tasks.parse-command.results.parsed-command)"
+        operator: notin
+        values: ["none", "unknown", ""]
+      - input: "$(tasks.parse-command.results.parsed-command)"
+        operator: in
+        values: ["deploy", "test", "delete env"]
+      - input: "$(tasks.garden-setup.results.garden-command)"
+        operator: in
+        values: ["deploy"]
+      - input: "$(params.git-url)"
+        operator: notin
+        values: [""]
+      - input: "$(tasks.parse-command.results.parsed-command)"
+        operator: notin
+        values: ["none", "unknown", ""]
+      - input: "$(tasks.parse-command.results.parsed-command)"
+        operator: in
+        values: ["deploy", "test", "delete env"]
+    taskRef:
+      name: pr-write-comment
+    params:
+      - name: pr-url
+        value: $(params.new-pr-url)
+      - name: app-repository
+        value: $(params.git-url)
+      - name: command
+        value: "cat $(workspaces.output.path)/garden-outputs | jq -r '.result'"
+      - name: extraCommand
+        value: "cat $(workspaces.output.path)/env-ingresses"
+      - name: message
+        value: |
+          Deployment
+          ---------
+          
+          Your environment has been deployed successfully.
+
+          ${extraCommandResult}
+
+          Images
+          ---------
+
+          \`\`\`
+
+          ${commandResult}
+
+          \`\`\`
+
+          Commands
+          ---------
+
+          You can destroy your env with : /destroy 
+
+          You can scan a container with : /scan image:tag
+  
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws

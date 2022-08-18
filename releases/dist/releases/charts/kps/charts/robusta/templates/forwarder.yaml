@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-forwarder
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-forwarder
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-forwarder
+      {{- if .Values.kubewatch.annotations }}
+      annotations: {{ toYaml .Values.kubewatch.annotations | nindent 8 }}
+      {{- end }}
+    spec:
+      serviceAccountName: {{ .Release.Name }}-forwarder-service-account
+      containers:
+      - name: kubewatch
+        # this is a custom version of kubewatch built from https://github.com/aantn/kubewatch
+        image: {{ .Values.kubewatch.image }}
+        imagePullPolicy: {{ .Values.kubewatch.imagePullPolicy }}
+        env:
+          - name: KW_CONFIG
+            value: /config
+          - name: ENABLE_PPROF
+            value: {{ .Values.kubewatch.pprof | quote }}
+        volumeMounts:
+          - name: robusta-kubewatch-config
+            mountPath: /config
+        resources:
+          requests:
+            cpu: {{ .Values.kubewatch.resources.requests.cpu }}
+            memory: {{ .Values.kubewatch.resources.requests.memory | quote }}
+          limits:
+            memory: {{ .Values.kubewatch.resources.requests.memory | quote }}
+            {{ if .Values.kubewatch.resources.limits.cpu }}cpu: {{ .Values.kubewatch.resources.limits.cpu | quote }}{{ end }}
+      volumes:
+        - name:  robusta-kubewatch-config
+          configMap:
+            name: {{ .Release.Name }}-kubewatch-config
+      {{- if .Values.kubewatch.nodeSelector }}
+      nodeSelector: {{ toYaml .Values.kubewatch.nodeSelector | nindent 8 }}
+      {{- end }}
+      {{- if .Values.kubewatch.affinity }}
+      affinity: {{ toYaml .Values.kubewatch.affinity | nindent 8 }}
+      {{- end }}
+      {{- if .Values.kubewatch.tolerations }}
+      tolerations:  {{ toYaml .Values.kubewatch.tolerations | nindent 8 }}
+      {{- end }}

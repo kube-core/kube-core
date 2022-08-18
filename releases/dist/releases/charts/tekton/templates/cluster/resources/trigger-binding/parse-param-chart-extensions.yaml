@@ -1,0 +1,11 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerBinding
+metadata:
+  name: parse-param-chart-extensions
+  namespace: tekton-pipelines
+spec:
+  params:
+  - name: chart-name
+    value: $(extensions.chart-name)
+  - name: chart-version
+    value: $(extensions.chart-version)

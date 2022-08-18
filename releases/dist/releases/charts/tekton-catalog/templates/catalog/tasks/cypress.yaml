@@ -1,0 +1,48 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: cypress
+  labels:
+    app.kubernetes.io/version: "0.0.1"
+  annotations:
+    tekton.dev/pipelines.minVersion: "0.12.1"
+    tekton.dev/tags: cypress, e2e, test, ti
+    tekton.dev/displayName: "cypress"
+spec:
+  description: >-
+    This task runs e2e test with cypress
+  workspaces:
+    - name: input
+    - name: output
+    - name: source
+    - name: data
+
+  params:
+    - name: project-name
+      description: The project name
+      type: string
+    - name: args
+      description: array of arguments
+      type: array
+      default: ["info"]
+    - name: image
+      description: The image used by the task
+      default: cypress/included:4.12.1
+      type: string
+
+  steps:
+    - name: install-dependencies
+      image: $(params.image)
+      imagePullPolicy: IfNotPresent
+      command:
+        - "yarn"
+      args:
+        - install
+      workingDir: $(workspaces.source.path)/$(params.project-name)
+
+    - name: run-ti
+      image: $(params.image)
+      imagePullPolicy: IfNotPresent
+      args:
+        - $(params.args)
+      workingDir: $(workspaces.source.path)/$(params.project-name)

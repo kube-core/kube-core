@@ -1,0 +1,13 @@
+apiVersion: v2
+appVersion: v0.1.1
+description: Helm chart that deploys patch-operator
+keywords:
+- volume
+- storage
+- csi
+- expansion
+- monitoring
+name: patch-operator
+sources:
+- https://github.com/redhat-cop/patch-operator
+version: v0.1.1

@@ -1,0 +1,21 @@
+ingressShim:
+  defaultIssuerName: {{ .Values.cluster.common.defaultIssuerName }}
+  defaultIssuerKind: {{ .Values.cluster.common.defaultIssuerKind }}
+  # defaultIssuerGroup: ""
+installCRDs: false
+
+{{ if eq .Values.cloud.provider "aws" }}
+serviceAccount:
+  annotations: 
+    eks.amazonaws.com/role-arn: {{ index .Values.releases .Release.Name "config" "role-arn" }}
+{{ end }}
+
+replicaCount: {{ index .Values.releases .Release.Name "config" "replicaCount" }}
+
+webhook:
+  replicaCount: {{ index .Values.releases .Release.Name "config" "replicaCount" }}
+  hostNetwork: {{ index .Values.releases .Release.Name "config" "webhook" "hostNetwork" }}
+  securePort: {{ index .Values.releases .Release.Name "config" "webhook" "securePort" }}
+
+cainjector:
+  replicaCount: {{ index .Values.releases .Release.Name "config" "replicaCount" }}

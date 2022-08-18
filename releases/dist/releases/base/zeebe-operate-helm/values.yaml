@@ -1,0 +1,41 @@
+global:
+  zeebe: "{{ .Release.Name }}-zeebe"
+  zeebePort: 26500
+  elasticsearch:
+    host: "elasticsearch-master"
+    port: 9200
+    clusterName: "elasticsearch"
+    prefix: zeebe-record
+    url:
+
+logging:
+  level:
+    ROOT: INFO
+    org.camunda.operate: DEBUG
+
+service:
+  type: ClusterIP
+  port: 80
+image:
+  repository: camunda/operate
+  tag: 1.1.2
+
+resources: 
+  requests:
+    cpu: 500m
+    memory: 1Gi
+  limits:
+    cpu: 1000m
+    memory: 2Gi
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    ingress.kubernetes.io/rewrite-target: "/"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"    
+  path: /
+  host:
+  tls:
+    enabled: false
+    secretName:

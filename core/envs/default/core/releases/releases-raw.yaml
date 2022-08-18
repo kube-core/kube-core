@@ -1,0 +1,22 @@
+releasesRaw:
+  namespace-dev:
+    enabled: false
+    labels:
+      type: namespace
+    manifests: []
+    namespace: dev
+    needs: []
+  namespace-mongodb:
+    enabled: false
+    labels:
+      type: namespace
+    manifests: []
+    namespace: mongodb
+    needs: []
+  namespace-rabbitmq:
+    enabled: false
+    labels:
+      type: namespace
+    manifests: []
+    namespace: rabbitmq
+    needs: []

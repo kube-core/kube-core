@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tekton-logs-server
+  labels: 
+    app: tekton-logs-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tekton-logs-server
+  template:
+    metadata:
+      labels:
+        app: tekton-logs-server
+    spec:
+      containers:
+      - name: node
+        image: node:14
+        ports:
+        - containerPort: 3000
+        command:
+        - bash
+        args:
+        - -c
+        - |
+          cat <<EOF > server.js
+          const express = require('express');
+          const aws = require('aws-sdk');
+
+          aws.config.update({
+            endpoint: 'minio.minio.svc.cluster.local:80',
+            accessKeyId: 'minio',
+            secretAccessKey: 'minio123',
+            region: 'storage',
+            s3ForcePathStyle: true,
+            sslEnabled: false
+          });
+
+          const s3 = new aws.S3();
+          const app = express();
+
+          const bucket = 'tekton-logs'
+
+          function streamLogs(namespace, pod, container, response) {
+              try {
+                  s3.listObjects({ Bucket: bucket, Delimiter: '', Prefix: 'logs/'+namespace+'/'+pod+'/'+container+'/' }).promise().then(files => { 
+                    return files.Contents
+                    .sort((a, b) => a.Key.localeCompare(b.Key))
+                    .reduce((acc, file) => {
+                      return acc.then(() => {
+                        return new Promise(fulfill => {
+                          return s3.getObject({Bucket: bucket, Key: file.Key})
+                            .createReadStream()
+                            .on("finish", fulfill)
+                            .pipe(response, { end: false })
+                        }
+                      )}
+                    )}, Promise.resolve())
+                  }).then(() => response.end());
+              } catch (e) {
+                  console.log(e)
+              }
+          }
+
+          app.get('/logs/:namespace/:pod/:container', (req, res) => {
+            return streamLogs(req.params.namespace, req.params.pod, req.params.container, res)
+          });
+
+          app.listen(3000, '0.0.0.0');
+          
+          EOF
+
+          npm init -y
+
+          npm install aws-sdk@2.748.0 express@4.17.1
+
+          node ./server.js
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: tekton-logs-server
+  annotations:
+  {{ toYaml .Values.cluster.common.defaultServiceAnnotations | nindent 4 }}
+  labels:
+    app: tekton-logs-server
+  {{ toYaml .Values.cluster.common.defaultServiceLabels | nindent 4 }}
+spec:
+  ports:
+  - port: 3000
+    targetPort: 3000
+  selector:
+    app: tekton-logs-server

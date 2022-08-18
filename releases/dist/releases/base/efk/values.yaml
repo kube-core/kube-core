@@ -1,0 +1,566 @@
+clusterName: neokube
+
+#List the namespaces you want logs of here
+watchedNamespace:
+  - dev-pgroell
+#   - kube-system
+#   - garden-system
+
+fluentdConfig:
+  fluentd.conf: |-
+    <match fluent.**>
+     @type null
+    </match>
+
+    <source>
+      @type forward
+      bind 0.0.0.0
+      port 24224
+    </source>
+
+    <source>
+      @type http
+      bind 0.0.0.0
+      port 9880
+    </source>
+
+    # Example exclusion. Better to handle it in fluentbit if possible
+    # <filter **>
+    #   @type grep
+    #   <exclude>
+    #     key $.log_processed.path
+    #     pattern /\/ping/
+    #   </exclude>
+    # </filter>
+
+    <match fluentd.healthcheck>
+      @type stdout
+    </match>
+
+    # <match integration>
+    #   @type stdout
+    # </match>
+
+    <match log**>
+      # # es
+      @type elasticsearch
+      host "elasticsearch-master"
+      port "9200"
+
+      # # connection
+      # reload_connections false
+      # reconnect_on_error true
+      # reload_on_failure true
+
+      # # Log format
+      include_tag_key true
+      # suppress_type_name true
+      # # logstash_format true
+
+      # # es errors
+      # log_es_400_reason true
+
+      # # rollover / ilm
+      # rollover_index true
+      # deflector_alias logstash
+
+      # # Index
+      # # Activate to create index dynamically from fluentbit tags
+      logstash_prefix ${tag}
+
+
+      # test
+      suppress_type_name true
+      # time_key "time"
+      # time_key_format "%Y-%m-%dT%H:%M:%S%N%z"
+      # index_name "docker-${tag}"
+      logstash_format true
+      reconnect_on_error true
+      reload_on_failure true
+      reload_connections false
+      request_timeout 10
+      default_elasticsearch_version 7
+      fail_on_detecting_es_version_retry_exceed false
+      max_retry_get_es_version 2
+      log_es_400_reason true
+      selector_class_name "Fluent::Plugin::ElasticseatchFallbackSelector"
+      with_transporter_log true
+      verify_es_version_at_startup true
+      template_name "logstash-default"
+      template_file "/tmp/templates/template.json"
+      ilm_policy_id "logstash-policy"
+      ilm_policy {"policy":{"phases":{"hot":{"min_age":"0ms","actions":{"rollover":{"max_age":"5m","max_size":"10mb","max_docs":100},"set_priority":{"priority":100}}},"warm":{"actions":{"set_priority":{"priority":50}}},"cold":{"min_age":"5m","actions":{"freeze":{},"set_priority":{"priority":0}}},"delete":{"min_age":"10m","actions":{"delete":{"delete_searchable_snapshot":true}}}}}}
+      ilm_policy_overwrite false
+      application_name ${tag}
+      index_separator ""
+      index_date_pattern ""
+      enable_ilm true
+
+      <buffer>
+        @type file
+        path /opt/bitnami/fluentd/logs/buffers/logs.buffer
+        # flush_mode interval
+        # retry_type exponential_backoff
+        flush_thread_count 2
+        flush_interval 5s
+        # retry_forever
+        # retry_max_interval 30
+        # chunk_limit_size 2M
+        # total_limit_size 500M
+        # overflow_action block
+      </buffer>
+    </match>
+
+fluentdVolume:
+  template.json: |-
+    {
+      "index_patterns": [
+        "log-*"
+      ],
+      "order": 200,
+      "settings": {
+        "index.mapping.ignore_malformed": true,
+        "index.query.default_field": "json.message",
+        "index.refresh_interval": "30s",
+        "index.search.slowlog.threshold.query.debug": "0ms",
+        "index.search.slowlog.threshold.query.info": "1s",
+        "index.search.slowlog.threshold.fetch.debug": "0ms",
+        "index.search.slowlog.threshold.fetch.info": "1s",
+        "index.translog.sync_interval": "1m",
+        "index.number_of_shards": 4,
+        "index.number_of_replicas": 1,
+        "index.analysis": {
+          "analyzer": {
+            "log_analyzer": {
+              "type": "pattern",
+              "pattern": "\\W+",
+              "lowercase": true
+            }
+          },
+          "normalizer": {
+            "lowercase_normalizer": {
+              "type": "custom",
+              "filter": [
+                "lowercase"
+              ]
+            }
+          }
+        }
+      },
+      "mappings": {
+        "dynamic": true,
+        "dynamic_templates": [
+          {
+            "no_index_fields_past_depth_2": {
+              "path_match": "*.*.*",
+              "match_mapping_type": "object",
+              "mapping": {
+                "type": "object",
+                "enabled": false
+              }
+            }
+          },
+          {
+            "create_keyword_index_for_all_string_fields": {
+              "match": "*",
+              "match_mapping_type": "string",
+              "mapping": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer",
+                "ignore_above": 1000
+              }
+            }
+          }
+        ],
+        "properties": {
+          "@timestamp": {
+            "type": "date"
+          },
+          "thread": {
+            "type": "text",
+            "analyzer": "log_analyzer",
+            "norms": false,
+            "similarity": "boolean",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              }
+            }
+          },
+          "json.message": {
+            "type": "text",
+            "analyzer": "log_analyzer",
+            "norms": false,
+            "similarity": "boolean"
+          }
+        }
+      }
+    }
+
+elasticsearch:
+  enabled: true
+  clusterName: "elasticsearch"
+  nodeGroup: "master"
+
+  # The service that non master groups will try to connect to when joining the cluster
+  # This should be set to clusterName + "-" + nodeGroup for your master group
+  masterService: ""
+
+  # Elasticsearch roles that will be applied to this nodeGroup
+  # These will be set as environment variables. E.g. node.master=true
+  roles:
+    master: "true"
+    ingest: "true"
+    data: "true"
+
+  replicas: 3
+  minimumMasterNodes: 2
+
+  esMajorVersion: ""
+
+  # Allows you to add any config files in /usr/share/elasticsearch/config/
+  # such as elasticsearch.yml and log4j2.properties
+  esConfig:
+    elasticsearch.yml: |
+      indices.lifecycle.poll_interval: 1m
+  #    key:
+  #      nestedkey: value
+  #  log4j2.properties: |
+  #    key = value
+
+  esJavaOpts: "-Dlog4j2.formatMsgNoLookups=true"
+
+  # resources:
+  #   requests:
+  #     cpu: "1000m"
+  #     memory: "8Gi"
+  #   limits:
+  #     # cpu: "1000m"
+  #     memory: "8Gi"
+
+  volumeClaimTemplate:
+    accessModes: [ "ReadWriteOnce" ]
+    resources:
+      requests:
+        storage: 70Gi
+
+  persistence:
+    enabled: true
+    labels:
+      # Add default labels for the volumeClaimTemplate fo the StatefulSet
+      enabled: false
+    annotations: {}
+
+  ingress:
+    enabled: false
+    annotations: {}
+    tls:
+      - secretName: elasticsearch-example-tls
+        hosts:
+         - elasticsearch.mydomain.tld
+    hosts:
+      - host: elasticsearch.mydomain.tld
+        paths:
+          - paths: /
+
+  # image: eu.gcr.io/neo9-software-factory/elasticsearch/gcp-aws
+
+  # imagePullSecrets:
+  #   - name: gcr-neo9-software-factory
+
+  extraEnvs:
+    - name: S3
+      value: "false"
+    - name: GCS
+      value: "false"
+    - name: BUCKET_NAME
+      value: bucket_name
+
+  lifecycle:
+    postStart:
+      exec:
+        command:
+        - bash
+        - -c
+        - |
+          #!/bin/bash
+
+          ES_URL=http://localhost:9200
+
+          while [[ "$(curl -s -o /dev/null -w '%{http_code}\n' $ES_URL)" != "200" ]]; do sleep 1; done
+
+          # Create S3 repository settings
+          if  [[ $S3 = "true" ]]; then
+            curl -X PUT "$ES_URL/_snapshot/my_repository?pretty" -H 'Content-Type: application/json' -d'
+            {
+              "type": "s3",
+              "settings": {
+                "bucket": "'$BUCKET_NAME'",
+                "client": "secondary"
+              }
+            }
+            '
+          fi
+
+          # Create GCS repository settings
+          if [[ $GCS = "true" ]]; then
+            curl -X PUT "$ES_URL/_snapshot/my_repository?pretty" -H 'Content-Type: application/json' -d'
+            {
+              "type": "gcs",
+              "settings": {
+                "bucket": "'$BUCKET_NAME'",
+                "client": "secondary"
+              }
+            }
+            '
+          fi
+
+          # Create snapshot lifecycle policy
+          if [[ $S3 = "true" || $GCS = "true" ]]; then
+            curl -X PUT "$ES_URL/_slm/policy/daily-snapshots?pretty" -H 'Content-Type: application/json' -d'
+            {
+              "schedule": "0 30 1 * * ?", 
+              "name": "<daily-snap-{now/d}>", 
+              "repository": "my_repository", 
+              "retention": { 
+                "expire_after": "1095d"
+              }
+            }
+            '
+          fi
+
+kibana:
+  enabled: true
+  elasticsearchHosts: "http://elasticsearch-master:9200"
+
+  replicas: 1
+
+  # resources:
+  #   requests:
+  #     cpu: "1000m"
+  #     memory: "2Gi"
+  #   limits:
+  #     cpu: "1000m"
+  #     memory: "2Gi"
+
+  healthCheckPath: "/app/kibana"
+
+  # Allows you to add any config files in /usr/share/kibana/config/
+  # such as kibana.yml
+  kibanaConfig: {}
+  #   kibana.yml: |
+  #     key:
+  #       nestedkey: value
+
+  ingress:
+    enabled: false
+    annotations: {}
+      # kubernetes.io/ingress.class: nginx
+    tls:
+      - secretName: kibana-example-tls
+        hosts:
+         - kibana.mydomain.tld
+    hosts:
+      - host: kibana.mydomain.tld
+        paths:
+          - path: /
+
+  #List the namespaces you want logs of here with a name matching this pattern
+  extraEnvs:
+    - name: WATCHED_NAMESPACE1
+      value: dev-pgroell
+  #   - name: WATCHED_NAMESPACE2
+  #     value: kube-system
+  #   - name: WATCHED_NAMESPACE3
+  #     value: garden-system
+
+  lifecycle:
+    postStart:
+      exec:
+        command:
+        - bash
+        - -c
+        - |
+          #!/bin/bash
+
+          # Import a dashboard (official example)
+          # KB_URL=http://localhost:5601
+          # while [[ "$(curl -s -o /dev/null -w '%{http_code}\n' -L $KB_URL)" != "200" ]]; do sleep 1; done
+          # curl -XPOST "$KB_URL/api/kibana/dashboards/import" -H "Content-Type: application/json" -H 'kbn-xsrf: true' -d'"objects":[{"type":"index-pattern","id":"my-pattern","attributes":{"title":"my-pattern-*"}},{"type":"dashboard","id":"my-dashboard","attributes":{"title":"Look at my dashboard"}}]}'
+
+          KIBANA_URL=http://localhost:5601
+
+          # example: checkStatus http://httpbin.org/status/500 500
+          checkStatus() {
+              local url=${1:-http://localhost:8080}
+              local code=${2:-200}
+              local status=$(curl --head --location --connect-timeout 5 --write-out %{http_code} --silent --output /dev/null ${url})
+              [[ $status == ${code} ]]
+          }
+
+          # Wait until service is ready
+          while [[ "$(curl -s -o /dev/null -w '%{http_code}\n' $KIBANA_URL/app/kibana)" != "200" ]]; do sleep 1; done
+
+          # Delete index pattern if it exists already
+          # curl -X DELETE -v $KIBANA_URL/api/saved_objects/index-pattern/$TEMPLATE_NAME \
+          # -H 'kbn-xsrf: true' -H 'Content-Type: application/json'
+
+          # Apply default Index Pattern into Kibana
+          i=1
+          while :
+          do
+            var=WATCHED_NAMESPACE$i
+            TEMPLATE_NAME=log-${!var}*
+            if [[ ! -n ${!var} ]]; then
+              break
+            fi
+            curl  -X POST -v $KIBANA_URL/api/saved_objects/index-pattern/$TEMPLATE_NAME \
+            -H 'kbn-xsrf: true' -H 'Content-Type: application/json' \
+            -d '{"attributes": {"title": "'$TEMPLATE_NAME'", "timeFieldName":"@timestamp"}}'
+            i=$((i+1))
+          done
+
+
+metricbeat:
+  enabled: true
+  daemonset:
+    enabled: false
+  deployment:
+    enabled: true
+    metricbeatConfig:
+      metricbeat.yml: |
+        metricbeat.modules:
+        - module: kubernetes
+          enabled: true
+          processors:
+          - add_kubernetes_metadata: ~
+          - add_cloud_metadata: ~
+          - add_host_metadata: ~
+          - add_docker_metadata: ~
+          metricsets:
+            - event
+          period: 10s
+          hosts: ["${KUBE_STATE_METRICS_HOSTS}"]
+        # setup.template.name: "events"
+        # setup.template.pattern: "events-*"
+        # setup.ilm.enabled: auto
+        # setup.ilm.rollover_alias: "metricbeat"
+        # setup.ilm.pattern: "{now/d}-000001"
+        output.elasticsearch:
+          # index: "%{[fields.log_type]}-%{[agent.version]}-%{+yyyy.MM.dd}"
+          # index: "events-%{[agent.version]}-%{+yyyy.MM.dd}"
+          hosts: '${ELASTICSEARCH_HOSTS:elasticsearch-master:9200}'
+
+fluentd:
+  forwarder:
+    ## Enable forwarder daemonset
+    ##
+    enabled: false
+
+  ## Agregator parameters
+  ##
+  aggregator:
+    ## Enable Aggregator daemonset
+    ##
+    enabled: true
+    ## Number of Aggregator replicas
+    ##
+    replicaCount: 1
+
+    ## Name of the config file that will be used by Fluentd at launch
+    ## Fluentd will look for it under the /opt/bitnami/fluentd/conf directory
+    ##
+    configFile: fluentd.conf
+
+    ## Name of the configMap that contains the configuration files for fluentd
+    ## If not specified, one will be created by default
+    ##
+    configMap: efk-fluentd-config
+
+    ## Port the Aggregator container will listen for logs. Leave it blank to ignore.
+    ## You can specify other ports in the aggregator.containerPorts parameter
+    ##
+    port: 24224
+
+    ## String with extra arguments for the Fluentd command line
+    ## ref: https://docs.fluentd.org/deployment/command-line-option
+    ##
+    extraArgs: ""
+
+    extraVolumes:
+      - name: efk-fluentd-volume
+        configMap:
+          name: efk-fluentd-volume
+    extraVolumeMounts:
+      - name: efk-fluentd-volume
+        mountPath: /tmp/templates
+
+    ## Aggregator containers' resource requests and limits
+    ## ref: http://kubernetes.io/docs/user-guide/compute-resources/
+    ##
+    resources:
+      # We usually recommend not to specify default resources and to leave this as a conscious
+      # choice for the user. This also increases chances charts run on environments with little
+      # resources, such as Minikube. If you do want to specify resources, uncomment the following
+      # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+      limits: {}
+      #   cpu: 500m
+      #   memory: 1Gi
+      requests: {}
+      #   cpu: 300m
+      #   memory: 512Mi
+
+fluent-bit:
+  enabled: true
+  # Default values for fluent-bit.
+
+  # kind -- DaemonSet or Deployment
+  kind: DaemonSet
+
+  # replicaCount -- Only applicable if kind=Deployment
+  replicaCount: 1
+
+  image:
+    repository: fluent/fluent-bit
+    pullPolicy: IfNotPresent
+    tag: 1.6.3
+
+  existingConfigMap: efk-fluentbit-config
+
+  config: {}
+
+elasticsearch-exporter:
+  enabled: true
+  resources: {}
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+  service:
+    type: ClusterIP
+    httpPort: 9108
+    metricsPort:
+      name: http
+
+  extraEnvSecrets: {}
+    # ES_PASSWORD:
+    #   secret: my-secret
+    #   key: password
+
+  es:
+    uri: http://admin:${ES_PASSWORD}@elasticsearch-es-http.efk.svc.cluster.local:9200
+    cluster_settings: true
+    timeout: 30s
+
+  web:
+    path: /metrics
+
+  serviceMonitor:
+    enabled: true
+    # namespace: monitoring
+    labels: {}
+    interval: 10s

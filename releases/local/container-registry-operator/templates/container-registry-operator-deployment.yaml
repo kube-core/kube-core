@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: container-registry-operator
+    app.kubernetes.io/component: container-registry-operator
+    app.kubernetes.io/instance: container-registry-operator
+  name: container-registry-operator-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      deployment: container-registry-operator-deployment
+  template:
+    metadata:
+      labels:
+        deployment: container-registry-operator-deployment
+    spec:
+      containers:
+        - env:
+            - name: DEV_MODE
+              value: 'false'
+            - name: NODE_ENV
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          image: ihebchakroun/container-registry-operator:v0.1.2
+          resources:
+            requests:
+              cpu: 25m
+              memory: 265M
+            limits:
+              cpu: 85m
+              memory: 300M
+          imagePullPolicy: Always
+          name: container-registry-operator
+      serviceAccount: container-registry-operator-service-account

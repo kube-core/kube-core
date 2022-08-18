@@ -1,0 +1,8 @@
+apiVersion: v2
+appVersion: latest
+description: Neo9 standard API chart
+icon: https://neo9.fr/assets/images/neo9-logo-baseline.svg
+kubeVersion: '>= 1.12.0-0 <= 1.24.x-x'
+name: n9-api
+type: application
+version: 1.3.1

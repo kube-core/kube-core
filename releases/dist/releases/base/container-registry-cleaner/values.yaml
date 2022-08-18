@@ -1,0 +1,11 @@
+schedule: "0 9 * * *"
+concurrencyPolicy: Forbid
+restartPolicy: OnFailure
+secretName: gcr-admin
+cloud:
+  project: ""
+  registry:
+    hostname: ""
+nodeSelector: {}
+tolerations: []
+affinity: {}

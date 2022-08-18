@@ -1,0 +1,21 @@
+{{ if ( default .Values.global.istio.enabled .Values.istio.enabled ) -}}
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ include "n9-api.fullname" . }}
+  labels:
+    {{- include "n9-api.labels" . | nindent 4 }}
+spec:
+  hosts:
+    - {{ include "n9-api.fullname" . }}
+  http:
+  - route:
+    - destination:
+        host: {{ include "n9-api.fullname" . }}
+        port:
+          number: {{ .Values.service.port }}
+    {{- if .Values.istio.retries }}
+    retries:
+      {{ toYaml .Values.istio.retries | indent 6 | trim }}
+    {{- end }}
+{{- end }}

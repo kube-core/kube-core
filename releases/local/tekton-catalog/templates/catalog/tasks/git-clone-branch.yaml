@@ -1,0 +1,59 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: git-clone-branch
+  labels:
+    app.kubernetes.io/version: "0.0.1"
+  annotations:
+    tekton.dev/pipelines.minVersion: "0.12.1"
+    tekton.dev/tags: git, clone
+    tekton.dev/displayName: "git clone"
+spec:
+  description: >-
+    This task clones a git repository with a specific branch
+  workspaces:
+    - name: input
+    - name: output
+    - name: source
+    - name: data
+  params:
+    - name: repository
+      description: The repository to clone
+      type: string
+    - name: branch
+      description: The branch to checkout
+      type: string
+    - name: image
+      description: The image used by the task
+      type: string
+      default: neo9sas/devops-tools:v1.5.0
+    - name: use-vendir
+      description: Use vendir to retreive repositories
+      type: string
+      default: "false"
+  steps:
+    - name: initialize
+      image: $(params.image)
+      script: |
+        #!/usr/bin/env bash
+        echo "I am supposed to clone this repository: $(params.repository)!"
+    - name: git-clone-branch
+      image: $(params.image)
+      # command: ["git", "clone", "$(params.repository)"]
+      command: ["/bin/bash"]
+      args:
+        - -c
+        - |
+          # TODO: Remove this and set proper permissions/user/home for
+          # tekton and docker container
+          cp -rfp ~/.ssh /root
+
+          cd $(workspaces.source.path)
+
+          # Clone PR Repo
+          git clone -b $(params.branch) $(params.repository)
+
+          if [ "$(params.use-vendir)" == "true" ]; then
+              cd projects
+              ./sync.sh
+          fi

@@ -1,0 +1,23 @@
+apiVersion: rabbitmq.com/v1beta1
+kind: RabbitmqCluster
+metadata:
+  name: rabbitmq
+spec:
+  replicas: {{ .Values.rabbitmq.cluster.replicas }}
+  persistence:
+    storage: {{ .Values.rabbitmq.cluster.storageSize }}
+    storageClassName: {{ .Values.rabbitmq.cluster.storageClass }}
+  {{ if eq .Values.rabbitmq.cluster.serviceType "LoadBalancer" }}
+  service:
+    type: LoadBalancer
+    annotations:
+      external-dns.alpha.kubernetes.io/hostname: amqp.{{ .Values.cluster.config.domain }}
+      external-dns.alpha.kubernetes.io/ttl: "5"
+      # cert-manager.io/cluster-issuer: letsencrypt-prod
+      # kubernetes.io/ingress.class: nginx
+      # exposeIngressUrl: globally
+      # forecastle.stakater.com/expose: "true" 
+  {{ end }}
+  rabbitmq:
+    additionalConfig: |
+      log.console.level = error

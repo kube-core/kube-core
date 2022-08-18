@@ -1,0 +1,38 @@
+forecastle:
+  config:
+    namespaceSelector:
+      {{ toYaml (index .Values.releases .Release.Name "config" "namespaceSelector") | indent 6 | trim }}
+    headerBackground:
+    headerForeground:
+    title: {{ default (printf "%s-cluster" .Values.project.name | replace "-" " " | title ) (index .Values.releases .Release.Name "config" "title") }}
+  service:
+    annotations:
+      {{ toYaml .Values.cluster.common.defaultServiceAnnotations | indent 6 | trim }}
+    expose: "false"
+  ingress:
+    enabled: true
+    annotations:
+      forecastle.stakater.com/icon: https://raw.githubusercontent.com/stakater/Forecastle/master/assets/web/forecastle-round-100px.png
+    {{ if .Values.cluster.common.defaultIngressAnnotations }}
+      {{ toYaml .Values.cluster.common.defaultIngressAnnotations | nindent 6 }}
+    {{- end }}
+    {{- if (index .Values.releases .Release.Name "config" "ingress" "annotations") }}
+      {{ toYaml (index .Values.releases .Release.Name "config" "ingress" "annotations") | nindent 6 }}
+    {{- end }}
+    labels:
+    {{ if .Values.cluster.common.defaultIngressLabels }}
+      {{ toYaml .Values.cluster.common.defaultIngressLabels | nindent 6 }}
+    {{- end }}
+    {{- if (index .Values.releases .Release.Name "config" "ingress" "labels") }}
+      {{ toYaml (index .Values.releases .Release.Name "config" "ingress" "labels") | nindent 6 }}
+    {{- end }}
+    # className: ~
+    hosts:
+    - host: {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
+      paths:
+      - path: /
+        pathType: Prefix
+    tls:
+    - hosts:
+      - {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
+      secretName: {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") | replace "." "-"}}-tls

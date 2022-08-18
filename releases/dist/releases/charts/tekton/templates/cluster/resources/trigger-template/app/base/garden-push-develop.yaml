@@ -1,0 +1,81 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerTemplate
+metadata:
+  name: garden-push-develop
+spec:
+  params:
+  - name: build-format
+  - name: build-tool
+  - name: git-url
+  - name: git-project-name
+  - name: git-branch
+  - name: git-branch-sanitized
+  - name: git-sha
+  - name: project-id
+  - name: container-images-repository
+  - name: sonar-url
+  - name: git-api-endpoint
+  - name: continuous-delivery-namespace
+  - name: debug-sleep
+  - name: container-image-tag
+  - name: tekton-url
+  resourcetemplates:
+  - apiVersion: tekton.dev/v1beta1
+    kind: PipelineRun
+    metadata:
+      generateName: garden-push-$(tt.params.git-branch-sanitized)-$(tt.params.git-project-name)-
+    spec:
+      serviceAccountName: tekton
+      workspaces:
+      - name: ws
+        volumeClaimTemplate:
+          spec:
+            accessModes:
+              - ReadWriteOnce
+            resources:
+              requests:
+                storage: 10Gi
+      pipelineRef:
+        name:  {{ .Values.tekton.config.templates.gardenPushDevelop.pipelineRef }}
+      params:
+      - name: cluster-repository
+        value: {{ .Values.cluster.config.repository.url }}
+
+      - name: cluster-branch
+        value: {{ .Values.cluster.config.repository.ref }}
+
+      - name: garden-branch
+        value: develop
+
+      - name: apps-branch
+        value: $(tt.params.git-branch)
+
+      - name: garden-env
+        value: integration
+
+      - name: init-project
+        value: "false"
+
+      - name: git-url
+        value: $(tt.params.git-url)
+
+      - name: git-project-name
+        value: $(tt.params.git-project-name)
+
+      - name: git-commit
+        value: $(tt.params.git-sha)
+
+      - name: git-api-endpoint
+        value: $(tt.params.git-api-endpoint)
+
+      - name: project-id
+        value: $(tt.params.project-id)
+
+      - name: tekton-url
+        value: https://tekton-dashboard.tekton-pipelines.{{ .Values.cluster.config.domain }}
+
+      - name: sonar-url
+        value: https://sonarqube.{{ .Values.cluster.config.domain }}/
+
+      - name: build-tool
+        value: $(tt.params.build-tool)

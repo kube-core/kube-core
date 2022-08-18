@@ -1,0 +1,69 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: chatbot-init
+spec:
+  params:
+  - name: git-url
+  - name: pr-url
+  - name: new-pr-url
+  - name: pr-source
+  - name: pr-target
+  - name: message
+    default: ""
+  workspaces:
+  - name: ws
+  tasks:
+  - name: pr-write-comment
+    taskRef:
+      name: pr-write-comment
+    params:
+      - name: app-repository
+        value: $(params.git-url)
+      - name: pr-url
+        value: $(params.new-pr-url)
+      # - name: message
+      #   value: $(params.message)
+      - name: message
+        value: |
+          PR Infos
+          ---------
+
+          Hi ! You just opened a pr. \
+          The repo is : $(params.git-url) \
+          The PR url is : $(params.pr-url) \
+          The new PR url is : $(params.new-pr-url) \
+          The source branch is : $(params.pr-source) \
+          The target branch is : $(params.pr-target)
+
+          Chatbot Commands
+          ---------
+          
+          Available Now \
+          **/deploy**                 -> Deploys PR environment \
+          **/destroy**                -> Destroys PR environment \
+          **/scan** *nginx:latest*      -> Runs a scan on an image (deploy command outputs images)
+          
+          Coming Soon :) \
+          **/test**                   -> Launches unit & integration tests on this PR \
+          **/workflow**               -> Runs a garden workflow \
+          **/debug**                  -> Prints info to help debug \
+          **/init**                   -> Runs init workflow on deployed env \
+          **/load**                   -> Runs a load test on the PR \
+          **/ux**                     -> Runs UX checks & automation \
+          **/notify**                 -> Notifies people about this PR \
+          **/help**                   -> Displays help
+
+          ---------
+
+          Enjoy ! :)
+          
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws

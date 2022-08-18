@@ -1,0 +1,80 @@
+manifests:
+- apiVersion: cert-manager.io/v1
+  kind: ClusterIssuer
+  metadata:
+    name: letsencrypt-staging
+    namespace: cert-manager
+  spec:
+    acme:
+      email: {{ .Values.cluster.config.adminEmail }}
+      privateKeySecretRef:
+        name: letsencrypt-staging
+      server: https://acme-staging-v02.api.letsencrypt.org/directory
+      solvers:
+      - http01:
+          ingress:
+            class: {{ .Values.cluster.common.defaultIngressClass }}
+- apiVersion: cert-manager.io/v1
+  kind: ClusterIssuer
+  metadata:
+    name: letsencrypt-prod
+    namespace: cert-manager
+  spec:
+    acme:
+      email:  {{ .Values.cluster.config.adminEmail }}
+      privateKeySecretRef:
+        name: letsencrypt-prod
+      server: https://acme-v02.api.letsencrypt.org/directory
+      solvers:
+      - http01:
+          ingress:
+            class: {{ .Values.cluster.common.defaultIngressClass }}
+- apiVersion: cert-manager.io/v1
+  kind: ClusterIssuer
+  metadata:
+    name: letsencrypt-dns-staging-gcp
+    namespace: cert-manager
+  spec:
+    acme:
+      email:  {{ .Values.cluster.config.adminEmail }}
+      privateKeySecretRef:
+        name: letsencrypt-dns-staging-gcp
+      server: https://acme-staging-v02.api.letsencrypt.org/directory
+      solvers:
+      {{ if eq .Values.cloud.provider "gcp"}}
+      - dns01:
+          cloudDNS:
+            project: {{ .Values.cloud.project }}
+            serviceAccountSecretRef:
+              key: dns-admin.json
+              name: dns-admin
+      {{ else if eq .Values.cloud.provider "aws"}}
+      - dns01:
+          route53:
+            region: eu-west-1
+      {{ end }}       
+- apiVersion: cert-manager.io/v1
+  kind: ClusterIssuer
+  metadata:
+    name: letsencrypt-dns-production-gcp
+    namespace: cert-manager
+  spec:
+    acme:
+      email:  {{ .Values.cluster.config.adminEmail }}
+      privateKeySecretRef:
+        name: letsencrypt-dns-production-gcp
+      server: https://acme-v02.api.letsencrypt.org/directory
+      solvers:
+      {{ if eq .Values.cloud.provider "gcp"}}
+      - dns01:
+          cloudDNS:
+            project: {{ .Values.cloud.project }}
+            serviceAccountSecretRef:
+              key: dns-admin.json
+              name: dns-admin
+      {{ else if eq .Values.cloud.provider "aws"}}
+      - dns01:
+          route53:
+            region: eu-west-1
+      {{ end }}
+

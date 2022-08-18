@@ -1,0 +1,5 @@
+environments:
+  default:
+    # missingFileHandler: Warn
+    values:
+      {{ tpl (readFile "./templates/base/common-layers.yaml.gotmpl") . | nindent 6 }}

@@ -1,0 +1,103 @@
+- {{ toYaml .item.release | nindent 2 | trim }} {{/*# Allow to use all standard helmfile properties*/}}
+  installed: {{ .item.enabled }} {{/*# Controls installation & removal*/}}
+  {{/* forceNamespace: {{ .item.release.namespace }} # Doesn't work */}}
+  {{ if .item.labels }}
+  labels: {{ toYaml .item.labels | nindent 4 }}
+    app: {{ .item.release.name }}
+    type: chart
+  {{ end }}
+  values:
+  {{/*Inject core values if enabed. Placed here so that core values can be overriden by a release if needed. */}}
+  {{/*Be careful about values naming conflicts when activated. */}}
+  {{- if .item.injectCoreValues -}}
+  - {{ toYaml .coreValues | nindent 4 | trim }}
+  {{- end }}
+  - "./values/{{ .item.release.name }}.yaml.gotmpl" {{/*# Release has to have a value file, even empty*/}}
+  {{- if .item.extraReleaseValues }} {{/*# Adding extra values (not in .item.release because of toYaml above)*/}}
+  {{- range .item.extraReleaseValues }}
+  - "{{ . }}"
+  {{- end }}
+  {{- end }}
+  {{- if .item.values }} {{/*# Allows overriding / accessing values from the original chart !*/}}
+  - {{ toYaml .item.values | nindent 4 | trim }}
+  {{- end }}
+  {{- if .item.strategicMergePatches }}
+  strategicMergePatches:
+  {{ toYaml .item.strategicMergePatches | nindent 2 }}
+  {{- end }}
+  jsonPatches:
+  {{- if .item.jsonPatches }}
+  {{ toYaml .item.jsonPatches | nindent 2 }}
+  {{- end }}
+  {{- if .item.options.removeIngressClassAnnotation }}
+  - target:
+      version: v1
+      kind: Ingress
+      name: .*
+    patch:
+      - op: remove
+        path: "/metadata/annotations/kubernetes.io~1ingress.class"
+        {{/*# For Reference - brace yourself ;)
+        # https://github.com/kubernetes-sigs/kustomize/issues/1256#issuecomment-562531658
+        # https://datatracker.ietf.org/doc/html/rfc6902
+        # http://jsonpatch.com/#json-pointer */}}
+  {{- end }}
+  {{- if .item.options.removeIngressClassName }}
+  - target:
+      version: v1
+      kind: Ingress
+      name: .*
+    patch:
+      - op: remove
+        path: "/spec/ingressClassName"
+  {{- end }}
+  transformers:
+  {{- if .item.transformers }}
+  {{ toYaml .item.transformers | nindent 2 }}
+  {{- end }}
+  {{- if .item.options.applyDefaultLabelsOnIngress }}
+  - apiVersion: builtin
+    kind: LabelTransformer
+    metadata:
+      name: apply-default-labels-on-ingress
+    labels:
+      {{ toYaml .coreValues.cluster.common.defaultIngressLabels | nindent 6 }}
+    fieldSpecs:
+    - path: metadata/labels
+      kind: Ingress
+      create: true
+  {{- end }}
+  {{- if .item.options.applyDefaultAnnotationsOnIngress }}
+  - apiVersion: builtin
+    kind: AnnotationsTransformer
+    metadata:
+      name: apply-default-annotations-on-ingress
+    annotations:
+      {{ toYaml .coreValues.cluster.common.defaultIngressAnnotations | nindent 6 }}
+    fieldSpecs:
+    - path: metadata/annotations
+      kind: Ingress
+      create: true
+  {{- end }}
+  {{- if .coreValues.core.globalLabelsEnabled }}
+  - apiVersion: builtin
+    kind: LabelTransformer
+    metadata:
+      name: apply-global-labels-on-everything
+    labels:
+      cluster.kube-core.io/name: {{ .coreValues.cluster.config.name }}
+      cloud.kube-core.io/provider: {{ .coreValues.cloud.provider }}
+      cloud.kube-core.io/project: {{ .coreValues.cloud.project }}
+      app.kube-core.io/version: {{ .coreValues.core.version }}
+      {{- if .coreValues.cluster.common.globalLabels }}
+      {{ toYaml .coreValues.cluster.common.globalLabels | nindent 6 }}
+      {{- end }}
+    fieldSpecs:
+    - path: metadata/labels
+      create: true
+  {{- end }}
+  {{- if .item.hooks }}
+  hooks:
+  {{ toYaml .item.hooks | nindent 2 }}
+  {{- end }}
+  

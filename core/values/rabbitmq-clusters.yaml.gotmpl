@@ -1,0 +1,12 @@
+manifests:
+{{ range $key, $value := (index .Values.releasesCustom.rabbitmq "config" "clusters") }}
+- apiVersion: rabbitmq.com/v1beta1
+  kind: RabbitmqCluster
+  metadata:
+    name: {{ $value.name }}
+    namespace: {{ $value.namespace }}
+  spec: {{ toYaml $value.spec | nindent 4 }}
+{{ end }}
+{{ if (index .Values.releasesCustom.rabbitmq "manifests") }}
+{{ toYaml (index .Values.releasesCustom.rabbitmq "manifests") }}
+{{ end }}

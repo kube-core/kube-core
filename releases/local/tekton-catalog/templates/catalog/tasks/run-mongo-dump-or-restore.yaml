@@ -1,0 +1,159 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: run-mongo-dump-restore
+  namespace: tekton-pipelines
+  labels:
+    app.kubernetes.io/version: "0.0.1"
+  annotations:
+    tekton.dev/pipelines.minVersion: "0.12.1"
+    tekton.dev/tags: job
+    tekton.dev/displayName: "dump/restore mongodb"
+spec:
+  description: >-
+    Run a mongodb dump/restore
+  volumes:
+    - name: kubeconfig
+      secret:
+        secretName: kubeconfig
+    - name: kubeconfig-internal-gcloud
+      secret:
+        secretName: kubeconfig-internal-gcloud
+    - name: kubeconfig-no-gcloud
+      secret:
+        secretName: kubeconfig-no-gcloud
+    - name: tekton
+      secret:
+        secretName: tekton
+  params:
+    - name: run-task
+      description: An easy way to skip task
+      type: string
+      default: "true"
+
+    - name: action
+      description: Action to do (will be args https://github.com/neo9/mongodb-backups#usage)
+      type: string
+      default: "dump" # dump | list | restore | restore-last
+
+    - name: source-namespace
+      description: The namespace where is stored configuration
+      type: string
+      default: ""
+
+    - name: environment
+      description: The name of the config to use for restore (contains database) source
+      type: string
+      default: ""
+
+    - name: wait-for-job-to-be-finished
+      description: Wait or run job in background
+      type: string
+      default: "true"
+
+    - name: job-timeout
+      description: Job timeout
+      type: string
+      default: "300s"
+
+    - name: image
+      description: The image used by the task
+      type: string
+      default: neo9sas/devops-tools:v1.5.0
+
+    - name: sleep
+      description: The PR URL
+      type: string
+      default: "false"
+
+    - name: sleep-time
+      description: The PR URL
+      type: string
+      default: "600"
+
+  steps:
+    - name: run-job
+      image: $(params.image)
+      imagePullPolicy: Always
+      command: ["/bin/bash"]
+      volumeMounts:
+        - name: kubeconfig
+          mountPath: /tmp/kubeconfig
+        - name: kubeconfig-internal-gcloud
+          mountPath: /tmp/kubeconfig-internal-gcloud
+        - name: kubeconfig-no-gcloud
+          mountPath: /tmp/kubeconfig-no-gcloud
+        - name: tekton
+          mountPath: /tmp/tekton
+      env:
+        - name: KUBECONFIG
+          value: /tmp/kubeconfig-internal-gcloud/kubeconfig-internal-gcloud.yaml
+      args:
+        - -c
+        - |
+          #!/usr/bin/env bash
+
+          #set -x
+
+          shortAction=$(echo "$(params.action)" | awk '{print $1'})
+          jobName=mongodb-$shortAction-job-$(params.environment)-$(date +%s)
+
+          if [[ "$(params.run-task)" == "false" ]]; then
+            echo "task skipped"
+            exit 0
+          fi
+
+          cat <<EOF > job.yaml
+          apiVersion: batch/v1
+          kind: Job
+          metadata:
+            name: $jobName
+            namespace: $(params.source-namespace)
+          spec:
+            ttlSecondsAfterFinished: 3600
+            template:
+              spec:
+                restartPolicy: Never
+                containers:
+                - name: mongodb-backup
+                  image: neo9sas/mongodb-backups:v0.7.0
+                  imagePullPolicy: IfNotPresent
+                  command: ["/bin/sh"]
+                  args: ["-c", "/bin/mongodb-backups --config /etc/config/config.yaml --$(params.action)"]
+                  volumeMounts:
+                    - name: config-volume
+                      mountPath: /etc/config
+                  env:
+                    - name: MONGODB_USER
+                      valueFrom:
+                        secretKeyRef:
+                          key: MONGODB_USER
+                          name: mongodb-backups-$(params.environment)
+                    - name: MONGODB_PASSWORD
+                      valueFrom:
+                        secretKeyRef:
+                          key: MONGODB_PASSWORD
+                          name: mongodb-backups-$(params.environment)
+                  resources:
+                    limits:
+                      memory: 1Gi
+                    requests:
+                      memory: 1Gi
+                      cpu: 500m
+                volumes:
+                  - name: config-volume
+                    configMap:
+                      name: mongodb-backups-$(params.environment)
+          EOF
+
+          if [[ "$(params.sleep)" == "true" ]]; then
+            sleep $(params.sleep-time)
+          fi
+
+          kubectl -n $(params.source-namespace) apply -f job.yaml
+
+          if [[ "$(params.wait-for-job-to-be-finished)" == "true" ]]; then
+            kubectl -n $(params.source-namespace) wait --for=condition=complete --timeout=$(params.job-timeout) job/${jobName}
+            echo -e "\n\n\n"
+            kubectl -n $(params.source-namespace) logs job/${jobName}
+          fi

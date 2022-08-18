@@ -1,0 +1,14 @@
+apiVersion: rabbitmq.com/v1beta1
+kind: Exchange
+metadata:
+  name: {{ .Values.cluster.config.name }}-bucket-events
+spec:
+  name: {{ .Values.cluster.config.name }}-bucket-events # name of the exchange
+  type: fanout # default to 'direct' if not provided; can be set to 'direct', 'fanout', 'headers', and 'topic'
+  autoDelete: false
+  durable: true
+  rabbitmqClusterReference:
+    name: rabbitmq
+    namespace: rabbitmq
+  # arguments:
+  #   alternate-exchange: bucket-events-alt

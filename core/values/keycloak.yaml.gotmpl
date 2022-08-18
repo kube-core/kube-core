@@ -1,0 +1,57 @@
+postgresql:
+  enabled: true
+  postgresqlPostgresPassword: "postgres"
+  postgresqlUsername: postgres
+  postgresqlPassword: "postgres"
+  {{ if index .Values.releases .Release.Name "config" "ha" }}
+  replication:
+    enabled: true
+    user: repl_user
+    password: repl_password
+    readReplicas: 3
+    synchronousCommit: "on"
+    numSynchronousReplicas: 2
+    applicationName: keycloak
+    singleService: true
+    uniqueServices: false
+  {{ end }}
+{{ if index .Values.releases .Release.Name "config" "ha" }}
+replicaCount: 3
+serviceDiscovery:
+  enabled: true
+{{ end }}
+auth:
+  createAdminUser: true
+  adminUser: admin
+  adminPassword: admin
+  managementUser: manager
+  managementPassword: manager
+proxyAddressForwarding: true
+ingress:
+  enabled: true
+  certManager: false
+  hostname: {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
+  apiVersion: null
+  path: /
+  pathType: ImplementationSpecific
+  annotations:
+  {{ if .Values.cluster.common.defaultIngressAnnotations }}
+    {{ toYaml .Values.cluster.common.defaultIngressAnnotations | nindent 4 }}
+  {{- end }}
+  {{- if (index .Values.releases .Release.Name "config" "ingress" "annotations") }}
+    {{ toYaml (index .Values.releases .Release.Name "config" "ingress" "annotations") | nindent 4 }}
+  {{- end }}
+  labels:
+  {{ if .Values.cluster.common.defaultIngressLabels }}
+    {{ toYaml .Values.cluster.common.defaultIngressLabels | nindent 4 }}
+  {{- end }}
+  {{- if (index .Values.releases .Release.Name "config" "ingress" "labels") }}
+    {{ toYaml (index .Values.releases .Release.Name "config" "ingress" "labels") | nindent 4 }}
+  {{- end }}
+  tls: false
+  extraTls:
+  - hosts:
+      - {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
+    secretName: {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") | replace "." "-"}}-tls
+metrics:
+  enabled: true

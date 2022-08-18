@@ -1,0 +1,149 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: pr-write-comment
+  labels:
+    app.kubernetes.io/version: "0.0.1"
+  annotations:
+    tekton.dev/pipelines.minVersion: "0.12.1"
+    tekton.dev/tags: pr-write-comment, debug, dev, tools
+    tekton.dev/displayName: "pr-write-comment"
+spec:
+  description: >-
+    This task makes the pipeline pr-write-comment, allowing to exec in and debug
+    the pipeline
+  workspaces:
+    - name: input
+    - name: output
+    - name: source
+    - name: data
+  volumes:
+    - name: kubeconfig-internal-gcloud
+      secret:
+        secretName: kubeconfig-internal-gcloud
+    - name: tekton
+      secret:
+        secretName: tekton
+  params:
+    - name: app-repository
+      description: The PR repository
+      type: string
+
+    - name: pr-url
+      description: The PR URL
+      type: string
+
+    - name: message
+      description: The message to write
+      type: string
+      default: ""
+
+    - name: command
+      description: The message to write
+      type: string
+      default: ""
+
+    - name: extraCommand
+      description: The message to write
+      type: string
+      default: ""
+
+    - name: jqCommand
+      description: The message to write
+      type: string
+      default: ""
+  steps:
+    - name: initialize
+      image: neo9sas/devops-tools:v1.5.0
+      script: |
+        #!/usr/bin/env bash
+        echo "I am supposed to write a comment on this PR : $(params.pr-url)"
+
+    - name: pr-init
+      image: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/pullrequest-init@sha256:69633ecd0e948f6462c61bb9e008b940a05b143ef51c67e6e4093278a23dac53 #tag: v0.20.1
+      command: ["/ko-app/pullrequest-init"]
+      env:
+      - name: AUTH_TOKEN
+        value: DhaBiGr3LTq9BebRqpdb
+        # valueFrom:
+        #   secretKeyRef:
+        #     name: gl-token
+        #     key: token
+      args:
+      - "-url"
+      - $(params.pr-url)
+      - "-path"
+      - "$(workspaces.source.path)/pr"
+      - "-mode"
+      - "download"
+      - "-provider"
+      - "gitlab"
+
+    - name: pr-write-comment
+      image: neo9sas/devops-tools:v1.5.0
+      volumeMounts:
+        - name: kubeconfig-internal-gcloud
+          mountPath: /tmp/kubeconfig-internal-gcloud
+        - name: tekton
+          mountPath: /tmp/tekton
+      env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /tmp/tekton/tekton.json
+        - name: KUBECONFIG
+          value: /tmp/kubeconfig-internal-gcloud/kubeconfig-internal-gcloud.yaml
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+      script: |
+        #!/usr/bin/env bash
+        set -xe
+
+        command='$(params.command)'
+        jqCommand='$(params.jqCommand)'
+        extraCommand='$(params.extraCommand)'
+
+        commandResult=$(eval "${command}")
+        extraCommandResult=$(eval "${extraCommand}")
+        jqResult=$(eval ${jqCommand})
+
+        #  
+
+        if [[ -z "${command}" ]]
+        then
+          message='$(params.message)'
+        fi
+
+        if [[ -z "${message}" ]]
+        then
+          message="$(params.message)"
+        fi
+
+        COMMENT="${message}"
+       
+        echo "$COMMENT" > $(workspaces.source.path)/pr/comments/comment
+
+
+    - name: pr-update
+      image: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/pullrequest-init:v0.16.2
+      command: ["/ko-app/pullrequest-init"]
+      env:
+      - name: AUTH_TOKEN
+        value: DhaBiGr3LTq9BebRqpdb
+        # valueFrom:
+        #   secretKeyRef:
+        #     name: gl-token
+        #     key: token
+      args:
+      - "-url"
+      - $(params.pr-url)
+      - "-path"
+      - "$(workspaces.source.path)/pr"
+      - "-mode"
+      - "upload"
+      - "-provider"
+      - "gitlab"

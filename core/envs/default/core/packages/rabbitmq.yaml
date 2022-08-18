@@ -1,0 +1,13 @@
+releases:
+  rabbitmq-operators:
+    labels:
+      package: rabbitmq
+    enabled: true
+  rabbitmq-config:
+    labels:
+      package: rabbitmq
+    enabled: true
+  rabbitmq-cluster:
+    labels:
+      package: rabbitmq
+    enabled: true

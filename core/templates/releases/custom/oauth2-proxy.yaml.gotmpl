@@ -1,0 +1,49 @@
+{{- $values := .Values }}
+
+{{- range $key, $value :=  (index .Values.releasesCustom.oauth2Proxy "config" "proxies") }}
+
+- name: oauth2-proxy-{{ $value.namespace }}-{{ $value.name }}
+  namespace: {{ $value.namespace }}
+  chart: ../releases/dist/releases/charts/oauth2-proxy
+  # version: 4.2.1
+  # version: 5.0.7
+  installed: {{ $value.enabled }}
+  {{- if $value.needs }}
+  needs: {{ toYaml $value.needs | nindent 2 }}
+  {{ end }}
+  labels:
+    app: oauth2-proxy
+    type: oauth2-proxy
+  values:
+{{ if $value.shareGlobalConfig }}
+    - {{ toYaml $values.releasesCustom.oauth2Proxy.config.global | nindent 6 }}
+{{ end }}
+    - {{ toYaml $value.values | nindent 6 }}
+
+{{ if and ($value.pullExistingSecret) ($values | get "releasesCustom.oauth2Proxy.config.global.config.existingSecret" false) }}
+
+- name: {{ $value.name }}-pull-secret
+  chart: ../releases/dist/releases/charts/raw
+  namespace: {{ $value.namespace }}
+  {{ if $value.needs }}
+  wait: true
+  needs: {{ toYaml $value.needs | nindent 2 }}
+  {{ end }}
+  installed: {{ $value.enabled }}
+  labels:
+    app: oauth2-proxy
+    type: oauth2-proxy
+  values:
+  - manifests:
+    - apiVersion: v1
+      kind: Secret
+      metadata:
+        name: {{ $values.releasesCustom.oauth2Proxy.config.global.config.existingSecret }}
+        annotations:
+          replicator.v1.mittwald.de/replicate-from: secrets/{{ $values.releasesCustom.oauth2Proxy.config.global.config.existingSecret }}
+      data: {}
+
+{{ end }}
+
+{{- end -}}
+

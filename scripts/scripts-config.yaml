@@ -1,0 +1,621 @@
+scripts:
+  apps_istio_configure_istio_injection:
+    path: ./src/apps/istio/configure-istio-injection.sh
+    name: apps_istio_configure_istio_injection
+    description: ""
+    args: ""
+  apps_istio_verify_istio_access:
+    path: ./src/apps/istio/verify-istio-access.sh
+    name: apps_istio_verify_istio_access
+    description: ""
+    args: ""
+  apps_minio_configure_minio:
+    path: ./src/apps/minio/configure-minio.sh
+    name: apps_minio_configure_minio
+    description: ""
+    args: ""
+  apps_minio_minio_config_check:
+    path: ./src/apps/minio/minio-config-check.sh
+    name: apps_minio_minio_config_check
+    description: ""
+    args: ""
+  apps_minio_minio_push_file:
+    path: ./src/apps/minio/minio-push-file.sh
+    name: apps_minio_minio_push_file
+    description: ""
+    args: ""
+  apps_sentry_sentry_create_projects:
+    path: ./src/apps/sentry/sentry-create-projects.sh
+    name: apps_sentry_sentry_create_projects
+    description: ""
+    args: ""
+  apps_sentry_sentry_get_dsns:
+    path: ./src/apps/sentry/sentry-get-dsns.sh
+    name: apps_sentry_sentry_get_dsns
+    description: ""
+    args: ""
+  cloud_gcp_setup_cluster_manager_create:
+    path: ./src/cloud/gcp/setup/cluster-manager/create.sh
+    name: cloud_gcp_setup_cluster_manager_create
+    description: ""
+    args: ""
+  cloud_gcp_setup_cluster_manager_destroy:
+    path: ./src/cloud/gcp/setup/cluster-manager/destroy.sh
+    name: cloud_gcp_setup_cluster_manager_destroy
+    description: ""
+    args: ""
+  cloud_gcp_setup_crossplane_create:
+    path: ./src/cloud/gcp/setup/crossplane/create.sh
+    name: cloud_gcp_setup_crossplane_create
+    description: ""
+    args: ""
+  cloud_gcp_setup_crossplane_destroy:
+    path: ./src/cloud/gcp/setup/crossplane/destroy.sh
+    name: cloud_gcp_setup_crossplane_destroy
+    description: ""
+    args: ""
+  cloud_gcp_setup_dns_create:
+    path: ./src/cloud/gcp/setup/dns/create.sh
+    name: cloud_gcp_setup_dns_create
+    description: ""
+    args: ""
+  cloud_gcp_setup_dns_destroy:
+    path: ./src/cloud/gcp/setup/dns/destroy.sh
+    name: cloud_gcp_setup_dns_destroy
+    description: ""
+    args: ""
+  cloud_gcp_setup_gcr_create:
+    path: ./src/cloud/gcp/setup/gcr/create.sh
+    name: cloud_gcp_setup_gcr_create
+    description: ""
+    args: ""
+  cloud_gcp_setup_gcr_destroy:
+    path: ./src/cloud/gcp/setup/gcr/destroy.sh
+    name: cloud_gcp_setup_gcr_destroy
+    description: ""
+    args: ""
+  cloud_gcp_setup_gcs_create:
+    path: ./src/cloud/gcp/setup/gcs/create.sh
+    name: cloud_gcp_setup_gcs_create
+    description: ""
+    args: ""
+  cloud_gcp_setup_gcs_destroy:
+    path: ./src/cloud/gcp/setup/gcs/destroy.sh
+    name: cloud_gcp_setup_gcs_destroy
+    description: ""
+    args: ""
+  cloud_gcp_setup_kubeconfig_create_no_gcloud:
+    path: ./src/cloud/gcp/setup/kubeconfig/create-no-gcloud.sh
+    name: cloud_gcp_setup_kubeconfig_create_no_gcloud
+    description: ""
+    args: ""
+  cloud_gcp_setup_kubeconfig_create:
+    path: ./src/cloud/gcp/setup/kubeconfig/create.sh
+    name: cloud_gcp_setup_kubeconfig_create
+    description: ""
+    args: ""
+  cloud_gcp_setup_kubeconfig_destroy:
+    path: ./src/cloud/gcp/setup/kubeconfig/destroy.sh
+    name: cloud_gcp_setup_kubeconfig_destroy
+    description: ""
+    args: ""
+  cloud_gcp_setup_kubeconfig_get_context:
+    path: ./src/cloud/gcp/setup/kubeconfig/get-context.sh
+    name: cloud_gcp_setup_kubeconfig_get_context
+    description: ""
+    args: ""
+  cloud_gcp_setup_tekton_create:
+    path: ./src/cloud/gcp/setup/tekton/create.sh
+    name: cloud_gcp_setup_tekton_create
+    description: ""
+    args: ""
+  cloud_gcp_setup_tekton_destroy:
+    path: ./src/cloud/gcp/setup/tekton/destroy.sh
+    name: cloud_gcp_setup_tekton_destroy
+    description: ""
+    args: ""
+  cloud_gcp_setup_tekton_git:
+    path: ./src/cloud/gcp/setup/tekton/git.sh
+    name: cloud_gcp_setup_tekton_git
+    description: ""
+    args: ""
+  cloud_gcp_setup_tekton_storage:
+    path: ./src/cloud/gcp/setup/tekton/storage.sh
+    name: cloud_gcp_setup_tekton_storage
+    description: ""
+    args: ""
+  cloud_gcp_setup_velero_create:
+    path: ./src/cloud/gcp/setup/velero/create.sh
+    name: cloud_gcp_setup_velero_create
+    description: ""
+    args: ""
+  cloud_gcp_setup_velero_destroy:
+    path: ./src/cloud/gcp/setup/velero/destroy.sh
+    name: cloud_gcp_setup_velero_destroy
+    description: ""
+    args: ""
+  cluster_apply_config:
+    path: ./src/cluster/apply/config.sh
+    name: cluster_apply_config
+    description: ""
+    args: ""
+  cluster_apply_configmaps:
+    path: ./src/cluster/apply/configmaps.sh
+    name: cluster_apply_configmaps
+    description: ""
+    args: ""
+  cluster_apply_crds:
+    path: ./src/cluster/apply/crds.sh
+    name: cluster_apply_crds
+    description: ""
+    args: ""
+  cluster_apply_helmfiles:
+    path: ./src/cluster/apply/helmfiles.sh
+    name: cluster_apply_helmfiles
+    description: ""
+    args: ""
+  cluster_apply_namespaces:
+    path: ./src/cluster/apply/namespaces.sh
+    name: cluster_apply_namespaces
+    description: ""
+    args: ""
+  cluster_apply_secrets:
+    path: ./src/cluster/apply/secrets.sh
+    name: cluster_apply_secrets
+    description: ""
+    args: ""
+  cluster_apply:
+    path: ./src/cluster/apply.sh
+    name: cluster_apply
+    description: ""
+    args: ""
+  cluster_build:
+    path: ./src/cluster/build.sh
+    name: cluster_build
+    description: ""
+    args: ""
+  cluster_generate_generate:
+    path: ./src/cluster/generate/generate.sh
+    name: cluster_generate_generate
+    description: ""
+    args: ""
+  cluster_process:
+    path: ./src/cluster/process.sh
+    name: cluster_process
+    description: ""
+    args: ""
+  cluster_setup_externaldns_install:
+    path: ./src/cluster/setup/externaldns/install.sh
+    name: cluster_setup_externaldns_install
+    description: ""
+    args: ""
+  cluster_setup_flux_install:
+    path: ./src/cluster/setup/flux/install.sh
+    name: cluster_setup_flux_install
+    description: ""
+    args: ""
+  cluster_setup_install:
+    path: ./src/cluster/setup/install.sh
+    name: cluster_setup_install
+    description: ""
+    args: ""
+  cluster_setup_post_install:
+    path: ./src/cluster/setup/post-install.sh
+    name: cluster_setup_post_install
+    description: ""
+    args: ""
+  cluster_setup_pre_install:
+    path: ./src/cluster/setup/pre-install.sh
+    name: cluster_setup_pre_install
+    description: ""
+    args: ""
+  cluster_setup_sealedsecrets_get_certificate:
+    path: ./src/cluster/setup/sealedsecrets/get-certificate.sh
+    name: cluster_setup_sealedsecrets_get_certificate
+    description: ""
+    args: ""
+  cluster_setup_sealedsecrets_install:
+    path: ./src/cluster/setup/sealedsecrets/install.sh
+    name: cluster_setup_sealedsecrets_install
+    description: ""
+    args: ""
+  gitops_build:
+    path: ./src/gitops/build.sh
+    name: gitops_build
+    description: ""
+    args: ""
+  gitops_ci_auto_build:
+    path: ./src/gitops/ci/auto-build.sh
+    name: gitops_ci_auto_build
+    description: ""
+    args: ""
+  gitops_ci_auto_core_updates:
+    path: ./src/gitops/ci/auto-core-updates.sh
+    name: gitops_ci_auto_core_updates
+    description: ""
+    args: ""
+  gitops_ci_auto_pr:
+    path: ./src/gitops/ci/auto-pr.sh
+    name: gitops_ci_auto_pr
+    description: ""
+    args: ""
+  gitops_ci_auto_setup:
+    path: ./src/gitops/ci/auto-setup.sh
+    name: gitops_ci_auto_setup
+    description: ""
+    args: ""
+  gitops_cleanup_custom:
+    path: ./src/gitops/cleanup-custom.sh
+    name: gitops_cleanup_custom
+    description: ""
+    args: ""
+  gitops_cleanup:
+    path: ./src/gitops/cleanup.sh
+    name: gitops_cleanup
+    description: ""
+    args: ""
+  gitops_configmaps:
+    path: ./src/gitops/configmaps.sh
+    name: gitops_configmaps
+    description: ""
+    args: ""
+  gitops_gitops:
+    path: ./src/gitops/gitops.sh
+    name: gitops_gitops
+    description: ""
+    args: ""
+  gitops_helmfile_template:
+    path: ./src/gitops/helmfile-template.sh
+    name: gitops_helmfile_template
+    description: ""
+    args: ""
+  gitops_helmfile:
+    path: ./src/gitops/helmfile.sh
+    name: gitops_helmfile
+    description: ""
+    args: ""
+  gitops_overlay:
+    path: ./src/gitops/overlay.sh
+    name: gitops_overlay
+    description: ""
+    args: ""
+  gitops_overlays_apply:
+    path: ./src/gitops/overlays/apply.sh
+    name: gitops_overlays_apply
+    description: ""
+    args: ""
+  gitops_patch:
+    path: ./src/gitops/patch.sh
+    name: gitops_patch
+    description: ""
+    args: ""
+  gitops_process:
+    path: ./src/gitops/process.sh
+    name: gitops_process
+    description: ""
+    args: ""
+  gitops_replicated_secrets:
+    path: ./src/gitops/replicated-secrets.sh
+    name: gitops_replicated_secrets
+    description: ""
+    args: ""
+  gitops_restore_secrets:
+    path: ./src/gitops/restore-secrets.sh
+    name: gitops_restore_secrets
+    description: ""
+    args: ""
+  gitops_secrets:
+    path: ./src/gitops/secrets.sh
+    name: gitops_secrets
+    description: ""
+    args: ""
+  gitops_utils_check_requirements:
+    path: ./src/gitops/utils/check-requirements.sh
+    name: gitops_utils_check_requirements
+    description: ""
+    args: ""
+  gitops_utils_generate_namespaces:
+    path: ./src/gitops/utils/generate-namespaces.sh
+    name: gitops_utils_generate_namespaces
+    description: ""
+    args: ""
+  gitops_utils_get_helm_managed:
+    path: ./src/gitops/utils/get-helm-managed.sh
+    name: gitops_utils_get_helm_managed
+    description: ""
+    args: ""
+  gitops_utils_get_not_helm_managed:
+    path: ./src/gitops/utils/get-not-helm-managed.sh
+    name: gitops_utils_get_not_helm_managed
+    description: ""
+    args: ""
+  gitops_utils_install_requirements:
+    path: ./src/gitops/utils/install-requirements.sh
+    name: gitops_utils_install_requirements
+    description: ""
+    args: ""
+  includes:
+    path: ./src/includes.sh
+    name: includes
+    description: ""
+    args: ""
+  k8s_check_context:
+    path: ./src/k8s/check-context.sh
+    name: k8s_check_context
+    description: ""
+    args: ""
+  k8s_configmaps_generate:
+    path: ./src/k8s/configmaps/generate.sh
+    name: k8s_configmaps_generate
+    description: ""
+    args: ""
+  k8s_secrets_generate:
+    path: ./src/k8s/secrets/generate.sh
+    name: k8s_secrets_generate
+    description: ""
+    args: ""
+  k8s_secrets_import_secrets:
+    path: ./src/k8s/secrets/import-secrets.sh
+    name: k8s_secrets_import_secrets
+    description: ""
+    args: ""
+  k8s_secrets_seal:
+    path: ./src/k8s/secrets/seal.sh
+    name: k8s_secrets_seal
+    description: '## Seals a Secret locally using sealed-secrets certificate'
+    args: ""
+  lib_apply_config:
+    path: ./src/lib/apply/config.sh
+    name: lib_apply_config
+    description: ""
+    args: ""
+  lib_apply_crds:
+    path: ./src/lib/apply/crds.sh
+    name: lib_apply_crds
+    description: ""
+    args: ""
+  lib_apply_helmfile:
+    path: ./src/lib/apply/helmfile.sh
+    name: lib_apply_helmfile
+    description: ""
+    args: ""
+  lib_apply_kubectl:
+    path: ./src/lib/apply/kubectl.sh
+    name: lib_apply_kubectl
+    description: ""
+    args: ""
+  lib_apply_namespaces:
+    path: ./src/lib/apply/namespaces.sh
+    name: lib_apply_namespaces
+    description: ""
+    args: ""
+  test_audit_manifest:
+    path: ./src/test/audit-manifest.sh
+    name: test_audit_manifest
+    description: '## Audits one manifest using kubeaudit'
+    args: ""
+  test_audit:
+    path: ./src/test/audit.sh
+    name: test_audit
+    description: '## Runs audit test'
+    args: ""
+  test_conftest_manifest:
+    path: ./src/test/conftest-manifest.sh
+    name: test_conftest_manifest
+    description: ""
+    args: ""
+  test_conftest:
+    path: ./src/test/conftest.sh
+    name: test_conftest
+    description: ""
+    args: ""
+  test_lint_manifest:
+    path: ./src/test/lint-manifest.sh
+    name: test_lint_manifest
+    description: ""
+    args: ""
+  test_lint:
+    path: ./src/test/lint.sh
+    name: test_lint
+    description: ""
+    args: ""
+  test_score_manifest:
+    path: ./src/test/score-manifest.sh
+    name: test_score_manifest
+    description: ""
+    args: ""
+  test_score:
+    path: ./src/test/score.sh
+    name: test_score
+    description: ""
+    args: ""
+  test_validate_manifest:
+    path: ./src/test/validate-manifest.sh
+    name: test_validate_manifest
+    description: ""
+    args: ""
+  test_validate:
+    path: ./src/test/validate.sh
+    name: test_validate
+    description: ""
+    args: ""
+  utils_argparse.bash:
+    path: ./src/utils/argparse.bash.sh
+    name: utils_argparse.bash
+    description: ""
+    args: ""
+  utils_others_get_crash_logs:
+    path: ./src/utils/others/get-crash-logs.sh
+    name: utils_others_get_crash_logs
+    description: ""
+    args: ""
+  utils_others_hpa_generate_hpas:
+    path: ./src/utils/others/hpa/generate-hpas.sh
+    name: utils_others_hpa_generate_hpas
+    description: ""
+    args: ""
+  utils_others_pdb_generate_pdb:
+    path: ./src/utils/others/pdb/generate-pdb.sh
+    name: utils_others_pdb_generate_pdb
+    description: ""
+    args: ""
+  utils_others_priorityclass_generate_priorityclass:
+    path: ./src/utils/others/priorityclass/generate-priorityclass.sh
+    name: utils_others_priorityclass_generate_priorityclass
+    description: ""
+    args: ""
+  utils_read_cluster_path:
+    path: ./src/utils/read-cluster-path.sh
+    name: utils_read_cluster_path
+    description: ""
+    args: ""
+  utils_read_core_path:
+    path: ./src/utils/read-core-path.sh
+    name: utils_read_core_path
+    description: ""
+    args: ""
+  utils_test:
+    path: ./src/utils/test.sh
+    name: utils_test
+    description: ""
+    args: ""
+  utils_yaml_get_config:
+    path: ./src/utils/yaml/get_config.sh
+    name: utils_yaml_get_config
+    description: ""
+    args: ""
+  utils_yaml_log:
+    path: ./src/utils/yaml/log.sh
+    name: utils_yaml_log
+    description: ""
+    args: ""
+  utils_yaml_parse_yaml:
+    path: ./src/utils/yaml/parse_yaml.sh
+    name: utils_yaml_parse_yaml
+    description: ""
+    args: ""
+  apply_crds:
+    path: ./commands/apply/crds.sh
+    name: apply_crds
+    description: ""
+    args: ""
+  dev_mode_cluster:
+    path: ./commands/dev/mode/cluster.sh
+    name: dev_mode_cluster
+    description: ""
+    args: ""
+  dev_mode_dev:
+    path: ./commands/dev/mode/dev.sh
+    name: dev_mode_dev
+    description: ""
+    args: ""
+  dev_mode_legacy:
+    path: ./commands/dev/mode/legacy.sh
+    name: dev_mode_legacy
+    description: ""
+    args: ""
+  dev_mode_prod:
+    path: ./commands/dev/mode/prod.sh
+    name: dev_mode_prod
+    description: ""
+    args: ""
+  dev_releases_add_chart:
+    path: ./commands/dev/releases/add-chart.sh
+    name: dev_releases_add_chart
+    description: ""
+    args: ""
+  dev_releases_add_release:
+    path: ./commands/dev/releases/add-release.sh
+    name: dev_releases_add_release
+    description: ""
+    args: ""
+  dev_releases_build:
+    path: ./commands/dev/releases/build.sh
+    name: dev_releases_build
+    description: ""
+    args: ""
+  dev_releases_cleanup:
+    path: ./commands/dev/releases/cleanup.sh
+    name: dev_releases_cleanup
+    description: ""
+    args: ""
+  dev_releases_get:
+    path: ./commands/dev/releases/get.sh
+    name: dev_releases_get
+    description: ""
+    args: ""
+  dev_releases_lint:
+    path: ./commands/dev/releases/lint.sh
+    name: dev_releases_lint
+    description: ""
+    args: ""
+  dev_releases_run:
+    path: ./commands/dev/releases/run.sh
+    name: dev_releases_run
+    description: ""
+    args: ""
+  dev_utils_build:
+    path: ./commands/dev/utils/build.sh
+    name: dev_utils_build
+    description: ""
+    args: ""
+  dev_utils_bump:
+    path: ./commands/dev/utils/bump.sh
+    name: dev_utils_bump
+    description: ""
+    args: ""
+  diff_all:
+    path: ./commands/diff/all.sh
+    name: diff_all
+    description: ""
+    args: ""
+  diff_cluster:
+    path: ./commands/diff/cluster.sh
+    name: diff_cluster
+    description: ""
+    args: ""
+  diff_core:
+    path: ./commands/diff/core.sh
+    name: diff_core
+    description: ""
+    args: ""
+  generate_cluster_config:
+    path: ./commands/generate/cluster-config.sh
+    name: generate_cluster_config
+    description: ""
+    args: ""
+  generate_values:
+    path: ./commands/generate/values.sh
+    name: generate_values
+    description: ""
+    args: ""
+  scripts_cat:
+    path: ./commands/scripts/cat.sh
+    name: scripts_cat
+    description: ""
+    args: ""
+  scripts_list:
+    path: ./commands/scripts/list.sh
+    name: scripts_list
+    description: ""
+    args: ""
+  values_all:
+    path: ./commands/values/all.sh
+    name: values_all
+    description: ""
+    args: ""
+  values_cluster:
+    path: ./commands/values/cluster.sh
+    name: values_cluster
+    description: ""
+    args: ""
+  values_core:
+    path: ./commands/values/core.sh
+    name: values_core
+    description: ""
+    args: ""
+  values_keys:
+    path: ./commands/values/keys.sh
+    name: values_keys
+    description: ""
+    args: ""

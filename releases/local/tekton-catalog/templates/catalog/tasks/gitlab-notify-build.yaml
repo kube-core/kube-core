@@ -1,0 +1,107 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: gitlab-notify-build
+  labels:
+    app.kubernetes.io/version: "0.0.1"
+  annotations:
+    tekton.dev/pipelines.minVersion: "0.12.1"
+    tekton.dev/tags: gitlab, notify, build
+    tekton.dev/displayName: "gitlab notify build"
+
+spec:
+  description: >-
+    This task notify gitlab with the pipeline status
+  workspaces:
+    - name: input
+    - name: output
+    - name: source
+    - name: data
+
+  params:
+    - name: ref
+      description: The ref (branch or tag) to which the status refers
+      type: string
+    - name: git-sha
+      description: The commit-sha
+      type: string
+      default: ""
+    - name: image
+      description: The image used by the task
+      type: string
+      default: neo9sas/devops-tools:v1.5.0
+    - name: aggregateStatus
+      description: he aggregate status of all tasks
+      type: string
+      default: "Running"
+    - name: project-id
+      description: the project id on gitlab
+      default: ""
+    - name: gitlab-url
+      type: string
+      description: "The gitlab url"
+    - name: tekton-url
+      type: string
+      description: The target URL to associate with this status
+  
+  volumes:
+    - name: podinfo
+      downwardAPI:
+        items:
+          - path: "labels"
+            fieldRef:
+              fieldPath: metadata.labels['tekton.dev/pipelineRun']
+
+  steps:
+    - name: exec-script
+      image: $(params.image)
+      imagePullPolicy: IfNotPresent
+      command: ["/bin/bash"]
+      volumeMounts:
+        - name: podinfo
+          mountPath: /etc/podinfo
+      env:
+        - name: gitlabApiToken
+          valueFrom:
+            secretKeyRef:
+              name: gitlab-api-token
+              key: token
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+      args:
+        - -c
+        - |
+          #!/usr/bin/env bash 
+          state=""
+          if [ "$(params.aggregateStatus)"=="Succeeded" ] || [ "$(params.aggregateStatus)" == "Completed" ] 
+          then
+            state="success"
+          fi
+          if [ "$(params.aggregateStatus)" == "Failed" ] 
+          then
+            state="failed"
+          fi
+          if [ "$(params.aggregateStatus)" == "Cancelled" ] 
+          then
+            state="cancelled"
+          fi
+          if [ "$(params.aggregateStatus)" == "Running" ] 
+          then
+            state="running"
+          fi
+
+          if [[ -e /etc/podinfo/labels ]]; then
+            piplinerunName=`cat /etc/podinfo/labels`
+          fi;
+
+          # piplinerunName=$(echo $POD_NAME | awk -F '-notify-' '{print $1}')
+
+          url="$(params.tekton-url)/%23/namespaces/$POD_NAMESPACE/pipelineruns/$piplinerunName"
+
+          curl --request POST --header "PRIVATE-TOKEN: $gitlabApiToken" "$(params.gitlab-url)/projects/$(params.project-id)/statuses/$(params.git-sha)?ref=$(params.ref)&state=$state&target_url=$url&name=tekton-pipelines"

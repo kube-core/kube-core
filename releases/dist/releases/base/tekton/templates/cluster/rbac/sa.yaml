@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  namespace: tekton-pipelines
+  name: tekton
+secrets:
+  - name: gitlab-ssh
+  - name: docker-registry-gcr-admin
+imagePullSecrets:
+  - name: tekton

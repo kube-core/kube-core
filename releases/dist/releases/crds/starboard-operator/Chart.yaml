@@ -1,0 +1,12 @@
+apiVersion: v2
+appVersion: 0.10.3
+description: A Helm chart for starboard-operator.
+keywords:
+  - aquasecurity
+  - starboard
+  - trivy
+name: starboard-operator
+sources:
+  - https://github.com/aquasecurity/starboard
+type: application
+version: 0.5.3

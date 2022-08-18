@@ -1,0 +1,55 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: npm-publish
+  labels:
+    app.kubernetes.io/version: "0.1"
+  annotations:
+    tekton.dev/pipelines.minVersion: "0.17.0"
+    tekton.dev/tags: build-tool
+spec:
+  description: >-
+    This task can be used to run npm publish on a project.
+
+    This task can be used to run npm publish on a project
+    where package.json is present.
+  workspaces:
+    - name: source
+  params:
+    - name: PATH_CONTEXT
+      type: string
+      default: "."
+      description: The path where package.json of the project is defined.
+    - name: NPM_PUBLISHER
+      type: string
+      description: The secret name of the npm publisher
+    - name: IMAGE
+      type: string
+      default: "docker.io/library/node:12-alpine@sha256:12048cdfd75d944df35f3144132d9bdeee78015fbd6df765edad1be46599b110"
+      description: The node image you want to use.
+  
+  volumes:
+    - name: npm-publisher-volume
+      secret:
+        secretName: $(params.NPM_PUBLISHER)
+
+  steps:
+    - name: publish
+      image: $(params.IMAGE)
+      volumeMounts:
+        - name: npm-publisher-volume
+          readOnly: true
+          mountPath: /tmp/npm-publisher
+      script: |
+        #!/bin/sh
+        cp /tmp/npm-publisher/.npmrc .npmrc
+        apk add --quiet --no-progress jq
+        PACKAGE_VERSION=$(jq -r .version package.json)
+        PACKAGE_NAME=$(jq -r .name package.json)
+        checkOnNexus=$(npm view $PACKAGE_NAME@$PACKAGE_VERSION --json)
+        if [ -z "$checkOnNexus" ]; then
+          npm publish --non-interactive
+        else
+          echo "$PACKAGE_NAME@$PACKAGE_VERSION already exists on Nexus"
+        fi
+      workingDir: $(workspaces.source.path)/$(params.PATH_CONTEXT)

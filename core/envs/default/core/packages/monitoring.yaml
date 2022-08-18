@@ -1,0 +1,9 @@
+releases:
+  kps:
+    labels:
+      package: monitoring
+    enabled: true
+  sloop:
+    labels:
+      package: monitoring
+    enabled: true

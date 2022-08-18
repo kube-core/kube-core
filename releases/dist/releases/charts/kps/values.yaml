@@ -1,0 +1,417 @@
+kps:
+  enabled: true
+
+  # Services
+  kubeDns:
+    enabled: true
+  coreDns:
+    enabled: false
+
+  # As for gke those aren't accessible to scrape metrics from
+  kubeProxy:
+    enabled: false
+  kubeScheduler:
+    enabled: false
+  kubeControllerManager:
+    enabled: false
+  kubeEtcd:
+    enabled: false
+
+  # Default rules
+  defaultRules:
+    rules:
+      kubeScheduler: false
+      kubeProxy: false
+
+  # additionalPrometheusRulesMap:
+  # # Usefull when using elastic prometheus exporter
+  # # https://grafana.com/oss/prometheus/exporters/elasticsearch-exporter/?tab=recording-rules#step-3-configure-recording-rules
+  #   elasticsearch:
+  #     groups:
+  #       - name: elasticsearch_rules
+  #         rules:
+  #           - record: elasticsearch_filesystem_data_free_percent
+  #             expr: 100 - elasticsearch_filesystem_data_used_percent
+  #           - record: elasticsearch_red_cluster_status
+  #             expr: sum by (cluster) (elasticsearch_cluster_health_status == 2)
+  #           - record: elasticsearch_yellow_cluster_status
+  #             expr: sum by (cluster) (elasticsearch_cluster_health_status == 1)
+  #           - record: elasticsearch_process_cpu_high
+  #             expr: sum by (cluster, instance, name) (elasticsearch_process_cpu_percent)
+  #           - record: elasticsearch_os_cpu_high
+  #             expr: sum by (cluster, instance, name) (elasticsearch_os_cpu_percent)
+  #           - record: elasticsearch_filesystem_data_used_percent
+  #             expr: sum by (cluster, instance, name) (100 * (elasticsearch_filesystem_data_size_bytes - elasticsearch_filesystem_data_free_bytes) / elasticsearch_filesystem_data_size_bytes)
+  #           - record: elasticsearch_node_disk_watermark_reached
+  #             expr: sum by (cluster, instance, name) (round((1 - (elasticsearch_filesystem_data_available_bytes / elasticsearch_filesystem_data_size_bytes)) * 100, 0.001))
+  #           - record: elasticsearch_heap_utilization_percentage
+  #             expr: sum by (cluster, instance, name) (100 * (elasticsearch_jvm_memory_used_bytes{area="heap"} / elasticsearch_jvm_memory_max_bytes{area="heap"}))
+  #   # Made for mongodb dashboard 14997
+  #   mongodb:
+  #     groups:
+  #       - name: mongodb_rules
+  #         rules:
+  #           - record: mongodb_rs_members_state
+  #             expr: mongodb_mongod_replset_member_state
+
+  prometheus:
+    prometheusSpec:
+      externalLabels:
+        cluster: cluster-name
+      ruleSelectorNilUsesHelmValues: false
+      serviceMonitorSelectorNilUsesHelmValues: false
+      podMonitorSelectorNilUsesHelmValues: false
+      probeSelectorNilUsesHelmValues: false
+      retention: 72h
+      thanos:
+        image: quay.io/thanos/thanos:v0.26.0
+        version: v0.26.0
+        objectStorageConfig:
+          name: kps-thanos-objstore-secret
+          key: objstore.yml
+    thanosService:
+      enabled: true
+    additionalServiceMonitors:
+      - name: thanos
+        endpoints:
+          - interval: 10s
+            port: http
+        jobLabel: thanos
+        namespaceSelector:
+          matchNames:
+            - monitoring
+        selector:
+          matchLabels:
+            app.kubernetes.io/name: kps-thanos
+    ingress:
+      enabled: false
+      annotations: {}
+      labels: {}
+      tls: []
+        # - secretName: domain-tls
+        #   hosts:
+        #   - domain.tld
+      hosts: []
+        # - domain.tld 
+
+  grafana:
+    replicas: 1
+    adminPassword: admin
+    # # To access dashboards without auth
+    # grafana.ini:
+    #   auth.anonymous:
+    #     enabled: true
+    #     org_name: Main Org.
+    #     org_role: Viewer
+    defaultDashboardsTimezone: Europe/Paris
+    sidecar:
+      datasources:
+        uid: thanos
+      dashboards:
+        provider:
+          folder: "Kps"
+    plugins:
+      - grafana-piechart-panel
+      - flant-statusmap-panel
+    datasources:
+      datasources.yaml:
+        apiVersion: 1
+        deleteDatasources:
+          - name: Prometheus
+            orgId: 1
+          - name: Thanos
+            orgId: 1
+        datasources:
+          - name: Thanos
+            type: prometheus
+            url: http://kps-thanos-query.monitoring.svc:9090
+            access: proxy
+            editable: false
+          # - name: Prometheus
+          #   type: prometheus
+          #   url: http://kps-prometheus.monitoring.svc:9090
+          #   access: proxy
+          #   editable: false
+    ingress:
+      enabled: false
+      annotations: {}
+      labels: {}
+      tls: []
+        # - secretName: domain-tls
+        #   hosts:
+        #   - domain.tld
+      hosts: []
+        # - domain.tld 
+          
+    dashboardProviders: {}
+      # dashboardproviders.yaml:
+      #   apiVersion: 1
+      #   providers:
+      #     - name: kubernetes
+      #       orgId: 1
+      #       folder: 'Kubernetes'
+      #       type: file
+      #       disableDeletion: true
+      #       editable: false
+      #       options:
+      #         path: /var/lib/grafana/dashboards/kubernetes
+      #     - name: telegraf
+      #       orgId: 1
+      #       folder: 'Telegraf'
+      #       type: file
+      #       disableDeletion: true
+      #       editable: false
+      #       options:
+      #         path: /var/lib/grafana/dashboards/telegraf
+      #     - name: thanos
+      #       orgId: 1
+      #       folder: 'Thanos'
+      #       type: file
+      #       disableDeletion: true
+      #       editable: false
+      #       options:
+      #         path: /var/lib/grafana/dashboards/thanos
+      #     - name: elastic-search
+      #       orgId: 1
+      #       folder: 'elastic-search'
+      #       type: file
+      #       disableDeletion: true
+      #       editable: false
+      #       options:
+      #         path: /var/lib/grafana/dashboards/elastic-search
+      #     - name: nginx
+      #       orgId: 1
+      #       folder: 'nginx'
+      #       type: file
+      #       disableDeletion: true
+      #       editable: false
+      #       options:
+      #         path: /var/lib/grafana/dashboards/nginx
+      #     - name: proxy
+      #       orgId: 1
+      #       folder: 'proxy'
+      #       type: file
+      #       disableDeletion: true
+      #       editable: false
+      #       options:
+      #         path: /var/lib/grafana/dashboards/proxy
+      #     - disableDeletion: true
+      #       editable: false
+      #       folder: Mongo
+      #       name: mongodb
+      #       options:
+      #         path: /var/lib/grafana/dashboards/mongodb
+      #       orgId: 1
+      #       type: file
+    dashboards: {}
+      # kubernetes:
+      #   k8s-cluster-compute-resources:
+      #     url: https://raw.githubusercontent.com/neo9/grafana-dashboards/master/kubernetes/k8s-cluster-compute-resources.json
+      #   k8s-namespace-compute-resources:
+      #     url: https://raw.githubusercontent.com/neo9/grafana-dashboards/master/kubernetes/k8s-namespace-compute-resources.json
+      #   k8s-nodes:
+      #     url: https://raw.githubusercontent.com/neo9/grafana-dashboards/master/kubernetes/k8s-nodes.json
+      #   k8s-pod-compute-resources:
+      #     url: https://raw.githubusercontent.com/neo9/grafana-dashboards/master/kubernetes/k8s-pod-compute-resources.json
+      #   k8s-pvc:
+      #     url: https://raw.githubusercontent.com/neo9/grafana-dashboards/master/kubernetes/k8s-pvc.json
+      #   k8s-statefulsets:
+      #     url: https://raw.githubusercontent.com/neo9/grafana-dashboards/master/kubernetes/k8s-statefulsets.json
+      #   k8s-use-method-node:
+      #     url: https://raw.githubusercontent.com/neo9/grafana-dashboards/master/kubernetes/k8s-use-method-node.json
+      #   k8s-workload:
+      #     url: https://raw.githubusercontent.com/neo9/grafana-dashboards/master/kubernetes/k8s-workload.json
+      #   cluster:
+      #     url: https://raw.githubusercontent.com/neo9/grafana-dashboards/master/kubernetes/k8s-cluster.json
+      # elastic-search:
+      #   elastic-search-telegraf:
+      #     gnetId: 266
+      #     revision: 4
+      #     datasource: Thanos
+      #   elastic-search-cluster:
+      #     gnetId: 2322
+      #     revision: 4
+      #     datasource: Thanos
+      #   elastic-exporter-dashboard:
+      #     datasource: Thanos
+      #     gnetId: 14191
+      #     revision: 1
+      # nginx:
+      #   ingress-controller-overview:
+      #     datasource: Thanos
+      #     gnetId: 9614
+      #     revision: 1
+      #   ingress-controller-overview-ngen:
+      #     datasource: Thanos
+      #     gnetId: 14314
+      #     revision: 2
+      #   request-handling-performance:
+      #     datasource: Thanos
+      #     gnetId: 12680
+      #     revision: 1
+      # proxy:
+      #   kube-dns:
+      #     gnetId: 12321
+      #     revision: 2
+      #     datasource: Thanos
+      #   core-dns:
+      #     gnetId: 12382
+      #     revision: 1
+      #     datasource: Thanos
+      # thanos:
+      #   thanos-sidecar:
+      #     url: https://raw.githubusercontent.com/neo9/grafana-dashboards/master/kubernetes/thanos-sidecar.json
+      #   thanos-store:
+      #     url: https://raw.githubusercontent.com/neo9/grafana-dashboards/master/kubernetes/thanos-store.json
+      #   thanos-compact:
+      #     url: https://raw.githubusercontent.com/neo9/grafana-dashboards/master/kubernetes/thanos-compact.json
+      #   thanos-query:
+      #     url: https://raw.githubusercontent.com/neo9/grafana-dashboards/master/kubernetes/thanos-query.json
+      # telegraf:
+      #   mongodb:
+      #     url: https://raw.githubusercontent.com/neo9/grafana-dashboards/master/telegraf/mongodb.json
+      #   es:
+      #     url: https://raw.githubusercontent.com/neo9/grafana-dashboards/master/telegraf/es-alpha.json
+      #   system-metrics:
+      #     gnetId: 6149
+      #     revision: 1
+      #     datasource: Thanos
+      # mongodb:
+      #   mongodb-dashboard:
+      #     datasource: Thanos
+      #     gnetId: 12079
+      #     revision: 3
+
+  alertmanager:
+    ingress:
+      enabled: false
+      annotations: {}
+      labels: {}
+      tls: []
+        # - secretName: domain-tls
+        #   hosts:
+        #   - domain.tld
+      hosts: []
+        # - domain.tld 
+    config: {}
+        # # Add opsgenie configuration like bellow
+        # global:
+        #   resolve_timeout: 5m
+        # inhibit_rules:
+        #   ## As gke won't let us edit resources for it
+        #   - target_matchers:
+        #       - alertname="CPUThrottlingHigh"
+        #       - container="metrics-server-nanny"
+        #   ## Might be noisy if not well-configured
+        #   - target_matchers:
+        #       - alertname="KubeCPUOvercommit"
+        #       - cluster="name-of-my-cluster"
+        # route:
+        #   group_by: ['alertname','job','namespace']
+        #   group_wait: 30s
+        #   group_interval: 5m
+        #   repeat_interval: 1h
+        #   receiver: 'default'
+        #   routes:
+        #     - matchers:
+        #         - alertname="InfoInhibitor"
+        #       receiver: 'null'
+        #     - matchers:
+        #         - alertname="Watchdog"
+        #       repeat_interval: 2m
+        #       group_interval: 2m
+        #       receiver: 'heartbeat'
+        # receivers:
+        #   - name: 'null'
+        #   - name: 'heartbeat'
+        #     webhook_configs:
+        #     - url: 'https://api.opsgenie.com/v2/heartbeats/cluster-name/ping'
+        #       send_resolved: true
+        #       http_config:
+        #         basic_auth:
+        #           password: ""
+        #   - name: 'default'
+        #     webhook_configs:
+        #     - url: 'http://kps-runner.monitoring.svc.cluster.local/api/alerts'
+        #       send_resolved: false
+        #       max_alerts: 1
+        #     opsgenie_configs:
+        #     - api_key: ""
+        #       send_resolved: true
+        #       message: |-
+        #         {{ if .CommonAnnotations.message }}
+        #           {{ .CommonAnnotations.message }}
+        #         {{ else if .CommonAnnotations.description }}
+        #           {{ .CommonAnnotations.description }}
+        #         {{ else }}
+        #           {{ range .Alerts }}
+        #             {{ range .Annotations.SortedPairs }}{{.Value }}{{ end }}
+        #           {{ end }}
+        #         {{ end }}
+        #       priority: '{{if or (eq .CommonLabels.severity "P1") (eq .CommonLabels.severity "P2") (eq .CommonLabels.severity "P3") (eq .CommonLabels.severity "P4") (eq .CommonLabels.severity "P5")}}{{ .CommonLabels.severity }}{{else}}P3{{end}}'
+
+kps-thanos:
+  enabled: true
+  fullnameOverride: kps-thanos
+  objstoreConfig: |-
+    type: s3
+    config:
+      bucket: kps-thanos
+      endpoint: kps-minio.monitoring.svc.cluster.local:9000
+      access_key: minio
+      secret_key: minio123
+      insecure: true
+  bucketweb:
+    enabled: true
+  compactor:
+    enabled: true
+    retentionResolutionRaw: 15d
+    retentionResolution5m: 30d
+    retentionResolution1h: 180d
+    persistence:
+      size: 20Gi
+  storegateway:
+    enabled: true
+  ruler:
+    enabled: false
+    # alertmanagers:
+    #   - http://kps-kube-prometheus-stack-alertmanager.monitoring.svc.cluster.local:9093
+    # config: |-
+    #   groups:
+    #     - name: "metamonitoring"
+    #       rules:
+    #         - alert: "PrometheusDown"
+    #           expr: absent(up{container="prometheus"})
+  query:
+    enabled: true
+    dnsDiscovery:
+      sidecarsService: kps-thanos-discovery
+      sidecarsNamespace: monitoring
+    replicaLabel: [prometheus_replica]
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+
+kps-minio:
+  enabled: true
+  resources:
+    requests:
+      memory: 1Gi
+  fullnameOverride: kps-minio
+  accessKey: "minio"
+  secretKey: "minio123"
+  defaultBucket:
+    enabled: true
+    name: kps-thanos
+    policy: none
+    purge: false
+  buckets: []
+
+kps-robusta:
+  enabled: false
+  enablePrometheusStack: false
+  enableServiceMonitors: false
+  disableCloudRouting: true
+  enablePlatformPlaybooks: false
+  clusterName: "neo9-default"

@@ -1,0 +1,12 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerBinding
+metadata:
+  name: parse-gitlab-user
+spec:
+  params:
+  - name: author-id
+    value: $(body.object_attributes.author_id)
+  - name: username
+    value: $(body.user.username)
+  - name: email
+    value: $(body.user.email)

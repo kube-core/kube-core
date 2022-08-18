@@ -1,0 +1,17 @@
+{{- if and (or .Values.clusterRole.create .Values.clusterRole.name) .Values.clusterRole.autoBindClusteRole }}
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ include "n9-api.fullname" . }}
+  labels:
+    {{- include "n9-api.labels" . | nindent 4 }}
+subjects:
+- kind: ServiceAccount
+  name: {{ include "n9-api.serviceAccountName" . }}
+  namespace: {{ .Release.Namespace }}
+  apiGroup: ""
+roleRef:
+  kind: ClusterRole
+  name: {{ include "n9-api.clusterRoleName" . }}
+  apiGroup: ""
+{{- end }}

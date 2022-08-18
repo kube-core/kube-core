@@ -1,0 +1,30 @@
+{{ if .Values.realms }}
+{{- $name := .Values.name }}
+
+{{- range $key, $value :=  (index .Values.realms ) }}
+
+---
+
+apiVersion: keycloak.org/v1alpha1
+kind: KeycloakRealm
+metadata:
+  name: "{{ $value.name }}"
+  labels:
+    app: "{{ $value.name }}"
+  {{- range $value.userGroups }}
+    users-{{ . }}: "users-{{ . }}"
+  {{- end }}
+spec:
+  realm:
+    {{- toYaml $value.realm | nindent 4 }}
+  instanceSelector:
+    matchLabels:
+      app: "{{ $name }}"
+  {{ if $value.realmOverrides }}
+  realmOverrides:
+    {{- toYaml $value.realmOverrides | nindent 4 }}
+  {{ end }}
+  unmanaged: {{ $value.unmanaged | default false | toString }}
+
+{{ end }}
+{{ end }}

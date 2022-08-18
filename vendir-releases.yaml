@@ -1,0 +1,385 @@
+apiVersion: vendir.k14s.io/v1alpha1
+kind: Config
+directories:
+  - path: releases/base
+    contents:
+      # Base Releases
+      - path: crossplane-buckets
+        helmChart:
+          name: crossplane-buckets
+          version: 0.1.1
+          repository:
+            url: https://charts.neo9.pro
+      - path: logging-operator
+        helmChart:
+          name: logging-operator
+          version: 3.17.8
+          repository:
+            url: https://kubernetes-charts.banzaicloud.com
+      
+      - path: cert-manager
+        helmChart: 
+          name: cert-manager
+          version: v1.3.0
+          repository:
+            url: https://charts.jetstack.io
+        
+      - path: chartmuseum
+        helmChart: 
+          name: chartmuseum
+          version: 3.4.0
+          repository:
+            url: https://chartmuseum.github.io/charts
+        
+      - path: crossplane
+        helmChart: 
+          name: crossplane
+          version: 1.7.1
+          repository:
+            url: https://charts.crossplane.io/stable
+        
+      - path: eck-operator
+        helmChart: 
+          name: eck-operator
+          version: 2.3.0
+          repository:
+            url: https://helm.elastic.co
+        
+      - path: efk
+        helmChart: 
+          name: efk
+          version: 1.1.0
+          repository:
+            url: https://charts.neo9.pro
+        
+      - path: estafette-k8s-node-compactor
+        helmChart: 
+          name: estafette-k8s-node-compactor
+          version: 1.1.0
+          repository:
+            url: https://helm.estafette.io
+        
+      - path: estafette-vulnerability-scanner
+        helmChart: 
+          name: estafette-vulnerability-scanner
+          version: 0.1.14
+          repository:
+            url: https://helm.estafette.io
+        
+      - path: external-dns
+        helmChart: 
+          name: external-dns
+          # version: 4.3.1
+          repository:
+            url: https://charts.bitnami.com/bitnami
+
+      - path: forecastle
+        helmChart: 
+          name: forecastle
+          version: v1.0.79
+          repository:
+            url: https://stakater.github.io/stakater-charts
+    
+      - path: n9-api
+        helmChart: 
+          name: n9-api
+          version: 1.3.1
+          repository:
+            url: https://charts.neo9.pro
+        
+      - path: istio-rules-external-services
+        helmChart: 
+          name: istio-rules-external-services
+          version: 1.12.1
+          repository:
+            url: https://charts.neo9.pro
+        
+      - path: keycloak
+        helmChart: 
+          name: keycloak
+          repository:
+            url: https://charts.bitnami.com/bitnami
+        
+      - path: keycloak-managed
+        helmChart: 
+          name: keycloak-managed
+          version: 0.7.0
+          repository:
+            url: https://charts.neo9.pro
+        
+      - path: kps
+        helmChart: 
+          name: kps
+          version: 1.0.0
+          repository:
+            url: https://charts.neo9.pro
+        
+      - path: kube-downscaler
+        helmChart: 
+          name: kube-downscaler
+          version: 0.3
+          repository:
+            url: https://charts.deliveryhero.io/
+        
+      - path: kube-fledged
+        helmChart: 
+          name: kube-fledged
+          version: v0.8.2
+          repository:
+            url: https://senthilrch.github.io/kubefledged-charts/
+        
+      - path: kubernetes-dashboard
+        helmChart: 
+          name: kubernetes-dashboard
+          version: 5.0.0
+          repository:
+            url: https://kubernetes.github.io/dashboard/
+        
+      - path: sonatype-nexus
+        helmChart: 
+          name: sonatype-nexus
+          version: 5.4.0
+          repository:
+            url: https://oteemo.github.io/charts
+        
+      - path: nginx
+        helmChart: 
+          name: nginx
+          # version: 9.7.3
+          repository:
+            url: https://charts.bitnami.com/bitnami
+        
+      - path: nginx-ingress-controller
+        helmChart: 
+          name: nginx-ingress-controller
+          # version: 6.0.1
+          repository:
+            url: https://charts.bitnami.com/bitnami
+        
+    
+      - path: patch-operator
+        helmChart: 
+          name: patch-operator
+          version: v0.1.1
+          repository:
+            url: https://charts.neo9.pro
+          
+      - path: polaris
+        helmChart: 
+          name: polaris
+          version: 5.1.0
+          repository:
+            url: https://charts.fairwinds.com/stable
+        
+      - path: predator
+        helmChart: 
+          name: predator
+          version: 1.6.1
+          repository:
+            url: https://zooz.github.io/helm/
+        
+      - path: reloader
+        helmChart: 
+          name: reloader
+          version: 0.0.104
+          repository:
+            url: https://stakater.github.io/stakater-charts
+        
+      - path: kubernetes-replicator
+        helmChart: 
+          name: kubernetes-replicator
+          version: 2.6.2
+          repository:
+            url: https://helm.mittwald.de
+        
+      - path: sonarqube
+        helmChart: 
+          name: sonarqube
+          version: 9.8.2
+          repository:
+            url: https://oteemo.github.io/charts
+        
+      - path: starboard-operator
+        helmChart: 
+          name: starboard-operator
+          version: 0.5.3
+          repository:
+            url: https://aquasecurity.github.io/helm-charts/
+
+      - path: velero
+        helmChart: 
+          name: velero
+          version: 2.29.4
+          repository:
+            url: https://vmware-tanzu.github.io/helm-charts
+      
+      - path: zeebe-cluster-helm
+        helmChart: 
+          name: zeebe-cluster-helm
+          version: 1.2.0
+          repository:
+            url: https://helm.camunda.io
+        
+      - path: zeebe-operate-helm
+        helmChart: 
+          name: zeebe-operate-helm
+          version: 1.1.3
+          repository:
+            url: https://helm.camunda.io
+        
+      - path: external-secrets
+        helmChart: 
+          name: external-secrets
+          version: 0.1.0
+          repository:
+            url: https://charts.neo9.pro
+        
+      - path: kubernetes-secret-generator
+        helmChart: 
+          name: kubernetes-secret-generator
+          version: 3.4.0
+          repository:
+            url: https://helm.mittwald.de
+        
+      - path: kube-cleanup-operator
+        helmChart: 
+          name: kube-cleanup-operator
+          version: 1.0.4
+          repository:
+            url: http://charts.lwolf.org
+        
+      - path: rabbitmq-cluster-operator
+        helmChart: 
+          name: rabbitmq-cluster-operator
+          version: 2.6.0
+          repository:
+            url: https://charts.bitnami.com/bitnami
+        
+      - path: sealed-secrets
+        helmChart: 
+          name: sealed-secrets
+          version: 2.1.8
+          repository:
+            url: https://bitnami-labs.github.io/sealed-secrets
+
+      # Local Releases
+      - path: chaos
+        directory:
+          path: ../../../releases/local/litmus
+                  
+      - path: raw
+        directory:
+          path: ../../../releases/local/raw
+                  
+      - path: ingress-access-operator
+        directory:
+          path: ../../../releases/local/ingress-access-operator
+                  
+      - path: estafette-gke-node-pool-shifter
+        directory:
+          path: ../../../releases/local/estafette-gke-node-pool-shifter
+                  
+      - path: estafette-gke-preemptible-killer
+        directory:
+          path: ../../../releases/local/estafette-gke-preemptible-killer
+
+      - path: cluster-logging
+        directory: 
+          path: ../../../releases/local/cluster-logging
+
+      - path: oauth2-proxy
+        directory: 
+          path: ../../../releases/local/oauth2-proxy
+
+      - path: container-registry-cleaner
+        directory: 
+          path: ../../../releases/local/container-registry-cleaner
+      - path: container-registry-operator
+        directory: 
+          path: ../../../releases/local/container-registry-operator
+      - path: flux
+        directory: 
+          path: ../../../releases/local/flux
+      - path: imagecache
+        directory: 
+          path: ../../../releases/local/imagecache
+      - path: istio-base
+        directory: 
+          path: ../../../releases/local/istio-base
+      - path: istio-grafana
+        directory: 
+          path: ../../../releases/local/istio-grafana
+      - path: istio-kiali
+        directory: 
+          path: ../../../releases/local/istio-kiali
+      - path: istio-prometheus
+        directory: 
+          path: ../../../releases/local/istio-prometheus
+      - path: istio-discovery
+        directory: 
+          path: ../../../releases/local/istio-discovery
+      - path: logging-stack
+        directory: 
+          path: ../../../releases/local/logging-stack
+      - path: metrics-server
+        directory: 
+          path: ../../../releases/local/metrics-server
+      - path: minio-operator
+        directory: 
+          path: ../../../releases/local/minio-operator
+      - path: minio-tenants
+        directory: 
+          path: ../../../releases/local/minio-tenants
+      - path: mysql-backup
+        directory: 
+          path: ../../../releases/local/mysql-backup
+      - path: mongodb-kubernetes-operator
+        directory: 
+          path: ../../../releases/local/mongodb-kubernetes-operator
+      - path: keycloak-operator
+        directory: 
+          path: ../../../releases/local/keycloak-operator
+      - path: postgres-operator
+        directory: 
+          path: ../../../releases/local/postgres-operator
+      - path: node-initializer
+        directory: 
+          path: ../../../releases/local/node-initializer
+      - path: priority-class
+        directory: 
+          path: ../../../releases/local/priority-class
+      - path: rabbitmq-cluster
+        directory: 
+          path: ../../../releases/local/rabbitmq-cluster
+      - path: rabbitmq-config
+        directory: 
+          path: ../../../releases/local/rabbitmq-config
+      - path: sloop
+        directory: 
+          path: ../../../releases/local/sloop
+      - path: sloth
+        directory: 
+          path: ../../../releases/local/sloth
+      - path: system-jobs
+        directory: 
+          path: ../../../releases/local/system-jobs
+      - path: tekton
+        directory: 
+          path: ../../../releases/local/tekton
+      - path: tekton-catalog
+        directory: 
+          path: ../../../releases/local/tekton-catalog
+      - path: tekton-logging
+        directory: 
+          path: ../../../releases/local/tekton-logging
+
+  - path: releases/crds
+    contents:
+      # CRD Releases
+      - path: chaos
+        helmChart:
+          name: litmus-core
+          version: 2.9.0
+          repository:
+            url: https://litmuschaos.github.io/litmus-helm/
+        includePaths: ["crds/*", "crds", "Chart.yaml", "values.yaml"]

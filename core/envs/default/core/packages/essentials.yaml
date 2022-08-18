@@ -1,0 +1,73 @@
+### Essentials Package
+## This pack should always contain the essentials features expected for a standard cluster.
+## It is opinionated, and is the default pack.
+###
+
+releases:
+  # Ingress
+  nginx-ingress-controller:
+    labels:
+      package: essentials
+    enabled: true
+  ingress-access-operator:
+    labels:
+      package: essentials
+    enabled: true
+  external-dns:
+    labels:
+      package: essentials
+    enabled: true
+  cert-manager:
+    labels:
+      package: essentials
+    enabled: true
+  cluster-issuers:
+    labels:
+      package: essentials
+    enabled: true
+
+  # Cluster Tools
+  sealed-secrets:
+    labels:
+      package: essentials
+    enabled: true
+  reloader:
+    labels:
+      package: essentials
+    enabled: true
+  replicator:
+    labels:
+      package: essentials
+    enabled: true
+  secret-generator:
+    labels:
+      package: essentials
+    enabled: true
+  kube-downscaler:
+    labels:
+      package: essentials
+    enabled: true
+  system-config:
+    labels:
+      package: essentials
+    enabled: true
+  priority-class:
+    labels:
+      package: essentials
+    enabled: true
+
+  # Backups
+  velero:
+    labels:
+      package: essentials
+    enabled: true
+
+  # Admin
+  polaris:
+    labels:
+      package: essentials
+    enabled: true
+  forecastle:
+    labels:
+      package: essentials
+    enabled: true

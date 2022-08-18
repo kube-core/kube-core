@@ -1,0 +1,157 @@
+# Globals
+- ./envs/globals.yaml
+
+####################
+# START - Releases #
+####################
+
+# Schema
+# Default values for all standard releases
+- ./envs/default/core/releases/schema.yaml
+####################
+
+####################
+# Releases
+# Defines all standard releases
+- ./envs/default/core/releases/releases.yaml
+# Defines all raw releases
+- ./envs/default/core/releases/releases-raw.yaml
+# Defines all custom releases
+- ./envs/default/core/releases/releases-custom.yaml
+# Defines default templated values for all releases
+- ./envs/default/core/releases/releases-config.yaml
+# Defines default overrides for all releases
+- ./envs/default/core/releases/releases-values.yaml
+# Defines default secrets for all releases
+- ./envs/default/core/releases/releases-secrets.yaml
+# Defines default scheduling rules for all releases
+- ./envs/default/core/releases/releases-scheduling.yaml
+####################
+
+####################
+# Dynamic injection of all extra releases in "./env/default/core/releases/extra"
+{{ exec "bash" (list "-c" (printf "./scripts/read-extra-releases.sh %s" "default")) | indent 0 | trim }}
+####################
+
+####################
+# END - Releases   #
+####################
+
+
+####################
+# START - Config   #
+####################
+
+####################
+# Core Config - Global Framework Values
+- ./envs/default/core.yaml
+# Cluster Config -  Everyhing related to the cluster
+- ./envs/default/cluster.yaml
+####################
+
+####################
+# Dynamic injection of all layers in "./env/default/core/config"
+{{ exec "bash" (list "-c" (printf "./scripts/read-layers.sh %s" "default")) | indent 0 | trim }}
+####################
+
+####################
+# END - Config     #
+####################
+
+
+####################
+# START - Packages #
+####################
+
+# Toggle releases easily
+- ./envs/default/core/packages/base.yaml
+
+# If test enabled, only use test
+# Used to validate that a fresh cluster works as expected
+{{ if (.Values | get "core.packages.test.enabled" false) }}
+- ./envs/default/core/packages/test.yaml
+
+# Else if all enabled, only use all
+# Used for integration test of all releases
+{{ else if (.Values | get "core.packages.all.enabled" false) }}
+- ./envs/default/core/packages/all.yaml
+
+# Else, use user defined packages
+# This is the normal behavior, and what consumers should use
+{{ else }}
+
+
+# Essentials
+{{ if (.Values | get "core.packages.cluster-tools.enabled" false) }}
+- ./envs/default/core/packages/cluster-tools.yaml
+{{ end }}
+
+{{ if (.Values | get "core.packages.ingress.enabled" false) }}
+- ./envs/default/core/packages/ingress.yaml
+{{ end }}
+
+{{ if (.Values | get "core.packages.essentials.enabled" false) }}
+- ./envs/default/core/packages/essentials.yaml
+{{ end }}
+
+
+# Observability
+{{ if (.Values | get "core.packages.logging.enabled" false) }}
+- ./envs/default/core/packages/logging.yaml
+{{ end }}
+
+{{ if (.Values | get "core.packages.crds.enabled" false) }}
+- ./envs/default/core/packages/crds.yaml
+{{ end }}
+
+{{ if (.Values | get "core.packages.logging-v2.enabled" false) }}
+- ./envs/default/core/packages/logging-v2.yaml
+{{ end }}
+
+{{ if (.Values | get "core.packages.minio.enabled" false) }}
+- ./envs/default/core/packages/minio.yaml
+{{ end }}
+
+{{ if (.Values | get "core.packages.rabbitmq.enabled" false) }}
+- ./envs/default/core/packages/rabbitmq.yaml
+{{ end }}
+
+{{ if (.Values | get "core.packages.monitoring.enabled" false) }}
+- ./envs/default/core/packages/monitoring.yaml
+{{ end }}
+
+# Estafette
+{{ if (.Values | get "core.packages.estafette.enabled" false) }}
+- ./envs/default/core/packages/estafette.yaml
+{{ end }}
+
+# Tekton
+{{ if (.Values | get "core.packages.tekton.enabled" false) }}
+- ./envs/default/core/packages/tekton.yaml
+{{ end }}
+
+# Istio
+{{ if (.Values | get "core.packages.istio.enabled" false) }}
+- ./envs/default/core/packages/istio.yaml
+{{ end }}
+
+{{ if (.Values | get "core.packages.crossplane.enabled" false) }}
+- ./envs/default/core/packages/crossplane.yaml
+{{ end }}
+
+{{ end }}
+
+####################
+# END - Packages   #
+####################
+
+
+# Custom Layers
+{{ if (.Values | get "core.ha" false) }}
+- ./envs/default/core/custom/ha.yaml
+{{ end }}
+
+
+
+# A last chance to override anything :)
+- ./envs/overrides.yaml

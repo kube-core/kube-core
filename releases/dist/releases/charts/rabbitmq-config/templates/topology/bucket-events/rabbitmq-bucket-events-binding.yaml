@@ -1,0 +1,11 @@
+apiVersion: rabbitmq.com/v1beta1
+kind: Binding
+metadata:
+  name: {{ .Values.cluster.config.name }}-bucket-events-binding
+spec:
+  source: {{ .Values.cluster.config.name }}-bucket-events # an existing exchange
+  destination: {{ .Values.cluster.config.name }}-bucket-events # an existing queue
+  destinationType: queue # can be 'queue' or 'exchange'
+  rabbitmqClusterReference:
+    name: rabbitmq
+    namespace: rabbitmq

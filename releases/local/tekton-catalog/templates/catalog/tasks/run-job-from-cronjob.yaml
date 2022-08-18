@@ -1,0 +1,110 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: run-job-from-cronjob
+  namespace: tekton-pipelines
+  labels:
+    app.kubernetes.io/version: "0.0.1"
+  annotations:
+    tekton.dev/pipelines.minVersion: "0.12.1"
+    tekton.dev/tags: job, cronjob
+    tekton.dev/displayName: "run job from cronjob"
+spec:
+  description: >-
+    Run a job from a cronjob
+  volumes:
+    - name: kubeconfig
+      secret:
+        secretName: kubeconfig
+    - name: kubeconfig-internal-gcloud
+      secret:
+        secretName: kubeconfig-internal-gcloud
+    - name: kubeconfig-no-gcloud
+      secret:
+        secretName: kubeconfig-no-gcloud
+    - name: tekton
+      secret:
+        secretName: tekton
+  params:
+    - name: run-task
+      description: An easy way to skip task
+      type: string
+      default: "true"
+
+    - name: cronjob-source-namespace
+      description: The namespace of the cronjob source
+      type: string
+      default: ""
+
+    - name: cronjob-source-name
+      description: The name of the cronjob source
+      type: string
+      default: ""
+
+    - name: job-name-prefix
+      description: The name of the created job
+      type: string
+      default: ""
+
+    - name: wait-for-job-to-be-finished
+      description: Wait or run job in background
+      type: string
+      default: "true"
+
+    - name: job-timeout
+      description: Job timeout
+      type: string
+      default: "300s"
+
+    - name: image
+      description: The image used by the task
+      type: string
+      default: neo9sas/devops-tools:v1.5.0
+
+    - name: sleep
+      description: The PR URL
+      type: string
+      default: "false"
+
+    - name: sleep-time
+      description: The PR URL
+      type: string
+      default: "600"
+
+  steps:
+    - name: run-job
+      image: $(params.image)
+      imagePullPolicy: Always
+      command: ["/bin/bash"]
+      volumeMounts:
+        - name: kubeconfig
+          mountPath: /tmp/kubeconfig
+        - name: kubeconfig-internal-gcloud
+          mountPath: /tmp/kubeconfig-internal-gcloud
+        - name: kubeconfig-no-gcloud
+          mountPath: /tmp/kubeconfig-no-gcloud
+        - name: tekton
+          mountPath: /tmp/tekton
+      env:
+        - name: KUBECONFIG
+          value: /tmp/kubeconfig-internal-gcloud/kubeconfig-internal-gcloud.yaml
+      args:
+        - -c
+        - |
+          #!/usr/bin/env bash
+
+          set -x
+
+          if [[ "$(params.sleep)" == "true" ]]; then
+            sleep $(params.sleep-time)
+          fi
+
+          if [[ "$(params.run-task)" == "true" ]]; then
+            jobName=$(params.job-name-prefix)-$(date +%s)
+            kubectl -n $(params.cronjob-source-namespace) create job --from=cronjob/$(params.cronjob-source-name) ${jobName}
+            if [[ "$(params.wait-for-job-to-be-finished)" == "true" ]]; then
+              kubectl -n $(params.cronjob-source-namespace) wait --for=condition=complete --timeout=$(params.job-timeout) job/${jobName}
+            fi
+          else
+            echo "task skipped"
+          fi

@@ -1,0 +1,25 @@
+{{- range .Values.externalService }}
+{{- if not .httpOnly }}
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ .name }}
+  namespace: {{ $.Release.Namespace }}
+spec:
+  hosts:
+  - {{ .host }}
+  gateways:
+  - mesh
+  http:
+  - match:
+    - gateways:
+      - mesh
+      port: {{ default "1443" .tlsOriginationPort }}
+    rewrite:
+      authority: {{ .host }}:{{ default "443" .httpsPort }}
+    route:
+    - destination:
+        host: {{ .host }}
+{{- end }}
+{{- end }}

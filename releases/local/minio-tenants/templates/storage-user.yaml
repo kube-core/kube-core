@@ -1,0 +1,8 @@
+apiVersion: v1
+stringData:
+  CONSOLE_ACCESS_KEY: {{ .Values.credentials.user.user }}
+  CONSOLE_SECRET_KEY: {{ .Values.credentials.user.password }}
+kind: Secret
+metadata:
+  name: storage-user
+type: Opaque

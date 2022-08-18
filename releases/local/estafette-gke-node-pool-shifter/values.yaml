@@ -1,0 +1,48 @@
+affinity:
+  nodeAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+    - preference:
+        matchExpressions:
+        - key: cloud.google.com/gke-preemptible
+          operator: In
+          values:
+          - "true"
+      weight: 10
+extraArgs: []
+extraEnv: {}
+extraLabels: {}
+extraPodLabels: {}
+fullnameOverride: ""
+image:
+  pullPolicy: IfNotPresent
+  repository: estafette/estafette-gke-node-pool-shifter
+  tag: 1.2.4
+imagePullSecrets: []
+interval: 300
+logFormat: plaintext
+nameOverride: ""
+nodePoolFrom: node-pool-a
+nodePoolFromMinNode: 0
+nodePoolTo: node-pool-b
+nodeSelector: {}
+podSecurityContext: {}
+rbac:
+  enable: true
+replicaCount: 1
+resources:
+  limits:
+    cpu: 50m
+    memory: 128Mi
+  requests:
+    cpu: 10m
+    memory: 16Mi
+secret:
+  googleServiceAccountKeyfileJson: '{"type": "service_account"}'
+  useGcpServiceAccountAnnotation: false
+  valuesAreBase64Encoded: false
+securityContext: {}
+serviceAccount:
+  create: true
+  name: null
+tolerations: []
+secretName: estafette-gke-node-pool-shifter

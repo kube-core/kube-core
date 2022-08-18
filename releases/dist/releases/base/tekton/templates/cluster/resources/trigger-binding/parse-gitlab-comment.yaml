@@ -1,0 +1,16 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerBinding
+metadata:
+  name: parse-gitlab-comment
+spec:
+  params:
+  - name: comment
+    value: $(body.object_attributes.note)
+  - name: author-id
+    value: $(body.object_attributes.author_id)
+  - name: username
+    value: $(body.user.username)
+  - name: email
+    value: $(body.user.email)
+  - name: comment-url
+    value: $(body.object_attributes.url)

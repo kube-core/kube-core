@@ -1,0 +1,34 @@
+apiVersion: logging.banzaicloud.io/v1beta1
+kind: Logging
+metadata:
+  name: logging
+spec:
+  {{ if .Values.cluster.logging.stack.fluentd.enabled }}
+  fluentd:
+    bufferStorageVolume:
+      pvc:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: {{ .Values.cluster.logging.stack.fluentd.buffer.storageSize }}
+          storageClassName: {{ .Values.cluster.logging.stack.fluentd.buffer.storageClass }}
+          volumeMode: Filesystem
+    scaling:
+      replicas: {{ .Values.cluster.logging.stack.fluentd.replicas }}
+      {{ if (eq .Values.cluster.logging.stack.fluentd.drain true) }}
+      drain: 
+        enabled: true
+      {{ end }}
+    tolerations: {{ toYaml .Values.cluster.logging.stack.fluentd.tolerations | nindent 6 }}
+    affinity: {{ toYaml .Values.cluster.logging.stack.fluentd.affinity | nindent 6 }}
+  {{ end }}
+  {{ if .Values.cluster.logging.stack.fluentbit.enabled }}
+  fluentbit:
+    bufferStorage:
+      storage.backlog.mem_limit: {{ .Values.cluster.logging.stack.fluentbit.buffer.mem_limit }}
+    tolerations: {{ toYaml .Values.cluster.logging.stack.fluentbit.tolerations | nindent 6 }}
+    affinity: {{ toYaml .Values.cluster.logging.stack.fluentbit.affinity | nindent 6 }}
+  {{ end }}
+  controlNamespace: {{ .Release.Namespace }}

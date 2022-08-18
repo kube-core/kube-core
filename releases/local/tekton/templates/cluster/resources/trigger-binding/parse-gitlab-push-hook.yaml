@@ -1,0 +1,15 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerBinding
+metadata:
+  name: parse-gitlab-push-hook
+  namespace: tekton-pipelines
+spec:
+  params:
+  - name: git-url
+    value: $(body.repository.url)
+  - name: git-project-name
+    value: $(body.repository.name)
+  - name: git-sha
+    value: $(body.checkout_sha)
+  - name: project-id
+    value: $(body.project_id)

@@ -1,0 +1,9 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerBinding
+metadata:
+  name: parse-param-notify-slack-extensions
+  namespace: tekton-pipelines
+spec:
+  params:
+  - name: notify-slack
+    value: $(extensions.notify-slack)

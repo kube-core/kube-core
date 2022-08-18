@@ -1,0 +1,250 @@
+### These should be implemented in each project. 
+# Keep these up to date to help implementing quickly.
+
+# Global project variables
+project:
+  name: KUBE_CORE_PROJECT_NAME
+  description: KUBE_CORE_PROJECT_DESCRIPTION
+  repository: KUBE_CORE_PROJECT_REPOSITORY
+  ref: KUBE_CORE_PROJECT_REF
+  path: KUBE_CORE_PROJECT_PATH
+
+# Git Repository Info (used to generate git related stuff)
+git:
+  provider: KUBE_CORE_GIT_PROVIDER
+  web: KUBE_CORE_GIT_WEB
+  api:
+    url: KUBE_CORE_GIT_API_URL
+    host: KUBE_CORE_GIT_API_HOST
+    token: KUBE_CORE_GIT_API_TOKEN
+  ssh:
+    url: KUBE_CORE_GIT_SSH_URL
+    host: KUBE_CORE_GIT_SSH_HOST
+    key: KUBE_CORE_GIT_SSH_KEY
+    known_hosts: KUBE_CORE_GIT_SSH_KNOWN_HOSTS
+  webhooks:
+    token: KUBE_CORE_GIT_WEBHOOKS_TOKEN
+  bot:
+    user: KUBE_CORE_GIT_BOT_USER
+    name: KUBE_CORE_GIT_BOT_NAME
+
+# GitOps Repository Info - Can differ from git repo !
+gitops:
+  api: KUBE_CORE_GITOPS_API
+  ssh: KUBE_CORE_GITOPS_SSH
+  web: KUBE_CORE_GITOPS_WEB
+  repository: KUBE_CORE_GITOPS_REPOSITORY
+  ref: KUBE_CORE_GITOPS_REF
+  path: KUBE_CORE_GITOPS_PATH
+  refresh: 1m #KUBE_CORE_GITOPS_REFRESH
+  ssh_key: KUBE_CORE_GITOPS_SSH_KEY
+  autocommit: false #KUBE_CORE_GITOPS_AUTOCOMMIT
+
+# Cloud Provider information
+cloud:
+  provider: KUBE_CORE_CLOUD_PROVIDER
+  project: KUBE_CORE_CLOUD_PROJECT
+  registry:
+    hostname: KUBE_CORE_CLOUD_REGISTRY_HOSTNAME
+  default: 
+    location: KUBE_CORE_CLOUD_DEFAULT_LOCATION
+
+
+# Cluster configuration
+cluster:
+  config:
+    backups: 
+      schedule: "0 12 * * *" #KUBE_CORE_CLUSTER_CONFIG_BACKUPS_SCHEDULE
+    name: KUBE_CORE_CLUSTER_CONFIG_NAME
+    context: KUBE_CORE_CLUSTER_CONFIG_CONTEXT
+    domain: KUBE_CORE_CLUSTER_CONFIG_DOMAIN
+    additionnalDomains: [] # KUBE_CORE_CLUSTER_CONFIG_ADDITIONNAL_DOMAINS
+    cidr: 
+    - name: cluster-range
+      cidr: KUBE_CORE_CLUSTER_CONFIG_CIDR_CLUSTER_RANGE
+    - name: cluster-nat
+      cidr: KUBE_CORE_CLUSTER_CONFIG_CIDR_CLUSTER_NAT
+    network:
+      type: KUBE_CORE_CLUSTER_CONFIG_NETWORK_TYPE
+    repository:
+      name: KUBE_CORE_CLUSTER_CONFIG_REPOSITORY_NAME
+      url: KUBE_CORE_CLUSTER_CONFIG_REPOSITORY_URL
+      ref: KUBE_CORE_CLUSTER_CONFIG_REPOSITORY_REF
+      path: KUBE_CORE_CLUSTER_CONFIG_REPOSITORY_PATH
+    adminEmail: KUBE_CORE_CLUSTER_CONFIG_ADMIN_EMAIL
+    schedule: "Mon-Fri 08:00-20:00 Europe/Paris" #KUBE_CORE_CLUSTER_CONFIG_SCHEDULE
+    downscalerExcludedNamespaces: "system-tools,namespace-node-affinity" #KUBE_CORE_CLUSTER_CONFIG_DOWNSCALER_EXCLUDED_NAMESPACES
+
+  common:
+    globalLabels: {}
+    defaultIngressClass: nginx
+    defaultVisitorGroups: self
+    defaultIssuerName: "letsencrypt-staging"
+    defaultIssuerKind: "ClusterIssuer"
+    # See how to refactor the following
+    # Service
+    defaultServiceAnnotations:
+      ingress.neo9.io/expose-annotations: |-
+        kubernetes.io/ingress.class: nginx
+        cert-manager.io/cluster-issuer: letsencrypt-staging
+        external-dns.alpha.kubernetes.io/ttl: 5
+        ingress.neo9.io/allowed-visitors: self
+        ingress.neo9.io/access-operator-enabled: true
+        nginx.ingress.kubernetes.io/ssl-redirect: true
+        nginx.ingress.kubernetes.io/force-ssl-redirect: true
+        nginx.ingress.kubernetes.io/proxy-body-size: 200m
+        nginx.org/client-max-body-size: 200m
+        forecastle.stakater.com/expose: true
+        exposeIngressUrl: globally
+      ingress.neo9.io/expose-labels: |-
+        ingress.neo9.io/access-operator-enabled: true
+    defaultServiceLabels:
+      ingress.neo9.io/expose: "true"
+    # Ingress
+    defaultIngressLabels:
+      ingress.neo9.io/access-operator-enabled: "true"
+    defaultIngressAnnotations:
+      kubernetes.io/ingress.class: "nginx"
+      cert-manager.io/cluster-issuer: "letsencrypt-staging"
+      external-dns.alpha.kubernetes.io/ttl: "5"
+      ingress.neo9.io/allowed-visitors: "self"
+      ingress.neo9.io/access-operator-enabled: "true"
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/proxy-body-size: "200m"
+      nginx.org/client-max-body-size: "200m"
+      forecastle.stakater.com/expose: "true"
+      exposeIngressUrl: "globally"
+
+  logging:
+    flows:
+      flows:
+      - name: app
+        namespaces:
+        - dev
+        - integration
+        - validation
+        - staging
+        - preproduction
+        - preprod
+        - production
+        - prod
+      - name: cluster
+        namespaces:
+        - nginx-ingress
+        - nginx-istio-ingress
+    integrations:
+      es:
+        enabled: true
+    stack:
+      esStackVersion: 8.3.3
+      es:
+        enabled: true
+        nodes:
+          count: 3
+          storageSize: 50Gi
+          storageClass: gcp-sc-retain-wait-ssd
+          # esJavaOpts: -Xms512m -Xmx512m # Always 50% of requested memory
+          esJavaOpts: -Xms2g -Xmx2g # Always 50% of requested memory
+          resources:
+            requests:
+              memory: 4Gi
+              cpu: 1
+            limits:
+              memory: 4Gi
+          affinity: {}
+            # nodeAffinity:
+            #   requiredDuringSchedulingIgnoredDuringExecution:
+            #     nodeSelectorTerms:
+            #     - matchExpressions:
+            #       - key: type
+            #         operator: In
+            #         values:
+            #         - search
+          nodeSelector: {}
+          tolerations:
+          - key: "type"
+            operator: "Equal"
+            value: "search"
+            effect: "NoSchedule"
+          - key: "type"
+            operator: "Equal"
+            value: "search"
+            effect: "NoExecute"
+          - key: "type"
+            operator: "Equal"
+            value: "logging"
+            effect: "NoSchedule"
+          - key: "type"
+            operator: "Equal"
+            value: "logging"
+            effect: "NoExecute"
+          - key: "type"
+            operator: "Equal"
+            value: "monitoring"
+            effect: "NoSchedule"
+          - key: "type"
+            operator: "Equal"
+            value: "monitoring"
+            effect: "NoExecute"
+      kibana:
+        enabled: true
+      minio:
+        enabled: true
+      fluentd:
+        enabled: true
+        replicas: 3
+        buffer:
+          storageSize: 10Gi
+          storageClass: gcp-sc-retain-wait-ssd
+        tolerations:
+        - key: "type"
+          operator: "Equal"
+          value: "monitoring"
+          effect: "NoSchedule"
+        - key: "type"
+          operator: "Equal"
+          value: "monitoring"
+          effect: "NoExecute"
+        affinity: {}
+      fluentbit:
+        enabled: true
+        buffer:
+          mem_limit: 250M
+        tolerations:
+        - key: "type"
+          operator: "Equal"
+          value: "monitoring"
+          effect: "NoSchedule"
+        - key: "type"
+          operator: "Equal"
+          value: "monitoring"
+          effect: "NoExecute"
+        - key: "type"
+          operator: "Equal"
+          value: "production"
+          effect: "NoSchedule"
+        - key: "type"
+          operator: "Equal"
+          value: "production"
+          effect: "NoExecute"
+        - key: "type"
+          operator: "Equal"
+          value: "system"
+          effect: "NoSchedule"
+        - key: "type"
+          operator: "Equal"
+          value: "system"
+          effect: "NoExecute"
+        affinity: {}
+
+  delivery:
+    namespace: integration
+    branch: develop
+    config:
+      run:
+        tests: "true"
+    node:
+      version: "14.15.4"
+      tests:
+        image: "ihebchakroun/node-14.15.4-chrome-lighthouse:latest"

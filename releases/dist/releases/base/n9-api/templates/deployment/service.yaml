@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "n9-api.fullname" . }}
+  labels:
+    {{- include "n9-api.labels" . | nindent 4 }}
+    {{- if .Values.service.labels }}
+    {{ toYaml .Values.service.labels | indent 4 | trim }}
+    {{- end }}
+    {{- if eq .Values.api.type "java" }}
+    spring-boot: "true"
+    {{- end }}
+  {{- if .Values.service.annotations }}
+  annotations:
+    {{ toYaml .Values.service.annotations | indent 4 | trim }}
+  {{- end }}
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    {{- include "n9-api.selectorLabels" . | nindent 4 }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  {{- if .Values.metrics.enabled }}
+    - port: {{ default ( include "n9-api.apiType-metrics-port" . ) .Values.metrics.port }}
+      targetPort: metrics
+      protocol: TCP
+      name: metrics
+  {{- end }}
+  {{- range .Values.service.additionalPorts }}
+    - port: {{ .port }}
+      name: {{ .name }}
+      targetPort: {{ .name }}
+      protocol: TCP
+  {{- end }}

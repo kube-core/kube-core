@@ -1,0 +1,8 @@
+schedule: {{ index .Values.releases .Release.Name "config" "schedule" }}
+concurrencyPolicy: {{ index .Values.releases .Release.Name "config" "concurrencyPolicy" }}
+restartPolicy: {{ index .Values.releases .Release.Name "config" "restartPolicy" }}
+secretName: {{ index .Values.releases .Release.Name "config" "secretName" }}
+cloud: {{ toYaml .Values.cloud | nindent 2 }}
+nodeSelector: {{ toYaml (index .Values.releases .Release.Name "scheduling" "nodeSelector") | nindent 2 }}
+tolerations: {{ toYaml (index .Values.releases .Release.Name "scheduling"  "tolerations") | nindent 2 }} 
+affinity: {{ toYaml (index .Values.releases .Release.Name "scheduling" "affinity") | nindent 2 }}

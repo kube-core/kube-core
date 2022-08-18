@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: custom-init-entrypoint
+  labels:
+    app: custom-init
+data:
+  entrypoint.sh: |
+    #!/usr/bin/env bash
+
+    set -euo pipefail
+
+    DEBIAN_FRONTEND=noninteractive
+    ROOT_MOUNT_DIR="${ROOT_MOUNT_DIR:-/root}"
+
+    # We use chroot to run the following commands in the host root (mounted as the /root volume in the container)
+    sysctl -w fs.inotify.max_user_watches=655360
+
+

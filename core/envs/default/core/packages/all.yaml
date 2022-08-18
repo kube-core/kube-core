@@ -1,0 +1,255 @@
+### All Package
+## All releases, enabled
+## You probably shouldn't use this for anything else than testing
+## Generated with : helmfile build | yq e - -P -o json | jq -r '.renderedvalues.releases[] | {(.release.name): {enabled: true}}' | jq -s '{releases: (add)}'| yq e - -P
+###
+
+releases:
+  cert-manager:
+    labels:
+      package: all
+    enabled: true
+  chaos:
+    labels:
+      package: all
+    enabled: true
+  chartmuseum:
+    labels:
+      package: all
+    enabled: true
+  cluster-issuers:
+    labels:
+      package: all
+    enabled: true
+  cluster-logging:
+    labels:
+      package: all
+    enabled: true
+  container-registry-cleaner:
+    labels:
+      package: all
+    enabled: true
+  container-registry-operator:
+    labels:
+      package: all
+    enabled: true
+  crossplane:
+    labels:
+      package: all
+    enabled: true
+  eck-operator:
+    labels:
+      package: all
+    enabled: true
+  eck-operator-crds:
+    labels:
+      package: all
+    enabled: true
+  efk:
+    labels:
+      package: all
+    enabled: true
+  estafette-gke-node-pool-shifter:
+    labels:
+      package: all
+    enabled: true
+  estafette-gke-preemptible-killer:
+    labels:
+      package: all
+    enabled: true
+  estafette-k8s-node-compactor:
+    labels:
+      package: all
+    enabled: true
+  estafette-vulnerability-scanner:
+    labels:
+      package: all
+    enabled: true
+  external-dns:
+    labels:
+      package: all
+    enabled: true
+  flux:
+    labels:
+      package: all
+    enabled: true
+  forecastle:
+    labels:
+      package: all
+    enabled: true
+  imagecache:
+    labels:
+      package: all
+    enabled: true
+  ingress-access-operator:
+    labels:
+      package: all
+    enabled: true
+  istio-ingress-sidecar:
+    labels:
+      package: all
+    enabled: true
+  istio-rules-external-services:
+    labels:
+      package: all
+    enabled: true
+  keycloak:
+    labels:
+      package: all
+    enabled: true
+  keycloak-dev:
+    labels:
+      package: all
+    enabled: true
+  kps:
+    labels:
+      package: all
+    enabled: true
+  kube-cleanup-operator:
+    labels:
+      package: all
+    enabled: true
+  kube-downscaler:
+    labels:
+      package: all
+    enabled: true
+  kube-fledged:
+    labels:
+      package: all
+    enabled: true
+  kubernetes-dashboard:
+    labels:
+      package: all
+    enabled: true
+  logging-operator:
+    labels:
+      package: all
+    enabled: true
+  logging-stack:
+    labels:
+      package: all
+    enabled: true
+  metrics-server:
+    labels:
+      package: all
+    enabled: true
+  minio-operator:
+    labels:
+      package: all
+    enabled: true
+  minio-tenants:
+    labels:
+      package: all
+    enabled: true
+  mongodb-operator:
+    labels:
+      package: all
+    enabled: true
+  nexus:
+    labels:
+      package: all
+    enabled: true
+  nginx:
+    labels:
+      package: all
+    enabled: true
+  nginx-ingress-controller:
+    labels:
+      package: all
+    enabled: true
+  nginx-istio-ingress-controller:
+    labels:
+      package: all
+    enabled: true
+  node-initializer:
+    labels:
+      package: all
+    enabled: true
+  polaris:
+    labels:
+      package: all
+    enabled: true
+  predator:
+    labels:
+      package: all
+    enabled: true
+  priority-class:
+    labels:
+      package: all
+    enabled: true
+  rabbitmq-cluster:
+    labels:
+      package: all
+    enabled: true
+  rabbitmq-config:
+    labels:
+      package: all
+    enabled: true
+  rabbitmq-operators:
+    labels:
+      package: all
+    enabled: true
+  reloader:
+    labels:
+      package: all
+    enabled: true
+  replicator:
+    labels:
+      package: all
+    enabled: true
+  sealed-secrets:
+    labels:
+      package: all
+    enabled: true
+  sloop:
+    labels:
+      package: all
+    enabled: true
+  sloth:
+    labels:
+      package: all
+    enabled: true
+  sonarqube:
+    labels:
+      package: all
+    enabled: true
+  starboard-operator:
+    labels:
+      package: all
+    enabled: true
+  system-config:
+    labels:
+      package: all
+    enabled: true
+  system-jobs:
+    labels:
+      package: all
+    enabled: true
+  tekton:
+    labels:
+      package: all
+    enabled: true
+  tekton-catalog:
+    labels:
+      package: all
+    enabled: true
+  tekton-logging:
+    labels:
+      package: all
+    enabled: true
+  velero:
+    labels:
+      package: all
+    enabled: true
+  visitor-groups:
+    labels:
+      package: all
+    enabled: true
+  zeebe:
+    labels:
+      package: all
+    enabled: true
+  zeebe-operate:
+    labels:
+      package: all
+    enabled: true

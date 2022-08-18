@@ -1,0 +1,126 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: trivy
+  labels:
+    app.kubernetes.io/version: "0.0.1"
+  annotations:
+    tekton.dev/pipelines.minVersion: "0.12.1"
+    tekton.dev/tags: trivy, scan, image
+    tekton.dev/displayName: "trivy"
+spec:
+  description: >-
+    Runs trivy vulnerability scanner
+  workspaces:
+    - name: input
+    - name: output
+    - name: source
+    - name: data
+  volumes:
+    - name: kubeconfig
+      secret:
+        secretName: kubeconfig
+    - name: kubeconfig-internal-gcloud
+      secret:
+        secretName: kubeconfig-internal-gcloud
+    - name: kubeconfig-no-gcloud
+      secret:
+        secretName: kubeconfig-no-gcloud
+    - name: tekton
+      secret:
+        secretName: tekton
+  params:
+
+    - name: trivy-image
+      description: The trivy image to use
+      type: string
+      # default: "public.ecr.aws/aquasecurity/trivy:0.18.3"
+      default: "neo9sas/devops-tools:v1.5.0"
+
+    - name: trivy-format
+      description: The trivy report format
+      type: string
+      default: "json"
+
+    - name: trivy-command
+      description: The trivy command to run
+      type: string
+      default: "image"
+
+    - name: target-image
+      description: The image to scan for vulnerabilities
+      type: string
+      default: "nginx:latest"
+  results:
+    - name: trivy-report
+      description: The trivy report
+
+  steps:
+    - name: scan
+      image: $(params.trivy-image)
+      imagePullPolicy: Always
+      command: ["/bin/bash"]
+      volumeMounts:
+        - name: kubeconfig
+          mountPath: /tmp/kubeconfig
+        - name: kubeconfig-internal-gcloud
+          mountPath: /tmp/kubeconfig-internal-gcloud
+        - name: kubeconfig-no-gcloud
+          mountPath: /tmp/kubeconfig-no-gcloud
+        - name: tekton
+          mountPath: /tmp/tekton
+      env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /tmp/tekton/tekton.json
+        - name: KUBECONFIG
+          value: /tmp/kubeconfig-internal-gcloud/kubeconfig-internal-gcloud.yaml
+        # TODO: Use a secret or a permanent trivy server for DB. 
+        # Not a big deal, there are no scopes allowed. 
+        # Just to bypass GitHub public rate limiting on :
+        # (https://api.github.com/repos/aquasecurity/trivy-db/releases)
+        - name: GITHUB_TOKEN
+          value: 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 
+      args:
+        - -c
+        - |
+          trivyCommand=$(params.trivy-command)
+          trivyFlags='--no-progress --severity HIGH,CRITICAL --ignore-unfixed'
+          # --light
+          trivyFormat=$(params.trivy-format)
+          targetImage=$(params.target-image)
+          outputPath=$(workspaces.output.path)/trivy-report
+          errorPath=$(workspaces.output.path)/trivy-error
+          tmpPath=$(workspaces.output.path)/trivy-tmp
+          
+          echo ${trivyCommand}
+          echo ${trivyFormat}
+          echo ${targetImage}
+          echo ${outputPath}
+          echo ${errorPath}
+
+          echo "trivy -q ${trivyCommand} ${trivyFlags} -f ${trivyFormat} ${targetImage} | jq -r --arg targetImage ${targetImage} 'try .[].Vulnerabilities[] | \"| \($targetImage) | \(.Severity) | \(.PkgName) | \(.InstalledVersion) | \(.FixedVersion) | \(.VulnerabilityID) | \(.PrimaryURL) |\"'"
+          trivy -q ${trivyCommand} ${trivyFlags} -f ${trivyFormat} ${targetImage} > ${tmpPath} 2> ${errorPath}
+                              
+          #  
+
+          if [ -s "${tmpPath}" ]
+          then
+            echo "Scan complete."
+            echo "Vulnerabilities found !"
+            echo '| Image | Severity | Package | Installed Version | Fixed Version | CVE ID | CVE URL |' >> ${outputPath}
+            echo '| --- | --- | --- | --- | --- | --- | --- |' >> ${outputPath}
+            formattedReport=$(cat ${tmpPath} | jq -r --arg targetImage "${targetImage}" 'try .[].Vulnerabilities[] | "| \($targetImage) | \(.Severity) | \(.PkgName) | \(.InstalledVersion) | \(.FixedVersion) | \(.VulnerabilityID) | \(.PrimaryURL) |"')
+            echo "${formattedReport}" >> ${outputPath}
+
+          elif [ -s "${errorPath}" ]
+          then
+            echo "Error during scan !"
+            cat ${errorPath} > ${outputPath}
+
+          elif [ ! -s "${tmpPath}" -a ! -s "${errorPath}" ]
+          then
+            echo "No vulnerabilities found !" | tee ${outputPath}
+
+          else
+            echo "Unexpected error. Check logs" | tee ${outputPath}
+          fi

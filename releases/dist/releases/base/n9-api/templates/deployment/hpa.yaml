@@ -1,0 +1,48 @@
+{{ if .Values.hpa.enabled -}}
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "n9-api.fullname" . }}
+  labels:
+    {{- include "n9-api.labels" . | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "n9-api.fullname" . }}
+  minReplicas: {{ .Values.hpa.minReplicas }}
+  maxReplicas: {{ .Values.hpa.maxReplicas }}
+  metrics:
+  {{- if .Values.hpa.customMetrics }}
+  {{ toYaml .Values.hpa.customMetrics | indent 2 | trim }}
+  {{- end }}
+  {{- if .Values.hpa.cpu }}
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: {{ .Values.hpa.cpu }}
+  {{- end }}
+  {{- if .Values.hpa.memory }}
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: {{ .Values.hpa.memory }}
+  {{- end }}
+  {{- if .Values.hpa.rabbitmq.enabled }}
+  - type: Object
+    object:
+      metric:
+        name: {{ .Values.hpa.rabbitmq.metricName }} # master-api_queue_messages
+      describedObject:
+        apiVersion: v1
+        kind: Service
+        name: {{ .Values.hpa.rabbitmq.serviceName }} # bench-rabbitmq
+      target:
+        type: Value
+        value: {{ .Values.hpa.rabbitmq.target }}
+  {{- end }}
+{{- end }}

@@ -1,0 +1,9 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerBinding
+metadata:
+  name: parse-param-debug-extensions
+  namespace: tekton-pipelines
+spec:
+  params:
+  - name: debug-sleep
+    value: $(extensions.debug_sleep)

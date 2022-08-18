@@ -1,0 +1,36 @@
+manifests:
+  ################################################################################
+  # Setting up the default provider configuration.
+  ################################################################################
+
+  - apiVersion: pkg.crossplane.io/v1alpha1
+    kind: ControllerConfig
+    metadata:
+      name: crossplane-provider-controller-config
+    spec:
+      args:
+        # Enable ExernalSecretStores alpha feature (publishConnectionDetailsTo).
+        - --enable-external-secret-stores
+        - --debug
+
+  {{- if or (index .Values.releases "crossplane" "config" "providers" "gcp" "enabled") (eq $.Values.cloud.provider "gcp") }}
+  - apiVersion: pkg.crossplane.io/v1
+    kind: Provider
+    metadata:
+      name: crossplane-gcp-provider
+    spec:
+      package: "crossplane/provider-gcp:v0.21.0"
+      controllerConfigRef:
+        name: crossplane-provider-controller-config
+  {{- end }}
+
+  {{- if or (index .Values.releases "crossplane" "config" "providers" "aws" "enabled") (eq $.Values.cloud.provider "aws") }}
+  - apiVersion: pkg.crossplane.io/v1
+    kind: Provider
+    metadata:
+      name: crossplane-aws-provider
+    spec:
+      package: "crossplane/provider-aws:v0.27.0"
+      controllerConfigRef:
+        name: crossplane-provider-controller-config
+  {{- end }}

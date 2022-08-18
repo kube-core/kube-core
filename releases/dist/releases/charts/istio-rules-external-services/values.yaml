@@ -1,0 +1,28 @@
+# https://www.envoyproxy.io/docs/envoy/latest/api-v3/extensions/transport_sockets/tls/v3/common.proto#envoy-v3-api-msg-extensions-transport-sockets-tls-v3-tlsparameters
+externalService: []
+  #- name: foncia-structure-ws          # REQUIRED
+
+  #  host: api-structures.foncia.com    # REQUIRED
+  #  hosts:
+  #  - demo1.org
+  #  - demo2.org
+
+  #  httpPort: 80
+  #  httpsPort: 443
+  #  tlsOriginationPort: 1443
+  #  sniHost: api-structures.foncia.com
+  #  cipherSuites:
+  #  - ECDHE-ECDSA-AES128-SHA
+  #  - ECDHE-RSA-AES128-SHA
+  #  - AES128-GCM-SHA256
+  #  - AES128-SHA
+  #  - ECDHE-ECDSA-AES256-GCM-SHA384
+  #  - ECDHE-RSA-AES256-GCM-SHA384
+  #  - ECDHE-ECDSA-AES256-SHA
+  #  - ECDHE-RSA-AES256-SHA
+  #  - AES256-GCM-SHA384
+  #  - AES256-SHA
+  # httpOnly: false
+  # resolution: DNS
+  # defaultPortName: http-port
+  # defaultPortProtocol: HTTP

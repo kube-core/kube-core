@@ -1,0 +1,78 @@
+apiVersion: {{ template "deployment.apiVersion" . }}
+kind: Deployment
+metadata:
+{{- if .Values.forecastle.deployment.annotations }}
+  annotations:
+{{ toYaml .Values.forecastle.deployment.annotations | indent 4 }}
+{{- end }}
+  labels:
+{{ include "forecastle.labels.stakater" . | indent 4 }}
+{{ include "forecastle.labels.chart" . | indent 4 }}
+  name: {{ template "forecastle.name" . }}
+spec:
+  replicas: {{ .Values.forecastle.deployment.replicas }}
+  revisionHistoryLimit: {{ .Values.forecastle.deployment.revisionHistoryLimit }}
+  selector:
+    matchLabels:
+{{ include "forecastle.labels.selector" . | indent 6 }}
+  template:
+    metadata:
+      labels:
+{{ include "forecastle.labels.selector" . | indent 8 }}
+    spec:
+      containers:
+      - env:
+        - name: KUBERNETES_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        image: "{{ .Values.forecastle.image.name }}:{{ .Values.forecastle.image.tag }}"
+        name: {{ template "forecastle.name" . }}
+        volumeMounts:
+        - name: {{ template "forecastle.name" . }}-config
+          mountPath: /etc/forecastle
+      {{- if .Values.forecastle.openshiftOauthProxy.enabled }}
+      - name: oauth-proxy
+        image: "{{ default "stakater/oauth-proxy:v0.0.2" .Values.forecastle.openshiftOauthProxy.image }}"
+        imagePullPolicy: IfNotPresent
+        ports:
+          - containerPort: 8443
+            name: public
+        args:
+          - --https-address=:8443
+          - --provider=openshift
+          - --openshift-service-account={{ template "forecastle.name" . }}
+          - --upstream=http://localhost:3000
+          - --tls-cert=/etc/tls/private/tls.crt
+          - --tls-key=/etc/tls/private/tls.key
+          - --cookie-secret=SECRET
+        volumeMounts:
+          - mountPath: /etc/tls/private
+            name: openshift-oauth-proxy-tls
+      {{- end }}
+      volumes:
+      - name: {{ template "forecastle.name" . }}-config
+        configMap:
+          name: {{ template "forecastle.name" . }}
+      {{- if .Values.forecastle.openshiftOauthProxy.enabled }}
+      - name: openshift-oauth-proxy-tls
+        secret:
+          secretName: openshift-oauth-proxy-tls
+      {{- end }}
+      serviceAccountName: {{ template "forecastle.name" . }}
+      {{- with .Values.forecastle.deployment.securityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.forecastle.deployment.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.forecastle.deployment.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.forecastle.deployment.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

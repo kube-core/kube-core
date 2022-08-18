@@ -1,0 +1,157 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: cluster-push-develop
+spec:
+  params:
+  - name: build-format
+    description: The build format hint (jar / image), gives indication about what the pipeline needs to produce
+    type: string
+    default: ""
+  - name: git-project-name
+    description: The git project name which is at the origin of the push
+    type: string
+    default: ""
+  - name: git-sha
+    description: The git sha which is at the origin of the push
+    type: string
+    default: ""
+  - name: git-url
+    description: The repository url
+    type: string
+    default: ""
+  - name: git-branch
+    description: The repository branch at the origin of the push
+    type: string
+    default: ""
+  - name: project-id
+    description: The project id on gitlab
+    type: string
+    default: ""
+  - name: container-images-repository
+    description: Container images repository url
+    type: string
+    default: ""
+  - name: git-api-endpoint
+    description: Git provider API endpoint
+    type: string
+    default: ""
+  - name: tekton-url
+    type: string
+    description: "The tekton url"
+
+  workspaces:
+  - name: ws
+  
+  tasks:
+
+  - name: init
+    taskRef:
+      name: devops-tools
+    params:
+      - name: script
+        value: |
+          echo "push on $(params.git-branch) for $(params.git-project-name), id: $(params.project-id)"
+          echo "build-format: $(params.build-format)"
+          echo "git-url: $(params.git-url)"
+          echo "git-sha: $(params.git-sha)"
+          echo "container images repository: $(params.container-images-repository)"
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+
+  - name: clone-projet
+    taskRef:
+      name: git-clone
+    workspaces:
+    - name: output
+      workspace: ws
+    params:
+    - name: url
+      value: $(params.git-url)
+    - name: subdirectory
+      value: $(params.git-project-name)
+    - name: revision
+      value: $(params.git-branch)
+
+  - name: notify-build-running
+    runAfter:
+    - clone-projet
+    taskRef:
+      name: gitlab-notify-build
+    params:
+      - name: git-sha
+        value: $(params.git-sha)
+      - name: project-id
+        value: $(params.project-id)
+      - name: gitlab-url
+        value: $(params.git-api-endpoint)
+      - name: tekton-url
+        value: $(params.tekton-url)
+      - name: ref
+        value: $(params.git-branch) 
+    workspaces:
+        - name: input
+          workspace: ws
+        - name: output
+          workspace: ws
+        - name: source
+          workspace: ws
+        - name: data
+          workspace: ws
+
+  - name: gitops-build
+    runAfter:
+    - clone-projet
+    taskRef:
+      name: devops-tools
+    params:
+      - name: script
+        value: |
+          #!/usr/bin/env bash
+
+          cd $(workspaces.source.path)/$(params.git-project-name)/cluster/scripts
+
+          ENV=ci ./src/gitops/ci/auto-build.sh "$(params.git-branch)"
+
+    workspaces:
+        - name: input
+          workspace: ws
+        - name: output
+          workspace: ws
+        - name: source
+          workspace: ws
+        - name: data
+          workspace: ws
+  finally:
+      - name: notify-build-status
+        taskRef:
+          name: gitlab-notify-build
+        params:
+          - name: git-sha
+            value: $(params.git-sha)
+          - name: aggregateStatus
+            value: "$(tasks.status)"
+          - name: project-id
+            value: $(params.project-id)
+          - name: gitlab-url
+            value: $(params.git-api-endpoint)
+          - name: tekton-url
+            value: $(params.tekton-url)
+          - name: ref
+            value: $(params.git-branch) 
+        workspaces:
+          - name: input
+            workspace: ws
+          - name: output
+            workspace: ws
+          - name: source
+            workspace: ws
+          - name: data
+            workspace: ws

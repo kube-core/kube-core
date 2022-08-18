@@ -1,0 +1,15 @@
+dependencies:
+- name: kube-prometheus-stack
+  repository: https://prometheus-community.github.io/helm-charts
+  version: 35.5.1
+- name: thanos
+  repository: https://charts.bitnami.com/bitnami/
+  version: 10.5.0
+- name: minio
+  repository: https://helm.min.io/
+  version: 8.0.10
+- name: robusta
+  repository: https://robusta-charts.storage.googleapis.com
+  version: 0.9.12
+digest: sha256:0f63a7d15e5d62990d18bf6c6613f66163c536383168594d87edbbf2d52716a1
+generated: "2022-06-01T16:29:39.8163382+02:00"

@@ -1,0 +1,16 @@
+# Estafette
+releases:
+  estafette-gke-node-pool-shifter:
+    labels:
+      package: estafette
+    enabled: true
+
+  estafette-gke-preemptible-killer:
+    labels:
+      package: estafette
+    enabled: true
+
+  estafette-k8s-node-compactor:
+    labels:
+      package: estafette
+    enabled: true

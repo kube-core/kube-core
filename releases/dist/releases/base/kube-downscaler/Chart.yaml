@@ -1,0 +1,15 @@
+apiVersion: v1
+appVersion: 21.2.0
+description: Scale down Kubernetes deployments after work hours
+home: https://codeberg.org/hjacobs/kube-downscaler
+keywords:
+- k8s pods scheduler
+- scheduled lifecycle
+maintainers:
+- name: hjacobs
+  url: https://codeberg.org/hjacobs
+name: kube-downscaler
+sources:
+- https://github.com/deliveryhero/helm-charts
+- https://codeberg.org/hjacobs/kube-downscaler
+version: "0.3"

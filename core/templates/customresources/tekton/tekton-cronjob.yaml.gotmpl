@@ -1,0 +1,99 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  namespace:  {{ .namespace }}
+  name: {{ .name }}
+spec:
+  schedule: {{ .values.schedule | quote }}
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: tekton
+        spec:
+          serviceAccountName: tekton
+          volumes:
+          - name: ssh 
+            secret: 
+              secretName: gitlab-ssh     
+          containers:
+          - name: {{ .name }}
+            volumeMounts:
+            - name: ssh
+              mountPath: "/root/.ssh/"
+            image: neo9sas/devops-tools:v1.5.0
+            imagePullPolicy: IfNotPresent
+            args:
+              - sh
+              - -c
+              - |    
+                # TODO gets last sha, it is needed to notify that the pipeline is running
+                # gitSha=$(git ls-remote {{ .values.gitUrl }} --refs {{ .values.gitBranch }} | awk '{ print $1 }' )
+                gitSha="develop"
+                echo $gitSha
+
+                date=$(date '+%d%m%Y%H%M%S')
+
+                # creates the PipelineRun Crd
+                printf '
+                apiVersion: tekton.dev/v1beta1
+                kind: PipelineRun
+                metadata:
+                  name: app-push-develop-cron-run-%s
+                  namespace: {{ .namespace }}
+                spec:
+                  serviceAccountName: tekton
+                  workspaces:
+                  - name: ws
+                    volumeClaimTemplate:
+                      spec:
+                        accessModes:
+                          - ReadWriteOnce
+                        resources:
+                          requests:
+                            storage: 1Gi
+                  pipelineRef:
+                    name: app-push-develop
+                  params:
+                  - name: git-project-name
+                    value: {{ .values.gitProjectName }}
+                  - name: git-sha
+                    value: %s
+                  - name: git-url
+                    value: {{ .values.gitUrl }}
+                  - name: git-branch
+                    value: {{ .values.gitBranch }}
+                  - name: project-id
+                    value: {{ .values.projectId | quote }}
+                  - name: container-images-repository
+                    value: {{ .values.containerImagesRepository }}
+                  - name: git-api-endpoint
+                    value: {{ .values.gitApiEndpoint }}
+                  - name: sonar-url
+                    value: {{ .values.sonarUrl }}
+                  - name: tekton-url
+                    value: {{ .values.tektonUrl }} 
+                  - name: continuous-delivery-namespace
+                    value: integration
+                  - name: container-image-tag
+                    value: "v-%s"
+                  - name: notify-slack
+                    value: "true"
+                  - name: node-version
+                    value: "{{ .values.nodeVersion }}" 
+                  - name: node-tests-image
+                    value: "{{ .values.nodeTestsImage }}" 
+                  - name: run-tests
+                    value: "{{ .values.runTests }}"
+                  - name: chart-name
+                    value: "{{ .values.chartName }}"
+                  - name: chart-version
+                    value: "{{ .values.chartVersion }}"
+
+                ' "$date" "$gitSha" "$gitSha" >> app-push-develop-run.yaml
+                cat app-push-develop-run.yaml
+
+                # apply new configuration
+                kubectl create -n tekton-pipelines -f app-push-develop-run.yaml
+          restartPolicy: OnFailure

@@ -1,0 +1,23 @@
+environments:
+  default: {}
+
+helmDefaults:
+  kubeContext: ${KUBE_CORE_CLUSTER_NAME}
+  cleanupOnFail: true
+  wait: false
+  force: false
+  historyMax: 10
+  createNamespace: true
+  devel: true
+  timeout: 3600 # seconds
+
+commonLabels:
+  publisher: ${KUBE_CORE_PROJECT_ORG}
+
+repositories: []
+helmfiles:
+  - path: ${KUBE_CORE_REPOSITORY}?ref=${KUBE_CORE_VERSION}
+    values:
+      - ./values/core/config.yaml
+
+releases: []

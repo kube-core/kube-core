@@ -1,0 +1,99 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  {{ if .Values.mySqlBackup.targetAllDatabases }}
+  name: "{{ .Values.mySqlBackup.targetDatabaseHost }}-fulldb-backup"
+  {{ else }}
+  name: "{{ .Values.mySqlBackup.targetDatabaseHost }}-{{ .Values.mySqlBackup.targetDatabaseNames }}db-backup"
+  {{ end }}
+spec:
+  schedule: {{ .Values.mySqlBackup.schedule | quote }}
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 604800
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+          - name: my-database-backup
+            image: ghcr.io/benjamin-maynard/kubernetes-cloud-mysql-backup:v2.6.0
+            imagePullPolicy: Always
+            env:
+              - name: BACKUP_CREATE_DATABASE_STATEMENT
+                value: {{ .Values.mySqlBackup.backupCreateDatabaseStatement | quote }}
+              {{ if .Values.mySqlBackup.backupAdditionalParams }}
+              - name: BACKUP_ADDITIONAL_PARAMS
+                value: {{ .Values.mySqlBackup.backupAdditionalParams | quote }}
+              {{ end }}
+              - name: BACKUP_TIMESTAMP
+                value: {{ .Values.mySqlBackup.backupTimestamp | quote }}
+              - name: BACKUP_COMPRESS
+                value: {{ .Values.mySqlBackup.backupCompress | quote }}
+              {{ if .Values.mySqlBackup.backupCompress }}
+              - name: BACKUP_COMPRESS_LEVEL
+                value: {{ .Values.mySqlBackup.backupCompressLevel | quote }}
+              {{ end }}
+              {{ if .Values.mySqlBackup.agePublicKey }}
+              - name: AGE_PUBLIC_KEY
+                value: {{ .Values.mySqlBackup.agePublicKey | quote }}
+              {{ end }}
+              - name: TARGET_DATABASE_HOST
+                value: {{ .Values.mySqlBackup.targetDatabaseHost | quote }}
+              - name: TARGET_DATABASE_PORT
+                value: {{ .Values.mySqlBackup.targetDatabasePort | quote }}
+              - name: TARGET_DATABASE_NAMES
+                value: {{ .Values.mySqlBackup.targetDatabaseNames | quote }}
+              - name: TARGET_ALL_DATABASES
+                value: {{ .Values.mySqlBackup.targetAllDatabases | quote }}
+              - name: TARGET_DATABASE_USER
+                value: {{ .Values.mySqlBackup.targetDatabaseUser | quote }}
+              - name: TARGET_DATABASE_PASSWORD
+                valueFrom:
+                   secretKeyRef:
+                     name: {{ .Values.mySqlBackup.targetDatabasePassword.existingSecret }}
+                     key: {{ .Values.mySqlBackup.targetDatabasePassword.secretKey }}
+              - name: BACKUP_PROVIDER
+                value: {{ .Values.mySqlBackup.backupProvider | quote }}
+              {{ if eq .Values.mySqlBackup.backupProvider "gcp" }}
+              - name: GCP_GCLOUD_AUTH
+                valueFrom:
+                   secretKeyRef:
+                     name: {{ .Values.mySqlBackup.gcpGcloudAuth.existingSecret }}
+                     key: {{ .Values.mySqlBackup.gcpGcloudAuth.secretKey }}
+              - name: GCP_BUCKET_NAME
+                value: {{ .Values.mySqlBackup.gcpBucketName | quote }}
+              - name: GCP_BUCKET_BACKUP_PATH
+                value: {{ .Values.mySqlBackup.gcpBucketBackupPath | quote }}
+              {{ else if eq .Values.mySqlBackup.backupProvider "aws" }}
+              - name: AWS_ACCESS_KEY_ID
+                value: {{ .Values.mySqlBackup.awsAccessKeyId | quote }}
+              - name: AWS_SECRET_ACCESS_KEY
+                valueFrom:
+                   secretKeyRef:
+                     name: {{ .Values.mySqlBackup.awsSecretAccessKey.existingSecret }}
+                     key: {{ .Values.mySqlBackup.awsSecretAccessKey.secretKey }}
+              - name: AWS_DEFAULT_REGION
+                value: {{ .Values.mySqlBackup.awsDefaultRegion | quote }}
+              - name: AWS_BUCKET_NAME
+                value: {{ .Values.mySqlBackup.awsBucketName | quote }}
+              - name: AWS_BUCKET_BACKUP_PATH
+                value: {{ .Values.mySqlBackup.awsBucketBackupPath | quote }}
+              - name: AWS_S3_ENDPOINT
+                value: {{ .Values.mySqlBackup.awsS3Endpoint | quote }}
+              {{ end }}
+              - name: SLACK_ENABLED
+                value: {{ .Values.mySqlBackup.slackEnabled | quote }}
+              {{ if .Values.mySqlBackup.slackEnabled }}
+              - name: SLACK_USERNAME
+                value: {{ .Values.mySqlBackup.slackUsername | quote }}
+              - name: SLACK_CHANNEL
+                value: {{ .Values.mySqlBackup.slackChannel | quote }}
+              - name: SLACK_WEBHOOK_URL
+                valueFrom:
+                   secretKeyRef:
+                     name: {{ .Values.mySqlBackup.slackWebhookUrl.existingSecret }}
+                     key: {{ .Values.mySqlBackup.slackWebhookUrl.secretKey }}
+              {{ end }}
