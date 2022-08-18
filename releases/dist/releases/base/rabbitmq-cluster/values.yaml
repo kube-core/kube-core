@@ -1,0 +1,11 @@
+rabbitmq:
+  cluster:
+    serviceType: LoadBalancer
+    visitorGroupBasedSourceRanges: true
+    loadBalancerSourceRanges: |-
+      ["10.114.0.0/16", "34.140.122.26/32", "176.124.43.162/32", "35.195.170.103/32", "35.195.18.169/32", "35.195.94.121/32", "35.240.53.4/32", "52.47.163.232/32", "77.196.142.114/32", "78.193.215.55/32", "80.28.115.188/32"]
+    replicas: 3
+    storageSize: 10Gi
+    storageClass: gcp-sc-retain-wait-ssd
+    additionalConfig: |
+      log.console.level = error

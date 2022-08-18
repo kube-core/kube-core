@@ -1,0 +1,49 @@
+apiVersion: minio.min.io/v2
+kind: Tenant
+metadata:
+  name: storage
+spec:
+
+  requestAutoCert: false
+
+  s3:
+    ## This feature is turned off by default
+    # Note : Creates an ExternalName. 
+    # To enable, check how to make it work properly
+    # And integrate with external-dns / ingress-access-operator
+    bucketDNS: false
+
+  users:
+    - name: storage-user
+  configuration:
+    name: storage-configuration
+  credsSecret:
+    name: storage-creds-secret
+
+
+  serviceMetadata:
+    minioServiceLabels: {{ toYaml .Values.cluster.common.defaultServiceLabels | nindent 6 }}    
+    minioServiceAnnotations: {{ toYaml .Values.cluster.common.defaultServiceAnnotations | nindent 6 }}    
+    
+    consoleServiceLabels: {{ toYaml .Values.cluster.common.defaultServiceLabels | nindent 6 }}   
+    consoleServiceAnnotations: {{ toYaml .Values.cluster.common.defaultServiceAnnotations | nindent 6 }}
+
+  ## Specification for MinIO Pool(s) in this Tenant.
+  pools:
+    ## Servers specifies the number of MinIO Tenant Pods / Servers in this pool.
+    ## For standalone mode, supply 1. For distributed mode, supply 4 or more.
+    ## Note that the operator does not support upgrading from standalone to distributed mode.
+    - servers: {{ .Values.tenant.servers }}
+      ## volumesPerServer specifies the number of volumes attached per MinIO Tenant Pod / Server.
+      volumesPerServer: {{ .Values.tenant.volumesPerServer }}
+      ## This VolumeClaimTemplate is used across all the volumes provisioned for MinIO Tenant in this Pool.
+      volumeClaimTemplate:
+        metadata:
+          name: data
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: {{ .Values.tenant.storageSize }}
+          storageClassName: gcp-sc-retain-wait

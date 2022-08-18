@@ -1,0 +1,10 @@
+apiVersion: v2
+name: istio-prometheus
+version: 1.10.2
+description: Helm chart for deploying Istio Prometheus
+keywords:
+  - istio
+sources:
+  - https://raw.githubusercontent.com/istio/istio/release-1.10/samples/addons/prometheus.yaml
+engine: gotpl
+icon: https://istio.io/latest/favicons/android-192x192.png

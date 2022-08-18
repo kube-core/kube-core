@@ -1,0 +1,63 @@
+serviceAccountName: sloop
+name: sloop
+replicas: 1
+image:
+  tag: latest
+  repository: sloopimage/sloop
+  pullPolicy: IfNotPresent
+persistentVolume:
+  ## If defined it will specify the storageClass for the statefulSet
+  ## If undefined it will use the cluster default (typically gp2 on AWS, standard on GKE)
+  #  storageClass:
+  size: 10Gi
+  dataAccessMode: ReadWriteOnce
+  sizeLimit: 12Gi
+resources: {}
+service:
+  port: 80
+  targetPort: 8080
+  type: ClusterIP
+## Configure extra options for liveness and readiness probes
+livenessProbe:
+  enabled: true
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+  successThreshold: 1
+readinessProbe:
+  enabled: true
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+  successThreshold: 1
+ingress:
+  enabled: false
+  host: sloop.example.com
+  annotations: {}
+  labels: {}
+  tls: {}
+
+config: |-
+  {
+    "displayContext": "cluster",
+    "defaultNamespace": "default",
+    "defaultKind": "Pod",
+    "defaultLookback": "1h",
+    "leftBarLinks": [
+    ],
+    "resourceLinks": [
+    ]
+  }
+
+clusterRole:
+  # List CRD apiGroups that you want to watch here
+  # Istio is just here as an example.  Alternatively if you want to get all CRDs its possible to add '*'
+  # to apiGroups, but that would give sloop permissions to read secrets which may not be desirable
+  apiGroups:
+    - authentication.istio.io
+    - config.istio.io
+    - networking.istio.io
+    - rbac.istio.io
+    - security.istio.io

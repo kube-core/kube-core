@@ -1,0 +1,285 @@
+cluster:
+  logging:
+    config:
+      bucketPrefixOverride: ""
+      indexTemplate:
+        secretRef:
+          name: logstash-default-index-template
+          key: template
+        default: |
+          {
+            "order": 200,
+            "settings": {
+              "index.mapping.ignore_malformed": true,
+              "index.query.default_field": [
+                "parsed_log.message",
+                "parsed_log.error"
+              ],
+              "index.refresh_interval": "30s",
+              "index.search.slowlog.threshold.query.debug": "0ms",
+              "index.search.slowlog.threshold.query.info": "1s",
+              "index.search.slowlog.threshold.fetch.debug": "0ms",
+              "index.search.slowlog.threshold.fetch.info": "1s",
+              "index.translog.sync_interval": "1m",
+              "index.number_of_shards": 4,
+              "index.number_of_replicas": 1,
+              "index.analysis": {
+                "analyzer": {
+                  "log_analyzer": {
+                    "type": "pattern",
+                    "pattern": "\\W+",
+                    "lowercase": true
+                  }
+                },
+                "normalizer": {
+                  "lowercase_normalizer": {
+                    "type": "custom",
+                    "filter": [
+                      "lowercase"
+                    ]
+                  }
+                }
+              }
+            },
+            "mappings": {
+              "dynamic": true,
+              "dynamic_templates": [
+                {
+                  "no_index_fields_past_depth_7": {
+                    "path_match": "*.*.*.*.*.*.*.*",
+                    "match_mapping_type": "object",
+                    "mapping": {
+                      "type": "object",
+                      "enabled": false
+                    }
+                  }
+                },
+                {
+                  "create_keyword_index_for_all_string_fields": {
+                    "match": "*",
+                    "match_mapping_type": "string",
+                    "mapping": {
+                      "type": "keyword",
+                      "normalizer": "lowercase_normalizer",
+                      "ignore_above": 1000
+                    }
+                  }
+                }
+              ],
+              "properties": {
+                "@timestamp": {
+                  "type": "date"
+                },
+                "parsed_log": {
+                  "properties": {
+                    "thread": {
+                      "type": "text",
+                      "analyzer": "log_analyzer",
+                      "norms": false,
+                      "similarity": "boolean",
+                      "fields": {
+                        "keyword": {
+                          "type": "keyword",
+                          "normalizer": "lowercase_normalizer"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "text",
+                      "analyzer": "log_analyzer",
+                      "norms": false,
+                      "similarity": "boolean"
+                    },
+                    "error": {
+                      "type": "text",
+                      "analyzer": "log_analyzer",
+                      "norms": false,
+                      "similarity": "boolean"
+                    },
+                    "status": {
+                      "type": "keyword"
+                    },
+                    "size": {
+                      "type": "long"
+                    },
+                    "iteration": {
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "kubernetes": {
+                  "properties": {
+                    "container_name": {
+                      "type": "text",
+                      "fields": {
+                        "keyword": {
+                          "type": "keyword",
+                          "normalizer": "lowercase_normalizer"
+                        }
+                      }
+                    },
+                    "labels": {
+                      "type": "object",
+                      "subobjects": false,
+                      "properties": {
+                        "app.kubernetes.io/name": {
+                          "type": "keyword"
+                        }
+                      }
+                    },
+                    "annotations": {
+                      "type": "object",
+                      "subobjects": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+    outputs:
+      outputs: [] # Not implemented
+      config:
+        buffer:
+          tags: tag,time
+          timekey: 10m
+          timekey_wait: 1m
+          timekey_use_utc: true
+          flush_thread_count: 1
+          flush_mode: interval
+          flush_interval: 10m
+        txtLogsPath: "logs/${tag}/"
+        txtObjectKeyFormat: "%{path}%{time_slice}_%{index}.log"
+        path: "logs/%Y-%m-%d/${tag}"
+        object_key_format: "%{path}/%{index}.log" # => 159.log
+        # object_key_format: "%{path}/%{time_slice}%{uuid_hash}%{index}.%{file_extension}" => aon-aqua-bite-api2022081514202.json
+        # object_key_format: "%{path}/%{index}-${chunk_id}.log" # => 0-5e6405b27529c86fcfb00cd1bebb98be.log
+          # Old default:
+          # tags: tag,time
+          # timekey: 10m
+          # timekey_wait: 1m
+          # timekey_use_utc: true
+          # flush_thread_count: 2
+          # flush_mode: interval
+          # flush_interval: 60s
+          # ~2 log file per 10mins (multithreaded - requires using chunk_id in object_key_format)
+          # tags: tag,time
+          # timekey: 10m
+          # timekey_wait: 1m
+          # timekey_use_utc: true
+          # flush_thread_count: 2
+          # flush_mode: lazy
+          # ---
+          # ~1 log file per 2mins
+          # ~730 log files per day
+          # ---
+          # tags: tag,time
+          # timekey: 10m
+          # timekey_wait: 1m
+          # timekey_use_utc: true
+          # flush_thread_count: 2
+          # flush_mode: interval
+          # flush_interval: 60s
+    flows:
+      flows: []
+      # - name: dev
+      #   namespaces:
+      #   - dev
+      dynamicFlowsEnabled: true
+      dynamicOutputsEnabled: true
+      simpleDynamicFlowsOutputMapping: true
+      default:
+        enabled: false
+        nullout: true
+        stdout: false
+        matchAll: false
+        namespaces: []
+        extraFilters: []
+        # - record_modifier:
+        #     records:
+        #       stuff: blabla
+        extraMatchRules: []
+        # - select:
+        #     labels:
+        #       my-label: test
+        extraOutputs: []
+        outputs:
+          default:
+            enabled: true
+            es: false
+            minio: false
+          dynamic:
+            enabled: false
+            es: false
+      tekton:
+        enabled: false
+      config:
+        legacyOutputRefs: false
+        forceDefault: false
+        forceDynamic: false
+        tagFormat: ${namespace_name}/${pod_name}/${container_name}
+        removeKeys: "$.kubernetes.labels.app,$.kubernetes.labels.component,$.kubernetes.labels.chart,$.kubernetes.labels.version,$.kubernetes.labels.istio,$.kubernetes.labels.instance"
+        whitelist:
+          enabled: true
+          keys: "tag,cluster,log_type,kubernetes,stream,time,parsed_log"
+        dedot: false
+        parser:
+          key_name: log
+          remove_key_name_field: false
+          reserve_data: true
+          reserve_time: true
+          # inject_key_prefix: message
+          hash_value_field: parsed_log
+          parse:
+            type: multi_format
+            patterns:
+            - format: nginx
+            - format: json
+            - format: syslog
+            - format: none
+            # - format: multiline
+    integrations:
+      tekton:
+        enabled: false
+        config:
+          globalOutputRefs: ["nullout"]
+      es:
+        enabled: false
+        config:
+          ilm_policy_id: 7-days-default
+      minio:
+        enabled: false
+        config:
+          auto_create_bucket: false
+          s3_endpoint: http://minio.minio.svc.cluster.local:80
+          s3_bucket: kube-core-logs
+          s3_region: storage
+          credentials:
+            id:
+              secretName: minio-logging
+              secretKey: AWS_ACCESS_KEY_ID
+            key:
+              secretName: minio-logging
+              secretKey: AWS_SECRET_ACCESS_KEY
+      s3:
+        enabled: false
+        config:
+          auto_create_bucket: false
+          s3_bucket: kube-core-logs
+          s3_region: eu-west-1
+          credentials:
+            id:
+              secretName: aws-s3-logging
+              secretKey: AWS_ACCESS_KEY_ID
+            key:
+              secretName: aws-s3-logging
+              secretKey: AWS_SECRET_ACCESS_KEY
+      gcs:
+        enabled: false
+        config:
+          auto_create_bucket: false
+          project: kube-core
+          bucket: kube-core-logs
+          credentials:
+            secretKeyRef:
+              secretName: logging
+              secretKey: logging.json

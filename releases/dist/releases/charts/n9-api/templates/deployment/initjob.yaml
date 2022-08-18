@@ -1,0 +1,64 @@
+{{ if .Values.initJob.enabled -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ include "n9-api.fullname" . }}-init"
+  labels:
+    {{- include "n9-api.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-delete-policy": {{ .Values.initJob.hookDeletionPolicy }}
+    "helm.sh/hook-weight":  "1"
+spec:
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+        {{- if .Values.pod.annotations }}
+        {{ toYaml .Values.pod.annotations | indent 8 | trim }}
+        {{- end }}
+    spec:
+      {{- with ( default .Values.global.imagePullSecrets .Values.image.pullSecrets ) }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.initJob.priorityClassName }}
+      priorityClassName: {{ .Values.initJob.priorityClassName }}
+      {{- end }}
+      serviceAccountName: {{ template "n9-api.serviceAccountName" . }}
+      containers:
+      - name: {{ include "n9-api.fullname" . }}
+        {{ $imagePolicy := printf "%s:%s" .Release.Namespace (include "n9-api.fullname" .) }}
+        {{- if .Values.image.digest }}
+        image: {{ .Values.image.repository }}@{{ .Values.image.digest }} 
+        {{- else }}
+        image: {{ .Values.image.repository }}:{{ include "n9-api.version" . }} # {"$imagepolicy": "{{ coalesce .Values.flux.imagePolicy $imagePolicy }}"}
+        {{- end }}
+        {{- if .Values.pod.workingDir }}
+        workingDir: {{ .Values.pod.workingDir }}
+        {{- end }}
+        command:
+        {{- range .Values.initJob.command }}
+         - {{ . | quote }}
+        {{- end }}
+        env:
+        {{- if .Values.pod.env }}
+        {{- range .Values.pod.env.values }}
+        - name: {{ .name }}
+          value: "{{ .value }}"
+        {{- end }}
+        {{- range .Values.pod.env.secrets }}
+        - name: {{ default .secretKey .name }}
+          valueFrom:
+            secretKeyRef:
+              name: {{ .secretName }}
+              key: {{ .secretKey }}
+        {{- end }}
+        {{- end }}
+        resources:
+          {{ toYaml .Values.initJob.resources | indent 10 | trim }}
+      restartPolicy: Never
+  backoffLimit: 0
+  activeDeadlineSeconds: {{ .Values.initJob.activeDeadlineSeconds }}
+  ttlSecondsAfterFinished: {{ .Values.initJob.ttlSecondsAfterFinished }}
+{{- end }}

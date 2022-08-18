@@ -1,0 +1,8 @@
+cluster: {{ toYaml .Values.cluster | nindent 2 }}
+
+es-exporter:
+  enabled: true
+  es:
+    uri: http://logging-es-default:9200
+  serviceMonitor:
+    enabled: true

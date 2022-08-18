@@ -1,0 +1,6 @@
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: preview
+value: 5000
+description: "PriorityClass for preview"

@@ -1,0 +1,5 @@
+node_modules
+keys
+.kube-core
+.vscode
+cli/node_modules

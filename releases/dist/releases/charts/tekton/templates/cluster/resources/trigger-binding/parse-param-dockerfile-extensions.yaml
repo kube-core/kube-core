@@ -1,0 +1,9 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerBinding
+metadata:
+  name: parse-param-dockerfile-extensions
+  namespace: tekton-pipelines
+spec:
+  params:
+  - name: dockerfile
+    value: $(extensions.dockerfile)

@@ -1,0 +1,8 @@
+configmap: {{ toYaml (index .Values.releases .Release.Name "config" "configmap") | nindent 2 }}
+minimumNodeAgeSeconds: {{ index .Values.releases .Release.Name "config" "minimumNodeAgeSeconds" }}
+neededMarkedTimeForRemovalSeconds: {{ index .Values.releases .Release.Name "config" "neededMarkedTimeForRemovalSeconds" }}
+sleepDurationBetweenIterationsSeconds: {{ index .Values.releases .Release.Name "config" "sleepDurationBetweenIterationsSeconds" }}
+nodeSelector: {{ toYaml (index .Values.releases .Release.Name "scheduling" "nodeSelector") | nindent 2 }}
+tolerations: {{ toYaml (index .Values.releases .Release.Name "scheduling"  "tolerations") | nindent 2 }}
+affinity: {{ toYaml (index .Values.releases .Release.Name "scheduling" "affinity") | nindent 2 }}
+logFormat: json

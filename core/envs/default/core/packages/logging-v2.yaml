@@ -1,0 +1,17 @@
+releases:
+  logging-operator:
+    labels:
+      package: logging-v2
+    enabled: true
+  eck-operator:
+    labels:
+      package: logging-v2
+    enabled: true
+  logging-stack:
+    labels:
+      package: logging-v2
+    enabled: true
+  cluster-logging:
+    labels:
+      package: logging-v2
+    enabled: true

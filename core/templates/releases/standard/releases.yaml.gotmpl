@@ -1,0 +1,43 @@
+### TODO: Allowing to check for extra conditions from global values
+### (e.g install only if .Values.cloud.provider == gcp)
+### Required for cloud-agnostic version
+{{- $values := .Values }}
+{{- $releases := .Values.releases }}
+
+{{- range $key, $value := $releases }}
+{{- if $value.enabled -}}
+
+{{ $requirementsMet := true -}}
+{{ $lastRequirementMet := false -}}
+
+{{- if $value.needs -}}
+{{- range $currentRequirement := $value.needs -}}
+
+{{- $lastRequirementMet = $releases | get (printf "%s.enabled" $currentRequirement) -}}
+{{ if not $lastRequirementMet }}
+{{ $requirementsMet = false }}
+{{- end -}}
+
+{{- end -}}
+{{- end -}}
+
+{{ $newValues := $value }}
+{{ $_ := set $newValues "enabled" $requirementsMet }}
+{{- tpl (readFile "templates/releases/standard/release.yaml.gotmpl") (dict "item" $newValues "coreValues" $values) }}
+
+
+{{ if $value.manifests }}
+- name: {{ $value.release.name }}-manifests
+  chart: ../releases/dist/releases/charts/raw
+  namespace: {{ $value.release.namespace }}
+  needs: ["{{ $value.release.name }}"]
+  labels: {{ toYaml .labels | nindent 4 }}
+    app: {{ $value.release.name }}
+    type: manifests
+  values:
+  - "./values/release-manifests.yaml.gotmpl"
+  # - "./values/{{ $value.release.name }}-manifests.yaml.gotmpl"
+{{ end }}
+
+{{- end -}}
+{{- end -}}

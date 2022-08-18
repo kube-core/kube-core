@@ -1,0 +1,11 @@
+interval: {{ index .Values.releases .Release.Name "config" "interval" }}
+nodePoolFromMinNode: {{ index .Values.releases .Release.Name "config" "nodePoolFromMinNode" }}
+nodePoolFrom: {{ index .Values.releases .Release.Name "config" "nodePoolFrom" }}
+nodePoolTo: {{ index .Values.releases .Release.Name "config" "nodePoolTo" }}
+nodeSelector: {{ toYaml (index .Values.releases .Release.Name "scheduling" "nodeSelector") | nindent 2 }}
+tolerations: {{ toYaml (index .Values.releases .Release.Name "scheduling"  "tolerations") | nindent 2 }}
+affinity: {{ toYaml (index .Values.releases .Release.Name "scheduling" "affinity") | nindent 2 }}
+extraEnv:
+  GOOGLE_APPLICATION_CREDENTIALS: {{ (index .Values.releases .Release.Name "secrets" "credentials" "targetPath") }}
+secretName: {{ (index .Values.releases .Release.Name "secrets" "credentials" "existingSecret") }}
+logFormat: json

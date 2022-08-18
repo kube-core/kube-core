@@ -1,0 +1,6 @@
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: software-factory-high
+value: 21100
+description: "PriorityClass for software-factory-high"

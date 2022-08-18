@@ -1,0 +1,234 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: garden-test
+  labels:
+    app.kubernetes.io/version: "0.0.1"
+  annotations:
+    tekton.dev/pipelines.minVersion: "0.12.1"
+    tekton.dev/tags: garden, deploy
+    tekton.dev/displayName: "garden deploy"
+spec:
+  description: >-
+    Deploys a garden app
+  workspaces:
+    - name: input
+    - name: output
+    - name: source
+    - name: data
+  volumes:
+    - name: kubeconfig
+      secret:
+        secretName: kubeconfig
+    - name: kubeconfig-internal-gcloud
+      secret:
+        secretName: kubeconfig-internal-gcloud
+    - name: kubeconfig-no-gcloud
+      secret:
+        secretName: kubeconfig-no-gcloud
+    - name: tekton
+      secret:
+        secretName: tekton
+    - name: npmrc-reader
+      configMap:
+        name: npmrc-reader
+    - name: npmrc-publisher
+      configMap:
+        name: npmrc-publisher
+  params:
+    - name: cluster-name
+      description: The cluster name
+      type: string
+      default: "dev"
+
+    - name: cluster-repository
+      description: The repository to clone
+      type: string
+
+    - name: cluster-branch
+      description: The branch to checkout
+      type: string
+      default: "develop"
+
+    - name: garden-branch
+      description: The branch to checkout
+      type: string
+      default: "develop"
+
+    - name: garden-user
+      description: The branch to checkout
+      type: string
+      default: "tekton"
+
+    - name: image
+      description: The image used by the task
+      type: string
+      default: neo9sas/devops-tools:v1.5.0
+      
+
+    - name: apps-branch
+      description: The cluster name
+      type: string
+      default: "develop"
+
+    - name: garden-env
+      description: The PR URL
+      type: string
+      default: dev
+
+    - name: init-project
+      description: The PR URL
+      type: string
+      default: "false"
+
+    - name: garden-command
+      description: The PR URL
+      type: string
+      default: "scan"
+
+    - name: garden-args
+      description: The PR URL
+      type: string
+      default: ""
+
+    - name: sleep
+      description: The PR URL
+      type: string
+      default: "false"
+
+    - name: sleep-time
+      description: The PR URL
+      type: string
+      default: "600"
+
+    - name: trigger-git-url
+      description: The trigger git url
+      type: string
+      default: ""
+
+    - name: trigger-git-project-name
+      description: The trigger git project name
+      type: string
+      default: ""
+
+    - name: trigger-git-commit
+      description: The trigger git commit
+      type: string
+      default: ""
+
+    - name: garden-repo-subpath
+      description: The garden repository subpath
+      type: string
+      default: "garden"
+
+  results:
+  - name: garden-command
+    description: The garden command
+  - name: garden-test-raw-status
+    description: Informations about test execution. Contains INFO if test succeed, ERROR if there is some errors
+  - name: garden-test-result-message
+    description: The error message
+  steps:
+    - name: garden-version
+      image: $(params.image)
+      script: |
+        #!/usr/bin/env bash
+        echo "Init - Checking stuff"
+
+        echo "Checking garden.io version ..."
+        garden_version=$(garden version)
+        echo "Using garden ${garden_version}"
+
+    - name: garden
+      image: $(params.image)
+      imagePullPolicy: Always
+      command: ["/bin/bash"]
+      volumeMounts:
+        - name: kubeconfig
+          mountPath: /tmp/kubeconfig
+        - name: kubeconfig-internal-gcloud
+          mountPath: /tmp/kubeconfig-internal-gcloud
+        - name: kubeconfig-no-gcloud
+          mountPath: /tmp/kubeconfig-no-gcloud
+        - name: tekton
+          mountPath: /tmp/tekton
+        - name: npmrc-reader
+          mountPath: /tmp/npmrc-reader
+        - name: npmrc-publisher
+          mountPath: /tmp/npmrc-publisher
+      # TODO : Try using this instead of copying file in task
+      # env:
+      #   NPM_CONFIG_USERCONFIG: /tmp/npmrc-reader/npmrc-reader
+      #   OR
+      #   NODE_AUTH_TOKEN: token?
+      # TODO: refacto devops-tools & use this instead
+      env:
+        # - name: GARDEN_LOG_LEVEL
+        #   value: debug
+        - name: GARDEN_LOGGER_TYPE
+          value: basic
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /tmp/tekton/tekton.json
+        - name: KUBECONFIG
+          value: /tmp/kubeconfig-internal-gcloud/kubeconfig-internal-gcloud.yaml
+      args:
+        - -c
+        - |
+          #!/usr/bin/env bash
+
+          # Copy SSH keys injected by Tekton
+          cp -rfp ~/.ssh /root
+
+          # Variables
+          rootPath=$(workspaces.source.path)/$(params.cluster-name)
+          clusterPath=${rootPath}/cluster
+          gardenPath=${rootPath}/$(params.garden-repo-subpath)
+          terraformPath=${rootPath}/terraform
+          gardenCommand="$(params.garden-command)"
+          gardenEnv="$(params.garden-env)"
+          gardenArgs="$(params.garden-args)"
+          projectName="$(params.trigger-git-project-name)-image"
+          triggerProjectCommit="$(params.trigger-git-commit)"
+          
+          # TODO: See if we really need to be root
+          userHome=/root 
+
+          # Setup required/optional env vars
+          export user=$(params.garden-user)
+          gardenUser=$(params.garden-user)
+          apps_branch=$(params.apps-branch)
+
+          # Slugify branch to DNS
+          export branch=$( echo "$apps_branch" | sed -r s/[^a-zA-Z0-9]+/-/g | sed -r s/^-+\|-+$//g | tr A-Z a-z)
+
+          if [[ "$(params.sleep)" == "true" ]]
+          then
+            sleep $(params.sleep-time)
+          fi
+
+          cd ${gardenPath}
+
+          echo "Garden command : garden ${gardenCommand} ${projectName} ${gardenArgs} --env=${gardenEnv} --yes"
+          rm -rf ~/.garden
+          # garden ${gardenCommand} ${gardenArgs} --env=${gardenEnv} --yes > $(workspaces.output.path)/garden-test-logs 2> $(workspaces.output.path)/garden-test-errors
+
+          (garden ${gardenCommand} ${projectName} ${gardenArgs} --env=${gardenEnv} --yes | tee $(workspaces.output.path)/garden-test-logs) 3>&1 1>&2 2>&3 | tee $(workspaces.output.path)/garden-test-errors
+          
+          cat .garden/error.log >> $(workspaces.output.path)/garden-errors
+          cat .garden/error.log > $(workspaces.output.path)/garden-test-errors
+
+          echo "Build triggered by *${projectName}* \`#$(echo ${triggerProjectCommit} | cut -c1-12)\`" | tee -a $(workspaces.output.path)/full-test-log
+          if [[ -s "$(workspaces.output.path)/garden-test-errors" ]]
+          then
+            echo -n "ERROR" | tee $(results.garden-test-raw-status.path)
+            echo "Tests failed with the following error :" | tee -a $(workspaces.output.path)/full-test-log
+            echo '```' | tee -a $(workspaces.output.path)/full-test-log
+            cat $(workspaces.output.path)/garden-test-errors | tee -a $(workspaces.output.path)/full-test-log
+            echo '```' | tee -a $(workspaces.output.path)/full-test-log
+          else
+            echo -n "INFO"  | tee $(results.garden-test-raw-status.path)
+            echo 'Tests passed' | tee -a $(workspaces.output.path)/full-test-log
+          fi
+          cat $(workspaces.output.path)/full-test-log | tee $(results.garden-test-result-message.path)
+
+          echo "Tests completed !"

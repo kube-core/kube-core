@@ -1,0 +1,191 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: cluster-hooks
+  namespace: tekton-pipelines
+  annotations:
+    # xposer.stakater.com/annotations: |-
+    #   exposeIngressUrl: globally
+    #   kubernetes.io/ingress.class: nginx
+    #   external-dns.alpha.kubernetes.io/ttl: 5
+    #   cert-manager.io/cluster-issuer: letsencrypt-dns-production-gcp
+    #   forecastle.stakater.com/expose: true
+spec:
+  # serviceType: ClusterIP
+  serviceAccountName: tekton
+  triggers: 
+    ### Develop
+    ## Push Hook
+    # Not filtered because the Push Hooks are filtered on GitLab: dev* (e.g. dev, develop)
+    - name: cluster-push-develop
+      interceptors:
+      - name: "Validate GitLab Payload & Filter on EventType"
+        ref:
+          name: "gitlab"
+          kind: ClusterInterceptor
+        params:
+          - name: secretRef
+            value:
+              secretName: "gitlab-token"
+              secretKey: "token"
+          - name: eventTypes
+            value:
+              - "Push Hook"
+              - "Tag Push Hook"
+      - name: "CEL filter: target develop branch"
+        ref:
+          name: "cel"
+        params:
+        - name: "filter"
+          value: "body.ref == 'refs/heads/develop' || body.ref == 'refs/heads/main'"
+      - name: "Extract branch from revision"
+        ref:
+          name: "cel"
+        params:
+        - name: "overlays"
+          value:
+            - key: build_format
+              expression: "requestURL.parseURL().rawQuery.contains('buildFormat=') ? requestURL.parseURL().query['buildFormat'] : 'image'"
+            - key: debug_sleep
+              expression: "requestURL.parseURL().rawQuery.contains('debugSleep=') ? requestURL.parseURL().query['debugSleep'] : 'false'"
+            - key: git_branch
+              expression: "body.ref.replace('refs/heads/', '')"
+            - key: git_branch_sanitized
+              expression: "body.ref.replace('refs/heads/', '').replace('refs/tags/', '').replace('/', '-')"
+            - key: container_image_tag
+              expression: "body.ref.startsWith('refs/tags/') ? body.ref.replace('refs/tags/', '') : 'v-' + body.checkout_sha"
+      # - name: "Extract build format from hook query params"
+      #   ref:
+      #     name: "cel"
+      #   params:
+      #   - name: "overlays"
+      #     value:
+      #       - key: build_format
+      #         expression: "requestURL.parseURL().rawQuery.contains('buildFormat=') ? requestURL.parseURL().query['buildFormat'] : 'image'"
+              
+      # - name: "CEL filter: only when PRs are opened"
+      #   ref:
+      #     name: "cel"
+      #   params:
+      #   - name: "filter"
+      #     value: "body.action in ['opened', 'reopened']"
+      # - name: "CEL Expr: replace branch"
+      #   ref:
+      #     name: "cel"
+      #   params:
+      #   - name: "overlays"
+      #     value:
+      #     - key: new_source_branch
+      #       expression: "body.object_attributes.source_branch.replace('/', '-')"
+      #     - key: new_target_branch
+      #       expression: "body.object_attributes.target_branch.replace('/', '-')"
+      bindings:
+        - ref: parse-gitlab-push-hook
+        - ref: parse-gitlab-push-hook-extensions
+        - ref: parse-custom-config  # contains customer specific values
+      template:
+        ref: cluster-push-develop
+
+
+    ### All Branches except develop
+    ## Chatbot Init
+    # # Prints help on newly created PR
+    # - name: cluster-pr-opened
+    #   interceptors:
+    #   - gitlab:
+    #       secretRef:
+    #         secretName: gl-token
+    #         secretKey: token
+    #       eventTypes:
+    #         - Merge Request Hook
+    #   - cel:
+    #       filter: "body.object_attributes.action in ['open'] && body.object_kind in ['merge_request']"
+    #       overlays:
+    #         - key: new_pr
+    #           expression: "body.object_attributes.url.replace('scm', 'gitlab-api').replace('/-/','/')"
+    #         - key: new_source_branch
+    #           expression: "body.object_attributes.source_branch.replace('/', '-')"
+    #         - key: new_target_branch
+    #           expression: "body.object_attributes.target_branch.replace('/', '-')"
+    #   bindings:
+    #     - ref: parse-gitlab-merge-request
+    #   template:
+    #     ref: cluster-pr-opened
+
+    # # PR Update
+    # # Updates PR Env when new pushes are made
+    # - name: cluster-pr-reopened
+    #   interceptors:
+    #   - gitlab:
+    #       secretRef:
+    #         secretName: gl-token
+    #         secretKey: token
+    #       eventTypes:
+    #         - Merge Request Hook
+    #   - cel:
+    #       filter: "body.object_attributes.action in ['reopen'] && body.object_kind in ['merge_request']"
+    #       overlays:
+    #         - key: new_pr
+    #           expression: "body.object_attributes.url.replace('scm', 'gitlab-api').replace('/-/','/')"
+    #         - key: new_source_branch
+    #           expression: "body.object_attributes.source_branch.replace('/', '-')"
+    #         - key: new_target_branch
+    #           expression: "body.object_attributes.target_branch.replace('/', '-')"
+    #   bindings:
+    #     - ref: parse-gitlab-merge-request
+    #   template:
+    #     ref: cluster-pr-reopened
+
+
+    # # PR Update
+    # # Updates PR Env when new pushes are made
+    # - name: cluster-pr-updated
+    #   interceptors:
+    #   - gitlab:
+    #       secretRef:
+    #         secretName: gl-token
+    #         secretKey: token
+    #       eventTypes:
+    #         - Merge Request Hook
+    #   - cel:
+    #       filter: "body.object_attributes.action in ['update'] && body.object_kind in ['merge_request']"
+    #       overlays:
+    #         - key: new_pr
+    #           expression: "body.object_attributes.url.replace('scm', 'gitlab-api').replace('/-/','/')"
+    #         - key: new_source_branch
+    #           expression: "body.object_attributes.source_branch.replace('/', '-')"
+    #         - key: new_target_branch
+    #           expression: "body.object_attributes.target_branch.replace('/', '-')"
+    #   bindings:
+    #     - ref: parse-gitlab-merge-request
+    #   template:
+    #     ref: cluster-pr-updated
+
+
+
+
+    # ## PR Note Added
+    # # Updates PR Env when new pushes are made
+    # - name: cluster-pr-note-added
+    #   interceptors:
+    #   - gitlab:
+    #       secretRef:
+    #         secretName: gl-token
+    #         secretKey: token
+    #       eventTypes:
+    #         - Note Hook
+    #   - cel:
+    #       filter: "body.object_attributes.noteable_type in ['MergeRequest'] && body.object_kind in ['note']"
+    #       # filter: "body.object_attributes.noteable_type in ['MergeRequest'] && body.object_kind in ['note'] && (body.merge_request.source_branch in ['feat/chatbot'])"
+    #       overlays:
+    #         - key: new_pr
+    #           expression: "body.object_attributes.url.replace('scm', 'gitlab-api').replace('/-/','/')"
+    #         - key: new_source_branch
+    #           expression: "body.merge_request.source_branch.replace('/', '-')"
+    #         - key: new_target_branch
+    #           expression: "body.merge_request.target_branch.replace('/', '-')"
+    #   bindings:
+    #     - ref: parse-gitlab-merge-request-note
+    #     - ref: parse-gitlab-comment
+    #   template:
+    #     ref: cluster-pr-note-added

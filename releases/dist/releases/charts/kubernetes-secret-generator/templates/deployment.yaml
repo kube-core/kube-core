@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kubernetes-secret-generator.fullname" . }}
+  labels:
+  {{- include "kubernetes-secret-generator.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+  {{- include "kubernetes-secret-generator.selectorLabels" . | nindent 6 }}
+  strategy:
+    type: {{ .Values.deploymentStrategy }}
+  template:
+    metadata:
+      labels:
+    {{- include "kubernetes-secret-generator.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- if .Values.priorityClassName }}
+      priorityClassName: {{ .Values.priorityClassName | quote}}
+      {{- end }}
+      {{- include "kubernetes-secret-generator.images.pullSecrets" (dict "images" (list .Values.image) "global" .Values.global) | nindent 6 }}
+      serviceAccountName: {{ include "kubernetes-secret-generator.serviceAccountName" . }}
+      securityContext:
+      {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+          {{- toYaml .Values.securityContext | nindent 12 }}
+          image: {{ include "kubernetes-secret-generator.images.image" (dict "root" . "Values" .Values.image)}}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            {{- $args := .Values.args }}
+            {{- if not .Values.installCRDs }}
+              {{- $args = append $args "--disable-crd-support" }}
+            {{- end }}
+            {{- toYaml $args | nindent 12 }}
+          ports:
+            - containerPort: 8080
+              name: healthcheck
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: healthcheck
+            initialDelaySeconds: 6
+            periodSeconds: 3
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: healthcheck
+            initialDelaySeconds: 6
+            periodSeconds: 3
+          env:
+            - name: WATCH_NAMESPACE
+              value: {{ template "kubernetes-secret-generator.watchNamespace" . }}
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: "kubernetes-secret-generator"
+            - name: REGENERATE_INSECURE
+              value: {{ .Values.regenerateInsecure | quote }}
+            - name: SECRET_LENGTH
+              value: {{ .Values.secretLength | quote }}
+            - name: USE_METRICS_SERVICE
+              value: {{ .Values.useMetricsService | quote }}
+          resources:
+      {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+  {{- toYaml . | nindent 8 }}
+  {{- end }}

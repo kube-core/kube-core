@@ -1,0 +1,54 @@
+
+{{- if .Values.core.installCRDs -}}
+{{ tpl (readFile "templates/releases/standard/crds.yaml.gotmpl") . }}
+{{- end -}}
+
+{{- if .Values.core.releasesEnabled -}}
+{{ tpl (readFile "templates/releases/standard/releases.yaml.gotmpl") . }}
+{{- end -}}
+
+{{- if .Values.core.releasesRawEnabled -}}
+{{ tpl (readFile "templates/releases/standard/releases-raw.yaml.gotmpl") . }}
+{{- end -}}
+
+
+
+{{- if .Values.core.releasesCustomEnabled -}}
+{{ tpl (readFile "templates/releases/custom/releases-custom.yaml.gotmpl") . }}
+{{- end -}}
+
+{{- if .Values.releasesCustom.rabbitmq.enabled -}}
+{{ tpl (readFile "templates/releases/custom/rabbitmq.yaml.gotmpl") . }}
+{{- end -}}
+
+{{- if .Values.releasesCustom.mongodb.enabled -}}
+{{ tpl (readFile "templates/releases/custom/mongodb.yaml.gotmpl") . }}
+{{- end -}}
+
+{{- if .Values.releasesCustom.mysqlBackup.enabled -}}
+{{ tpl (readFile "templates/releases/custom/mysql-backup.yaml.gotmpl") . }}
+{{- end -}}
+
+{{- if .Values.releasesCustom.postgresOperator.enabled -}}
+{{ tpl (readFile "templates/releases/custom/postgres-operator.yaml.gotmpl") . }}
+{{- end -}}
+
+{{- if .Values.releasesCustom.postgresOperatorCluster.enabled -}}
+{{ tpl (readFile "templates/releases/custom/postgres-operator-cluster.yaml.gotmpl") . }}
+{{- end -}}
+
+{{- if .Values.releasesCustom.oauth2Proxy.enabled -}}
+{{ tpl (readFile "templates/releases/custom/oauth2-proxy.yaml.gotmpl") . }}
+{{- end -}}
+
+{{- if .Values.releasesCustom.keycloakManaged.enabled -}}
+{{ tpl (readFile "templates/releases/custom/keycloak-managed.yaml.gotmpl") . }}
+{{- end -}}
+
+{{- if .Values.releasesCustom.containerRegistry.enabled -}}
+{{ tpl (readFile "templates/releases/custom/container-registry.yaml.gotmpl") . }}
+{{- end -}}
+
+{{- if .Values.releasesCustom.tektonCronjob.enabled -}}
+{{ tpl (readFile "templates/releases/custom/tekton-cronjob.yaml.gotmpl") . }}
+{{- end -}}

@@ -1,0 +1,33 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+  {{ if .Values.cluster.common.defaultIngressAnnotations }}
+    {{ toYaml .Values.cluster.common.defaultIngressAnnotations | nindent 4 }}
+  {{- end }}
+  {{- if (index .Values "tekton" "dashboard" "ingress" "annotations") }}
+    {{ toYaml (index .Values "tekton" "dashboard" "ingress" "annotations") | nindent 4 }}
+  {{- end }}
+  labels:
+    {{- include "tekton.labels" . | nindent 4 }}
+    {{ if .Values.cluster.common.defaultIngressLabels }}
+      {{ toYaml .Values.cluster.common.defaultIngressLabels | nindent 4 }}
+    {{- end }}
+    {{- if (index .Values "tekton" "dashboard" "ingress" "labels") }}
+      {{ toYaml (index .Values "tekton" "dashboard" "ingress" "labels") | nindent 4 }}
+    {{- end }}
+  name: dashboard
+  namespace: tekton-pipelines
+spec:
+  rules:
+  - host: {{ (index .Values "tekton" "dashboard" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
+    http:
+      paths:
+      - backend:
+          serviceName: tekton-dashboard
+          servicePort: 9097
+        pathType: ImplementationSpecific
+  tls:
+  - hosts:
+    - {{ (index .Values "tekton" "dashboard" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
+    secretName: {{ (index .Values "tekton" "dashboard" "ingress" "subdomain") | replace "." "-"}}-tls

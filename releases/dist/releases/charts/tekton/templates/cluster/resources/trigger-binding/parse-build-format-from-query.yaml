@@ -1,0 +1,11 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerBinding
+metadata:
+  name: parse-build-format-from-query
+  namespace: tekton-pipelines
+spec:
+  params:
+  - name: build-format
+    value: $(extensions.build_format)
+  - name: build-tool
+    value: $(extensions.build_tool)

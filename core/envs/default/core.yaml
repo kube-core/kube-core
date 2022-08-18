@@ -1,0 +1,22 @@
+# These values must be filled on consumer side !
+core:
+  ha: false
+  installCRDs: false
+
+  packages:
+    essentials:
+      enabled: false
+    logging:
+      enabled: false
+    logging-v2:
+      enabled: false
+    estafette:
+      enabled: false
+    tekton:
+      enabled: false
+    monitoring:
+      enabled: false
+    istio:
+      enabled: false
+    test:
+      enabled: false

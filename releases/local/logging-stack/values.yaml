@@ -1,0 +1,8 @@
+es-exporter:
+  enabled: false
+
+cluster:
+  logging:
+    stack:
+      fluentd:
+        drain: false

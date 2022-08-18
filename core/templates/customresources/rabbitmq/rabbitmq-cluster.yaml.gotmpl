@@ -1,0 +1,93 @@
+apiVersion: rabbitmq.com/v1beta1
+kind: RabbitmqCluster
+metadata:
+  labels:
+    app: rabbitmq
+    instance:
+  annotations:
+    some: annotation
+  name: rabbitmqcluster-sample
+spec:
+  replicas: 3
+  terminationGracePeriodSeconds: 60 
+  service:
+    type: ClusterIP
+    annotations: {}
+  persistence:
+    storageClassName: standard
+    storage: 10Gi
+  resources:
+    requests:
+      cpu: 30m
+      memory: 500Mi
+    limits:
+      memory: 500Mi  
+# ---
+# apiVersion: rabbitmq.com/v1beta1
+# kind: RabbitmqCluster
+# metadata:
+#   labels:
+#     app: rabbitmq
+#     instance:
+#   annotations:
+#     some: annotation
+#   name: rabbitmqcluster-sample
+# spec:
+#   replicas: 3
+#   terminationGracePeriodSeconds: 60 # default: 604800 (week)
+#   service:
+#     type: ClusterIP
+#     annotations: {}
+#   persistence:
+#     storageClassName: standard
+#     storage: 10Gi
+#   resources:
+#     requests:
+#       cpu: 30m
+#       memory: 500Mi
+#     limits:
+#       memory: 500Mi  
+#   affinity: {}
+#     # nodeAffinity:
+#     #   preferredDuringSchedulingIgnoredDuringExecution:
+#     #     nodeSelectorTerms:
+#     #     - matchExpressions:
+#     #       - key: kubernetes.io/hostname
+#     #         operator: In
+#     #         values:
+#     #         - node-1
+#   tolerations: {}
+#     # - key: "dedicated"
+#     #   operator: "Equal"
+#     #   value: "rabbitmq"
+#     #   effect: "NoSchedule"
+#   rabbitmq: {}
+#     # additionalConfig: |
+#     #   cluster_formation.peer_discovery_backend = rabbit_peer_discovery_k8s
+#     #   cluster_formation.k8s.host = kubernetes.default
+#     #   cluster_formation.k8s.address_type = hostname
+#     #   cluster_formation.node_cleanup.interval = 30
+#     #   cluster_formation.node_cleanup.only_log_warning = true
+#     #   cluster_partition_handling = pause_minority
+#     #   queue_master_locator = min-masters
+#     # # channel_max = 1050
+#     # advancedConfig: |
+#     #   [
+#     #       {ra, [
+#     #           {wal_data_dir, '/var/lib/rabbitmq/quorum-wal'}
+#     #       ]}
+#     #   ].
+#     # envConfig: |
+#     #   RABBITMQ_DISTRIBUTION_BUFFER_SIZE=some_value
+#     # additionalPlugins:
+#     #   - rabbitmq_top
+#     #   - rabbitmq_shovel
+  
+#   # tls:
+#   #   secretName: rabbitmq-server-certs
+#   #   caSecretName: rabbitmq-ca-cert
+#   #   disableNonTLSListeners: true
+#   terminationGracePeriodSeconds: 60 # default: 604800 (week)
+#   override:
+#     service: {}
+#     statefulSet: {}

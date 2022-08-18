@@ -1,0 +1,26 @@
+{{- if .Values.pod.mounts.pvc }}
+{{- range .Values.pod.mounts.pvc }}
+{{- $rangeItem := . -}}
+{{- with $ }}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ include "n9-api.fullname" . }}-{{ $rangeItem.name }}
+  labels:
+    {{- include "n9-api.labels" . | nindent 4 }}
+spec:
+  {{- if $rangeItem.storageClass }}
+  storageClassName: {{ $rangeItem.storageClass | quote }}
+  {{- else }}
+  storageClassName: ""
+  {{- end }}
+  {{- if $rangeItem.accessMode }}
+  accessModes:
+    - {{ $rangeItem.accessMode | quote }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ default "10" ($rangeItem.size | quote) }}
+{{- end }}
+{{- end }}
+{{- end }}

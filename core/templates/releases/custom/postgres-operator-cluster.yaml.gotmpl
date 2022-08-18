@@ -1,0 +1,38 @@
+{{- $values := .Values }}
+
+{{- range $key, $value :=  (index .Values.releasesCustom.postgresOperatorCluster "config" "clusters") }}
+
+### Postgres-operator heavily depend on ressources naming format {TEAM}-{NAME}
+
+- name: {{ $value.name }}
+  chart: ../releases/dist/releases/charts/raw
+  namespace: {{ $value.namespace }}
+  {{ if $value.needs }}
+  wait: true
+  needs: {{ toYaml $value.needs | nindent 2 }}
+  {{ end }}
+  installed: {{ $value.enabled }}
+  labels:
+    app: postgres-cluster
+    type: postgres-cluster
+  values:
+  - manifests:
+    - apiVersion: "acid.zalan.do/v1"
+      kind: postgresql
+      metadata:
+        name: {{ $value.name }}
+        annotations: {{ toYaml $value.annotations | nindent 10 }}
+        labels: {{ toYaml $value.labels | nindent 10 }}
+      spec:
+        {{ toYaml $value.spec | nindent 8 }}
+{{ if $value.config.replicateSecret_additional_secret_mount }}
+    - apiVersion: v1
+      kind: Secret
+      metadata:
+        name: {{ $values.releasesCustom.postgresOperator.values.configAwsOrGcp.additional_secret_mount }}
+        annotations:
+          replicator.v1.mittwald.de/replicate-from: postgres-operator/{{ $values.releasesCustom.postgresOperator.values.configAwsOrGcp.additional_secret_mount }}
+      data: {}
+{{ end }}
+
+{{- end -}}

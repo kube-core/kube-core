@@ -1,0 +1,46 @@
+# Default integration outputs
+{{ if .Values.cluster.logging.integrations.gcs.enabled }}
+---
+{{ template "cluster-logging.objectStorageOutputTemplate" (dict "cluster" .Values.cluster "name" "default" "objectStorageType" "gcs") }}
+{{ end }}
+
+{{ if .Values.cluster.logging.integrations.minio.enabled }}
+---
+{{ template "cluster-logging.objectStorageOutputTemplate" (dict "cluster" .Values.cluster "name" "default" "objectStorageType" "minio") }}
+{{ end }}
+
+{{ if .Values.cluster.logging.integrations.s3.enabled }}
+---
+{{ template "cluster-logging.objectStorageOutputTemplate" (dict "cluster" .Values.cluster "name" "default" "objectStorageType" "s3") }}
+{{ end }}
+# Default integration outputs
+
+
+# Outputs for Tekton
+{{ if .Values.cluster.logging.integrations.tekton.enabled }}
+
+{{ if .Values.cluster.logging.integrations.gcs.enabled }}
+---
+{{ template "cluster-logging.objectStorageOutputTemplate" (dict "cluster" .Values.cluster "name" "tekton" "objectStorageType" "gcs" "txtLogs" true) }}
+{{ end }}
+
+{{ if .Values.cluster.logging.integrations.minio.enabled }}
+---
+{{ template "cluster-logging.objectStorageOutputTemplate" (dict "cluster" .Values.cluster "name" "tekton" "objectStorageType" "minio" "txtLogs" true) }}
+{{ end }}
+
+{{ if .Values.cluster.logging.integrations.s3.enabled }}
+---
+{{ template "cluster-logging.objectStorageOutputTemplate" (dict "cluster" .Values.cluster "name" "tekton" "objectStorageType" "s3" "txtLogs" true) }}
+{{ end }}
+
+{{ end }} 
+# Outputs for Tekton
+
+
+# Elasticsearch
+{{ if .Values.cluster.logging.integrations.es.enabled }}
+---
+{{ template "cluster-logging.esOutputTemplate" (dict "cluster" .Values.cluster) }}
+{{ end }}
+# Elasticsearch

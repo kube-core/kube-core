@@ -1,0 +1,9 @@
+{{- $value := .Values }}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pod-env-overrides
+  namespace: postgres-operator
+data:
+{{ toYaml $value.releasesCustom.postgresOperator.config.pod_env_overrides.data | nindent 2 }}

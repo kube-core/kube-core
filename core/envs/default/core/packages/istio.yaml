@@ -1,0 +1,35 @@
+releases:
+  nginx-istio-ingress-controller:
+    labels:
+      package: istio
+    enabled: true
+
+  istio-rules-external-services:
+    labels:
+      package: istio
+    enabled: true
+
+  istio-base:
+    labels:
+      package: istio
+    enabled: true
+
+  istiod:
+    labels:
+      package: istio
+    enabled: true
+
+  istio-prometheus:
+    labels:
+      package: istio
+    enabled: true
+
+  istio-grafana:
+    labels:
+      package: istio
+    enabled: true
+
+  istio-kiali:
+    labels:
+      package: istio
+    enabled: true

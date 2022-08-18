@@ -1,0 +1,6 @@
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: high
+value: 144000
+description: "PriorityClass for high"

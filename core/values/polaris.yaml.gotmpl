@@ -1,0 +1,45 @@
+dashboard:
+  enable: true
+  replicas: 1
+  service:
+    type: ClusterIP
+    annotations:
+      {{ toYaml .Values.cluster.common.defaultServiceAnnotations | indent 6 | trim }}
+  ingress:
+    enabled: true
+    hosts:
+    - {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
+    annotations:
+      forecastle.stakater.com/icon: https://github.com/FairwindsOps/polaris/blob/master/docs/.vuepress/public/img/polaris-logo.png?raw=true
+    {{ if .Values.cluster.common.defaultIngressAnnotations }}
+      {{ toYaml .Values.cluster.common.defaultIngressAnnotations | nindent 6 }}
+    {{- end }}
+    {{- if (index .Values.releases .Release.Name "config" "ingress" "annotations") }}
+      {{ toYaml (index .Values.releases .Release.Name "config" "ingress" "annotations") | nindent 6 }}
+    {{- end }}
+    labels:
+    {{ if .Values.cluster.common.defaultIngressLabels }}
+      {{ toYaml .Values.cluster.common.defaultIngressLabels | nindent 6 }}
+    {{- end }}
+    {{- if (index .Values.releases .Release.Name "config" "ingress" "labels") }}
+      {{ toYaml (index .Values.releases .Release.Name "config" "ingress" "labels") | nindent 6 }}
+    {{- end }}
+    tls:
+      - secretName: {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") | replace "." "-"}}-tls
+        hosts:
+          - {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
+
+
+webhook:
+  enable: false
+  replicas: 1
+  nodeSelector: {}
+  tolerations: []
+  # Priority Class name to be used in deployment if provided.
+  priorityClassName:
+
+audit:
+  enable: false
+  cleanup: false
+  outputURL: ""
+

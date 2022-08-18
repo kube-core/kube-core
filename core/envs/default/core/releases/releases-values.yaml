@@ -1,0 +1,106 @@
+releases:
+  chartmuseum:
+    values:
+      extraArgs:
+        - --cache-interval=1m
+      gcp:
+        secret:
+          enabled: false
+          key: chartmuseum-sa.json
+          name: chartmuseum-sa
+  cluster-logging:
+    values:
+      installCRDs: false
+  eck-operator:
+    values:
+      installCRDs: false
+  kube-cleanup-operator:
+    values:
+      args:
+        - --namespace=tekton-pipelines
+        - --delete-successful-after=5m
+        - --delete-failed-after=120m
+        - --delete-pending-pods-after=60m
+        - --delete-evicted-pods-after=60m
+        - --delete-orphaned-pods-after=60m
+        - --legacy-mode=false
+      rbac:
+        create: true
+        global: true
+      serviceAccount:
+        create: true
+  kubernetes-dashboard:
+    values:
+      resources:
+        limits:
+          cpu: 0.5
+          memory: 200Mi
+        requests:
+          cpu: 50m
+          memory: 100Mi
+  logging-stack:
+    values:
+      installCRDs: false
+  nginx-ingress-controller:
+    values:
+      podLabels:
+        test: test
+      resources:
+        limits: {}
+        requests: {}
+  sealed-secrets:
+    values:
+      crd:
+        create: false
+  tekton:
+    config:
+      app-hooks:
+        ingress:
+          annotations: {}
+          labels: {}
+          subdomain: "app-hooks.tekton-pipelines"
+      cluster-hooks:
+        ingress:
+          annotations: {}
+          labels: {}
+          subdomain: "cluster-hooks.tekton-pipelines"
+      config:
+        hooks:
+          appPushDevelop:
+            templateRef: app-push-develop
+          gardenPushDevelop:
+            templateRef: garden-push-develop
+        templates:
+          appPushDevelop:
+            pipelineRef: app-push-develop
+          gardenPushDevelop:
+            pipelineRef: garden-deploy
+      core-hooks:
+        ingress:
+          annotations: {}
+          labels: {}
+          subdomain: "core-hooks.tekton-pipelines"
+      dashboard:
+        ingress:
+          annotations: {}
+          labels: {}
+          subdomain: "tekton-dashboard.tekton-pipelines"
+      garden-hooks:
+        ingress:
+          annotations: {}
+          labels: {}
+          subdomain: "garden-hooks.tekton-pipelines"
+      pipeline:
+        cleanup:
+          enabled: false
+          keep:
+            pipelineRuns: 100
+            taskRuns: 500
+      storage:
+        bucket: kube-core-tekton-storage
+      webhook:
+        scaling:
+          minAvailable: 2
+  tekton-logging:
+    values:
+      installCRDs: false

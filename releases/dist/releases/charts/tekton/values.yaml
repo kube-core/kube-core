@@ -1,0 +1,53 @@
+cluster:
+  logging:
+    integrations:
+      tekton:
+        enabled: false
+externalLogs:
+  enabled: false
+  endpoint: http://tekton-logs-server.logging.svc.cluster.local:3000/logs
+tekton:
+  pipeline:
+    cleanup:
+      enabled: true
+  webhook:
+    scaling:
+      minAvailable: 2
+  storage:
+    bucket: kube-core-tekton-storage
+  core-hooks:
+    ingress:
+      subdomain: "core-hooks.tekton-pipelines"
+      annotations: {}
+      labels: {}
+  cluster-hooks:
+    ingress:
+      subdomain: "cluster-hooks.tekton-pipelines"
+      annotations: {}
+      labels: {}
+  app-hooks:
+    ingress:
+      subdomain: "app-hooks.tekton-pipelines"
+      annotations: {}
+      labels: {}
+  garden-hooks:
+    ingress:
+      subdomain: "garden-hooks.tekton-pipelines"
+      annotations: {}
+      labels: {}
+  dashboard:
+    ingress:
+      subdomain: "tekton-dashboard.tekton-pipelines"
+      annotations: {}
+      labels: {}
+  config:
+    hooks:
+      appPushDevelop:
+        templateRef: app-push-develop
+      gardenPushDevelop:
+        templateRef: garden-push-develop
+    templates:
+      appPushDevelop:
+        pipelineRef: app-push-develop
+      gardenPushDevelop:
+        pipelineRef: garden-deploy

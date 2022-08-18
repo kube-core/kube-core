@@ -1,0 +1,63 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: setup-project
+  labels:
+    app.kubernetes.io/version: "0.0.1"
+  annotations:
+    tekton.dev/pipelines.minVersion: "0.12.1"
+    tekton.dev/tags: setup, preinstall, npmrc
+    tekton.dev/displayName: "setup project"
+spec:
+  description: >-
+    This task setup project
+  workspaces:
+    - name: source
+  params:
+    - name: image
+      description: The image used by the task
+      type: string
+      default: neo9sas/devops-tools:v1.5.0
+    - name: directory
+      description: The directory containing the app, relative to the source repository root
+      default: .
+    - name: ci-preinstall
+      description: if we should run a script named ci-preinstall
+      default: "false"
+    - name: branch
+      description: branch that should be used for preinstall
+      default: "develop"
+    - name: build-tool
+      description: The build tool npm, gradle or maven
+    - name: NPM_READER
+      type: string
+      description: The secret name of the npm publisher (default npm-reader)
+      default: "npm-reader"
+
+  volumes:
+    - name: npm-publisher-volume
+      secret:
+        secretName: $(params.NPM_READER)
+
+  steps:
+    - name: setup
+      image: $(params.image)
+      workingDir: $(workspaces.source.path)/$(params.directory)
+      volumeMounts:
+        - name: npm-publisher-volume
+          readOnly: true
+          mountPath: /tmp/npm-publisher
+      command: ["/bin/bash"]
+      args:
+        - -c
+        - |
+          # TODO: Remove this and set proper permissions/user/home for
+          cp -rfp ~/.ssh /root
+
+          if [[ $(params.ci-preinstall) == "true" ]]; then
+              BRANCH=$(params.branch) yarn run ci:preinstall
+          fi
+
+          if [[ $(params.build-tool) == "npm" ]]; then
+              cp /tmp/npm-publisher/.npmrc .npmrc
+          fi

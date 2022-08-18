@@ -1,0 +1,60 @@
+name:
+  appNameOverride: "ingress-access-operator"
+
+api:
+  type: "java"
+  deployedEnv: "production"
+
+image:
+  repository: neo9sas/ingress-access-operator
+  tag: v1.1.0
+
+pod:
+  env:
+    values:
+    - name: EXTENSION_UPDATE_ISTIO_INGRESS_SIDECAR_ENABLED
+      value: {{ (index .Values.releases .Release.Name "config" "dynamicIstioSidecar" "enabled") }}
+    - name: EXTENSION_EXPOSER_ENABLED
+      value: {{ (index .Values.releases .Release.Name "config" "exposer" "enabled") }}
+    - name: EXTENSION_EXPOSER_DOMAIN
+      value: {{ .Values.cluster.config.domain | quote}}
+    - name: EXTENSION_DEFAULT_FILTERING_ENABLED
+      value: {{ (index .Values.releases .Release.Name "config" "defaultFiltering" "enabled") }}
+    - name: LOGGING_LEVEL_IO_NEO9_INGRESS_ACCESS
+      value: {{ (index .Values.releases .Release.Name "config" "logLevel") }}
+
+serviceAccount:
+  create: true
+
+healthCheck:
+  enabled: true
+  path: "/actuator/health"
+ 
+service:
+  port: 8081
+
+clusterRole:
+  create: true
+  autoBindClusteRole: true
+  rules:
+    - apiGroups: ["networking.k8s.io"]
+      resources: ["ingresses"]
+      verbs: ["get", "list", "watch", "update", "patch", "create", "delete"]
+    - apiGroups: ["apiextensions.k8s.io"]
+      resources: ["customresourcedefinitions"]
+      verbs: ["get"]
+    - apiGroups: ["ingress.neo9.io"]
+      resources: ["visitorgroups"]
+      verbs: ["get", "list", "watch", "update", "patch"]
+    - apiGroups: ["ingress.neo9.io"]
+      resources: ["visitorgroups/status"]
+      verbs: ["get", "list", "watch", "update", "patch", "create", "delete"]
+    - apiGroups: [""]
+      resources: ["services"]
+      verbs: ["get", "list", "watch", "update", "patch", "create", "delete"]
+    - apiGroups: [""]
+      resources: ["namespaces"]
+      verbs: ["get", "list", "watch"]
+    - apiGroups: ["networking.istio.io"]
+      resources: ["sidecars"]
+      verbs: ["get", "list", "watch", "update", "patch", "create"]

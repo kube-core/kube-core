@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  labels: {{ toYaml (.Values.cluster.common.defaultIngressLabels) | nindent 4 }}
+  annotations: {{ toYaml (.Values.cluster.common.defaultIngressAnnotations) | nindent 4 }}
+  name: prometheus
+  namespace: istio-system
+spec:
+  rules:
+  - host: prometheus.mesh.{{ .Values.cluster.config.domain }}
+    http:
+      paths:
+      - backend:
+          serviceName: prometheus
+          servicePort: 9090
+        path: /
+        pathType: ImplementationSpecific
+  tls:
+  - hosts:
+    - prometheus.mesh.{{ .Values.cluster.config.domain }}
+    secretName: prometheus-tls

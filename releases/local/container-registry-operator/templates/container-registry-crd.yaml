@@ -1,0 +1,81 @@
+kind: CustomResourceDefinition
+apiVersion: apiextensions.k8s.io/v1
+metadata:
+  name: container-registries.neo9.io
+spec:
+  group: neo9.io
+  scope: Namespaced
+  names:
+    plural: container-registries
+    singular: container-registry
+    shortNames:
+      - cro
+    kind: ContainerRegistry
+    listKind: ContainerRegistries
+  versions:
+    - name: v1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          description: ContainerRegistry is the Schema for ContainerRegistry API
+          type: object
+          properties:
+            apiVersion:
+              description: >-
+                APIVersion defines the versioned schema of this representation
+                of an object.
+              type: string
+            kind:
+              description: >-
+                Kind is a string value representing the REST resource this
+                object represents.
+              type: string
+            metadata:
+              type: object
+            spec:
+              description: ContainerRegistry.spec describes the desired state of my resource
+              type: object
+              required:
+                - hostname
+                - project
+              properties:
+                secretName:
+                  nullable: true
+                  description: Secret name is a string value representing the name of the secrets for the dockerconfigjson
+                  type: string
+                hostname:
+                  nullable: false
+                  description: >-
+                    Hostname is a string value representing the hostname of the container regsitry
+                  type: string
+                project:
+                  nullable: false
+                  description: >-
+                    Project is a string value representing the project
+                  type: string
+                namespaces:
+                  description: List of Namespaces that we add the dockerconfigjson
+                  type: array
+                  items:
+                    description: namespace
+                    type: string
+                gcrAccessData:
+                  description: >-
+                    Gcr access data
+                  type: string
+                secretRef:
+                  description: reference to the dockerconfigjson secret
+                  type: string
+                imageRegistry:
+                  nullable: false
+                  description: GCR or Docker repository
+                  type: string
+              oneOf:
+                - required: ['gcrAccessData']
+                - required: ['secretRef']
+      subresources:
+        status: {}
+      additionalPrinterColumns:
+  conversion:
+    strategy: None

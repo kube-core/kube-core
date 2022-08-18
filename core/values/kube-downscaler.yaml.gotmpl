@@ -1,0 +1,76 @@
+## How many kube-downscaler pods should run in deployment
+replicaCount: 1
+
+## Namespace where kube-downscaler is going to be deployed.
+
+debug:
+  enable: true
+# namespace:
+  ## Deployment will query all namespaces if left empty:
+#  active_in:
+## How frequently kube-downscaler should query applications uptime, unit is in seconds.
+
+## Default is 60 seconds
+interval: 60
+
+rbac:
+  ## If true, create & use RBAC resources
+  create: true
+  ## Ignored if rbac.create is true
+  serviceAccountName: default
+
+image:
+  repository: hjacobs/kube-downscaler
+  tag: 21.2.0
+  pullPolicy: IfNotPresent
+  args:
+    - --include-resources=deployments,statefulsets
+    - --exclude-namespaces={{ .Values.cluster.config.downscalerExcludedNamespaces }}
+    # - --exclude-namespaces=kube-system,system-tools,namespace-node-affinity
+    # - --once
+    # - --dry-run
+    # --default-uptime="Mon-Sun 07:30-20:30 Europe/Berlin"
+
+resources:
+  limits:
+    cpu: 50m
+    memory: 200Mi
+  requests:
+    cpu: 50m
+    memory: 200Mi
+
+securityContext:
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
+
+extraLabels: {}
+
+deployment:
+  environment:
+    DEFAULT_UPTIME: {{ .Values.cluster.config.schedule }}
+
+# This will periodically remove all annotations preventing downscaling
+# Sometimes people forget to remove the annotations and this can incur costs
+resetAnnotationsCronjob:
+  enabled: false
+  image: bitnami/kubectl:latest
+  # Cron schedule for when to reset the annotations
+  schedule: 0 7 * * *
+  # A kubectl selector to identify what deployments to remove the annotation from
+  labelSelectors:
+    - environment=staging
+  resources:
+    limits:
+      cpu: 50m
+      memory: 50Mi
+    requests:
+      cpu: 50m
+      memory: 50Mi
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+nodeSelector: {{ toYaml (index .Values.releases .Release.Name "scheduling" "nodeSelector") | nindent 2 }}
+tolerations: {{ toYaml (index .Values.releases .Release.Name "scheduling"  "tolerations") | nindent 2 }} 
+affinity: {{ toYaml (index .Values.releases .Release.Name "scheduling" "affinity") | nindent 2 }}

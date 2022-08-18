@@ -1,0 +1,11 @@
+extends: default
+
+rules:
+  document-start: disable
+  # 80 chars should be enough, but don't fail if a line is longer
+  line-length: disable
+    # max: 80
+    # level: warning
+
+  # don't bother me with this rule
+  indentation: disable

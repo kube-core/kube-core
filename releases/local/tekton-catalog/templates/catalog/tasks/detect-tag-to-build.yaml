@@ -1,0 +1,83 @@
+# Source: tekton-catalog/templates/patched_resources.yaml
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  annotations:
+    tekton.dev/displayName: devops-tools
+    tekton.dev/pipelines.minVersion: 0.12.1
+    tekton.dev/tags: devops, tools
+  name: detect-tag-to-build
+  namespace: tekton-pipelines
+spec:
+  description: Runs a devops-tools container
+  params:
+    - default: echo "detect-tag-to-build"
+      description: The script to execute
+      name: script
+      type: string
+    - default: neo9sas/devops-tools:v1.5.0
+      description: The image used by the task
+      name: image
+      type: string
+    - default: ""
+      description: Container images repository url
+      name: container-images-repository
+      type: string
+    - default: ""
+      description: The git project name which is at the origin of the push
+      name: git-project-name
+      type: string
+    - default: ""
+      description: The container image tag to use (tag or hash)
+      name: container-image-tag
+      type: string
+    - default: ""
+      description: The repository branch at the origin of the push
+      name: git-branch
+      type: string
+  results:
+    - description: The full path of image to build
+      name: TARGET_IMAGE
+    - description: The tag of image to build
+      name: TARGET_IMAGE_TAG
+  steps:
+    - name: exec-script
+      image: $(params.image)
+      imagePullPolicy: Always
+      command:
+        - /bin/bash
+      args:
+        - -c
+        - |
+          #!/usr/bin/env bash
+          echo "Checking if branch or tag ..."
+          timestamp=$(date +"%s")
+
+          imageRepository="$(params.container-images-repository)"
+          projectName="$(params.git-project-name)"
+          inputTag="$(params.container-image-tag)"
+
+          baseImage="${imageRepository}/${projectName}:${inputTag}"
+
+          regexVersion='^v([0-9]+\.){0,2}(\*|[0-9]+)([-,a-z,0-9]*)$'
+          targetImage=""
+          targetTag="${inputTag}"
+
+          if [[ $(params.git-branch) =~ $regexVersion ]]; then
+              detectedBranch="tag"
+              targetImage="${baseImage}"
+          else
+              detectedBranch=$(params.git-branch)
+              targetImage="${baseImage}-${timestamp}"
+              targetTag="${inputTag}-${timestamp}"
+          fi
+          echo "Detected: ${detectedBranch}"
+          echo "Will build: ${targetImage}"
+          echo -n "${targetImage}" > $(results.TARGET_IMAGE.path)
+          echo -n "${targetTag}" > $(results.TARGET_IMAGE_TAG.path)
+  workspaces:
+    - name: input
+    - name: output
+    - name: source
+    - name: data
+

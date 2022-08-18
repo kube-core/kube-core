@@ -1,0 +1,45 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: cluster-devops-tools
+spec:
+  workspaces:
+  - name: ws
+  tasks:
+  - name: git-clone
+    taskRef:
+      name: git-clone-branch
+    params:
+      - name: repository
+        value: myrepository
+      - name: branch
+        value: master
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+
+  - name: devops-tools
+    taskRef:
+      name: devops-tools
+    params:
+      - name: script
+        value: |
+          #!/usr/bin/env bash
+          echo "Sleeping 600 seconds !"
+          sleep 600
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+    

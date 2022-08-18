@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "predator.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ template "predator.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ template "predator.fullname" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "predator.fullname" . }}
+        chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+        release: "{{ .Release.Name }}"
+        heritage: "{{ .Release.Service }}"
+        {{- with .Values.podAnnotations }}
+      annotations:
+        {{ toYaml . }}
+        {{- end }}
+    spec:
+      {{- with .Values.image.pullSecrets }}
+      imagePullSecrets:
+        {{ toYaml . }}
+      {{- end }}
+      volumes:
+        - name: sqlite
+      {{- if .Values.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.existingClaim | default (include "predator.fullname" .) }}
+      {{- else }}
+          emptyDir: {}
+      {{ end }}
+      serviceAccountName: {{ template "predator.serviceAccountName" . }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          envFrom:
+          - configMapRef:
+              name: {{ include "predator.fullname" . }}
+          env:
+  {{if ne .Values.database.type "SQLITE"}}
+          - name: "DATABASE_USERNAME"
+            valueFrom:
+              secretKeyRef:
+                key:  DATABASE_USERNAME
+                name: {{ .Release.Name }}
+          - name: "DATABASE_PASSWORD"
+            valueFrom:
+              secretKeyRef:
+                key:  DATABASE_PASSWORD
+                name: {{ .Release.Name }}
+  {{end}}
+          volumeMounts:
+            - name: sqlite
+              mountPath: /db
+          ports:
+            - name: http
+              containerPort: {{ .Values.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

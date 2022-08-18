@@ -1,0 +1,28 @@
+{{- $values := .Values }}
+{{- $raw := .Values.releasesRaw }}
+
+{{- range $key, $value := $raw }}
+{{ if $value.enabled }}
+
+- name: {{ $key }} # Allow to use all standard helmfile properties
+  installed: {{ $value.enabled }} # Controls installation & removal
+  chart: ../releases/dist/releases/charts/raw
+  namespace: {{ $value.namespace }}
+  version: 1.0.1
+  {{ if $value.needs }}
+  needs: {{ toYaml $value.needs | nindent 2 }}
+  {{ end }}
+  {{ if $value.labels }}
+  labels: {{ toYaml $value.labels | nindent 4 }}
+    app: {{ $key }}
+    component: manifests
+  {{ else }}
+  labels:
+    app: {{ $key }}
+    component: manifests
+  {{ end }}
+  values:
+  - "./values/raw.yaml.gotmpl" # Release has to have a value file, even empty
+  # - "./values/{{ $key }}.yaml.gotmpl" # Release has to have a value file, even empty
+{{- end -}}
+{{- end -}}

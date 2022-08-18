@@ -1,0 +1,82 @@
+replicaCount: 1
+
+port: 80
+
+podAnnotations: {}
+imagePullSecrets: {}
+image:
+  repository: zooz/predator
+  tag: 1.6
+  pullPolicy: Always
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+  annotations: {}
+  path: /
+  hosts:
+    - predator.local
+  tls: []
+
+persistence:
+  enabled: false
+  # storageClassName: default
+  accessModes:
+  - ReadWriteOnce
+  size: 2Gi
+  # annotations: {}
+  # existingClaim:
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+database:
+  type: SQLITE
+  name:
+  address:
+  username:
+  password:
+  cassandra:
+    replicationFactor: 1
+    keySpaceStrategy: SimpleStrategy
+    localDataCenter:
+  sqlite:
+    storage: /db/predator
+
+internalAddress:
+kubernetesUrl: https://kubernetes.default.svc
+jobPlatform: KUBERNETES
+apiVersion: v1
+delayRunnerMs: 0
+runnerDockerImage: zooz/predator-runner:1.6
+runnerCpu: 1
+runnerMemory: 256
+intervalCleanupFinishedContainers: 0
+customRunnerDefinition:
+allowInsecureTls: true
+skipInternalAddressCheck: true
+serviceAccount:
+  create: true
+rbac:
+  create: true
+
+
+streaming:
+  platform:
+  platformHealthCheckTimeoutMs: 2000
+  excludedAttributes:
+  kafka:
+    brokers:
+    clientId: predator
+    topic:
+    autoTopicCreation: false
+    adminRetries: 2

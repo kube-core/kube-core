@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+  {{ toYaml .Values.cluster.common.defaultIngressAnnotations | nindent 4 }}
+  labels:
+  {{ toYaml .Values.cluster.common.defaultIngressLabels | nindent 4 }}
+  name: rabbitmq
+spec:
+  rules:
+  - host: rabbitmq.{{ .Values.cluster.config.domain }}
+    http:
+      paths:
+      - backend:
+          service:
+            name: rabbitmq
+            port:
+              number: 15672
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - rabbitmq.{{ .Values.cluster.config.domain }}
+    secretName: rabbitmq-tls

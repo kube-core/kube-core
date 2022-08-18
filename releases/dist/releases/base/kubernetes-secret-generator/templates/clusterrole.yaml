@@ -1,0 +1,34 @@
+{{- if and .Values.rbac.create .Values.rbac.clusterRole -}}
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: "mittwald:{{ include "kubernetes-secret-generator.serviceAccountName" . }}"
+  labels:
+  {{ include "kubernetes-secret-generator.labels" . | nindent 4 }}
+rules:
+  # actual operator functionality
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+      - create
+      - list
+      - watch
+      - update
+  - apiGroups:
+        - secretgenerator.mittwald.de
+    resources:
+      - basicauths
+      - basicauths/status
+      - sshkeypairs
+      - sshkeypairs/status
+      - stringsecrets
+      - stringsecrets/status
+    verbs:
+      - get
+      - list
+      - watch
+      - update
+{{- end -}}

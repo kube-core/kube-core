@@ -1,0 +1,12 @@
+cleaner:
+  enabled: true
+  includes: Terminated|Completed|Error|Evicted|CrashLoopBackOff|ImagePullBackOff|ErrImagePull|ContainerCannotRun|NodeAffinity|Shutdown
+  excludeTekton: true
+  excludeCatalogue: true
+tainter:
+  enabled: true
+tekton:
+  enabled: false
+  pipeline:
+    cleanup:
+      enabled: false

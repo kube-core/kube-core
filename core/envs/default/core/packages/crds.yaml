@@ -1,0 +1,6 @@
+# TODO: Review implementation to make it work.
+# releases:
+#   eck-operator-crds:
+#     labels:
+#       package: crds
+#     enabled: true

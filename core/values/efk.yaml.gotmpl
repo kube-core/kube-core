@@ -1,0 +1,617 @@
+#List the namespaces you want logs of here
+watchedNamespace:
+{{- range (index .Values.releases .Release.Name "config" "watchedNamespaces") }}
+  - {{ . }}
+{{- end }}
+fluentdConfig:
+  fluentd.conf: |-
+    <match fluent.**>
+     @type null
+    </match>
+
+    <source>
+      @type forward
+      bind 0.0.0.0
+      port 24224
+    </source>
+
+    <source>
+      @type http
+      bind 0.0.0.0
+      port 9880
+    </source>
+
+    # Example exclusion. Better to handle it in fluentbit if possible
+    # <filter **>
+    #   @type grep
+    #   <exclude>
+    #     key $.log_processed.path
+    #     pattern /\/ping/
+    #   </exclude>
+    # </filter>
+
+    <match fluentd.healthcheck>
+      @type stdout
+    </match>
+
+    # <match integration>
+    #   @type stdout
+    # </match>
+
+    <match log**>
+      # # es
+      @type elasticsearch
+      host "elasticsearch-master"
+      port "9200"
+
+      # # connection
+      # reload_connections false
+      # reconnect_on_error true
+      # reload_on_failure true
+
+      # # Log format
+      include_tag_key true
+      # suppress_type_name true
+      # # logstash_format true
+
+      # # es errors
+      # log_es_400_reason true
+
+      # # rollover / ilm
+      # rollover_index true
+      # deflector_alias logstash
+
+      # # Index
+      # # Activate to create index dynamically from fluentbit tags
+      logstash_prefix ${tag}
+
+
+      # test
+      suppress_type_name true
+      # time_key "time"
+      # time_key_format "%Y-%m-%dT%H:%M:%S%N%z"
+      # index_name "docker-${tag}"
+      logstash_format true
+      reconnect_on_error true
+      reload_on_failure true
+      reload_connections false
+      request_timeout 10
+      default_elasticsearch_version 7
+      fail_on_detecting_es_version_retry_exceed false
+      max_retry_get_es_version 2
+      log_es_400_reason true
+      selector_class_name "Fluent::Plugin::ElasticseatchFallbackSelector"
+      with_transporter_log true
+      verify_es_version_at_startup true
+      template_name "logstash-default"
+      template_file "/tmp/templates/template.json"
+      ilm_policy_id "logstash-policy"
+      ilm_policy {{ index .Values.releases .Release.Name "config" "ilmPolicy" }}
+      ilm_policy_overwrite false
+      application_name ${tag}
+      index_separator ""
+      index_date_pattern ""
+      enable_ilm true
+
+      <buffer>
+        @type file
+        path /opt/bitnami/fluentd/logs/buffers/logs.buffer
+        # flush_mode interval
+        # retry_type exponential_backoff
+        flush_thread_count 2
+        flush_interval 5s
+        # retry_forever
+        # retry_max_interval 30
+        # chunk_limit_size 2M
+        # total_limit_size 500M
+        # overflow_action block
+      </buffer>
+    </match>
+
+fluentdVolume:
+  template.json: |-
+    {
+      "index_patterns": [
+        "log-*"
+      ],
+      "order": 200,
+      "settings": {
+        "index.mapping.ignore_malformed": true,
+        "index.query.default_field": "{{ index .Values.releases .Release.Name "config" "queryDefaultField" }}",
+        "index.refresh_interval": "30s",
+        "index.search.slowlog.threshold.query.debug": "0ms",
+        "index.search.slowlog.threshold.query.info": "1s",
+        "index.search.slowlog.threshold.fetch.debug": "0ms",
+        "index.search.slowlog.threshold.fetch.info": "1s",
+        "index.translog.sync_interval": "1m",
+        "index.number_of_shards": 4,
+        "index.number_of_replicas": 1,
+        "index.analysis": {
+          "analyzer": {
+            "log_analyzer": {
+              "type": "pattern",
+              "pattern": "\\W+",
+              "lowercase": true
+            }
+          },
+          "normalizer": {
+            "lowercase_normalizer": {
+              "type": "custom",
+              "filter": [
+                "lowercase"
+              ]
+            }
+          }
+        }
+      },
+      "mappings": {
+        "dynamic": true,
+        "dynamic_templates": [
+          {
+            "no_index_fields_past_depth_2": {
+              "path_match": "*.*.*",
+              "match_mapping_type": "object",
+              "mapping": {
+                "type": "object",
+                "enabled": false
+              }
+            }
+          },
+          {
+            "create_keyword_index_for_all_string_fields": {
+              "match": "*",
+              "match_mapping_type": "string",
+              "mapping": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer",
+                "ignore_above": 1000
+              }
+            }
+          }
+        ],
+        "properties": {
+          "@timestamp": {
+            "type": "date"
+          },
+          "thread": {
+            "type": "text",
+            "analyzer": "log_analyzer",
+            "norms": false,
+            "similarity": "boolean",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              }
+            }
+          },
+          "{{ index .Values.releases .Release.Name "config" "queryDefaultField" }}": {
+            "type": "text",
+            "analyzer": "log_analyzer",
+            "norms": false,
+            "similarity": "boolean"
+          }
+        }
+      }
+    }
+
+elasticsearch:
+  enabled: true
+  {{ if (index .Values.releases .Release.Name "scheduling" "elasticsearch" "tolerations") }}
+  tolerations: {{ toYaml (index .Values.releases .Release.Name "scheduling" "elasticsearch" "tolerations") | nindent 4 }}
+  {{ else }}
+  tolerations: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "tolerations") | nindent 4 }}
+  {{ end }}
+  {{ if (index .Values.releases .Release.Name "scheduling" "elasticsearch" "nodeSelector") }}
+  nodeSelector: {{ toYaml (index .Values.releases .Release.Name "scheduling" "elasticsearch" "nodeSelector") | nindent 4 }}
+  {{ else }}
+  nodeSelector: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "nodeSelector") | nindent 4 }}
+  {{ end }}
+  {{ if (index .Values.releases .Release.Name "scheduling" "elasticsearch" "affinity" "nodeAffinity") }}
+  nodeAffinity: {{ toYaml (index .Values.releases .Release.Name "scheduling" "elasticsearch" "affinity" "nodeAffinity") | nindent 4 }}
+  {{ else }}
+  nodeAffinity: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "affinity" "nodeAffinity") | nindent 4 }}
+  {{ end }}
+  {{ if (index .Values.releases .Release.Name "scheduling" "elasticsearch" "antiAffinity") }}
+  antiAffinity: {{ toYaml (index .Values.releases .Release.Name "scheduling" "elasticsearch" "antiAffinity") | nindent 4 }}
+  {{ else }}
+  antiAffinity: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "antiAffinity") | nindent 4 }}
+  {{ end }}
+  clusterName: "elasticsearch"
+  nodeGroup: "master"
+
+  # The service that non master groups will try to connect to when joining the cluster
+  # This should be set to clusterName + "-" + nodeGroup for your master group
+  masterService: ""
+
+  # Elasticsearch roles that will be applied to this nodeGroup
+  # These will be set as environment variables. E.g. node.master=true
+  roles:
+    master: "true"
+    ingest: "true"
+    data: "true"
+
+  replicas: {{ ( index .Values.releases .Release.Name "config" "replicas") }}
+  minimumMasterNodes: {{ ( index .Values.releases .Release.Name "config" "minimumMasterNodes") }}
+
+  esMajorVersion: ""
+
+  # Allows you to add any config files in /usr/share/elasticsearch/config/
+  # such as elasticsearch.yml and log4j2.properties
+  esConfig:
+    elasticsearch.yml: |
+      indices.lifecycle.poll_interval: 1m
+  esJavaOpts: {{ ( index .Values.releases .Release.Name "config" "esJavaOpts") }}
+
+  resources:
+    {{ toYaml ( index .Values.releases .Release.Name "config" "resources") | nindent 4 }}
+
+  volumeClaimTemplate:
+    accessModes: [ "ReadWriteOnce" ]
+    resources:
+      requests:
+        storage: 70Gi
+
+  persistence:
+    enabled: true
+    labels:
+      # Add default labels for the volumeClaimTemplate fo the StatefulSet
+      enabled: false
+    annotations: {}
+
+  image: {{ ( index .Values.releases .Release.Name "config" "image") }}
+
+  ingress:
+    enabled: {{ (index .Values.releases .Release.Name "config" "elasticsearch" "ingress" "enabled") }}
+    className: "{{ .Values.cluster.common.defaultIngressClass }}"
+    annotations:
+    {{ if .Values.cluster.common.defaultIngressAnnotations }}
+      {{ toYaml .Values.cluster.common.defaultIngressAnnotations | nindent 6 }}
+    {{- end }}
+    {{- if (index .Values.releases .Release.Name "config" "elasticsearch" "ingress" "annotations") }}
+      {{ toYaml (index .Values.releases .Release.Name "config" "elasticsearch" "ingress" "annotations") | nindent 6 }}
+    {{- end }}
+    labels:
+    {{ if .Values.cluster.common.defaultIngressLabels }}
+      {{ toYaml .Values.cluster.common.defaultIngressLabels | nindent 6 }}
+    {{- end }}
+    {{- if (index .Values.releases .Release.Name "config" "elasticsearch" "ingress" "labels") }}
+      {{ toYaml (index .Values.releases .Release.Name "config" "elasticsearch" "ingress" "labels") | nindent 6 }}
+    {{- end }}
+    tls:
+      - secretName: {{ index .Values.releases .Release.Name "config" "elasticsearch" "ingress" "subdomain" | replace "." "-"}}-tls
+        hosts:
+         - {{ index .Values.releases .Release.Name "config" "elasticsearch" "ingress" "subdomain" }}.{{ .Values.cluster.config.domain }}
+    hosts:
+      - host: {{ index .Values.releases .Release.Name "config" "elasticsearch" "ingress" "subdomain" }}.{{ .Values.cluster.config.domain }}
+        paths:
+          - path: /
+  {{ if not (index .Values.releases .Release.Name "config" "elasticsearch" "ingress" "enabled") }}
+  service:
+    annotations: {{ toYaml .Values.cluster.common.defaultServiceAnnotations | nindent 6 }}
+    labels: {{ toYaml .Values.cluster.common.defaultServiceLabels | nindent 6 }}
+  {{ end }}
+  extraEnvs:
+    - name: S3
+      value: {{ (index .Values.releases .Release.Name "config" "elasticsearch" "s3") | quote }}
+    - name: GCS
+      value: {{ (index .Values.releases .Release.Name "config" "elasticsearch" "gcs") | quote }}
+    - name: BUCKET_NAME
+      value: {{ (index .Values.releases .Release.Name "config" "elasticsearch" "bucket_name") }}
+
+  lifecycle:
+    postStart:
+      exec:
+        command:
+        - bash
+        - -c
+        - |
+          #!/bin/bash
+
+          ES_URL=http://localhost:9200
+
+          while [[ "$(curl -s -o /dev/null -w '%{http_code}\n' $ES_URL)" != "200" ]]; do sleep 1; done
+
+          # Create S3 repository settings
+          if  [[ $S3 = "true" ]]; then
+            curl -X PUT "$ES_URL/_snapshot/my_repository?pretty" -H 'Content-Type: application/json' -d'
+            {
+              "type": "s3",
+              "settings": {
+                "bucket": "'$BUCKET_NAME'",
+                "client": "secondary"
+              }
+            }
+            '
+          fi
+
+          # Create GCS repository settings
+          if [[ $GCS = "true" ]]; then
+            curl -X PUT "$ES_URL/_snapshot/my_repository?pretty" -H 'Content-Type: application/json' -d'
+            {
+              "type": "gcs",
+              "settings": {
+                "bucket": "'$BUCKET_NAME'",
+                "client": "secondary"
+              }
+            }
+            '
+          fi
+
+          # Create snapshot lifecycle policy
+          if [[ $S3 = "true" || $GCS = "true" ]]; then
+            curl -X PUT "$ES_URL/_slm/policy/daily-snapshots?pretty" -H 'Content-Type: application/json' -d'
+            {
+              "schedule": "0 30 1 * * ?",
+              "name": "<daily-snap-{now/d}>",
+              "repository": "my_repository",
+              "retention": {
+                "expire_after": "1095d"
+              }
+            }
+            '
+          fi
+
+
+
+
+
+kibana:
+  enabled: true
+  elasticsearchHosts: "http://elasticsearch-master:9200"
+  {{ if (index .Values.releases .Release.Name "scheduling" "kibana" "tolerations") }}
+  tolerations: {{ toYaml (index .Values.releases .Release.Name "scheduling" "kibana" "tolerations") | nindent 4 }}
+  {{ else }}
+  tolerations: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "tolerations") | nindent 4 }}
+  {{ end }}
+  {{ if (index .Values.releases .Release.Name "scheduling" "kibana" "nodeSelector") }}
+  nodeSelector: {{ toYaml (index .Values.releases .Release.Name "scheduling" "kibana" "nodeSelector") | nindent 4 }}
+  {{ else }}
+  nodeSelector: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "nodeSelector") | nindent 4 }}
+  {{ end }}
+  {{ if (index .Values.releases .Release.Name "scheduling" "kibana" "affinity") }}
+  affinity: {{ toYaml (index .Values.releases .Release.Name "scheduling" "kibana" "affinity") | nindent 4 }}
+  {{ else }}
+  affinity: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "affinity") | nindent 4 }}
+  {{ end }}
+  replicas: 1
+  resources:
+    requests:
+      cpu: "1000m"
+      memory: "2Gi"
+    limits:
+      cpu: "1000m"
+      memory: "2Gi"
+  extraEnvs:
+  - name: NODE_OPTIONS
+    value: --max-old-space-size=1800
+  {{- range $k, $v := (index .Values.releases .Release.Name "config" "watchedNamespaces") }}
+  {{ $k = add1 $k }}
+  - name: WATCHED_NAMESPACE{{ $k }}
+    value: {{ $v }}
+  {{- end }}
+  - name: WATCHED_NAMESPACE{{ add1 (len (index .Values.releases .Release.Name "config" "watchedNamespaces"))  }}
+    value: events
+  healthCheckPath: "/app/kibana"
+
+  # Allows you to add any config files in /usr/share/kibana/config/
+  # such as kibana.yml
+  kibanaConfig: {}
+  #   kibana.yml: |
+  #     key:
+  #       nestedkey: value
+
+  ingress:
+    enabled: {{ (index .Values.releases .Release.Name "config" "kibana" "ingress" "enabled") }}
+    className: "{{ .Values.cluster.common.defaultIngressClass }}"
+    annotations:
+    {{ if .Values.cluster.common.defaultIngressAnnotations }}
+      {{ toYaml .Values.cluster.common.defaultIngressAnnotations | nindent 6 }}
+    {{- end }}
+    {{- if (index .Values.releases .Release.Name "config" "kibana" "ingress" "annotations") }}
+      {{ toYaml (index .Values.releases .Release.Name "config" "kibana" "ingress" "annotations") | nindent 6 }}
+    {{- end }}
+    labels:
+    {{ if .Values.cluster.common.defaultIngressLabels }}
+      {{ toYaml .Values.cluster.common.defaultIngressLabels | nindent 6 }}
+    {{- end }}
+    {{- if (index .Values.releases .Release.Name "config" "kibana" "ingress" "labels") }}
+      {{ toYaml (index .Values.releases .Release.Name "config" "kibana" "ingress" "labels") | nindent 6 }}
+    {{- end }}
+    tls:
+      - secretName: {{ index .Values.releases .Release.Name "config" "kibana" "ingress" "subdomain" | replace "." "-"}}-tls
+        hosts:
+         - {{ index .Values.releases .Release.Name "config" "kibana" "ingress" "subdomain" }}.{{ .Values.cluster.config.domain }}
+    hosts:
+      - host: {{ index .Values.releases .Release.Name "config" "kibana" "ingress" "subdomain" }}.{{ .Values.cluster.config.domain }}
+        paths:
+          - path: /
+  {{ if not (index .Values.releases .Release.Name "config" "kibana" "ingress" "enabled") }}
+  service:
+    annotations:
+    {{ toYaml .Values.cluster.common.defaultServiceAnnotations | nindent 6 }}
+    labels: {{ toYaml .Values.cluster.common.defaultServiceLabels | nindent 6 }}
+  {{ end }}
+metricbeat:
+  enabled: true
+  daemonset:
+    enabled: false
+  deployment:
+    enabled: true
+    {{ if (index .Values.releases .Release.Name "scheduling" "metricbeat" "tolerations") }}
+    tolerations: {{ toYaml (index .Values.releases .Release.Name "scheduling" "metricbeat" "tolerations") | nindent 6 }}
+    {{ else }}
+    tolerations: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "tolerations") | nindent 6 }}
+    {{ end }}
+    {{ if (index .Values.releases .Release.Name "scheduling" "metricbeat" "nodeSelector") }}
+    nodeSelector: {{ toYaml (index .Values.releases .Release.Name "scheduling" "metricbeat" "nodeSelector") | nindent 6 }}
+    {{ else }}
+    nodeSelector: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "nodeSelector") | nindent 6 }}
+    {{ end }}
+    {{ if (index .Values.releases .Release.Name "scheduling" "metricbeat" "affinity") }}
+    affinity: {{ toYaml (index .Values.releases .Release.Name "scheduling" "metricbeat" "affinity") | nindent 6 }}
+    {{ else }}
+    affinity: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "affinity") | nindent 6 }}
+    {{ end }}
+    metricbeatConfig:
+      metricbeat.yml: |
+        metricbeat.modules:
+        - module: kubernetes
+          enabled: true
+          processors:
+          - add_kubernetes_metadata: ~
+          - add_cloud_metadata: ~
+          - add_host_metadata: ~
+          - add_docker_metadata: ~
+          metricsets:
+            - event
+          period: 10s
+          hosts: ["${KUBE_STATE_METRICS_HOSTS}"]
+        setup.template.name: "log-events"
+        setup.template.pattern: "log-events-*"
+        # setup.ilm.enabled: auto
+        setup.ilm.rollover_alias: "log-events"
+        # setup.ilm.pattern: "{now/d}-000001"
+        output.elasticsearch:
+          # index: "%{[fields.log_type]}-%{[agent.version]}-%{+yyyy.MM.dd}"
+          # index: "events-%{[agent.version]}-%{+yyyy.MM.dd}"
+          hosts: '${ELASTICSEARCH_HOSTS:elasticsearch-master:9200}'
+
+fluentd:
+  forwarder:
+    enabled: false
+
+  aggregator:
+    enabled: true
+    {{ if (index .Values.releases .Release.Name "scheduling" "fluentd" "tolerations") }}
+    tolerations: {{ toYaml (index .Values.releases .Release.Name "scheduling" "fluentd" "tolerations") | nindent 6 }}
+    {{ else }}
+    tolerations: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "tolerations") | nindent 6 }}
+    {{ end }}
+    {{ if (index .Values.releases .Release.Name "scheduling" "fluentd" "nodeSelector") }}
+    nodeSelector: {{ toYaml (index .Values.releases .Release.Name "scheduling" "fluentd" "nodeSelector") | nindent 6 }}
+    {{ else }}
+    nodeSelector: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "nodeSelector") | nindent 6 }}
+    {{ end }}
+    {{ if (index .Values.releases .Release.Name "scheduling" "fluentd" "affinity") }}
+    affinity: {{ toYaml (index .Values.releases .Release.Name "scheduling" "fluentd" "affinity") | nindent 6 }}
+    {{ else }}
+    affinity: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "affinity") | nindent 6 }}
+    {{ end }}
+    podLabels:
+      reloader.stakater.com/auto: "true"
+
+    replicaCount: 1
+    port: 24224
+
+    resources:
+      limits: {}
+      #   cpu: 500m
+      #   memory: 1Gi
+      requests: {}
+      #   cpu: 300m
+      #   memory: 512Mi
+
+
+fluent-bit:
+  enabled: true
+  tolerations:
+  - key: "type"
+    operator: "Equal"
+    value: "system"
+    effect: "NoSchedule"
+  - key: "type"
+    operator: "Equal"
+    value: "system"
+    effect: "NoExecute"
+
+  - key: "type"
+    operator: "Equal"
+    value: "main"
+    effect: "NoSchedule"
+  - key: "type"
+    operator: "Equal"
+    value: "main"
+    effect: "NoExecute"
+
+  - key: "type"
+    operator: "Equal"
+    value: "safety"
+    effect: "NoSchedule"
+  - key: "type"
+    operator: "Equal"
+    value: "safety"
+    effect: "NoExecute"
+
+  - key: "type"
+    operator: "Equal"
+    value: "live"
+    effect: "NoSchedule"
+  - key: "type"
+    operator: "Equal"
+    value: "live"
+    effect: "NoExecute"
+
+  - key: "type"
+    operator: "Equal"
+    value: "monitoring"
+    effect: "NoSchedule"
+  - key: "type"
+    operator: "Equal"
+    value: "monitoring"
+    effect: "NoExecute"
+
+  - key: "type"
+    operator: "Equal"
+    value: "logging"
+    effect: "NoSchedule"
+  - key: "type"
+    operator: "Equal"
+    value: "logging"
+    effect: "NoExecute"
+
+  - key: "type"
+    operator: "Equal"
+    value: "predator"
+    effect: "NoSchedule"
+  - key: "type"
+    operator: "Equal"
+    value: "predator"
+    effect: "NoExecute"
+
+
+  # Default values for fluent-bit.
+
+  # kind -- DaemonSet or Deployment
+  kind: DaemonSet
+
+  # replicaCount -- Only applicable if kind=Deployment
+  replicaCount: 1
+
+  image:
+    repository: fluent/fluent-bit
+    pullPolicy: IfNotPresent
+    tag: 1.6.3
+
+elasticsearch-exporter:
+  enabled: true
+  replicaCount: 1
+  es:
+    uri: http://elasticsearch-master.efk.svc.cluster.local:9200
+
+  {{ if (index .Values.releases .Release.Name "scheduling" "elasticsearchExporter" "tolerations") }}
+  tolerations: {{ toYaml (index .Values.releases .Release.Name "scheduling" "elasticsearchExporter" "tolerations") | nindent 6 }}
+  {{ else }}
+  tolerations: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "tolerations") | nindent 6 }}
+  {{ end }}
+  {{ if (index .Values.releases .Release.Name "scheduling" "elasticsearchExporter" "nodeSelector") }}
+  nodeSelector: {{ toYaml (index .Values.releases .Release.Name "scheduling" "elasticsearchExporter" "nodeSelector") | nindent 6 }}
+  {{ else }}
+  nodeSelector: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "nodeSelector") | nindent 6 }}
+  {{ end }}
+  {{ if (index .Values.releases .Release.Name "scheduling" "elasticsearchExporter" "affinity") }}
+  affinity: {{ toYaml (index .Values.releases .Release.Name "scheduling" "elasticsearchExporter" "affinity") | nindent 6 }}
+  {{ else }}
+  affinity: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "affinity") | nindent 6 }}
+  {{ end }}
+

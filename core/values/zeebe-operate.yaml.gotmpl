@@ -1,0 +1,53 @@
+global:
+  zeebe: "{{ .Release.Name }}-zeebe"
+  zeebePort: 26500
+  elasticsearch:
+    host: "elasticsearch-master"
+    port: 9200
+    clusterName: "elasticsearch"
+    prefix: zeebe-record
+    url:
+
+logging:
+  level:
+    ROOT: INFO
+    org.camunda.operate: DEBUG
+
+service:
+  type: ClusterIP
+  port: 80
+image:
+  repository: camunda/operate
+  tag: 1.1.2
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 1Gi
+  limits:
+    cpu: 1000m
+    memory: 2Gi
+
+ingress:
+  enabled: true
+#   className: nginx
+  annotations:
+  {{ if .Values.cluster.common.defaultIngressAnnotations }}
+    {{ toYaml .Values.cluster.common.defaultIngressAnnotations | nindent 4 }}
+  {{- end }}
+  {{- if (index .Values.releases .Release.Name "config" "ingress" "annotations") }}
+    {{ toYaml (index .Values.releases .Release.Name "config" "ingress" "annotations") | nindent 4 }}
+  {{- end }}
+  labels:
+  {{ if .Values.cluster.common.defaultIngressLabels }}
+    {{ toYaml .Values.cluster.common.defaultIngressLabels | nindent 4 }}
+  {{- end }}
+  {{- if (index .Values.releases .Release.Name "config" "ingress" "labels") }}
+    {{ toYaml (index .Values.releases .Release.Name "config" "ingress" "labels") | nindent 4 }}
+  {{- end }}
+  path: /
+  host: {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
+  tls:
+    enabled: true
+    secretName: {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") | replace "." "-"}}-tls
+

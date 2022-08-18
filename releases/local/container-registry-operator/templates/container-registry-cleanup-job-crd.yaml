@@ -1,0 +1,77 @@
+kind: CustomResourceDefinition
+apiVersion: apiextensions.k8s.io/v1
+metadata:
+  name: container-registries-cleanupjob.neo9.io
+spec:
+  group: neo9.io
+  scope: Namespaced
+  names:
+    plural: container-registries-cleanupjob
+    singular: container-registry-cleanupjob
+    shortNames:
+      - crcj
+    kind: ContainerRegistryCleanupJob
+    listKind: ContainerRegistriesCleanupJob
+  versions:
+    - name: v1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          description: ContainerRegistryCleanupJob is the Schema for ContainerRegistryCleanupJob API
+          type: object
+          properties:
+            apiVersion:
+              description: >-
+                APIVersion defines the versioned schema of this representation
+                of an object.
+              type: string
+            kind:
+              description: >-
+                Kind is a string value representing the REST resource this
+                object represents.
+              type: string
+            metadata:
+              type: object
+            spec:
+              description: ContainerRegistryCleanupJob.spec describes the desired state of my resource
+              type: object
+              required:
+                - schedule
+                - args
+                - selector
+              properties:
+                schedule:
+                  nullable: false
+                  description: >-
+                    The schedule to run the cronjob.
+                  type: string
+                args:
+                  nullable: false
+                  description: >-
+                    List of the argements to run the container-registry-cleaner
+                  type: array
+                  items:
+                    description: argement
+                    type: string
+                selector:
+                  description: >-
+                    Selector describes the group the cronjob will be executed on
+                  type: object
+                  required:
+                    - registrySelector
+                  properties:
+                    registrySelector:
+                      type: object
+                      properties:
+                        environnement:
+                          type: string
+                          nullable: true
+                        registry:
+                          type: string
+                          nullable: true
+      subresources:
+        status: {}
+      additionalPrinterColumns:
+  conversion:
+    strategy: None

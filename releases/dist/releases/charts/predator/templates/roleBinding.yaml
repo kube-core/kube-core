@@ -1,0 +1,20 @@
+{{- if and .Values.serviceAccount.create .Values.rbac.create }}
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  labels:
+    app: {{ template "predator.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+  name: {{ include "predator.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+subjects:
+- kind: ServiceAccount
+  name: {{ template "predator.serviceAccountName" . }}
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: Role
+  name: {{ include "predator.fullname" . }}
+  apiGroup: rbac.authorization.k8s.io
+{{- end}}

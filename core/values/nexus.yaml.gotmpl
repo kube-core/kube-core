@@ -1,0 +1,164 @@
+replicaCount: 1
+statefulset:
+  enabled: false
+
+# If enabled, a Job will be launched after the chart is installed to initialize the admin password of your choice
+initAdminPassword:
+  {{ toYaml (index .Values.releases .Release.Name "config" "initAdminPassword") | nindent 2 }}
+
+nexus:
+  imageName: quay.io/travelaudience/docker-nexus
+  imageTag: 3.27.0
+  imagePullPolicy: IfNotPresent
+  env:
+    - name: INSTALL4J_ADD_VM_PARAMS
+      value: "-Xms1200M -Xmx1200M -XX:MaxDirectMemorySize=2G -XX:ActiveProcessorCount=4"
+    - name: NEXUS_SECURITY_RANDOMPASSWORD
+      value: "false"
+  dockerPort: 5003
+  nexusPort: 8081
+  additionalPorts: []
+  resources:
+    requests:
+      cpu: 1000m
+      memory: 4096Mi
+
+route:
+  enabled: false
+  name: docker
+  portName: docker
+  labels:
+  annotations:
+  # path: docker.apps.ocp01.cluster.local
+
+nexusProxy:
+  enabled: false
+  imageName: quay.io/travelaudience/docker-nexus-proxy
+  imageTag: 2.6.0
+  imagePullPolicy: IfNotPresent
+  port: 8080
+  targetPort: 8080
+  svcName: http-nexus
+  env:
+    javaOptions:
+    nexusDockerHost:
+    nexusHttpHost: {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") | replace "." "-"}}.{{ .Values.cluster.config.domain }}
+    enforceHttps: false
+    cloudIamAuthEnabled: false
+
+nexusProxyRoute:
+  enabled: false
+  labels:
+  annotations:
+  # path: /nexus
+
+persistence:
+  enabled: true
+  accessMode: ReadWriteOnce
+  ## If defined, storageClass: <storageClass>
+  ## If set to "-", storageClass: "", which disables dynamic provisioning
+  ## If undefined (the default) or set to null, no storageClass spec is
+  ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+  ##   GKE, AWS & OpenStack)
+  ##
+  # existingClaim:
+  # annotations:
+  #  "helm.sh/resource-policy": keep
+  # storageClass: "-"
+  storageSize: 80Gi
+  # If PersistentDisk already exists you can create a PV for it by including the 2 following keypairs.
+  # pdName: nexus-data-disk
+  # fsType: ext4
+
+ingress:
+  enabled: true
+  path: /
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+  {{ if .Values.cluster.common.defaultIngressAnnotations }}
+    {{ toYaml .Values.cluster.common.defaultIngressAnnotations | nindent 4 }}
+  {{- end }}
+  {{- if (index .Values.releases .Release.Name "config" "ingress" "annotations") }}
+    {{ toYaml (index .Values.releases .Release.Name "config" "ingress" "annotations") | nindent 4 }}
+  {{- end }}
+  labels:
+  {{ if .Values.cluster.common.defaultIngressLabels }}
+    {{ toYaml .Values.cluster.common.defaultIngressLabels | nindent 4 }}
+  {{- end }}
+  {{- if (index .Values.releases .Release.Name "config" "ingress" "labels") }}
+    {{ toYaml (index .Values.releases .Release.Name "config" "ingress" "labels") | nindent 4 }}
+  {{- end }}
+  tls:
+    enabled: true
+    secretName: {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") | replace "." "-"}}-tls
+    hosts:
+    #  - nexus.{{ .Values.cluster.config.domain }}
+  #rules:
+  #  - host: nexus.{{ .Values.cluster.config.domain }}
+  #    http:
+  #      paths:
+  #      - backend:
+  #          serviceName: nexus-sonatype-nexus
+  #          servicePort: 8080
+
+ingressDocker:
+  enabled: false
+  path: /
+  labels: {}
+  annotations: {}
+  # # NOTE: Can't use 'false' due to https://github.com/jetstack/kube-lego/issues/173.
+  # kubernetes.io/ingress.allow-http: true
+  # kubernetes.io/ingress.class: gce
+  # kubernetes.io/ingress.global-static-ip-name: ""
+  # kubernetes.io/tls-acme: true
+  tls:
+    enabled: true
+    secretName: {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") | replace "." "-"}}-tls
+    hosts:
+  # Specify custom rules in addition to or instead of the nexus-proxy rules
+  rules:
+  # - host: http://nexus.127.0.0.1.nip.io
+  #   http:
+  #     paths:
+  #     - backend:
+  #         serviceName: additional-svc
+  #         servicePort: 80
+
+affinity: {}
+
+tolerations: []
+
+# # Enable configmap and add data in configmap
+config:
+  enabled: false
+  mountPath: /sonatype-nexus-conf
+  data:
+
+# # To use an additional service, set enable to true
+service:
+  type: ClusterIP
+  # name: additional-svc
+  enabled: false
+  labels: {}
+  annotations: {}
+  ports:
+  - name: nexus-service
+    targetPort: 80
+    port: 80
+  ## Configures the requested IP on the loadBalancer when using LoadBalancer service type
+  # loadBalancerIP: "192.168.1.10"
+
+additionalConfigMaps:
+  {{ toYaml (index .Values.releases .Release.Name "config" "additionalConfigMaps") | nindent 2 }}
+
+#  - name: maven-central
+#    labels:
+#      nexus-type: repository
+#    data:
+#      recipe: 'MavenProxy'
+#      remoteUrl: 'https://repo.maven.apache.org/maven2/'
+#      blobStoreName: 'default'
+#      strictContentTypeValidation: 'true'
+#      versionPolicy: 'RELEASE'
+#      layoutPolicy: 'STRICT'
+

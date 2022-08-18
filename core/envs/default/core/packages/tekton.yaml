@@ -1,0 +1,13 @@
+releases:
+  tekton:
+    labels:
+      package: tekton
+    enabled: true
+  tekton-catalog:
+    labels:
+      package: tekton
+    enabled: true
+  tekton-logging:
+    labels:
+      package: tekton
+    enabled: false

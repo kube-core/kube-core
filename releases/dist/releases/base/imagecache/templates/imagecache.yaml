@@ -1,0 +1,47 @@
+apiVersion: kubefledged.io/v1alpha2
+kind: ImageCache
+metadata:
+  # Name of the image cache. A cluster can have multiple image cache objects
+  name: imagecache
+  # The kubernetes namespace to be used for this image cache. You can choose a different namepace as per your preference
+  labels:
+    app: kube-fledged
+    component: imagecache
+spec:
+  # The "cacheSpec" field allows a user to define a list of images and onto which worker nodes those images should be cached (i.e. pre-pulled).
+  cacheSpec:
+  # Specifies a list of images (nginx:1.21.1 and tomcat:10.0.8) with no node selector, hence these images will be cached in all the nodes in the cluster
+  
+  # For all Nodes  
+  - images:
+    - fluent/fluent-bit:1.6.3
+    - quay.io/prometheus/node-exporter:v1.0.1
+  # # Main
+  # - images:
+  #   - docker.io/bitnami/nginx-ingress-controller:0.41.2-debian-10-r0
+  #   - docker.io/bitnami/nginx:1.19.4-debian-10-r19
+  #   - envoyproxy/envoy-alpine:v1.11.0
+  #   - fluent/fluent-bit:1.6.3
+  #   nodeSelector:
+  #     type: main
+
+  # # Safety
+  # - images:
+  #   - docker.io/bitnami/nginx-ingress-controller:0.41.2-debian-10-r0
+  #   - docker.io/bitnami/nginx:1.19.4-debian-10-r19
+  #   - envoyproxy/envoy-alpine:v1.11.0
+  #   - fluent/fluent-bit:1.6.3
+  #   nodeSelector:
+  #     type: safety
+
+  # # Web
+  # - images:
+  #   - docker.io/bitnami/nginx-ingress-controller:0.41.2-debian-10-r0
+  #   - docker.io/bitnami/nginx:1.19.4-debian-10-r19
+  #   - envoyproxy/envoy-alpine:v1.11.0
+  #   nodeSelector:
+  #     type: web
+
+#   Specifies a list of image pull secrets to pull images from private repositories into the cache
+#   imagePullSecrets:
+#   - name: myregistrykey

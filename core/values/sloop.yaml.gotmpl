@@ -1,0 +1,213 @@
+serviceAccountName: sloop
+name: sloop
+replicas: 1
+image:
+  tag: latest
+  repository: sloopimage/sloop
+  pullPolicy: IfNotPresent
+persistentVolume:
+  ## If defined it will specify the storageClass for the statefulSet
+  ## If undefined it will use the cluster default (typically gp2 on AWS, standard on GKE)
+  #  storageClass:
+  size: 35Gi
+  dataAccessMode: ReadWriteOnce
+  sizeLimit: 35Gi
+resources: {}
+service:
+  port: 80
+  targetPort: 8080
+  type: ClusterIP
+## Configure extra options for liveness and readiness probes
+livenessProbe:
+  enabled: true
+  initialDelaySeconds: 300
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+  successThreshold: 1
+readinessProbe:
+  enabled: true
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+  successThreshold: 1
+ingress:
+  enabled: true
+  host: {{ .Values.releases.sloop.config.ingress.subdomain }}.{{ .Values.cluster.config.domain }}
+  annotations:
+    forecastle.stakater.com/icon: https://github.com/salesforce/sloop/raw/master/other/sloop_logo_color_small_notext.png
+  {{- if .Values.cluster.common.defaultIngressAnnotations }}
+    {{ toYaml .Values.cluster.common.defaultIngressAnnotations | nindent 4 }}
+  {{- end }}
+  {{- if .Values.releases.sloop.config.ingress.annotations }}
+    {{ toYaml .Values.releases.sloop.config.ingress.annotations | nindent 4 }}
+  {{- end }}
+  labels:
+  {{ if .Values.cluster.common.defaultIngressLabels }}
+    {{ toYaml .Values.cluster.common.defaultIngressLabels | nindent 4 }}
+  {{- end }}
+  {{- if .Values.releases.sloop.config.ingress.labels }}
+    {{ toYaml .Values.releases.sloop.config.ingress.labels | nindent 4 }}
+  {{- end }}
+  tls:
+    - secretName: {{ .Values.releases.sloop.config.ingress.subdomain | replace "." "-"}}-tls
+      hosts:
+        - {{ .Values.releases.sloop.config.ingress.subdomain }}.{{ .Values.cluster.config.domain }}
+config: |-
+  {
+    "maxDiskMb": 8192,
+    "maxLookBack": 604800000000000,
+    "displayContext": "cluster",
+    "defaultNamespace": "default",
+    "defaultKind": "Pod",
+    "defaultLookback": "1h",
+    "leftBarLinks": [
+    ],
+    "resourceLinks": [
+    ]
+  }
+# # To edit default config, check file below for json key, time duration are in nanoseconds
+# # https://github.com/salesforce/sloop/blob/master/pkg/sloop/server/internal/config/config.go
+
+clusterRole:
+  # List CRD apiGroups that you want to watch here
+  # Istio is just here as an example.  Alternatively if you want to get all CRDs its possible to add '*'
+  # to apiGroups, but that would give sloop permissions to read secrets which may not be desirable
+  apiGroups:
+    - adapters.config.istio.io
+    - agents.agent.k8s.elastic.co
+    - alertmanagerconfigs.monitoring.coreos.com
+    - alertmanagers.monitoring.coreos.com
+    - apmservers.apm.k8s.elastic.co
+    - attributemanifests.config.istio.io
+    - authorizationpolicies.security.istio.io
+    - backendconfigs.cloud.google.com
+    - backups.velero.io
+    - backupstoragelocations.velero.io
+    - beats.beat.k8s.elastic.co
+    - bindings.rabbitmq.com
+    - buckets.source.toolkit.fluxcd.io
+    - capacityrequests.internal.autoscaling.k8s.io
+    - catalogsources.operators.coreos.com
+    - certificaterequests.cert-manager.io
+    - certificates.cert-manager.io
+    - certificates.certmanager.k8s.io
+    - challenges.acme.cert-manager.io
+    - challenges.certmanager.k8s.io
+    - chaosengines.litmuschaos.io
+    - chaosexperiments.litmuschaos.io
+    - chaosresults.litmuschaos.io
+    - clusterinterceptors.triggers.tekton.dev
+    - clusterissuers.cert-manager.io
+    - clusterissuers.certmanager.k8s.io
+    - clusterrbacconfigs.rbac.istio.io
+    - clusterserviceversions.operators.coreos.com
+    - clustertasks.tekton.dev
+    - clustertriggerbindings.triggers.tekton.dev
+    - clusterworkflowtemplates.argoproj.io
+    - conditions.tekton.dev
+    - cronworkflows.argoproj.io
+    - deletebackuprequests.velero.io
+    - destinationrules.networking.istio.io
+    - downloadrequests.velero.io
+    - elasticsearches.elasticsearch.k8s.elastic.co
+    - enterprisesearches.enterprisesearch.k8s.elastic.co
+    - envoyfilters.networking.istio.io
+    - eventlisteners.triggers.tekton.dev
+    - eventtrackerpolicies.eventtracker.litmuschaos.io
+    - exchanges.rabbitmq.com
+    - extensions.dashboard.tekton.dev
+    - federations.rabbitmq.com
+    - forecastleapps.forecastle.stakater.com
+    - frontendconfigs.networking.gke.io
+    - gateways.networking.istio.io
+    - gitrepositories.source.toolkit.fluxcd.io
+    - handlers.config.istio.io
+    - helmcharts.source.toolkit.fluxcd.io
+    - helmrepositories.source.toolkit.fluxcd.io
+    - httpapispecbindings.config.istio.io
+    - httpapispecs.config.istio.io
+    - installplans.operators.coreos.com
+    - instances.config.istio.io
+    - issuers.cert-manager.io
+    - issuers.certmanager.k8s.io
+    - istiooperators.install.istio.io
+    - keycloakbackups.keycloak.org
+    - keycloakclients.keycloak.org
+    - keycloakrealms.keycloak.org
+    - keycloaks.keycloak.org
+    - keycloakusers.keycloak.org
+    - kibanas.kibana.k8s.elastic.co
+    - kustomizations.kustomize.toolkit.fluxcd.io
+    - lighthousejobs.lighthouse.jenkins.io
+    - managedcertificates.networking.gke.io
+    - meshpolicies.authentication.istio.io
+    - mongodb.mongodb.com
+    - monitoringdashboards.monitoring.kiali.io
+    - operatorconditions.operators.coreos.com
+    - operatorconfigurations.acid.zalan.do
+    - operatorgroups.operators.coreos.com
+    - operators.operators.coreos.com
+    - orders.acme.cert-manager.io
+    - orders.certmanager.k8s.io
+    - peerauthentications.security.istio.io
+    - permissions.rabbitmq.com
+    - pipelineresources.tekton.dev
+    - pipelineruns.tekton.dev
+    - pipelines.tekton.dev
+    - podmonitors.monitoring.coreos.com
+    - podvolumebackups.velero.io
+    - podvolumerestores.velero.io
+    - policies.authentication.istio.io
+    - policies.rabbitmq.com
+    - postgresqls.acid.zalan.do
+    - postgresteams.acid.zalan.do
+    - probes.monitoring.coreos.com
+    - prometheuses.monitoring.coreos.com
+    - prometheusrules.monitoring.coreos.com
+    - queues.rabbitmq.com
+    - quotaspecbindings.config.istio.io
+    - quotaspecs.config.istio.io
+    - rabbitmqclusters.rabbitmq.com
+    - rbacconfigs.rbac.istio.io
+    - requestauthentications.security.istio.io
+    - resticrepositories.velero.io
+    - restores.velero.io
+    - rules.config.istio.io
+    - runs.tekton.dev
+    - schedules.velero.io
+    - schemareplications.rabbitmq.com
+    - sealedsecrets.bitnami.com
+    - serverstatusrequests.velero.io
+    - serviceentries.networking.istio.io
+    - servicemonitors.monitoring.coreos.com
+    - servicenetworkendpointgroups.networking.gke.io
+    - servicerolebindings.rbac.istio.io
+    - serviceroles.rbac.istio.io
+    - shovels.rabbitmq.com
+    - sidecars.networking.istio.io
+    - subscriptions.operators.coreos.com
+    - taskruns.tekton.dev
+    - tasks.tekton.dev
+    - telemetries.telemetry.istio.io
+    - templates.config.istio.io
+    - tenants.minio.min.io
+    - thanosrulers.monitoring.coreos.com
+    - triggerbindings.triggers.tekton.dev
+    - triggers.triggers.tekton.dev
+    - triggertemplates.triggers.tekton.dev
+    - updateinfos.nodemanagement.gke.io
+    - users.rabbitmq.com
+    - vhosts.rabbitmq.com
+    - virtualservices.networking.istio.io
+    - visitorgroups.ingress.neo9.io
+    - visitorgroups.mutable.neo9.io
+    - volumesnapshotclasses.snapshot.storage.k8s.io
+    - volumesnapshotcontents.snapshot.storage.k8s.io
+    - volumesnapshotlocations.velero.io
+    - volumesnapshots.snapshot.storage.k8s.io
+    - workflows.argoproj.io
+    - workflowtemplates.argoproj.io
+    - workloadentries.networking.istio.io
+    - workloadgroups.networking.istio.io

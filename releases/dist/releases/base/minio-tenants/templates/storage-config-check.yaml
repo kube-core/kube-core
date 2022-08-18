@@ -1,0 +1,79 @@
+{{ if .Values.storageConfigCheck.enabled }}
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: storage-config-check
+spec:
+  schedule: "* * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  startingDeadlineSeconds: 300
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: minio-config-check
+              image: minio/mc
+              command:
+              - sh
+              - -c
+              - |
+                # set -x
+                mode="local"
+                clusterName="{{ .Values.cluster.config.name }}"
+                clusterDomain="{{ .Values.cluster.config.domain }}"
+
+                if [[ "${mode}" == "local" ]]
+                then
+                  minioHost="http://minio.minio.svc.cluster.local"
+                else
+                  minioHost="https://minio.minio.${clusterDomain}"
+                fi
+
+                adminUser="admin"
+                adminPassword="admin123"
+
+                amqpUser="minio"
+                amqpPassword="minio123"
+
+                configString="notify_amqp:1 url=amqp://${amqpUser}:${amqpPassword}@rabbitmq.rabbitmq.svc.cluster.local:5672 exchange=${clusterName}-bucket-events exchange_type=fanout routing_key=${clusterName}-bucket-events mandatory=on durable=on no_wait=false internal=false auto_deleted=false delivery_mode=0 publisher_confirms=off queue_limit=0 queue_dir="
+
+                mc alias set ${clusterName} ${minioHost} ${adminUser} ${adminPassword}
+
+                # sleep 300
+
+                mc admin info "${clusterName}"
+
+                amqpConfig=$(mc admin config get ${clusterName} notify_amqp:1) && true
+
+                # echo $amqpConfig
+                # echo $configString
+
+                if [[ "$(echo -n ${amqpConfig})" == "$(echo -n ${configString})" ]]
+                then
+                  echo "Config is already set !"
+                else
+                  echo "Config is not set !"
+                  mc admin config set "${clusterName}" "${configString}"
+
+                  mc admin service restart "${clusterName}"
+
+                  mc admin info "${clusterName}"
+
+                fi
+  
+                echo "Reapplying buckets Events config..."
+                mc event add ${clusterName}/cluster-logs arn:minio:sqs::1:amqp --event put && true
+                mc event add ${clusterName}/app-logs arn:minio:sqs::1:amqp --event put && true
+                mc event add ${clusterName}/dev-logs arn:minio:sqs::1:amqp --event put && true
+              
+                echo "Reapplying buckets ILM config..."
+                ilmPolicy='{"Rules":[{"Expiration":{"Days":1,"DeleteMarker":false},"ID":"ilm-default","Status":"Enabled"}]}'
+                echo $ilmPolicy | mc ilm import ${clusterName}/cluster-logs
+                echo $ilmPolicy | mc ilm import ${clusterName}/app-logs
+                echo $ilmPolicy | mc ilm import ${clusterName}/dev-logs
+
+                echo "Done !"
+{{ end }}

@@ -1,0 +1,30 @@
+
+git:
+  tagName: "v${version}"
+  commitMessage: "chore: Release v${version}"
+  # requireBranch:
+  # - master
+  requireCommits: true
+  requireCleanWorkingDir: false
+  addUntrackedFiles: false
+
+  changelog: |-
+    npx auto-changelog -o CHANGELOG.md --commit-limit false
+
+gitlab:
+  releases: true
+  # releaseNotes: generate-release-notes.sh ${latestVersion} ${version}
+  # assets: ["dist/bin/*"]
+
+
+npm: false
+  # publish: false
+
+hooks:
+  "after:bump": 'sh -c "kube-core scripts:exec dev_utils_bump ${version}"'
+
+# plugins:
+#   "@release-it/bumper":
+#     out: 
+#       file: cli/package.json
+#       path: version

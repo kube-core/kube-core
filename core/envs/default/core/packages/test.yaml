@@ -1,0 +1,75 @@
+### test Package
+## Essential + Test releases
+###
+
+releases:
+  # Ingress
+  nginx-ingress-controller:
+    labels:
+      package: test
+    enabled: true
+  ingress-access-operator:
+    labels:
+      package: test
+    enabled: true
+  external-dns:
+    labels:
+      package: test
+    enabled: true
+  cert-manager:
+    labels:
+      package: test
+    enabled: true
+  cluster-issuers:
+    labels:
+      package: test
+    enabled: true
+
+  # Cluster Tools
+  sealed-secrets:
+    labels:
+      package: test
+    enabled: true
+  reloader:
+    labels:
+      package: test
+    enabled: true
+  replicator:
+    labels:
+      package: test
+    enabled: true
+  kube-downscaler:
+    labels:
+      package: test
+    enabled: true
+  system-config:
+    labels:
+      package: test
+    enabled: true
+  priority-class:
+    labels:
+      package: test
+    enabled: true
+
+  # Backups
+  velero:
+    labels:
+      package: test
+    enabled: true
+
+  # Tests
+  nginx:
+    labels:
+      package: test
+    enabled: true
+
+  # Admin
+  # polaris:
+    # labels:
+    #   package: test
+  #   enabled: true
+  # forecastle:
+    # labels:
+    #   package: test
+  #   enabled: true
+

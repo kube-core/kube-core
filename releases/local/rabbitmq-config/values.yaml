@@ -1,0 +1,24 @@
+rabbitmq:
+  users:
+  - name: admin
+    password: admin123
+    tags:
+    - policymaker
+    - monitoring
+    - management
+    - administrator
+    permissions:
+    - vhost: "/"
+      read: true
+      write: true
+      configure: true
+  - name: minio
+    password: minio123
+    tags:
+    - monitoring
+    permissions:
+    - vhost: "/"
+      read: true
+      write: true
+      configure: true
+

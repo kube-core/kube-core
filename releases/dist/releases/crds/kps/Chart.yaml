@@ -1,0 +1,8 @@
+apiVersion: v2
+appVersion: 0.56.3
+description: Neo9 monitoring stack (kps+thanos+minio+robusta)
+icon: https://neo9.fr/assets/images/neo9-logo-baseline.svg
+kubeVersion: '>=1.16.0-0'
+name: kps
+type: application
+version: 1.0.0

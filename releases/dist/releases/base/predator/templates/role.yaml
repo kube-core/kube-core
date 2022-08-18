@@ -1,0 +1,19 @@
+{{- if .Values.rbac.create }}
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  labels:
+    app: {{ template "predator.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+  name: {{ include "predator.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+rules:
+- apiGroups: ["batch", "extensions"]
+  resources: ["jobs"]
+  verbs: ["*"]
+- apiGroups: [""]
+  resources: ["pods", "pods/log"]
+  verbs: ["delete", "get", "list"]
+{{- end}}

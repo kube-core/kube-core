@@ -1,0 +1,18 @@
+manifests:
+# - apiVersion: "ingress.neo9.io/v1"
+#   kind: VisitorGroup
+#   metadata:
+#     name: public
+#   spec:
+#     sources:
+#       - name: public
+#         cidr: 0.0.0.0/0
+- apiVersion: "ingress.neo9.io/v1"
+  kind: VisitorGroup
+  metadata:
+    name: self
+  spec:
+    sources:
+    {{- with .Values.cluster.config.cidr }}
+      {{- toYaml . | nindent 6 }}
+    {{- end }}

@@ -1,0 +1,43 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: send-to-telegram
+  labels:
+    app.kubernetes.io/version: "0.1"
+  annotations:
+    tekton.dev/pipelines.minVersion: "0.12.1"
+    tekton.dev/tags: messaging
+spec:
+  description: >-
+    These tasks post a simple message to a telegram chat.
+
+    This task uses the Bot API of telegram to send a message.
+
+  params:
+  - name: bot-token-secret
+    type: string
+    description: Token of the bot through
+  - name: chat-id
+    type: string
+    description: ID of the chat to send the message towards
+  - name: message
+    type: string
+    description: The message to notify about
+  steps:
+  - name: post
+    image: docker.io/curlimages/curl:7.68.0@sha256:99a8e9629b3ae26efb977e1a98f4786d6bd730c5ab4dea64632e297d7c3e7151 #tag: 7.68.0
+    script: |
+      #!/bin/sh
+      MESSAGE=`echo $MESSAGE | sed -e 's/\"/\\\\"/g'`
+      JSON="{\"chat_id\": ${CHAT_ID}, \"text\": \"${MESSAGE}\" }"
+      curl -X POST -H 'Content-Type: application/json' -d "${JSON}" https://api.telegram.org/bot${BOT_TOKEN}/sendMessage
+    env:
+    - name: BOT_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: $(params.bot-token-secret)
+          key: token
+    - name: CHAT_ID
+      value: $(params.chat-id)
+    - name: MESSAGE
+      value: $(params.message)

@@ -1,0 +1,22 @@
+{{ if .Values.userGroups }}
+{{- range $key, $value :=  (index .Values.userGroups ) }}
+
+{{ range $userKey, $userValue :=  (index $value.users ) }}
+
+---
+
+apiVersion: keycloak.org/v1alpha1
+kind: KeycloakUser
+metadata:
+  name: "{{ $userValue.name }}-{{ $value.name }}"
+spec:
+  user:
+    {{- toYaml $userValue.user | nindent 4 }}
+  realmSelector:
+    matchLabels:
+      users-{{ $value.name }}: "users-{{ $value.name }}"
+
+{{ end }}
+
+{{ end }}
+{{ end }}

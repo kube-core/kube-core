@@ -1,0 +1,15 @@
+{{- if .Values.configMap }}
+{{- range .Values.configMap }}
+{{- $rangeItem := . -}}
+{{- with $ }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "n9-api.fullname" . }}-{{ $rangeItem.name }}
+  labels:
+    {{- include "n9-api.labels" . | nindent 4 }}
+data:
+  {{ toYaml $rangeItem.content | indent 2 | trim }}
+{{- end }}
+{{- end }}
+{{- end }}

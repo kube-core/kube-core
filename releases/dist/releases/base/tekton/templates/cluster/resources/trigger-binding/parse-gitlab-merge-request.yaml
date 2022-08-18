@@ -1,0 +1,20 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerBinding
+metadata:
+  name: parse-gitlab-merge-request
+spec:
+  params:
+  - name: pr-source
+    value: $(body.object_attributes.source_branch)
+  - name: pr-target
+    value: $(body.object_attributes.target_branch)
+  - name: new-pr-source
+    value: $(extensions.new_source_branch)
+  - name: new-pr-target
+    value: $(extensions.new_target_branch)
+  - name: pr-url
+    value: $(body.object_attributes.url)
+  - name: new-pr-url
+    value: $(extensions.new_pr)
+  - name: git-url
+    value: $(body.repository.url)

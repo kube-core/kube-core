@@ -1,0 +1,10 @@
+{{- if and .Values.clusterRole.create .Values.clusterRole.rules }}
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ include "n9-api.clusterRoleName" . }}
+  labels:
+    {{- include "n9-api.labels" . | nindent 4 }}
+rules:
+{{ toYaml .Values.clusterRole.rules | trim }}
+{{- end }}

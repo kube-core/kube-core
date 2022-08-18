@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: webhook-receiver
+  labels: {{ toYaml .Values.cluster.common.defaultIngressLabels | nindent 4 }}
+  annotations: {{ toYaml .Values.cluster.common.defaultIngressAnnotations | nindent 4 }}
+spec:
+  rules:
+  - host: flux-webhook.flux-system.{{ .Values.cluster.config.domain }}
+    http:
+      paths:
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: webhook-receiver
+            port:
+              number: 80
+  tls:
+  - hosts:
+    - flux-webhook.flux-system.{{ .Values.cluster.config.domain }}
+    secretName: flux-webhook-flux-system-tls

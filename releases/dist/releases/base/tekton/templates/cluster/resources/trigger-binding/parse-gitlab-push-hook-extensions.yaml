@@ -1,0 +1,13 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerBinding
+metadata:
+  name: parse-gitlab-push-hook-extensions
+  namespace: tekton-pipelines
+spec:
+  params:
+  - name: git-branch
+    value: $(extensions.git_branch)
+  - name: git-branch-sanitized
+    value: $(extensions.git_branch_sanitized)
+  - name: container-image-tag
+    value: $(extensions.container_image_tag)

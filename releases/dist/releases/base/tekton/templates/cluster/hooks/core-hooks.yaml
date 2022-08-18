@@ -1,0 +1,38 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: core-hooks
+  namespace: tekton-pipelines
+  annotations:
+spec:
+  # serviceType: ClusterIP
+  serviceAccountName: tekton
+  triggers: 
+    - name: core-tag
+      interceptors:
+      - name: "Validate GitLab Payload & Filter on EventType"
+        ref:
+          name: "gitlab"
+          kind: ClusterInterceptor
+        params:
+          - name: secretRef
+            value:
+              secretName: "gitlab-token"
+              secretKey: "token"
+          - name: eventTypes
+            value:
+              - "Tag Push Hook"
+      - name: "Extract tag from revision"
+        ref:
+          name: "cel"
+        params:
+        - name: "overlays"
+          value:
+            - key: git_tag
+              expression: "body.ref.replace('refs/tags/', '')"  
+      bindings:
+        - ref: parse-gitlab-push-hook
+        - ref: parse-gitlab-push-tag-extensions
+        - ref: parse-custom-config  # contains customer specific values
+      template:
+        ref: core-tag

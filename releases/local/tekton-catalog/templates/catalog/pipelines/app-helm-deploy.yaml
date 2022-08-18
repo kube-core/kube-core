@@ -1,0 +1,153 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: app-helm-deploy
+spec:
+  params:
+  - name: debug-sleep
+    default: "false"
+    description: Sleeping container while build is running, an easy way to debug
+  - name: git-project-name
+    description: The git project name which is at the origin of the push
+    type: string
+    default: ""
+  - name: git-url
+    description: The repository url
+    type: string
+    default: ""
+  - name: git-branch
+    description: The branch to use for helm values
+    type: string
+    default: "develop"
+  - name: container-images-repository
+    description: Container images repository url
+    type: string
+    default: ""
+  - name: delivery-namespace
+    description: The namespace
+    type: string
+    default: ""
+  - name: container-image-tag
+    description: The container image tag to use (tag or hash)
+    type: string
+    default: ""
+  - name: chart-name
+    type: string
+    description: The chart helm name to use for continuous deployment
+  - name: chart-version
+    type: string
+    description: The chart helm version to use for continuous deployment
+
+  workspaces:
+  - name: ws
+
+  tasks:
+
+  - name: init
+    taskRef:
+      name: devops-tools
+    params:
+      - name: script
+        value: |
+          echo "deploy requested for $(params.git-project-name) on $(params.delivery-namespace)"
+          echo "git-url: $(params.git-url)"
+          echo "git-branch: $(params.git-branch)"
+          echo "container-image-tag: $(params.container-image-tag)"
+          echo "container images repository: $(params.container-images-repository)"
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+
+  - name: clone-projet
+    taskRef:
+      name: git-clone
+    workspaces:
+    - name: output
+      workspace: ws
+    params:
+    - name: url
+      value: $(params.git-url)
+    - name: subdirectory
+      value: $(params.git-project-name)
+    - name: revision
+      value: $(params.git-branch)
+
+  - name: extract-build-config-from-source
+    runAfter:
+      - clone-projet
+    taskRef:
+      name: extract-build-config-from-source
+    workspaces:
+    - name: source
+      workspace: ws
+    params:
+    - name: directory
+      value: $(params.git-project-name)
+    - name: branch-override
+      value: $(params.git-branch)
+    - name: chart-name-override
+      value: $(params.chart-name)
+    - name: chart-version-override
+      value: $(params.chart-version)
+
+  - name: deploy
+    runAfter:
+    - extract-build-config-from-source
+    when:
+    - input: $(params.git-branch)
+      operator: in
+      values:
+      - "develop"
+    taskRef:
+      name: helm-deployment
+    workspaces:
+    - name: source
+      workspace: ws
+    params:
+    - name: release_name
+      value: $(params.git-project-name)
+    - name: release_namespace
+      value: $(params.delivery-namespace)
+    - name: overwrite_values
+      value: "image.tag=$(params.container-image-tag)"
+    - name: helm_values_param
+      value: "--values ./values/default.yaml --values ./values/$(params.delivery-namespace).yaml"
+    - name: subpath
+      value: $(params.git-project-name)
+    - name: chart_name
+      value: $(tasks.extract-build-config-from-source.results.HELM_CHART_NAME)
+    - name: chart_version
+      value: $(tasks.extract-build-config-from-source.results.HELM_CHART_VERSION)
+
+
+######################################################
+
+  - name: debug-sleep
+    when:
+      - input: $(params.debug-sleep)
+        operator: in
+        values:
+          - "true"
+    taskRef:
+      name: devops-tools
+    params:
+      - name: script
+        value: |
+          #!/usr/bin/env bash
+          echo "Sleeping 600 seconds !"
+          sleep 600
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws

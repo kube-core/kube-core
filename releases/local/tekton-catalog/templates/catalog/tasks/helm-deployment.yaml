@@ -1,0 +1,71 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: helm-deployment
+  labels:
+    app.kubernetes.io/version: "0.1"
+  annotations:
+    tekton.dev/pipelines.minVersion: "0.12.1"
+    tekton.dev/tags: helm
+spec:
+  description: >-
+    A simple way to deploy with helm
+
+  params:
+    - name: release_name
+      description: The helm release name
+      default: "helm-release"
+    - name: release_namespace
+      description: The helm release namespace
+      default: ""
+    - name: overwrite_values
+      description: "Specify the values you want to overwrite, comma separated: autoscaling.enabled=true,replicas=1"
+      default: ""
+    - name: helm_version
+      description: "Specify a specific helm version"
+      default: "latest"
+    - name: helm_values_param
+      description: "Specify helm values cli params (allow to pass multiple values file)"
+      default: ""
+    - name: helm_timeout
+      description: "Specify helm timeout"
+      default: "600s"
+    - name: subpath
+      description: Subpath for project in source directory
+      type: string
+      default: "."
+    - name: chart_name
+      description: The helm chart name
+      type: string
+      default: "neo9charts/n9-api"
+    - name: chart_version
+      description: The helm chart version, latest if empty
+      type: string
+      default: ""
+  workspaces:
+    - name: source
+  steps:
+    - name: upgrade
+      image: docker.io/lachlanevenson/k8s-helm:$(inputs.params.helm_version)
+      workingDir: $(workspaces.source.path)/$(params.subpath)
+      script: |
+        echo current installed helm releases
+        helm list --namespace "$(inputs.params.release_namespace)"
+
+        echo adding neo9 chart repository
+        helm repo add neo9charts https://charts.neo9.pro
+
+        helmVersionFlag=
+        if [ ! -z "$(inputs.params.chart_version)" ]; then
+          helmVersionFlag="--version $(inputs.params.chart_version)"
+        fi
+
+        echo installing helm chart...
+        helm upgrade $(inputs.params.release_name) $(inputs.params.chart_name) $helmVersionFlag \
+            --install --wait \
+            --namespace "$(inputs.params.release_namespace)" \
+            --timeout $(inputs.params.helm_timeout) \
+            --debug \
+            --set "$(inputs.params.overwrite_values)" \
+            --create-namespace $(inputs.params.helm_values_param)
+

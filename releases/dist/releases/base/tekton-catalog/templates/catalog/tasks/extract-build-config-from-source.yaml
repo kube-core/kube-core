@@ -1,0 +1,224 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: extract-build-config-from-source
+  labels:
+    app.kubernetes.io/version: "0.0.1"
+  annotations:
+    tekton.dev/pipelines.minVersion: "0.12.1"
+    tekton.dev/tags: git, clone
+    tekton.dev/displayName: "Extract build conf from project"
+spec:
+  description: >-
+    This task extract project build configurations from sources
+  workspaces:
+    - name: source
+  params:
+    - name: image
+      description: The image used by the task
+      type: string
+      default: neo9sas/devops-tools:v1.5.0
+    - name: directory
+      description: The directory containing the app, relative to the source repository root
+      default: .
+    - name: build-format-override
+      default: ''
+      description: Override detected build format with given value
+    - name: build-tool-override
+      default: ''
+      description: Override detected build tool with given value
+    - name: branch-override
+      default: ''
+      description: Override detected branch (this helps to know when it is a tag)
+    - name: dockerfile-override
+      default: ''
+      description: specify dockerfile to use
+    - name: chart-name-override
+      description: specify an override chart name to use
+    - name: chart-version-override
+      description: specify an override chart version to use
+  results:
+    - name: CNB_BUILDER
+      description: The detected CNB builder to use
+    - name: BUILD_TOOL
+      description: The build tool to use (docker, npm, gradle, maven)
+    - name: BUILD_TOOL_TOO
+      description: The build tool to use (npm, gradle, maven), this to detect with build tool we use even with docker detected
+    - name: IMAGE_BUILD_BUILD_TOOL
+      description: The build tool to use (jib, cnb)
+    - name: BUILD_FORMAT
+      description: The format target. A container image by default, but also accept package
+    - name: HELM_CHART_NAME
+      description: The chart to use for deployment
+    - name: HELM_CHART_VERSION
+      description: The version of the chart to use for deployment
+    - name: CYPRESS_TI
+      description: If the project has e2e tests with cypress
+    - name: BRANCH
+      description: branch name or tag
+    - name: PIPELINERUN_NAME
+      description: Pipeline name
+    - name: PREINSTALL
+      description: if we should run a preinstall script
+    - name: SHOULD_DEPLOY
+      description: check if we need to deploy using helm
+    - name: LIGHTHOUSE_CI
+      description: If the project have lighthouseci configuration file
+  
+  volumes:
+    - name: podinfo
+      downwardAPI:
+        items:
+          - path: "labels"
+            fieldRef:
+              fieldPath: metadata.labels['tekton.dev/pipelineRun']
+  steps:
+    - name: scan-project
+      image: $(params.image)
+      env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+      volumeMounts:
+        - name: podinfo
+          mountPath: /etc/podinfo
+      script: |
+        #!/bin/bash
+        set -o errexit
+
+        cd $(workspaces.source.path)/$(params.directory)
+
+        # default values
+        detectedBuildTool=""
+        detectedImageBuildTool="cnb"
+        detectedBuildFormat="image"
+        detectedCnbBuilder="paketobuildpacks/builder:base"
+        detectedChartName="neo9charts/n9-api"
+        detectedChartVersion=""
+        detectedCypressTest="false"
+        detectedBranch=""
+        dockerfile="Dockerfile"
+        preinstall="false"
+        detectedBuildToolToo=""
+        shouldBeDeployed="false"
+        detectedLhci="false"
+
+        if [ ! -z "$(params.dockerfile-override)" ]; then
+            dockerfile=$(params.dockerfile-override)
+        fi
+
+        if [ -f $dockerfile ]; then
+            detectedBuildTool="docker"
+            detectedImageBuildTool="buildah"
+            if [ -f build.gradle ]; then
+              detectedBuildToolToo="gradle"
+            elif [ -f pom.xml ]; then
+              detectedBuildToolToo="maven"
+            elif [ -f package.json ]; then
+              detectedBuildToolToo="npm"
+            fi
+        elif [ -f build.gradle ]; then
+            detectedBuildTool="gradle"
+            detectedBuildToolToo="gradle"
+            if grep 'com.google.cloud.tools.jib' build.gradle; then
+                detectedImageBuildTool="jib"
+            fi
+            if grep -E 'helmChart(.*)=' build.gradle; then
+                helmChartNameAndVersion=$(grep -E 'helmChart(.*)=' build.gradle | awk -F= '{print $2}' | xargs)
+                detectedChartName=$(echo "$helmChartNameAndVersion" | awk -F: '{print $1}' | tr -d '\n')
+                detectedChartVersion=$(echo "$helmChartNameAndVersion" | awk -F: '{print $2}' | tr -d '\n')
+            fi
+        elif [ -f pom.xml ]; then
+            detectedBuildTool="maven"
+            detectedBuildToolToo="maven"
+            if grep  'jib' pom.xml; then
+                detectedImageBuildTool="jib"
+            fi
+            if grep '<helmChart>' pom.xml; then
+                helmChartNameAndVersion=$(grep '<helmChart>' pom.xml | sed 's,<helmChart>\(.*\)</helmChart>,\1,g' | xargs)
+                detectedChartName=$(echo "$helmChartNameAndVersion" | awk -F: '{print $1}' | tr -d '\n')
+                detectedChartVersion=$(echo "$helmChartNameAndVersion" | awk -F: '{print $2}' | tr -d '\n')
+            fi
+        elif [ -f package.json ]; then
+            detectedBuildTool="npm"
+            detectedBuildToolToo="npm"
+            if grep 'cnbBuilder' package.json; then
+                detectedCnbBuilder=$(cat package.json | jq --raw-output '.cnbBuilder')
+            fi
+            if grep 'helmChart' package.json; then
+                helmChartNameAndVersion=$(cat package.json | jq --raw-output '.helmChart')
+                detectedChartName=$(echo "$helmChartNameAndVersion" | awk -F: '{print $1}' | tr -d '\n')
+                detectedChartVersion=$(echo "$helmChartNameAndVersion" | awk -F: '{print $2}' | tr -d '\n')
+            fi
+        else
+            echo 'could not detect build tool, aborting'
+            exit 3
+        fi
+
+        if [ -f values/config.yaml ]; then
+            detectedChartName=$(cat values/config.yaml | awk -F ': ' 'NR==1{print $2}')
+            detectedChartVersion=$(cat values/config.yaml | awk -F ': ' 'NR==2{print $2}')
+        fi
+
+        if [ ! -z "$(params.chart-name-override)" ]; then
+            detectedChartName=$(params.chart-name-override)
+        fi
+
+        if [ ! -z "$(params.chart-version-override)" ]; then
+            detectedChartVersion=$(params.chart-version-override)
+        fi
+
+        if [ -f package.json ]; then
+            if grep -q "ci:preinstall" package.json; then
+                preinstall="true"
+            fi
+        fi
+
+        if [ ! -z "$(params.build-format-override)" ]; then
+            detectedBuildFormat=$(params.build-format-override)
+        fi
+
+        if [ ! -z "$(params.build-tool-override)" ]; then
+            detectedBuildTool=$(params.build-tool-override)
+        fi
+
+        if [ -d cypress ]; then
+            detectedCypressTest="true"
+        fi
+
+        if [ -f lighthouserc.yml ]; then
+            detectedLhci="true"
+        fi
+
+        if [ -d values ]; then
+            shouldBeDeployed="true"
+        fi
+        
+        regexVersion='^v([0-9]+\.){0,2}(\*|[0-9]+)([-,a-z,0-9]*)$'
+        if [[ $(params.branch-override) =~ $regexVersion ]]; then
+            detectedBranch="tag"
+        else
+            detectedBranch=$(params.branch-override)
+        fi
+
+        if [[ -e /etc/podinfo/labels ]]; then
+            piplinerunName=`cat /etc/podinfo/labels`
+        fi;
+
+        # piplinerunName=$(echo $POD_NAME | awk -F '-extract-' '{print $1}')
+
+        echo -n "${detectedCnbBuilder}" > $(results.CNB_BUILDER.path)
+        echo -n "${detectedBuildTool}" > $(results.BUILD_TOOL.path)
+        echo -n "${detectedBuildToolToo}" > $(results.BUILD_TOOL_TOO.path)
+        echo -n "${detectedImageBuildTool}" > $(results.IMAGE_BUILD_BUILD_TOOL.path)
+        echo -n "${detectedBuildFormat}" > $(results.BUILD_FORMAT.path)
+        echo -n "${detectedChartName}" > $(results.HELM_CHART_NAME.path)
+        echo -n "${detectedChartVersion}" > $(results.HELM_CHART_VERSION.path)
+        echo -n "${detectedCypressTest}" > $(results.CYPRESS_TI.path)
+        echo -n "${detectedBranch}" > $(results.BRANCH.path)
+        echo -n "${piplinerunName}" > $(results.PIPELINERUN_NAME.path)
+        echo -n "${preinstall}" > $(results.PREINSTALL.path)
+        echo -n "${shouldBeDeployed}" > $(results.SHOULD_DEPLOY.path)
+        echo -n "${detectedLhci}" > $(results.LIGHTHOUSE_CI.path)
+

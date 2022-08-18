@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-artifact-bucket
+  namespace: tekton-pipelines
+  labels:
+    {{- include "tekton.labels" . | nindent 4 }}
+data:
+  {{ if .Values.tekton.storage.bucket }}
+  location: gs://{{ .Values.tekton.storage.bucket }}
+  {{ else }}
+  location: gs://{{ .Values.cluster.config.name }}-tekton-storage
+  {{ end }}
+  bucket.service.account.secret.name: tekton
+  bucket.service.account.secret.key: tekton.json
+  bucket.service.account.field.name: GOOGLE_APPLICATION_CREDENTIALS

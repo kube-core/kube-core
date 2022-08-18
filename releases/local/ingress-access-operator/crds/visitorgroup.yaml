@@ -1,0 +1,38 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: visitorgroups.ingress.neo9.io
+spec:
+  group: ingress.neo9.io
+  versions:
+    - name: v1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            metadata:
+              type: object
+            spec:
+              type: object
+              properties:
+                sources:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      cidr:
+                        type: string
+                        pattern: '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(/(3[0-2]|2[0-9]|1[0-9]|[0-9]))?$'
+                    required:
+                    - cidr
+  scope: Cluster
+  names:
+    plural: visitorgroups
+    singular: visitorgroup
+    kind: VisitorGroup
+    shortNames:
+    - vg

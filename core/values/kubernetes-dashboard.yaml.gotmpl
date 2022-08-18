@@ -1,0 +1,75 @@
+
+## Number of replicas
+replicaCount: {{ (index .Values.releases .Release.Name "config" "replicaCount") }}
+
+## Here annotations can be added to the kubernetes dashboard deployment
+annotations: {}
+## Here labels can be added to the kubernetes dashboard deployment
+labels: {}
+
+extraArgs:
+  - --enable-skip-login
+  - --enable-insecure-login
+  - --system-banner="Welcome to {{ .Values.cluster.config.name }}"
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+## Pod resource requests & limits
+resources:
+  requests:
+    cpu: 100m
+    memory: 200Mi
+  limits:
+    cpu: 2
+    memory: 200Mi
+
+ingress:
+  enabled: true
+
+  annotations:
+  {{ if .Values.cluster.common.defaultIngressAnnotations }}
+    {{ toYaml .Values.cluster.common.defaultIngressAnnotations | nindent 4 }}
+  {{- end }}
+  {{- if (index .Values.releases .Release.Name "config" "ingress" "annotations") }}
+    {{ toYaml (index .Values.releases .Release.Name "config" "ingress" "annotations") | nindent 4 }}
+  {{- end }}
+  labels:
+  {{ if .Values.cluster.common.defaultIngressLabels }}
+    {{ toYaml .Values.cluster.common.defaultIngressLabels | nindent 4 }}
+  {{- end }}
+  {{- if (index .Values.releases .Release.Name "config" "ingress" "labels") }}
+    {{ toYaml (index .Values.releases .Release.Name "config" "ingress" "labels") | nindent 4 }}
+  {{- end }}
+
+  ## If you plan to use TLS backend with enableInsecureLogin set to false
+  ## (default), you need to uncomment the below.
+  ## If you use ingress-nginx < 0.21.0
+  #   nginx.ingress.kubernetes.io/secure-backends: "true"
+  ## if you use ingress-nginx >= 0.21.0
+  #   nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+
+  ## Kubernetes Dashboard Ingress Class
+#   className: "{{ .Values.cluster.common.defaultIngressClass }}"
+
+  ## Kubernetes Dashboard Ingress paths
+  ## Both `/` and `/*` are required to work on gce ingress.
+  paths:
+    - /
+  #  - /*
+
+    ## Kubernetes Dashboard Ingress hostnames
+  ## Must be provided if Ingress is enabled
+  ##
+  hosts:
+    - {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
+  ## Kubernetes Dashboard Ingress TLS configuration
+  ## Secrets must be manually created in the namespace
+  ##
+  tls:
+    - secretName: {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") | replace "." "-"}}-tls
+      hosts:
+        - {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}

@@ -1,0 +1,38 @@
+apiVersion: v2
+appVersion: 7.16.2
+dependencies:
+- alias: elasticsearch
+  condition: elasticsearch.enabled
+  name: elasticsearch
+  repository: https://helm.elastic.co
+  version: 7.16.2
+- alias: kibana
+  condition: kibana.enabled
+  name: kibana
+  repository: https://helm.elastic.co
+  version: 7.16.2
+- alias: metricbeat
+  condition: metricbeat.enabled
+  name: metricbeat
+  repository: https://helm.elastic.co
+  version: 7.16.2
+- alias: fluentd
+  condition: fluentd.enabled
+  name: fluentd
+  repository: https://charts.bitnami.com/bitnami
+  version: 4.4.6
+- alias: fluent-bit
+  condition: fluent-bit.enabled
+  name: fluent-bit
+  repository: https://fluent.github.io/helm-charts
+  version: 0.19.16
+- alias: elasticsearch-exporter
+  condition: elasticsearch-exporter.enabled
+  name: prometheus-elasticsearch-exporter
+  repository: https://prometheus-community.github.io/helm-charts
+  version: 4.10.0
+description: Neo9 EFK
+kubeVersion: '>= 1.19.0-0'
+name: efk
+type: application
+version: 1.1.0

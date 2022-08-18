@@ -1,0 +1,40 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: lighthouse
+  labels:
+    app.kubernetes.io/version: "0.1"
+  annotations:
+    tekton.dev/pipelines.minVersion: "0.17.0"
+    tekton.dev/tags: quality,frontend
+spec:
+  description: >-
+    This task can be used to run lighthouse on a web page.
+    Lighthouse has audits for performance, accessibility, progressive web apps, SEO..
+
+  workspaces:
+    - name: source
+
+  params:
+    - name: URL
+      type: string
+      description: Web page url to audit
+    - name: IMAGE
+      type: string
+      default: "ihebchakroun/node-14.15.4-chrome-lighthouse:latest"
+      description: The image you want to use. it should have chrome and lighthouse installed
+  
+  results:
+    - name: REPORT
+      description: Audit Report
+    
+  steps:
+    - name: run-audit
+      image: $(params.IMAGE)
+      script: |
+        #!/bin/sh
+        mkdir ./reports/
+        lighthouse $(params.URL) --screenEmulation.disabled --throttling-method=provided --no-emulatedUserAgent --no-enable-error-reporting --chrome-flags="--no-sandbox --headless --disable-gpu --disable-dev-shm-usage" --output-path=./reports/lighthouse-results.html --max-wait-for-load=60000
+        $report=(cat ./reports/lighthouse-results.html) 
+        echo -n "${report}" > $(results.REPORT.path)
+      workingDir: $(workspaces.source.path)

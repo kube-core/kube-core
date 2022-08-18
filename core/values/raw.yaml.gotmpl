@@ -1,0 +1,1 @@
+manifests: {{ toYaml (index .Values.releasesRaw .Release.Name "manifests") | nindent 2 }}

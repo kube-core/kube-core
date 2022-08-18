@@ -1,0 +1,259 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "n9-api.fullname" . }}
+  labels:
+    {{- include "n9-api.labels" . | nindent 4 }}
+    {{- with .Values.deployment.labels }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- if .Values.deployment.annotations }}
+  annotations:
+    {{ toYaml .Values.deployment.annotations | indent 4 | trim }}
+  {{- end }}
+spec:
+  {{- with  .Values.deployment.progressDeadlineSeconds }}
+  progressDeadlineSeconds: {{ . | quote }}
+  {{- end }}
+  {{- with  .Values.deployment.minReadySeconds }}
+  minReadySeconds: {{ . | quote }}
+  {{- end }}
+  {{- if not .Values.hpa.enabled }}
+  replicas: {{ .Values.deployment.replicaCount }}
+  {{- end }}
+  strategy:
+    {{- toYaml .Values.deployment.strategy | nindent 4 }}
+  selector:
+    matchLabels:
+      {{- include "n9-api.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.pod.annotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "n9-api.labels" . | nindent 8 }}
+    spec:
+      {{- with ( default .Values.global.imagePullSecrets .Values.image.pullSecrets ) }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "n9-api.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.deployment.securityContext | nindent 8 }}
+      {{- with .Values.scheduling.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.scheduling.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.scheduling.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ include "n9-api.fullname" . }}
+          securityContext:
+            {{- toYaml .Values.pod.securityContext | nindent 12 }}
+          {{ $imagePolicy := printf "%s:%s-%s" .Release.Namespace (include "n9-api.fullname" .) .Values.flux.defaultImagePolicy }}
+          {{- if .Values.image.digest }}
+          image: {{ .Values.image.repository }}@{{ .Values.image.digest }} 
+          {{- else }}
+          image: {{ .Values.image.repository }}:{{ include "n9-api.version" . }} # {"$imagepolicy": "{{ coalesce .Values.flux.imagePolicy $imagePolicy }}"}
+          {{- end }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.pod.workingDir }}
+          workingDir: {{ .Values.pod.workingDir }}
+          {{- end }}
+          {{- if .Values.pod.command }}
+          command:
+          {{- range .Values.pod.command }}
+           - {{ . | quote }}
+          {{- end }}
+          {{- end }}
+          {{- if .Values.pod.args }}
+          args:
+          {{- range .Values.pod.args }}
+           - {{ . | quote }}
+          {{- end }}
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ default .Values.service.port .Values.service.targetPort }}
+              protocol: TCP
+            {{- if .Values.metrics.enabled }}
+            - name: metrics
+              containerPort: {{ default ( include "n9-api.apiType-metrics-port" . ) .Values.metrics.port }}
+              protocol: TCP
+            {{- end }}
+            {{- range .Values.service.additionalPorts }}
+            - name: {{ .name }}
+              containerPort: {{ default .port .targetPort }}
+              protocol: TCP
+            {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          {{- if and .Values.healthCheck.enabled .Values.healthCheck.liveness.enabled }}
+          livenessProbe:
+            {{- if or .Values.healthCheck.tcpSocket .Values.healthCheck.liveness.tcpSocket }}
+            tcpSocket:
+              port: {{ default ( default .Values.service.port .Values.healthCheck.port ) .Values.healthCheck.liveness.port  }}
+            {{- else }}
+            httpGet:
+              path: {{ default ( default ( include "n9-api.apiType-healthCheck-path" . ) .Values.healthCheck.path ) .Values.healthCheck.liveness.path }}
+              port: {{ default ( default .Values.service.port .Values.healthCheck.port ) .Values.healthCheck.liveness.port  }}
+            {{- end }}
+            initialDelaySeconds: {{ default .Values.healthCheck.initialDelaySeconds .Values.healthCheck.liveness.initialDelaySeconds }}
+            periodSeconds: {{ default .Values.healthCheck.periodSeconds .Values.healthCheck.liveness.periodSeconds }}
+            timeoutSeconds: {{ default .Values.healthCheck.timeoutSeconds .Values.healthCheck.liveness.timeoutSeconds }}
+            failureThreshold: {{ default .Values.healthCheck.failureThreshold .Values.healthCheck.liveness.failureThreshold }}
+          {{- end }}
+          {{- if and .Values.healthCheck.enabled .Values.healthCheck.readiness.enabled }}
+          readinessProbe:
+            {{- if or .Values.healthCheck.tcpSocket .Values.healthCheck.readiness.tcpSocket }}
+            tcpSocket:
+              port: {{ default ( default .Values.service.port .Values.healthCheck.port ) .Values.healthCheck.readiness.port  }}
+            {{- else }}
+            httpGet:
+              path: {{ default ( default ( include "n9-api.apiType-healthCheck-path" . ) .Values.healthCheck.path ) .Values.healthCheck.readiness.path }}
+              port: {{ default ( default .Values.service.port .Values.healthCheck.port ) .Values.healthCheck.readiness.port  }}
+            {{- end }}
+            initialDelaySeconds: {{ default .Values.healthCheck.initialDelaySeconds .Values.healthCheck.readiness.initialDelaySeconds }}
+            periodSeconds: {{ default .Values.healthCheck.periodSeconds .Values.healthCheck.readiness.periodSeconds }}
+            timeoutSeconds: {{ default .Values.healthCheck.timeoutSeconds .Values.healthCheck.readiness.timeoutSeconds }}
+            failureThreshold: {{ default .Values.healthCheck.failureThreshold .Values.healthCheck.readiness.failureThreshold }}   
+          {{- end }}
+          env:
+          {{- include "n9-api.apiType-env-values" . | nindent 10 -}}
+          {{- if ( default .Values.global.logLevel .Values.api.logLevel ) }}
+          - name: N9LOG
+            value: {{ ( default .Values.global.logLevel .Values.api.logLevel ) | quote }}
+          {{- end }}
+          {{- range .Values.pod.env.values }}
+          - name: {{ .name }}
+            value: "{{ .value }}"
+          {{- end }}
+          {{- range .Values.pod.env.secrets }}
+          - name: {{ default .secretKey .name }}
+            valueFrom:
+              secretKeyRef:
+                name: {{ .secretName }}
+                key: {{ .secretKey }}
+                optional: {{ .optional | default false }}
+          {{- end }}
+          {{- if .Values.pod.env.valuesMap }}
+            {{- range $k, $v := .Values.pod.env.valuesMap }}
+          - name: {{ $k }}
+            value: {{ $v | quote }}
+            {{- end }}
+          {{- end }}
+          {{- range .Values.pod.additionalEnv.values }}
+          - name: {{ .name }}
+            value: "{{ .value }}"
+          {{- end }}
+          {{- range .Values.pod.additionalEnv.secrets }}
+          - name: {{ default .secretKey .name }}
+            valueFrom:
+              secretKeyRef:
+                name: {{ .secretName }}
+                key: {{ .secretKey }}
+                optional: {{ .optional | default false }}
+          {{- end }}
+          {{- if .Values.pod.additionalEnv.valuesMap }}
+          {{- range $k, $v := .Values.pod.additionalEnv.valuesMap }}
+          - name: {{ $k }}
+            value: {{ $v | quote }}
+          {{- end }}
+          {{- end }}
+          {{- if or ( or .Values.pod.mounts.configMap .Values.pod.mounts.secrets ) ( or .Values.pod.mounts.configMapMap .Values.pod.mounts.pvc ) }}
+          volumeMounts:
+          {{- end }}
+          {{- range .Values.pod.mounts.configMap }}
+          - name: {{ .name }}
+            mountPath: {{ .mountPath }}
+            {{- with .subPath }}
+            subPath: {{ . }}
+            {{- end }}
+            readOnly: {{ .readOnly | default "true" }}
+          {{- end }}
+          {{- range .Values.pod.mounts.secrets }}
+          - name: {{ .name }}
+            mountPath: {{ .mountPath }}
+            readOnly: {{ .readOnly | default "true" }}
+          {{- end }}
+          {{- if .Values.pod.mounts.configMapMap }}
+          {{- range $k, $v := .Values.pod.mounts.configMapMap }}
+          - name: {{ $k }}
+            mountPath: {{ $v }}
+          {{- end }}
+          {{- end }}
+          {{- range .Values.pod.mounts.pvc }}
+          - name: {{ .name }}
+            mountPath: {{ .mountPath | default "/data" }}
+            subPath: {{ .subPath | default (printf "/%s" (.name)) }}
+          {{- end }}
+      {{ if .Values.initContainer.enabled }}
+      initContainers:
+      - name: {{ include "n9-api.fullname" . }}-init
+        {{ $imagePolicy := printf "%s:%s" .Release.Namespace (include "n9-api.fullname" .) }}
+        {{- if .Values.image.digest }}
+        image: {{ .Values.image.repository }}@{{ .Values.image.digest }} 
+        {{- else }}
+        image: {{ .Values.image.repository }}:{{ include "n9-api.version" . }} # {"$imagepolicy": "{{ coalesce .Values.flux.imagePolicy $imagePolicy }}"}
+        {{- end }}
+        {{- if .Values.pod.workingDir }}
+        workingDir: {{ .Values.pod.workingDir }}
+        {{- end }}
+        command:
+        {{- range .Values.initContainer.command }}
+        - {{ . | quote }}
+        {{- end }}
+        env:
+        {{- if .Values.pod.env }}
+        {{- range .Values.pod.env.values }}
+        - name: {{ .name }}
+          value: "{{ .value }}"
+        {{- end }}
+        {{- range .Values.pod.env.secrets }}
+        - name: {{ default .secretKey .name }}
+          valueFrom:
+            secretKeyRef:
+              name: {{ .secretName }}
+              key: {{ .secretKey }}
+        {{- end }}
+        {{- end }}
+        resources:
+          {{ toYaml .Values.initContainer.resources | indent 10 | trim }}
+      {{ end }}
+      {{- if or ( or .Values.pod.mounts.configMap .Values.pod.mounts.secrets ) ( or .Values.pod.mounts.configMapMap .Values.pod.mounts.pvc ) }}
+      volumes:
+      {{- end }}
+      {{- range .Values.pod.mounts.configMap }}
+      - name: {{ .name }}
+        configMap:
+          name: {{ .name }}
+      {{- end }}
+      {{- range .Values.pod.mounts.secrets }}
+      - name: {{ .name }}
+        secret:
+          secretName: {{ .secretName }}
+          defaultMode: {{ .defaultMode | default "256" }}
+      {{- end }}
+      {{- if .Values.pod.mounts.configMapMap }}
+      {{- range $k, $v := .Values.pod.mounts.configMapMap }}
+      - name: {{ $k }}
+        configMap:
+          name: {{ $k }}
+      {{- end }}
+      {{- end }}
+      {{- range .Values.pod.mounts.pvc }}
+      {{- $rangeItem := . -}}
+      {{- with $ }}
+      - name: {{ $rangeItem.name }}
+        persistentVolumeClaim:
+          claimName: {{ include "n9-api.fullname" . }}-{{ $rangeItem.name }}
+      {{- end }}
+      {{- end }}

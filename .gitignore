@@ -1,0 +1,12 @@
+node_modules
+.helmfile
+.vscode
+.plop.out.data
+.plop.out.log
+.oclif.manifest.json
+.kube-core
+keys
+vendir.lock.yaml
+dev
+docs
+examples

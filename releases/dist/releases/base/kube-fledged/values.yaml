@@ -1,0 +1,113 @@
+# Default values for kubefledged.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+controllerReplicaCount: 1
+webhookServerReplicaCount: 1
+image:
+  kubefledgedControllerRepository: docker.io/senthilrch/kubefledged-controller
+  kubefledgedCRIClientRepository: docker.io/senthilrch/kubefledged-cri-client
+  busyboxImageRepository: gcr.io/google-containers/busybox
+  busyboxImageVersion: "1.27.2"
+  kubefledgedWebhookServerRepository: docker.io/senthilrch/kubefledged-webhook-server
+  pullPolicy: Always
+command: 
+  kubefledgedControllerCommand: ["/opt/bin/kubefledged-controller"]
+  kubefledgedWebhookServerCommand: ["/opt/bin/kubefledged-webhook-server"]
+args:
+  controllerLogLevel: INFO
+  controllerImagePullDeadlineDuration: 5m
+  controllerImageCacheRefreshFrequency: 15m
+  controllerImagePullPolicy: IfNotPresent
+  webhookServerLogLevel: INFO
+  webhookServerCertFile: /var/run/secrets/webhook-server/tls.crt
+  webhookServerKeyFile: /var/run/secrets/webhook-server/tls.key
+  webhookServerPort: 443
+validatingWebhookCABundle:
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name:
+
+clusterRole:
+  # Specifies whether a cluster role should be created
+  create: true
+  # The name of the cluster role to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name:
+
+clusterRoleBinding:
+  # Specifies whether a cluster role binding should be created
+  create: true
+  # The name of the cluster role binding to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name:
+
+validatingWebhook:
+  # Specifies whether a validating webhook configuration should be created
+  create: true
+  # The name of the validating webhook configuration to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name:
+
+secret:
+  name:
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 80
+
+webhookService:
+  create: true
+  type: ClusterIP
+  port: 3443
+  targetPort: 443
+  name:
+
+ingress:
+  enabled: false
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths: []
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

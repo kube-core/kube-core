@@ -1,0 +1,9 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerBinding
+metadata:
+  name: parse-gitlab-push-tag-extensions
+  namespace: tekton-pipelines
+spec:
+  params:
+  - name: git-tag
+    value: $(extensions.git_tag)

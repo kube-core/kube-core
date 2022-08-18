@@ -1,0 +1,44 @@
+apiVersion: mongodbcommunity.mongodb.com/v1
+kind: MongoDBCommunity
+metadata:
+  name: {{ .name }}
+  annotations: {{ toYaml .annotations | nindent 4 }}
+  labels: {{ toYaml .labels | nindent 4 }}
+spec:
+  members: {{ .config.members }}
+  type: ReplicaSet
+  version: {{ .config.version }}
+  security:
+    authentication:
+      modes: ["SCRAM"]
+  users: {{ toYaml .config.users | nindent 4 }}
+  statefulSet:
+    spec:
+      selector:
+        matchLabels:
+          app: mongodb-{{ .name }}
+      template:
+        metadata:
+          labels:
+            app: mongodb-{{ .name }}
+        spec:
+          containers:
+            - name: mongod
+              resources: {{ toYaml .config.mongod.resources | nindent 16 }}
+            - name: mongodb-agent
+              resources: {{ toYaml .config.agent.resources | nindent 16 }}
+              readinessProbe:
+                failureThreshold: 50
+                initialDelaySeconds: 10
+          affinity:
+            podAntiAffinity:
+              preferredDuringSchedulingIgnoredDuringExecution:
+                - weight: 100
+                  podAffinityTerm:
+                    labelSelector:
+                      matchExpressions:
+                        - key: app
+                          operator: In
+                          values:
+                            - mongodb-{{ .name }}
+                    topologyKey: kubernetes.io/hostname

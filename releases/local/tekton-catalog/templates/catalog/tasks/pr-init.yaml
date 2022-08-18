@@ -1,0 +1,54 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: pr-init
+  labels:
+    app.kubernetes.io/version: "0.0.1"
+  annotations:
+    tekton.dev/pipelines.minVersion: "0.12.1"
+    tekton.dev/tags: pr-init, debug, dev, tools
+    tekton.dev/displayName: "pr-init"
+spec:
+  description: >-
+    This task makes the pipeline pr-init, allowing to exec in and debug
+    the pipeline
+  workspaces:
+    - name: input
+    - name: output
+    - name: source
+    - name: data
+  params:
+    - name: pr-url
+      description: The PR to download
+      type: string
+    - name: image
+      description: The image used by the task
+      type: string
+      default: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/pullrequest-init:v0.16.2
+      # default: neo9sas/devops-tools:v1.5.0
+  steps:
+    - name: initialize
+      image: $(params.image)
+      script: |
+        #!/usr/bin/env bash
+        echo "I am supposed to download this PR : $(params.pr-url)"
+    - name: pr-init
+      image: $(params.image)
+      command: ["/ko-app/pullrequest-init"]
+      env:
+      - name: AUTH_TOKEN
+        value: DhaBiGr3LTq9BebRqpdb
+        # valueFrom:
+        #   secretKeyRef:
+        #     name: gl-token
+        #     key: token
+      args:
+      - "-url"
+      - $(params.pr-url)
+      - "-path"
+      - "$(workspaces.source.path)/pr"
+      - "-mode"
+      - "download"
+      - "-provider"
+      - "gitlab"
+

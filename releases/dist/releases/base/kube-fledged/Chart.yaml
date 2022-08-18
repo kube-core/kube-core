@@ -1,0 +1,6 @@
+apiVersion: v2
+appVersion: v0.8.2
+description: A Helm chart for deploying kube-fledged
+name: kube-fledged
+type: application
+version: v0.8.2

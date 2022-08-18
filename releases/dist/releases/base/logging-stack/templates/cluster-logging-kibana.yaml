@@ -1,0 +1,51 @@
+{{ if .Values.cluster.logging.stack.kibana.enabled }}
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+  name: logging
+spec:
+  version: {{ .Values.cluster.logging.stack.esStackVersion }}
+  config:
+    xpack.security.authc.providers:
+      basic.basic1:
+        order: 0
+      anonymous.anonymous1:
+        order: 1
+        credentials:
+          username: "anonymous_service_account"
+          password: "anonymous_service_account_password"
+  podTemplate:
+    spec:
+      containers:
+      - name: kibana
+        resources:
+          requests:
+            memory: 256m
+            cpu: 0.1
+          limits:
+            memory: 1Gi
+            cpu: 1
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: 5601
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+  http:
+    tls:
+      selfSignedCertificate:
+        disabled: true
+    service:
+      metadata:
+        annotations:
+        {{ toYaml .Values.cluster.common.defaultServiceAnnotations | nindent 10 }}
+        labels:
+        {{ toYaml .Values.cluster.common.defaultServiceLabels | nindent 10 }}
+  elasticsearchRef:
+    name: logging
+  count: 1
+{{ end }}

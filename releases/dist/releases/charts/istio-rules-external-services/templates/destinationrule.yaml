@@ -1,0 +1,21 @@
+{{- range .Values.externalService }}
+{{- if not .httpOnly }}
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: {{ .name }}
+  namespace: {{ $.Release.Namespace }}
+spec:
+  host: {{ .host }}
+  trafficPolicy:
+    portLevelSettings:
+    - port:
+        number: {{ default "1443" .tlsOriginationPort }}
+      tls:
+        mode: SIMPLE # initiates HTTPS
+        {{- if .sniHost }}
+        sni: {{ .sniHost }}
+        {{- end }}
+{{- end }}
+{{- end }}

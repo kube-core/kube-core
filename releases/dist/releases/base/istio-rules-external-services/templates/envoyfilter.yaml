@@ -1,0 +1,40 @@
+{{- range .Values.externalService }}
+{{- if not .httpOnly }}
+{{- if or .cipherSuites .tlsMinVersion .tlsMaxVersion }}
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: {{ .name }}
+  namespace: {{ $.Release.Namespace }}
+spec:
+  configPatches:
+  - applyTo: CLUSTER
+    match:
+      context: SIDECAR_OUTBOUND
+      cluster:
+        portNumber: {{ default "1443" .tlsOriginationPort }}
+        service: {{ .host }}
+    patch:
+      operation: MERGE
+      value:
+        transport_socket:
+          typed_config:
+            '@type': type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
+            common_tls_context:
+              tls_params:
+                {{- if .tlsMinVersion }}
+                tls_minimum_protocol_version: {{ .tlsMinVersion }}
+                {{- end }}
+                {{- if .tlsMaxVersion }}
+                tls_maximum_protocol_version: {{ .tlsMaxVersion }}
+                {{- end }}
+                {{- if .cipherSuites }}
+                cipher_suites:
+                {{- range .cipherSuites }}
+                - {{ . }}
+                {{- end }}
+                {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

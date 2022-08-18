@@ -1,0 +1,70 @@
+{{- $values := .Values }}
+
+{{- range $key, $value :=  (index .Values.releasesCustom.keycloakManaged "config" "keycloak") }}
+
+- name: keycloak-operator-{{ $value.name }}
+  chart: ../releases/dist/releases/charts/keycloak-operator
+  installed: {{ $value.enabled }}
+  namespace: {{ $value.namespace }}
+  # {{ if and ($value.needs) ($value.values.externalDatabase.pgsqlClusterName) }}
+  # needs: {{ toYaml $value.needs | nindent 2 }}
+  # - {{ toYaml $value.values.externalDatabase.pgsqlClusterName }}
+  # {{ else if $value.needs }}
+  # needs: {{ toYaml $value.needs | nindent 2 }}
+  # {{ else if $value.values.externalDatabase.pgsqlClusterName }}
+  # needs:
+  # - {{ toYaml $value.values.externalDatabase.pgsqlClusterName }}
+  # {{ end }}
+  labels:
+    instance: "{{ $value.namespace }}-{{ $value.name }}"
+    app: keycloak
+    type: operator
+  values:
+    - operator:
+      {{ toYaml $value.values.operator | nindent 8 }}
+
+- name: keycloak-instance-{{ $value.name }}
+  chart: ../releases/dist/releases/charts/keycloak-managed
+  installed: {{ $value.enabled }}
+  namespace: {{ $value.namespace }}
+  # {{ if and ($value.needs) ($value.values.externalDatabase.pgsqlClusterName) }}
+  # needs: {{ toYaml $value.needs | nindent 2 }}
+  # - {{ toYaml $value.values.externalDatabase.pgsqlClusterName }}
+  # {{ else if $value.needs }}
+  # needs: {{ toYaml $value.needs | nindent 2 }}
+  # {{ else if $value.values.externalDatabase.pgsqlClusterName }}
+  # needs:
+  # - {{ toYaml $value.values.externalDatabase.pgsqlClusterName }}
+  # {{ end }}
+  labels:
+    instance: "{{ $value.namespace }}-{{ $value.name }}"
+    app: keycloak
+    type: app
+  values:
+    - name:
+      {{ toYaml $value.name | nindent 8 }}
+    - externalDatabase:
+      {{ toYaml $value.values.externalDatabase | nindent 8 }}
+    - adminAuth:
+      {{ toYaml $value.values.adminAuth | nindent 8 }}
+    - keycloak:
+      {{ toYaml $value.values.keycloak | nindent 8 }}
+    - realms:
+      {{ toYaml $value.values.realms | nindent 8 }}
+    - userGroups:
+      {{ toYaml $value.values.userGroups | nindent 8 }}
+    {{ if $value.values.ingress.clusterWideAnnotations }}
+    - ingress:
+        annotations:
+        {{ toYaml $values.cluster.common.defaultIngressAnnotations | nindent 10 }}
+    {{ end }}
+    {{ if $value.values.ingress.clusterWideLabels }}
+    - ingress:
+        labels:
+        {{ toYaml $values.cluster.common.defaultIngressLabels | nindent 10 }}
+    {{ end }}
+    - ingress:
+      {{ toYaml $value.values.ingress | nindent 8 }}
+    - service:
+      {{ toYaml $value.values.service | nindent 8 }}
+{{- end -}}

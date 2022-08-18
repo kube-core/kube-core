@@ -1,0 +1,150 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: gcs-upload-custom
+  labels:
+    app.kubernetes.io/version: "0.3"
+  annotations:
+    tekton.dev/pipelines.minVersion: "0.12.1"
+    tekton.dev/categories: Cloud, Storage
+    tekton.dev/tags: cloud, gcs
+    tekton.dev/displayName: "Upload to GCS"
+    tekton.dev/platforms: "linux/amd64"
+spec:
+  description: >-
+    A Task that uploads a GCS bucket.
+
+    This task uploads files or directories from a Workspace to a GCS bucket.
+
+  workspaces:
+  - name: credentials
+    description: A secret with a service account key to use as GOOGLE_APPLICATION_CREDENTIALS.
+  - name: source
+    description: A workspace where files will be uploaded from.
+  volumes:
+    - name: $(params.serviceAccountSecretName)
+      secret:
+        secretName: $(params.serviceAccountSecretName)
+  params:
+  - name: path
+    description: The path to files or directories relative to the source workspace that you'd like to upload.
+    type: string
+  - name: bucketAddressConfigMap
+    description: The configmap that has the address (including "gs://") where you'd like to upload files to.
+  - name: bucketAddressConfigMapKeyName
+    description: The key name of the bucketAddressConfigMap.
+    type: string
+  - name: deleteExtraFiles
+    description: |
+      When "true", delete extra files under location not found under path.
+      By default extra files are not deleted.
+
+      NOTE: this option can delete data quickly if you specify the wrong
+      source/destination combination. "BE CAREFUL WHEN USING THIS OPTION!".
+
+      NOTE: this option is implemented via "gsutil rsync". If the target bucket
+      contains a large number of files, it may take a long time for gsutil to
+      fetch the remote metadata for sync.
+
+      NOTE: setting this option to "true" is not compatible with replaceExistingFiles="false"
+    default: "false"
+    type: string
+  - name: replaceExistingFiles
+    description: |
+      When "false", files that already exists are skipped. Default: "true"
+
+      NOTE: setting this option to "false" is not compatible with deleteExtraFiles="true"
+    default: "true"
+  - name: serviceAccountSecretName
+    description: The secret name of the service account to the GOOGLE_APPLICATION_CREDENTIALS key file.
+    type: string
+  - name: serviceAccountSecretKeyName
+    description: The key name of the service account.
+    type: string
+  steps:
+
+  - name: mount-service-account
+    volumeMounts:
+    - name: $(params.serviceAccountSecretName)
+      readOnly: true
+      mountPath: /tmp/$(params.serviceAccountSecretName)
+    workingDir: $(workspaces.credentials.path)
+    image: gcr.io/google.com/cloudsdktool/cloud-sdk:379.0.0-slim@sha256:d844877c7aaa06a0072979230c68417ddb0f27087277f29747c7169d6ed0d2b9 #tag: 379.0.0-slim
+    imagePullPolicy: IfNotPresent
+    script: |
+      #!/usr/bin/env bash
+      set -xe      
+      cp /tmp/$(params.serviceAccountSecretName)/$(params.serviceAccountSecretKeyName) $(params.serviceAccountSecretKeyName)
+
+  - name: upload
+    env:
+      - name: CRED_PATH
+        value: "$(workspaces.credentials.path)/$(params.serviceAccountSecretKeyName)"
+      - name: SOURCE
+        value: "$(workspaces.source.path)/$(params.path)"
+      - name: LOCATION
+        valueFrom:
+          configMapKeyRef:
+            name: $(params.bucketAddressConfigMap)
+            key: $(params.bucketAddressConfigMapKeyName) 
+      - name: DELETE_EXTRA_FILES
+        value: $(params.deleteExtraFiles)
+      - name: REPLACE_EXISTING_FILES
+        value: $(params.replaceExistingFiles)
+    image: gcr.io/google.com/cloudsdktool/cloud-sdk:379.0.0-slim@sha256:d844877c7aaa06a0072979230c68417ddb0f27087277f29747c7169d6ed0d2b9 #tag: 379.0.0-slim
+    imagePullPolicy: IfNotPresent
+    script: |
+      #!/usr/bin/env bash
+      set -xe
+
+      if [[ -f "$CRED_PATH" ]]; then
+        GOOGLE_APPLICATION_CREDENTIALS="$CRED_PATH"
+      fi
+
+      if [[ "${GOOGLE_APPLICATION_CREDENTIALS}" != "" ]]; then
+        echo GOOGLE_APPLICATION_CREDENTIALS is set, activating Service Account...
+        gcloud auth activate-service-account --key-file="${GOOGLE_APPLICATION_CREDENTIALS}"
+      fi
+
+      CP_PARAMS=""
+      if [[ "$REPLACE_EXISTING_FILES" == "false" ]]; then
+          CP_PARAMS="-n"
+      fi
+
+      if [[ -d "$SOURCE" ]]; then
+        # Copying one folder
+        if [[ "$DELETE_EXTRA_FILES" == "true" ]]; then
+            if [[ "$REPLACE_EXISTING_FILES" == "false" ]]; then
+              echo "\"deleteExtraFiles\"" can be used only when \"replaceExistingFiles\"" is true"
+              exit 1
+            fi
+          # When deleteExtraFiles is requested, use rsync
+          gsutil -m rsync -d -r "${SOURCE}" "${LOCATION}"
+        else
+          gsutil -m cp ${CP_PARAMS} -r "${SOURCE}" "${LOCATION}"
+        fi
+      else
+        # Copying one file
+        gsutil cp ${CP_PARAMS} "${SOURCE}" "${LOCATION}"
+      fi
+    
+  - name: echo-uploaded-links
+    volumeMounts:
+    - name: $(params.serviceAccountSecretName)
+      readOnly: true
+      mountPath: /tmp/$(params.serviceAccountSecretName)
+    env:
+    - name: LOCATION
+      valueFrom:
+        configMapKeyRef:
+          name: $(params.bucketAddressConfigMap)
+          key: $(params.bucketAddressConfigMapKeyName) 
+    workingDir: $(workspaces.source.path)/$(params.path)
+    image: gcr.io/google.com/cloudsdktool/cloud-sdk:379.0.0-slim@sha256:d844877c7aaa06a0072979230c68417ddb0f27087277f29747c7169d6ed0d2b9 #tag: 379.0.0-slim
+    imagePullPolicy: IfNotPresent
+    script: |
+      #!/usr/bin/env bash
+      set -xe     
+      for report in *.html; do                             
+        echo "https://storage.cloud.google.com/$(echo $LOCATION | awk '{ print substr($0,6) }')/lhci/$report"
+      done

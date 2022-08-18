@@ -1,0 +1,61 @@
+---
+{{- range (index .Values "buckets") }}
+---
+apiVersion: storage.gcp.crossplane.io/v1alpha3
+kind: Bucket
+metadata:
+  {{- if (index . "hasPrefix" | default true) }}
+  name: {{ $.Values.prefix }}-{{ index . "name" }}
+  {{- else }}
+  name: {{ index . "name" }}
+  {{- end }}
+spec:
+  deletionPolicy: {{ index . "deletionPolicy" | default "Orphan" }}
+  location: {{ index . "location" | default "EU" }}
+  {{- if (index . "uniformPolicy" | default true) }}
+  bucketPolicyOnly:
+    enabled: true
+  {{- end }}
+  labels:
+    managed-by: "crossplane"
+    cluster: {{ $.Values.prefix }}
+    {{- if index . "labels" }}
+    {{ toYaml (index . "labels") | nindent 8 }}
+    {{- end }}
+---
+apiVersion: storage.gcp.crossplane.io/v1alpha1
+kind: BucketPolicy
+metadata:
+  name: {{ $.Values.prefix }}-{{ index . "name" }}
+spec:
+  forProvider:
+    bucketRef:
+      {{- if (index . "hasPrefix" | default true) }}
+      name: {{ $.Values.prefix }}-{{ index . "name" }}
+      {{- else }}
+      name: {{ index . "name" }}
+      {{- end }}
+    policy:
+      bindings:
+      {{- if (index . "roles" | default list) }}
+      {{- range index . "roles" }}
+      - role: {{ .role }}
+        serviceAccountMemberRefs:
+        {{- range .serviceAccounts }}
+        {{- if eq . "default" }}
+        - name: {{ $.Values.prefix }}-{{ include "crossplane-buckets.fullname" $ }}
+        {{- else }}
+        - name: {{ $.Values.prefix }}-{{ include "crossplane-buckets.fullname" $ }}-{{ . }}
+        {{- end }}
+        {{- end }}
+      {{- end }}
+      {{- else }}
+      - role: "roles/storage.admin"
+        serviceAccountMemberRefs:
+        {{- if eq (index . "serviceAccount" | default "default") "default" }}
+        - name: {{ $.Values.prefix }}-{{ include "crossplane-buckets.fullname" $ }}
+        {{- else }}
+        - name: {{ $.Values.prefix }}-{{ include "crossplane-buckets.fullname" $ }}-{{ .serviceAccount }}
+        {{- end }}
+      {{- end }}
+{{- end }}

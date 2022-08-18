@@ -1,0 +1,75 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: devops-tools-python
+  labels:
+    app.kubernetes.io/version: "0.0.1"
+  annotations:
+    tekton.dev/pipelines.minVersion: "0.12.1"
+    tekton.dev/tags: devops, tools
+    tekton.dev/displayName: "devops-tools"
+spec:
+  description: >-
+    Runs a devops-tools container
+  workspaces:
+    - name: input
+    - name: output
+    - name: source
+    - name: data
+  volumes:
+    - name: kubeconfig
+      secret:
+        secretName: kubeconfig
+    - name: kubeconfig-internal-gcloud
+      secret:
+        secretName: kubeconfig-internal-gcloud
+    - name: kubeconfig-no-gcloud
+      secret:
+        secretName: kubeconfig-no-gcloud
+    - name: tekton
+      secret:
+        secretName: tekton
+    - name: npmrc-reader
+      configMap:
+        name: npmrc-reader
+    - name: npmrc-publisher
+      configMap:
+        name: npmrc-publisher
+  params:
+    - name: script
+      description: The script to execute
+      type: string
+      default: "echo devops-tools"
+    
+    - name: image
+      description: The image used by the task
+      type: string
+      default: neo9sas/devops-tools:v1.5.0
+
+  steps:
+    - name: exec-script
+      image: $(params.image)
+      imagePullPolicy: Always
+      volumeMounts:
+        - name: kubeconfig
+          mountPath: /tmp/kubeconfig
+        - name: kubeconfig-internal-gcloud
+          mountPath: /tmp/kubeconfig-internal-gcloud
+        - name: kubeconfig-no-gcloud
+          mountPath: /tmp/kubeconfig-no-gcloud
+        - name: tekton
+          mountPath: /tmp/tekton
+        - name: npmrc-reader
+          mountPath: /tmp/npmrc-reader
+        - name: npmrc-publisher
+          mountPath: /tmp/npmrc-publisher
+      env:
+        - name: GARDEN_LOGGER_TYPE
+          value: basic
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /tmp/tekton/tekton.json
+        - name: KUBECONFIG
+          value: /tmp/kubeconfig-internal-gcloud/kubeconfig-internal-gcloud.yaml
+      script: | 
+        $(params.script)
+      

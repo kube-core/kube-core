@@ -1,0 +1,6 @@
+apiVersion: v2
+appVersion: v3.4.0
+description: Controller for automatically creating random secret values
+name: kubernetes-secret-generator
+type: application
+version: 3.4.0

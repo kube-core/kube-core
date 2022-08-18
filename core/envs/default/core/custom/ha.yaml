@@ -1,0 +1,104 @@
+releases:
+  cert-manager:
+    config:
+      replicaCount: 2
+      webhook:
+        replicaCount: 2
+      cainjector:
+        replicaCount: 2
+
+  external-dns:
+    enabled: true
+    config:
+      replicaCount: 2
+
+  nginx-ingress-controller:
+    config:
+      replicaCount: 3
+      minAvailable: 2
+      autoscaling:
+        enabled: true
+        minReplicas: 3
+        maxReplicas: 20
+        targetCPUUtilizationPercentage: 80
+        targetMemoryUtilizationPercentage: 80
+
+  nginx-istio-ingress-controller:
+    config:
+      replicaCount: 2
+      minAvailable: 2
+      autoscaling: {}
+
+  metrics-server:
+    values:
+      replicas: 6
+
+
+  efk:
+    config:
+      replicas: 3
+      minimumMasterNodes: 2
+    values:
+      fluentd:
+        aggregator:
+          replicaCount: 3
+
+  kps:
+    config:
+      prometheus:
+        replicaCount: 3
+    values:
+      prometheus:
+        podDisruptionBudget:
+          enabled: true
+          minAvailable: 2
+      alertmanager:
+        alertmanagerSpec:
+          replicas: 3
+        podDisruptionBudget:
+          enabled: true
+          minAvailable: 2
+      kps-thanos:
+        bucketweb:
+          replicaCount: 2
+          pdb:
+            create: true
+            minAvailable: 2
+        compactor:
+          replicaCount: 3
+        storegateway:
+          replicaCount: 3
+          pdb:
+            create: true
+            minAvailable: 2
+        query:
+          replicaCount: 3
+          pdb:
+            create: true
+            minAvailable: 2
+        queryFrontend:
+          replicaCount: 3
+          pdb:
+            create: true
+            minAvailable: 2
+        ruler:
+          replicaCount: 3
+          pdb:
+            create: true
+            minAvailable: 2
+        receive:
+          replicaCount: 3
+          pdb:
+            create: true
+            minAvailable: 2
+
+  # istio:
+  #   config:
+  #     istiod:
+  #       pilot:
+  #         autoscaleEnabled: true
+  #         autoscaleMin: 2
+  #         autoscaleMax: 5
+  #         replicaCount: 3
+  #         rollingMaxSurge: 100%
+  #         rollingMaxUnavailable: 25%

@@ -1,0 +1,18 @@
+releases:
+  # Enable core.
+  crossplane:
+    enabled: true
+    labels:
+      package: crossplane
+
+  # Enable provider (GCS or AWS at now).
+  crossplane-provider:
+    enabled: true
+    labels:
+      package: crossplane
+
+  # Create default provider config for given provider.
+  crossplane-provider-config:
+    enabled: true
+    labels:
+      package: crossplane
