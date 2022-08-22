@@ -3,6 +3,8 @@ releases:
     labels:
       component: certificates
       group: cluster
+    options:
+      injectReloaderAnnotations: true
     release:
       chart: ../releases/dist/releases/charts/cert-manager
       name: cert-manager
@@ -73,7 +75,20 @@ releases:
     hooks:
       - args:
           - -c
-          - kubectl wait --timeout 60s --for=condition=established crd/providers.pkg.crossplane.io
+          - |
+            # !/bin/bash
+            # Wait CRD installation for 60 seconds
+            for (( i=0; i <= 60; i++ )); do
+                conditionMet=$(kubectl wait --timeout 60s --for=condition=established crd/providers.pkg.crossplane.io)
+                if  echo "${conditionMet}" | grep "condition met"; then
+                    echo "Waited $i second. CRDs are up"
+                    exit 0;
+                else
+                    echo "Waiting for CRDs to be up (attempt $i)"
+                    sleep 1;
+                fi;
+            done;
+            exit 1
         command: "bash"
         events: ["presync"]
         showlogs: true
@@ -84,26 +99,34 @@ releases:
       chart: ../releases/dist/releases/charts/raw
       name: crossplane-provider
       namespace: crossplane-system
-      # needs:
-      #   - crossplane-system/crossplane
+      needs:
+        - crossplane-system/crossplane
       wait: true
   crossplane-provider-config:
     hooks:
       - args:
           - -c
           - |
-            # Wait CRD installation for 60 seconds
-            for (( i=0; i <= 1; i++ )); do
-                if [[ ! $(kubectl get providers.pkg.crossplane.io -o jsonpath='{range .items[*]}{.status.conditions[?(@.type=="Healty")].status}{"\n"}{end}') =~ "False" ]]; then
-                    echo "Waited $i second. All providers are up."
+            # !/bin/bash
+            # Wait Provider installation for 60 seconds
+            for (( i=0; i <= 60; i++ )); do
+                conditionMet=$(kubectl get providers.pkg.crossplane.io 2>&1)
+                echo $conditionMet
+                if [[ $(echo "${conditionMet}" | grep "No resources found") ]]; then
+                    echo "Waiting for providers to be healty (attempt $i)"
+                    sleep 1;
+                elif [[ $(echo "${conditionMet}" | grep -E "False|Unknown") ]]; then
+                    echo "Waiting for providers to be healty (attempt $i)"
+                    sleep 1;
+                elif [[ $(echo "${conditionMet}" | grep -E "True") ]]; then
+                    echo "Waited $i iterations. All providers are up."
                     exit 0;
+                else
+                    echo "Uknown status, waiting..."
+                    sleep 1;
                 fi;
-
-                echo "Waiting for providers to be healty (attempt $i)"
-                sleep 1;
             done;
-
-            exit 1;
+            exit 1
         command: "bash"
         events: ["presync"]
         showlogs: true
@@ -114,9 +137,9 @@ releases:
       chart: ../releases/dist/releases/charts/raw
       name: crossplane-provider-config
       namespace: crossplane-system
-      # needs:
-      #   - crossplane-system/crossplane
-      #   - crossplane-system/crossplane-provider
+      needs:
+        - crossplane-system/crossplane
+        - crossplane-system/crossplane-provider
       wait: true
   eck-operator:
     labels:
@@ -141,6 +164,8 @@ releases:
       cloud: gke
       component: preemptible
       group: estafette
+    options:
+      injectReloaderAnnotations: true
     release:
       chart: ../releases/dist/releases/charts/estafette-gke-node-pool-shifter
       name: estafette-gke-node-pool-shifter
@@ -150,6 +175,8 @@ releases:
       cloud: gke
       component: preemptible
       group: estafette
+    options:
+      injectReloaderAnnotations: true
     release:
       chart: ../releases/dist/releases/charts/estafette-gke-preemptible-killer
       name: estafette-gke-preemptible-killer
@@ -159,6 +186,8 @@ releases:
       cloud: gke
       component: preemptible
       group: estafette
+    options:
+      injectReloaderAnnotations: true
     release:
       chart: ../releases/dist/releases/charts/estafette-k8s-node-compactor
       name: estafette-k8s-node-compactor
@@ -175,6 +204,8 @@ releases:
     labels:
       component: dns
       group: cluster
+    options:
+      injectReloaderAnnotations: true
     release:
       chart: ../releases/dist/releases/charts/external-dns
       name: external-dns
@@ -245,10 +276,6 @@ releases:
       chart: ../releases/dist/releases/charts/raw
       name: istio-ingress-sidecar
       namespace: nginx-istio-ingress
-      # needs:
-      #   - istio-base
-      #   - istiod
-      #   - nginx-istio-ingress-controller
       wait: true
   istio-kiali:
     labels:
@@ -274,9 +301,6 @@ releases:
       chart: ../releases/dist/releases/charts/istio-rules-external-services
       name: istio-rules-external-services
       namespace: istio-system
-      # needs:
-      #   - istio-base
-      #   - istiod
   istiod:
     labels:
       component: discovery
@@ -305,6 +329,8 @@ releases:
     labels:
       component: kps
       group: monitoring
+    options:
+      injectReloaderAnnotations: true
     release:
       chart: ../releases/dist/releases/charts/kps
       name: kps
@@ -341,6 +367,12 @@ releases:
       chart: ../releases/dist/releases/charts/kubernetes-dashboard
       name: kubernetes-dashboard
       namespace: kubernetes-dashboard
+  logging-gcs:
+    labels: {}
+    release:
+      chart: ../releases/dist/releases/charts/crossplane-buckets
+      name: logging-gcs
+      namespace: crossplane-system
   logging-operator:
     labels:
       component: logging
@@ -419,6 +451,8 @@ releases:
     labels:
       component: controller
       group: ingress
+    options:
+      injectReloaderAnnotations: true
     release:
       chart: ../releases/dist/releases/charts/nginx-ingress-controller
       name: nginx-istio-ingress-controller
@@ -487,19 +521,17 @@ releases:
       group: operators
     release:
       chart: ../releases/dist/releases/charts/rabbitmq-cluster-operator
+      hooks:
+        - args: ["WARNING: Deleting validating webhook configuration for RabbitMQ Topology Operator. This should not be done, but it doesn't work without it for now."]
+          command: "echo"
+          events: ["postsync"]
+          showlogs: true
+        - args: ["delete", "validatingwebhookconfiguration", "rabbitmq-operators-rabbitmq-messaging-topology-operator-webhook"]
+          command: "kubectl"
+          events: ["postsync"]
+          showlogs: true
       name: rabbitmq-operators
       namespace: rabbitmq-system
-      # hooks:
-      #   - events: ["postsync"]
-      #     showlogs: true
-      #     command: "echo"
-      #     args: ["WARNING: Deleting validating webhook configuration for RabbitMQ Topology Operator. This should not be done, but it doesn't work without it for now."]
-      #   - events: ["postsync"]
-      #     showlogs: true
-      #     # For a better check, try to use the following :
-      #     # while [[ -z "$(kubectl get validatingwebhookconfiguration rabbitmq-operators-rabbitmq-messaging-topology-operator-webhook)"  ]]; do echo "waiting for webhook" && sleep 2; done && kubectl delete validatingwebhookconfiguration rabbitmq-operators-rabbitmq-messaging-topology-operator-webhook --wait=true
-      #     command: "kubectl"
-      #     args: ["delete", "validatingwebhookconfiguration", "rabbitmq-operators-rabbitmq-messaging-topology-operator-webhook"]
   reloader:
     labels:
       component: tool
@@ -584,6 +616,8 @@ releases:
     labels:
       component: tekton
       group: devops
+    options:
+      injectReloaderAnnotations: true
     release:
       chart: ../releases/dist/releases/charts/tekton
       name: tekton
@@ -608,10 +642,26 @@ releases:
     labels:
       component: backups
       group: cluster
+    options:
+      injectReloaderAnnotations: true
     release:
       chart: ../releases/dist/releases/charts/velero
       name: velero
       namespace: velero
+    strategicMergePatches:
+      - apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+          name: velero
+          namespace: velero
+        spec:
+          template:
+            spec:
+              containers:
+                - env:
+                    - name: GOOGLE_APPLICATION_CREDENTIALS
+                      value: /credentials/velero.json
+                  name: velero
   visitor-groups:
     labels:
       component: visitors

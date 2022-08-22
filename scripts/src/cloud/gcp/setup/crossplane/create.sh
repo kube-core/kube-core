@@ -98,5 +98,5 @@ gcloud projects add-iam-policy-binding ${project_name} --member "serviceAccount:
 gcloud projects add-iam-policy-binding ${project_name} --member "serviceAccount:$fullSA" --role="roles/compute.networkAdmin" && true
 gcloud projects add-iam-policy-binding ${project_name} --member "serviceAccount:$fullSA" --role="roles/storage.admin" && true
 
-# create service account key (this will create a `crossplane-gcp-provider-key.json` file in your current working directory)
+# create service account key (this will create a `gcp-key.json` file in your current working directory)
 gcloud --project ${project_name} iam service-accounts keys create --iam-account $fullSA ${credentialsFile} && true

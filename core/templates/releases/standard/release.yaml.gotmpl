@@ -1,5 +1,6 @@
 - {{ toYaml .item.release | nindent 2 | trim }} {{/*# Allow to use all standard helmfile properties*/}}
   installed: {{ .item.enabled }} {{/*# Controls installation & removal*/}}
+  kubeContext: {{ .coreValues.cluster.config.context }}
   {{/* forceNamespace: {{ .item.release.namespace }} # Doesn't work */}}
   {{ if .item.labels }}
   labels: {{ toYaml .item.labels | nindent 4 }}
@@ -79,6 +80,24 @@
       kind: Ingress
       create: true
   {{- end }}
+  {{- if .item.options.injectReloaderAnnotations }}
+  - apiVersion: builtin
+    kind: AnnotationsTransformer
+    metadata:
+      name: inject-reloader-annotations
+    annotations:
+      reloader.stakater.com/auto: "true"
+    fieldSpecs:
+    - path: metadata/annotations
+      kind: Deployment
+      create: true
+    - path: metadata/annotations
+      kind: StatefulSet
+      create: true
+    - path: metadata/annotations
+      kind: DaemonSet
+      create: true
+  {{- end }}
   {{- if .coreValues.core.globalLabelsEnabled }}
   - apiVersion: builtin
     kind: LabelTransformer
@@ -100,4 +119,3 @@
   hooks:
   {{ toYaml .item.hooks | nindent 2 }}
   {{- end }}
-  

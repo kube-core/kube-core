@@ -12,13 +12,13 @@ spec:
     aws_key_id:
       valueFrom:
         secretKeyRef:
-          name: {{ coalesce .idSecretName (index .cluster.logging.integrations .objectStorageType "config" "credentials" "id" "secretName")  }}
-          key: {{ coalesce .idSecretKey (index .cluster.logging.integrations .objectStorageType "config" "credentials" "id" "secretKey")  }}
+          name: {{ coalesce .idSecretName (index .secrets "s3_id" "secretRef" "name") (index .cluster.logging.integrations .objectStorageType "config" "credentials" "id" "secretName")  }}
+          key: {{ coalesce .idSecretKey (index .secrets "s3_id" "secretRef" "key") (index .cluster.logging.integrations .objectStorageType "config" "credentials" "id" "secretKey")  }}
     aws_sec_key:
       valueFrom:
         secretKeyRef:
-          name: {{ coalesce .keySecretName (index .cluster.logging.integrations .objectStorageType "config" "credentials" "key" "secretName")  }}
-          key: {{ coalesce .keySecretKey (index .cluster.logging.integrations .objectStorageType "config" "credentials" "key" "secretKey")  }}
+          name: {{ coalesce .keySecretName (index .secrets "s3_key" "secretRef" "name") (index .cluster.logging.integrations .objectStorageType "config" "credentials" "key" "secretName")  }}
+          key: {{ coalesce .keySecretKey (index .secrets "s3_key" "secretRef" "key") (index .cluster.logging.integrations .objectStorageType "config" "credentials" "key" "secretKey")  }}
     {{ if (eq .objectStorageType "minio") }}
     s3_endpoint: {{ .endpoint }}
     {{ end }}
@@ -32,18 +32,18 @@ spec:
     {{ end }}
 {{ else if (eq .objectStorageType "gcs" )}}
   gcs:
-    project: {{ coalesce .project .cluster.logging.integrations.gcs.config.project }}
+    project: {{ coalesce .project (index .cluster.logging.integrations .objectStorageType "config" "project") }}
     bucket: {{ coalesce .bucket (printf "%s-%s-logs" (coalesce .cluster.logging.config.bucketPrefixOverride .cluster.config.name) .name) }}
     {{ if (eq .txtLogs true) }}
     object_key_format: {{ .cluster.logging.outputs.config.txtObjectKeyFormat }}
     {{ else }}
     object_key_format: {{ .cluster.logging.outputs.config.object_key_format | quote }}
     {{ end }}
-    credentials_json: 
+    credentials_json:
       valueFrom:
         secretKeyRef:
-          name: {{ coalesce .gcsSecretName .cluster.logging.integrations.gcs.config.credentials.secretKeyRef.secretName }}
-          key:  {{ coalesce .gcsSecretKey .cluster.logging.integrations.gcs.config.credentials.secretKeyRef.secretKey }}     
+          name: {{ coalesce .gcsSecretName (index .secrets "gcs" "secretRef" "name") (index .cluster.logging.integrations .objectStorageType "config" "credentials" "secretKeyRef" "secretName") }}
+          key:  {{ coalesce .gcsSecretKey (index .secrets "gcs" "secretRef" "key") (index .cluster.logging.integrations .objectStorageType "config" "credentials" "secretKeyRef" "secretKey") }}
 {{ end }}
 {{ if (eq .txtLogs true) }}
     store_as: text

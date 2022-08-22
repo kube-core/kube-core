@@ -1,11 +1,3 @@
-## K8s resources type to be observed for new DNS entries by ExternalDNS
-##
-sources:
-  # - crd
-  - service
-  - ingress
-  # - contour-httpproxy
-
 ## DNS provider where the DNS records will be created. Available providers are:
 ## - alibabacloud, aws, azure, azure-private-dns, cloudflare, coredns, designate, digitalocean, google, hetzner, infoblox, linode, rfc2136, transip
 ##
@@ -14,25 +6,6 @@ provider: "google"
 {{ else if eq .Values.cloud.provider "aws" }}
 provider: "aws"
 {{ end }}
-
-## Templated strings that are used to generate DNS names from sources that don't define a hostname themselves
-##
-fqdnTemplates: []
-## Combine FQDN template and annotations instead of overwriting
-##
-combineFQDNAnnotation: false
-## Ignore hostname annotation when generating DNS names, valid only when fqdn-template is set
-##
-ignoreHostnameAnnotation: false
-## Allow external-dns to publish DNS records for ClusterIP services
-##
-publishInternalServices: false
-## Allow external-dns to publish host-ip for headless services
-##
-publishHostIP: false
-## The service types to take care about (default: all, options: ClusterIP, NodePort, LoadBalancer, ExternalName)
-##
-serviceTypeFilter: []
 
 
 {{ if eq .Values.cloud.provider "gcp" }}
@@ -44,52 +17,24 @@ google:
   project: {{ .Values.cloud.project }}
   ## Google Application Credentials
   ##
-  serviceAccountSecret: dns-admin
-  serviceAccountSecretKey: dns-admin.json
+  serviceAccountSecret: {{ (index .Values.releases .Release.Name "secrets" "credentials" "secretRef" "name") }}
+  serviceAccountSecretKey: {{ (index .Values.releases .Release.Name "secrets" "credentials" "secretRef" "key") }}
   serviceAccountKey: null
 {{ else if eq .Values.cloud.provider "aws"}}
 ## AWS configuration to be set via arguments/env. variables
 ##
 aws:
-  region: "eu-west-1"
-  ## @param aws.zoneType When using the AWS provider, filter for zones of this type (optional, options: public, private)
-  ##
-  zoneType: ""
-  ## @param aws.assumeRoleArn When using the AWS provider, assume role by specifying --aws-assume-role to the external-dns daemon
-  ##
-  ## @param aws.apiRetries Maximum number of retries for AWS API calls before giving up
-  ##
-  apiRetries: 3
-  ## @param aws.batchChangeSize When using the AWS provider, set the maximum number of changes that will be applied in each batch
-  ##
-  batchChangeSize: 1000
-  ## @param aws.zoneTags When using the AWS provider, filter for zones with these tags
-  ##
-  zoneTags: []
-  ## @param aws.preferCNAME When using the AWS provider, replaces Alias records with CNAME (options: true, false)
-  ##
-  preferCNAME: ""
-  ## @param aws.evaluateTargetHealth When using the AWS provider, sets the evaluate target health flag (options: true, false)
-  ##
-  evaluateTargetHealth: ""
-
+  region: {{ .Values.cloud.default.location }}
 serviceAccount:
-  ## @param serviceAccount.create Determine whether a Service Account should be created or it should reuse a exiting one.
-  ##
   create: true
-  ## @param serviceAccount.name ServiceAccount to use. A name is generated using the external-dns.fullname template if it is not set
-  ##
-  name: ""
-  ## @param serviceAccount.annotations Additional Service Account annotations
-  ##
-  annotations: 
+  annotations:
     eks.amazonaws.com/role-arn: {{ index .Values.releases .Release.Name "config" "role-arn" }}
   ## @param serviceAccount.automountServiceAccountToken Automount API credentials for a service account.
   ##
 {{ end }}
 ## Limit possible target zones by domain suffixes (optional)
 ##
-domainFilters: 
+domainFilters:
 - {{ .Values.cluster.config.domain }}
 {{ range $key, $value := .Values.cluster.config.additionnalDomains }}
 - {{ toYaml $value }}
@@ -97,21 +42,6 @@ domainFilters:
 
 txtOwnerId: {{ .Values.cluster.config.name }}
 
-## Exclude subdomains (optional)
-##
-excludeDomains: []
-## Limit possible target zones by zone id (optional)
-##
-zoneIdFilters: []
-## Filter sources managed by external-dns via annotation using label selector semantics (optional)
-##
-annotationFilter: ""
-## When enabled, prints DNS record changes rather than actually performing them
-##
-dryRun: false
-## When enabled, triggers run loop on create/update/delete events (optional, in addition of regular interval)
-##
-triggerLoopOnEvent: false
 ## Adjust the interval for DNS updates
 ##
 interval: "1m"
@@ -122,7 +52,7 @@ logLevel: info
 ## Formats of the ExternalDNS logs. Available values are:
 ## - text, json
 ##
-logFormat: text
+logFormat: json
 ## Modify how DNS records are synchronized between sources and providers (options: sync, upsert-only)
 ##
 policy: upsert-only
@@ -133,4 +63,4 @@ registry: "txt"
 
 ## Replica count
 ##
-replicas: {{ index .Values.releases .Release.Name "config" "replicaCount" }}
+replicaCount: {{ index .Values.releases .Release.Name "config" "replicaCount" }}

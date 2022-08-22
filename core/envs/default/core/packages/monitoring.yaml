@@ -3,7 +3,8 @@ releases:
     labels:
       package: monitoring
     enabled: true
-  sloop:
-    labels:
-      package: monitoring
-    enabled: true
+  # Not used that much. Probably should be in a monitoring-extras package instead ?
+  # sloop:
+  #   labels:
+  #     package: monitoring
+  #   enabled: true

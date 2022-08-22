@@ -41,13 +41,6 @@ releases:
   logging-stack:
     values:
       installCRDs: false
-  nginx-ingress-controller:
-    values:
-      podLabels:
-        test: test
-      resources:
-        limits: {}
-        requests: {}
   sealed-secrets:
     values:
       crd:

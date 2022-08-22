@@ -4,22 +4,22 @@
 
 {{ if (eq $values.cluster.logging.integrations.es.enabled true) }}
 ---
-{{ template "cluster-logging.esOutputTemplate" (dict "cluster" $values.cluster "name" .name) }}
+{{ template "cluster-logging.esOutputTemplate" (dict "cluster" $values.cluster "secrets" $values.secrets "name" .name) }}
 {{ end }}
 
 {{ if (eq $values.cluster.logging.integrations.gcs.enabled true) }}
 ---
-{{ template "cluster-logging.objectStorageOutputTemplate" (dict "cluster" $values.cluster "name" .name "objectStorageType" "gcs") }}
+{{ template "cluster-logging.objectStorageOutputTemplate" (dict "cluster" $values.cluster "secrets" $values.secrets "name" .name "objectStorageType" "gcs") }}
 {{ end }}
 
 {{ if (eq $values.cluster.logging.integrations.s3.enabled true) }}
 ---
-{{ template "cluster-logging.objectStorageOutputTemplate" (dict "cluster" $values.cluster "name" .name "objectStorageType" "s3") }}
+{{ template "cluster-logging.objectStorageOutputTemplate" (dict "cluster" $values.cluster "secrets" $values.secrets "name" .name "objectStorageType" "s3") }}
 {{ end }}
 
 {{ if (eq $values.cluster.logging.integrations.minio.enabled true) }}
 ---
-{{ template "cluster-logging.objectStorageOutputTemplate" (dict "cluster" $values.cluster "name" .name "objectStorageType" "minio") }}
+{{ template "cluster-logging.objectStorageOutputTemplate" (dict "cluster" $values.cluster "secrets" $values.secrets "name" .name "objectStorageType" "minio") }}
 {{ end }}
 
 {{ end }}

@@ -2,7 +2,15 @@
 #
 # NOTE: You should probably set this prefix to a short, descriptive, cluster name/environment.
 
-prefix: "project-name"
+# Values are "simple", and "complex"
+# Complex mode is broken
+mode: simple
+
+# If false, every bucket generates its own service account
+shareServiceAccount: true
+
+# Use a prefix for all buckets
+prefix: "cluster-name"
 
 # Allow to control metadata of the published secrets
 outputSecretMetadata:

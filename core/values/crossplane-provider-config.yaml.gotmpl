@@ -5,32 +5,15 @@ manifests:
   # INFO: We can't put this manifest in `crossplane-provider-gcp` because the CRDs
   # INFO: for GCP/AWS are not registered yet.
   ################################################################################
-
-  {{- if or (index .Values.releases "crossplane" "config" "providers" "gcp" "enabled") (eq $.Values.cloud.provider "gcp") }}
   - apiVersion: gcp.crossplane.io/v1beta1
     kind: ProviderConfig
     metadata:
-      name: {{ (eq .Values.cloud.provider "gcp") | ternary "default" "gcp-provider" }}
+      name: default
     spec:
-      projectID: {{ (index .Values.releases "crossplane" "config" "providers" "gcp" "projectID") | default (index $.Values.cloud "project") }}
+      projectID: {{ .Values.cloud.project }}
       credentials:
         source: Secret
         secretRef:
-          namespace: crossplane-system
-          name: {{ index .Values.releases "crossplane" "config" "providers" "gcp" "credentials" "secretRef" "name" }}
-          key: {{ index .Values.releases "crossplane" "config" "providers" "gcp" "credentials" "secretRef" "key" }}
-  {{- end }}
-
-  {{- if or (index .Values.releases "crossplane" "config" "providers" "aws" "enabled") (eq $.Values.cloud.provider "aws") }}
-  - apiVersion: aws.crossplane.io/v1beta1
-    kind: ProviderConfig
-    metadata:
-      name: {{ (eq .Values.cloud.provider "aws") | ternary "default" "aws-provider" }}
-    spec:
-      credentials:
-        source: Secret
-        secretRef:
-          namespace: crossplane-system
-          name: {{ index .Values.releases "crossplane" "config" "providers" "aws" "credentials" "secretRef" "name" }}
-          key: {{ index .Values.releases "crossplane" "config" "providers" "aws" "credentials" "secretRef" "key" }}
-  {{- end }}
+          namespace: {{ .Release.Namespace }}
+          name: {{ index .Values.releases "crossplane" "secrets" "credentials" "secretRef" "name" }}
+          key: {{ index .Values.releases "crossplane" "secrets" "credentials" "secretRef" "key" }}

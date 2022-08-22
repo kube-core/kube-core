@@ -17,7 +17,7 @@ metadata:
   name: {{ template "reloader-fullname" . }}
   namespace: {{ .Release.Namespace }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.reloader.deployment.replicas }}
   revisionHistoryLimit: 2
   selector:
     matchLabels:
@@ -114,12 +114,16 @@ spec:
           periodSeconds: {{ .Values.reloader.deployment.readinessProbe.periodSeconds | default "10" }}
           successThreshold: {{ .Values.reloader.deployment.readinessProbe.successThreshold | default "1" }}
 
+      {{- with .Values.reloader.deployment.containerSecurityContext }}
+        securityContext: {{ toYaml . | nindent 10 }}
+      {{- end }}
+
       {{- if eq .Values.reloader.readOnlyRootFileSystem true }}
         volumeMounts:
           - mountPath: /tmp/
             name: tmp-volume
       {{- end }}
-      {{- if or (.Values.reloader.logFormat) (.Values.reloader.ignoreSecrets) (.Values.reloader.ignoreNamespaces) (.Values.reloader.ignoreConfigMaps) (.Values.reloader.custom_annotations) (eq .Values.reloader.isArgoRollouts true) (ne .Values.reloader.reloadStrategy "default")}}
+      {{- if or (.Values.reloader.logFormat) (.Values.reloader.ignoreSecrets) (.Values.reloader.ignoreNamespaces) (.Values.reloader.ignoreConfigMaps) (.Values.reloader.custom_annotations) (eq .Values.reloader.isArgoRollouts true) (eq .Values.reloader.reloadOnCreate true) (ne .Values.reloader.reloadStrategy "default")}}
         args:
           {{- if .Values.reloader.logFormat }}
           - "--log-format={{ .Values.reloader.logFormat }}"
@@ -159,6 +163,9 @@ spec:
           {{- if eq .Values.reloader.isArgoRollouts true }}
           - "--is-Argo-Rollouts={{ .Values.reloader.isArgoRollouts }}"
           {{- end }}
+          {{- if eq .Values.reloader.reloadOnCreate true }}
+          - "--reload-on-create={{ .Values.reloader.reloadOnCreate }}"
+          {{- end }}
           {{- if ne .Values.reloader.reloadStrategy "default" }}
           - "--reload-strategy={{ .Values.reloader.reloadStrategy }}"
           {{- end }}
@@ -171,6 +178,9 @@ spec:
       securityContext: {{ toYaml .Values.reloader.deployment.securityContext | nindent 8 }}
 {{- end }}
       serviceAccountName: {{ template "reloader-serviceAccountName" . }}
+{{- if hasKey .Values.reloader.deployment "automountServiceAccountToken" }}
+      automountServiceAccountToken: {{ .Values.reloader.deployment.automountServiceAccountToken }}
+{{- end }}
     {{- if eq .Values.reloader.readOnlyRootFileSystem true }}
       volumes:
         - emptyDir: {}

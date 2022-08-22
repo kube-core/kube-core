@@ -1,4 +1,4 @@
-### These should be implemented in each project. 
+### These should be implemented in each project.
 # Keep these up to date to help implementing quickly.
 
 # Global project variables
@@ -46,20 +46,20 @@ cloud:
   project: KUBE_CORE_CLOUD_PROJECT
   registry:
     hostname: KUBE_CORE_CLOUD_REGISTRY_HOSTNAME
-  default: 
+  default:
     location: KUBE_CORE_CLOUD_DEFAULT_LOCATION
 
 
 # Cluster configuration
 cluster:
   config:
-    backups: 
+    backups:
       schedule: "0 12 * * *" #KUBE_CORE_CLUSTER_CONFIG_BACKUPS_SCHEDULE
     name: KUBE_CORE_CLUSTER_CONFIG_NAME
     context: KUBE_CORE_CLUSTER_CONFIG_CONTEXT
     domain: KUBE_CORE_CLUSTER_CONFIG_DOMAIN
     additionnalDomains: [] # KUBE_CORE_CLUSTER_CONFIG_ADDITIONNAL_DOMAINS
-    cidr: 
+    cidr:
     - name: cluster-range
       cidr: KUBE_CORE_CLUSTER_CONFIG_CIDR_CLUSTER_RANGE
     - name: cluster-nat
@@ -74,7 +74,7 @@ cluster:
     adminEmail: KUBE_CORE_CLUSTER_CONFIG_ADMIN_EMAIL
     schedule: "Mon-Fri 08:00-20:00 Europe/Paris" #KUBE_CORE_CLUSTER_CONFIG_SCHEDULE
     downscalerExcludedNamespaces: "system-tools,namespace-node-affinity" #KUBE_CORE_CLUSTER_CONFIG_DOWNSCALER_EXCLUDED_NAMESPACES
-
+    extraVisitorGroups: []
   common:
     globalLabels: {}
     defaultIngressClass: nginx
@@ -89,7 +89,7 @@ cluster:
         cert-manager.io/cluster-issuer: letsencrypt-staging
         external-dns.alpha.kubernetes.io/ttl: 5
         ingress.neo9.io/allowed-visitors: self
-        ingress.neo9.io/access-operator-enabled: true
+        ingress.neo9.io/access-filtered: true
         nginx.ingress.kubernetes.io/ssl-redirect: true
         nginx.ingress.kubernetes.io/force-ssl-redirect: true
         nginx.ingress.kubernetes.io/proxy-body-size: 200m
@@ -97,18 +97,18 @@ cluster:
         forecastle.stakater.com/expose: true
         exposeIngressUrl: globally
       ingress.neo9.io/expose-labels: |-
-        ingress.neo9.io/access-operator-enabled: true
+        ingress.neo9.io/access-filtered: true
     defaultServiceLabels:
       ingress.neo9.io/expose: "true"
     # Ingress
     defaultIngressLabels:
-      ingress.neo9.io/access-operator-enabled: "true"
+      ingress.neo9.io/access-filtered: "true"
     defaultIngressAnnotations:
       kubernetes.io/ingress.class: "nginx"
       cert-manager.io/cluster-issuer: "letsencrypt-staging"
       external-dns.alpha.kubernetes.io/ttl: "5"
       ingress.neo9.io/allowed-visitors: "self"
-      ingress.neo9.io/access-operator-enabled: "true"
+      ingress.neo9.io/access-filtered: "true"
       nginx.ingress.kubernetes.io/ssl-redirect: "true"
       nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
       nginx.ingress.kubernetes.io/proxy-body-size: "200m"

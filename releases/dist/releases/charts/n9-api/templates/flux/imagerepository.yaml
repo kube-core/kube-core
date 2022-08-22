@@ -1,0 +1,13 @@
+{{ if eq .Values.flux.enabled true }}
+apiVersion: image.toolkit.fluxcd.io/v1beta1
+kind: ImageRepository
+metadata:
+  name: {{ include "n9-api.fullname" . }}
+  labels:
+    {{- include "n9-api.labels" . | nindent 4 }}
+spec:
+  image: {{ .Values.image.repository }}
+  interval: {{ .Values.flux.imageRepository.interval }}
+  secretRef:
+    name: {{ .Values.flux.imageRepository.secretName }}
+{{ end }}

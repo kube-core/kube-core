@@ -46,13 +46,13 @@ manifests:
           cloudDNS:
             project: {{ .Values.cloud.project }}
             serviceAccountSecretRef:
-              key: dns-admin.json
-              name: dns-admin
+              key: {{ (index .Values.releases .Release.Name "secrets" "credentials" "secretRef" "key") }}
+              name: {{ (index .Values.releases .Release.Name "secrets" "credentials" "secretRef" "name") }}
       {{ else if eq .Values.cloud.provider "aws"}}
       - dns01:
           route53:
-            region: eu-west-1
-      {{ end }}       
+            region: {{ .Values.cloud.default.location }} # TODO: Make this variable !
+      {{ end }}
 - apiVersion: cert-manager.io/v1
   kind: ClusterIssuer
   metadata:
@@ -70,11 +70,10 @@ manifests:
           cloudDNS:
             project: {{ .Values.cloud.project }}
             serviceAccountSecretRef:
-              key: dns-admin.json
-              name: dns-admin
+              key: {{ (index .Values.releases .Release.Name "secrets" "credentials" "secretRef" "key") }}
+              name: {{ (index .Values.releases .Release.Name "secrets" "credentials" "secretRef" "name") }}
       {{ else if eq .Values.cloud.provider "aws"}}
       - dns01:
           route53:
-            region: eu-west-1
+            region: {{ .Values.cloud.default.location }} # TODO: Make this variable !
       {{ end }}
-

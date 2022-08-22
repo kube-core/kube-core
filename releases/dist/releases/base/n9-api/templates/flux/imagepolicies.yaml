@@ -1,0 +1,79 @@
+{{ if eq .Values.flux.enabled true }}
+{{ if eq .Values.flux.defaultImagePoliciesEnabled true }}
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta1
+kind: ImagePolicy
+metadata:
+  name: {{ include "n9-api.fullname" . }}-default
+  labels:
+    {{- include "n9-api.labels" . | nindent 4 }}
+spec:
+  imageRepositoryRef:
+    name: {{ include "n9-api.fullname" . }}
+  policy:
+    semver:
+      range: "*"
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta1
+kind: ImagePolicy
+metadata:
+  name: {{ include "n9-api.fullname" . }}-dev
+  labels:
+    {{- include "n9-api.labels" . | nindent 4 }}
+spec:
+  imageRepositoryRef:
+    name: {{ include "n9-api.fullname" . }}
+  filterTags:
+    # Matches v-${commitHash}-${timestamp} with a named capture group (https://pkg.go.dev/regexp)
+    pattern: '^v-(.*)-(?P<ts>.*)'
+    extract: '$ts'
+  policy:
+    numerical:
+      order: asc
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta1
+kind: ImagePolicy
+metadata:
+  name: {{ include "n9-api.fullname" . }}-staging
+  labels:
+    {{- include "n9-api.labels" . | nindent 4 }}
+spec:
+  imageRepositoryRef:
+    name: {{ include "n9-api.fullname" . }}
+  policy:
+    semver:
+      range: ">=0.0.0-0"
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta1
+kind: ImagePolicy
+metadata:
+  name: {{ include "n9-api.fullname" . }}-prod
+  labels:
+    {{- include "n9-api.labels" . | nindent 4 }}
+spec:
+  imageRepositoryRef:
+    name: {{ include "n9-api.fullname" . }}
+  policy:
+    semver:
+      range: ">=1.0.0"
+{{ end }}
+
+
+{{ if .Values.flux.imagePolicies }}
+{{ range $k, $v := .Values.flux.imagePolicies }}
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta1
+kind: ImagePolicy
+metadata:
+  name: {{ include "n9-api.fullname" $ }}-{{ $k }}
+  labels:
+    {{- include "n9-api.labels" $ | nindent 4 }}
+spec:
+  imageRepositoryRef:
+    name: {{ include "n9-api.fullname" $ }}
+{{ toYaml $v | indent 2 }}
+{{ end }}      
+
+{{ end }}
+
+{{ end }}
