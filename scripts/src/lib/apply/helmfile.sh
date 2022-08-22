@@ -15,16 +15,16 @@ helmfile_repos() {
 }
 
 helmfile_apply_command() {
-        
+
     helmfileAction="apply"
     helmfileActionArgs=${1:-"--skip-deps"}
-    
-    helmfileCommand=$(helmfile_build_command ${helmfileAction} ${helmfileActionArgs})=
-    echo "${helmfile_command}"
+
+    helmfileCommand=$(helmfile_build_command ${helmfileAction} ${helmfileActionArgs})
+    echo "${helmfileCommand}"
 }
 
 helmfile_list() {
-        
+
     helmfileAction="list"
     helmfileActionArgs=${1:-""}
 
@@ -33,12 +33,12 @@ helmfile_list() {
 }
 
 helmfile_template_command() {
-        
+
     helmfileAction="template"
-    helmfileActionArgs=${1:-"--skip-deps"}
+    helmfileActionArgs=${1:-"--skip-deps --include-transitive-needs"}
 
     helmfileCommand=$(helmfile_build_command ${helmfileAction} ${helmfileActionArgs})
-    
+
     echo "${helmfileCommand}"
 }
 
@@ -79,11 +79,11 @@ helmfile_template_release() {
 
         log_info "Templating: ${cluster_config_name}/${namespace}/${name}"
 
-        # Overriding helmfileSelectorOverride argument from helmfile_build_command :) 
+        # Overriding helmfileSelectorOverride argument from helmfile_build_command :)
         helmfileCommand=$(helmfileSelectorOverride="-l name=${name},namespace=${namespace}" helmfile_template_command)
 
         log_debug "${helmfileCommand} > ${releasePath}/all.yaml"
-        
+
         if [[ "$LOG_LEVEL" == "DEBUG" || "$LOG_LEVEL" == "INSANE" ]] ; then
             ${helmfileCommand} > ${releasePath}/all.yaml
         else
@@ -103,16 +103,16 @@ helmfile_build_command() {
         helmfileSelectorExpression=" -l name=${filter} -l namespace=${filter}"
     fi
 
-    # Quick Helmfile Selector. 
-    # Examples: 
+    # Quick Helmfile Selector.
+    # Examples:
     # key=value
     # key=value,key2=value2
     if [[ "$helmfileSelector" != "" ]] ; then
         helmfileSelectorExpression="${helmfileSelectorExpression} -l ${helmfileSelector}"
     fi
 
-    # Full Helmfile Selector. 
-    # Examples: 
+    # Full Helmfile Selector.
+    # Examples:
     # -l key=value
     # -l key=value,key2=value2 -l key3=value3 -l key4!=value4,key5=value5
     if [[ "$helmfileSelectorOverride" != "" ]] ; then
