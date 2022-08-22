@@ -77,21 +77,25 @@ The command removes all the Kubernetes components associated with the chart and 
 | `fullnameOverride` | String to fully override sealed-secrets.fullname        | `""`  |
 | `namespace`        | Namespace where to deploy the Sealed Secrets controller | `""`  |
 | `extraDeploy`      | Array of extra objects to deploy with the release       | `[]`  |
+| `commonAnnotations`| Annotations to add to all deployed resources            | `[]`  |
 
 
 ### Sealed Secrets Parameters
 
 | Name                                              | Description                                                                          | Value                               |
 | ------------------------------------------------- | ------------------------------------------------------------------------------------ | ----------------------------------- |
-| `image.registry`                                  | Sealed Secrets image registry                                                        | `docker.io`                           |
+| `image.registry`                                  | Sealed Secrets image registry                                                        | `docker.io`                         |
 | `image.repository`                                | Sealed Secrets image repository                                                      | `bitnami/sealed-secrets-controller` |
-| `image.tag`                                       | Sealed Secrets image tag (immutable tags are recommended)                            | `v0.17.5`                           |
+| `image.tag`                                       | Sealed Secrets image tag (immutable tags are recommended)                            | `v0.18.1`                           |
 | `image.pullPolicy`                                | Sealed Secrets image pull policy                                                     | `IfNotPresent`                      |
 | `image.pullSecrets`                               | Sealed Secrets image pull secrets                                                    | `[]`                                |
 | `createController`                                | Specifies whether the Sealed Secrets controller should be created                    | `true`                              |
 | `secretName`                                      | The name of an existing TLS secret containing the key used to encrypt secrets        | `sealed-secrets-key`                |
 | `updateStatus`                                    | Specifies whether the Sealed Secrets controller should update the status subresource | `true`                              |
 | `keyrenewperiod`                                  | Specifies key renewal period. Default 30 days                                        | `""`                                |
+| `rateLimit`                                       | Number of allowed sustained request per second for verify endpoint                   | `""`                                |
+| `rateLimitBurst`                                  | Number of requests allowed to exceed the rate limit per second for verify endpoint   | `""`                                |
+| `additionalNamespaces`                            | List of namespaces used to manage the Sealed Secrets                                 | `[]`                                |
 | `command`                                         | Override default container command                                                   | `[]`                                |
 | `args`                                            | Override default container args                                                      | `[]`                                |
 | `livenessProbe.enabled`                           | Enable livenessProbe on Sealed Secret containers                                     | `true`                              |
@@ -123,6 +127,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | `containerSecurityContext.readOnlyRootFilesystem` | Whether the Sealed Secret container has a read-only root filesystem                  | `true`                              |
 | `containerSecurityContext.runAsNonRoot`           | Indicates that the Sealed Secret container must run as a non-root user               | `true`                              |
 | `containerSecurityContext.runAsUser`              | Set Sealed Secret containers' Security Context runAsUser                             | `1001`                              |
+| `automountServiceAccountToken`                    | Whether to automatically mount the service account API-token to a particular pod     | `""`                                |
 | `podLabels`                                       | Extra labels for Sealed Secret pods                                                  | `{}`                                |
 | `podAnnotations`                                  | Annotations for Sealed Secret pods                                                   | `{}`                                |
 | `priorityClassName`                               | Sealed Secret pods' priorityClassName                                                | `""`                                |
@@ -158,14 +163,16 @@ The command removes all the Kubernetes components associated with the chart and 
 
 ### Other Parameters
 
-| Name                    | Description                                          | Value   |
-| ----------------------- | ---------------------------------------------------- | ------- |
-| `serviceAccount.create` | Specifies whether a ServiceAccount should be created | `true`  |
-| `serviceAccount.labels` | Extra labels to be added to the ServiceAccount       | `{}`    |
-| `serviceAccount.name`   | The name of the ServiceAccount to use.               | `""`    |
-| `rbac.create`           | Specifies whether RBAC resources should be created   | `true`  |
-| `rbac.labels`           | Extra labels to be added to RBAC resources           | `{}`    |
-| `rbac.pspEnabled`       | PodSecurityPolicy                                    | `false` |
+| Name                                          | Description                                                   | Value   |
+| --------------------------------------------- | ------------------------------------------------------------- | ------- |
+| `serviceAccount.create`                       | Specifies whether a ServiceAccount should be created          | `true`  |
+| `serviceAccount.labels`                       | Extra labels to be added to the ServiceAccount                | `{}`    |
+| `serviceAccount.name`                         | The name of the ServiceAccount to use.                        | `""`    |
+| `serviceAccount.automountServiceAccountToken` | Specifies, whether to mount the service account API-token     | `""`    |
+| `rbac.create`                                 | Specifies whether RBAC resources should be created            | `true`  |
+| `rbac.clusterRole`                            | Specifies whether the Cluster Role resource should be created | `true`  |
+| `rbac.labels`                                 | Extra labels to be added to RBAC resources                    | `{}`    |
+| `rbac.pspEnabled`                             | PodSecurityPolicy                                             | `false` |
 
 
 ### Metrics parameters
@@ -177,6 +184,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | `metrics.serviceMonitor.labels`            | Extra labels for the ServiceMonitor                                                    | `{}`    |
 | `metrics.serviceMonitor.annotations`       | Extra annotations for the ServiceMonitor                                               | `{}`    |
 | `metrics.serviceMonitor.interval`          | How frequently to scrape metrics                                                       | `""`    |
+| `metrics.serviceMonitor.honorLabels`       | Specify if ServiceMonitor endPoints will honor labels                                  | `true`  |
 | `metrics.serviceMonitor.scrapeTimeout`     | Timeout after which the scrape is ended                                                | `""`    |
 | `metrics.serviceMonitor.metricRelabelings` | Specify additional relabeling of metrics                                               | `[]`    |
 | `metrics.serviceMonitor.relabelings`       | Specify general relabeling                                                             | `[]`    |

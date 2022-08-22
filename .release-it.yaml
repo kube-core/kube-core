@@ -1,15 +1,15 @@
 
 git:
   tagName: "v${version}"
-  commitMessage: "chore: Release v${version}"
+  commitMessage: "release: v${version}"
   # requireBranch:
   # - master
   requireCommits: true
   requireCleanWorkingDir: false
   addUntrackedFiles: false
 
-  changelog: |-
-    npx auto-changelog -o CHANGELOG.md --commit-limit false
+  # changelog: |-
+  #   npx auto-changelog -o CHANGELOG.md --commit-limit false
 
 gitlab:
   releases: true
@@ -25,6 +25,6 @@ hooks:
 
 # plugins:
 #   "@release-it/bumper":
-#     out: 
+#     out:
 #       file: cli/package.json
 #       path: version

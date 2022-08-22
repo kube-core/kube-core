@@ -3,14 +3,14 @@
 initContainers:
   {{ if eq .Values.cloud.provider "aws" }}
   - name: velero-plugin-for-aws
-    image: velero/velero-plugin-for-aws:v1.3.0
+    image: velero/velero-plugin-for-aws:v1.5.0
     imagePullPolicy: IfNotPresent
     volumeMounts:
       - mountPath: /target
         name: plugins
   {{ else if eq .Values.cloud.provider "gcp" }}
   - name: velero-plugin-for-gcp
-    image: velero/velero-plugin-for-gcp:v1.2.0
+    image: velero/velero-plugin-for-gcp:v1.5.0
     imagePullPolicy: IfNotPresent
     volumeMounts:
       - mountPath: /target
@@ -105,7 +105,8 @@ configuration:
     {{ if eq .Values.cloud.provider "aws" }}
     AWS_CLUSTER_NAME: {{ .Values.cluster.config.domain }}
     {{ else if eq .Values.cloud.provider "gcp" }}
-    GOOGLE_APPLICATION_CREDENTIALS: /credentials/velero.json
+    # Now patched in releases via strategicmergepatch, which is still not ideal but better than this.
+    # GOOGLE_APPLICATION_CREDENTIALS: /credentials/velero.json
     {{ end }}
 
 
@@ -116,7 +117,7 @@ configuration:
   logLevel:
 
   # Set log-format for Velero pod. Default: text. Other option: json.
-  logFormat:
+  logFormat: json
 
   # Set true for backup all pod volumes without having to apply annotation on the pod when used restic Default: false. Other option: false.
   defaultVolumesToRestic:
@@ -156,13 +157,13 @@ credentials:
   # kiam to provide IAM credentials for the Velero pod.
   {{ if eq .Values.cloud.provider "gcp" }}
   useSecret: true
-  # useSecret: {{ (index .Values.releases .Release.Name "secrets" "credentials" "createSecret" ) }}
+  # useSecret: {{ (index .Values.releases .Release.Name "secrets" "credentials" "secretRef" "name" ) }}
   # Name of the secret to create if `useSecret` is true and `existingSecret` is empty
   name:
   # Name of a pre-existing secret (if any) in the Velero namespace
   # that should be used to get IAM account credentials. Optional.
   # existingSecret: velero
-  existingSecret: {{ (index .Values.releases .Release.Name "secrets" "credentials" "existingSecret" ) }}
+  existingSecret: {{ (index .Values.releases .Release.Name "secrets" "credentials" "secretRef" "name" ) }}
   {{ end }}
   # Data to be stored in the Velero secret, if `useSecret` is true and `existingSecret` is empty.
   # As of the current Velero release, Velero only uses one secret key/value at a time.
@@ -172,7 +173,7 @@ credentials:
   # [AWS] https://github.com/vmware-tanzu/velero-plugin-for-aws/blob/main/README.md
   # [GCP] https://github.com/vmware-tanzu/velero-plugin-for-gcp/blob/main/README.md
   # [Azure] https://github.com/vmware-tanzu/velero-plugin-for-microsoft-azure/blob/main/README.md
-  secretContents: {{ (index .Values.releases .Release.Name "secrets" "credentials" "secretContents" ) }}
+  # secretContents: {{ (index .Values.releases .Release.Name "secrets" "credentials" "secretRef" "name" ) }}
   #  cloud: |
   #    [default]
   #    aws_access_key_id=<REDACTED>
@@ -190,7 +191,7 @@ backupsEnabled: true
 snapshotsEnabled: false
 
 # Whether to deploy the restic daemonset.
-deployRestic: true
+deployRestic: false
 
 restic:
   podVolumePath: /var/lib/kubelet/pods
@@ -254,4 +255,3 @@ configMaps: {}
 ##
 ## End of additional Velero resource settings.
 ##
-

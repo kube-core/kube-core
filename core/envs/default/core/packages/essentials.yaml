@@ -13,6 +13,11 @@ releases:
     labels:
       package: essentials
     enabled: true
+  visitor-groups:
+    enabled: true
+    labels:
+      package: essentials
+    enabled: true
   external-dns:
     labels:
       package: essentials

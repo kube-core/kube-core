@@ -85,79 +85,6 @@ releasesCustom:
               keycloakImage: "quay.io/keycloak/keycloak:15.0.2"
             realms: []
             service: {}
-            # - name: realm-test
-            #   userGroups:
-            #     - group1
-            #     - group2
-            #   realm:
-            #     id: "test-env"
-            #     realm: "test"
-            #     enabled: True
-            #     displayName: "test"
-            #   clients:
-            #     - name: super-test
-            #       client:
-            #         clientId: client-script
-            #         secret: client-secret
-            # - name: realm-dev
-            #   userGroups:
-            #     - group1
-            #   realm:
-            #     id: "test-dev"
-            #     realm: "dev"
-            #     enabled: True
-            #     displayName: "dev"
-            #   clients: {}
-            userGroups: []
-            # - name: group1
-            #   users:
-            #     - name: userx
-            #       user:
-            #         username: "adoe"
-            #         firstName: "Alice"
-            #         lastName: "Doe"
-            #         email: "alice.doe@example.com"
-            #         enabled: True
-            #         emailVerified: False
-            #         realmRoles:
-            #           - "offline_access"
-            #         clientRoles:
-            #           account:
-            #             - "manage-account"
-            #           realm-management:
-            #             - "manage-users"
-            #     - name: usery
-            #       user:
-            #         username: "jdoe"
-            #         firstName: "John"
-            #         lastName: "Doe"
-            #         email: "john.doe@example.com"
-            #         enabled: True
-            #         emailVerified: False
-            #         realmRoles:
-            #           - "offline_access"
-            #         clientRoles:
-            #           account:
-            #             - "manage-account"
-            #           realm-management:
-            #             - "manage-users"
-            # - name: group2
-            #   users:
-            #     - name: userw
-            #       user:
-            #         username: "bdoe"
-            #         firstName: "Bob"
-            #         lastName: "Doe"
-            #         email: "bob.doe@example.com"
-            #         enabled: True
-            #         emailVerified: False
-            #         realmRoles:
-            #           - "offline_access"
-            #         clientRoles:
-            #           account:
-            #             - "manage-account"
-            #           realm-management:
-            #             - "manage-users"
     enabled: false
   mongodb:
     config:
@@ -185,7 +112,6 @@ releasesCustom:
             users:
               - db: admin
                 name: my-user
-                # a reference to the secret that will be used to generate the user's password
                 passwordSecretRef:
                   name: my-user-password
                 roles:
@@ -233,12 +159,6 @@ releasesCustom:
   oauth2Proxy:
     config:
       global:
-        # config:
-        #   existingSecret: oauth-clientid
-        #   cookieName: "Auth"
-        # extraArgs:
-        #   cookie-refresh: 10
-        #   email-domain: "domain.com,domain.org"
         ingress:
           annotations:
             kubernetes.io/ingress.class: nginx
@@ -272,11 +192,6 @@ releasesCustom:
         enabled: false
     enabled: false
     values: {}
-    # configAwsOrGcp:
-    #   additional_secret_mount: "postgres-backup-creds"
-    #   additional_secret_mount_path: "/var/secrets/google"
-    #   gcp_credentials: "/var/secrets/google/key.json"
-    #   wal_gs_bucket: ""
   ### Postgres-operator heavily depend on ressources naming format {TEAM}-{NAME} to deploy new cluster
   postgresOperatorCluster:
     config:

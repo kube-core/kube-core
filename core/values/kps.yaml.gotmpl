@@ -488,10 +488,10 @@ kps-thanos:
       secret_key: minio123
       insecure: true
   {{ if (index .Values.releases .Release.Name "config" "thanos" "externalObjectStorageBackend" "enabled") }}
-  existingObjstoreSecret: {{ index .Values.releases .Release.Name "config" "thanos" "externalObjectStorageBackend" "objstoreSecret" }}
+  existingObjstoreSecret: {{ index .Values.releases .Release.Name "secrets" "objstore" "secretRef" "name" }}
   existingObjstoreSecretItems:
-    - key: {{ index .Values.releases .Release.Name "config" "thanos" "externalObjectStorageBackend" "objstoreSecretKey" | default "objstore.yml" }}
-      path: objstore.yml
+    - key: {{ index .Values.releases .Release.Name "secrets" "objstore" "secretRef" "key" }}
+      path: {{ index .Values.releases .Release.Name "secrets" "objstore" "secretRef" "key" }}
   {{ end }}
   bucketweb:
     enabled: true

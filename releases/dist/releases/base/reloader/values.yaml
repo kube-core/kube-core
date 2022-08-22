@@ -13,6 +13,7 @@ reloader:
   isOpenshift: false
   ignoreSecrets: false
   ignoreConfigMaps: false
+  reloadOnCreate: false
   reloadStrategy: default # Set to default, env-vars or annotations
   ignoreNamespaces: "" # Comma separated list of namespaces to ignore
   logFormat: "" #json
@@ -23,6 +24,7 @@ reloader:
     rbac: false
   matchLabels: {}
   deployment:
+    replicas: 1
     nodeSelector:
     # cloud.google.com/gke-nodepool: default-pool
 
@@ -41,6 +43,13 @@ reloader:
       runAsNonRoot: true
       runAsUser: 65534
 
+    containerSecurityContext: {}
+      # capabilities:
+      #   drop:
+      #     - ALL
+      # allowPrivilegeEscalation: false
+      # readOnlyRootFilesystem: true
+
     # A list of tolerations to be applied to the Deployment.
     # Example:
     #   tolerations:
@@ -53,10 +62,10 @@ reloader:
     labels:
       provider: stakater
       group: com.stakater.platform
-      version: v0.0.104
+      version: v0.0.118
     image:
       name: stakater/reloader
-      tag: v0.0.104
+      tag: v0.0.118
       pullPolicy: IfNotPresent
     # Support for extra environment variables.
     env:
@@ -109,7 +118,7 @@ reloader:
     annotations: {}
     # The name of the ServiceAccount to use.
     # If not set and create is true, a name is generated using the fullname template
-    name:
+    name: 
   # Optional flags to pass to the Reloader entrypoint
   # Example:
   #   custom_annotations:

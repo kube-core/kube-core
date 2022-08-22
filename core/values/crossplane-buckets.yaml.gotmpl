@@ -1,1 +1,3 @@
-prefix: {{ .Values.project.name }}  
+cluster: {{ toYaml .Values.cluster | nindent 2 }}
+cloud: {{ toYaml .Values.cloud | nindent 2 }}
+prefix: {{ .Values.cluster.config.name }}

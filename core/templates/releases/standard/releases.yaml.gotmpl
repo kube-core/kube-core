@@ -30,14 +30,34 @@
 - name: {{ $value.release.name }}-manifests
   chart: ../releases/dist/releases/charts/raw
   namespace: {{ $value.release.namespace }}
-  needs: ["{{ $value.release.name }}"]
+  {{ if .labels }}
   labels: {{ toYaml .labels | nindent 4 }}
+  {{ else }}
+  labels:
+  {{ end }}
     app: {{ $value.release.name }}
     type: manifests
   values:
   - "./values/release-manifests.yaml.gotmpl"
   # - "./values/{{ $value.release.name }}-manifests.yaml.gotmpl"
 {{ end }}
+
+{{ if $value.secrets }}
+- name: {{ $value.release.name }}-secrets
+  chart: ../releases/dist/releases/charts/raw
+  namespace: {{ $value.release.namespace }}
+  {{ if .labels }}
+  labels: {{ toYaml .labels | nindent 4 }}
+  {{ else }}
+  labels:
+  {{ end }}
+    app: {{ $value.release.name }}
+    type: secrets
+  values:
+  - "./values/release-secrets.yaml.gotmpl"
+  # - "./values/{{ $value.release.name }}-secrets.yaml.gotmpl"
+{{ end }}
+
 
 {{- end -}}
 {{- end -}}

@@ -61,35 +61,45 @@ check_context "${cluster_config_context}"
 ## Header End
 
 
+
+
+
+
+log_info "Creating cluster-manager SA..."
+
 serviceAccount="cluster-manager"
-credentialsFile="$secrets_path/input/cluster-manager.json"
+serviceAccountDisplayName="${cluster_config_name}-${serviceAccount}"
+serviceAccountShortName="${cluster_config_name}-cm"
+credentialsFile="${secrets_path}/input/${serviceAccount}.json"
 
-# Create ServiceAccount
-gcloud iam service-accounts create ${serviceAccount} --project ${project_name} || true
+roles="$(cat <<EOF
+container.admin
+container.clusterAdmin
+container.clusterViewer
+container.developer
+compute.admin
+EOF
+)"
 
-# Attach the role to the newly create Google Service Account
-gcloud projects add-iam-policy-binding ${project_name} \
-  --member=serviceAccount:${serviceAccount}@${project_name}.iam.gserviceaccount.com \
-  --role=roles/container.admin
 
-gcloud projects add-iam-policy-binding ${project_name} \
-  --member=serviceAccount:${serviceAccount}@${project_name}.iam.gserviceaccount.com \
-  --role=roles/container.clusterAdmin
-  
-gcloud projects add-iam-policy-binding ${project_name} \
-  --member=serviceAccount:${serviceAccount}@${project_name}.iam.gserviceaccount.com \
-  --role=roles/container.clusterViewer
-  
-gcloud projects add-iam-policy-binding ${project_name} \
-  --member=serviceAccount:${serviceAccount}@${project_name}.iam.gserviceaccount.com \
-  --role=roles/container.developer
-    
-gcloud projects add-iam-policy-binding ${project_name} \
-  --member=serviceAccount:${serviceAccount}@${project_name}.iam.gserviceaccount.com \
-  --role=roles/compute.admin
-  
-# Delete old keys
-keys=$(gcloud iam service-accounts keys list --iam-account=${serviceAccount}@${project_name}.iam.gserviceaccount.com | tail -n +2 | awk '{print $1}')
-while read i; do gcloud iam service-accounts keys delete --iam-account=${serviceAccount}@${project_name}.iam.gserviceaccount.com --quiet $i ;done <<< "$keys" || true
-# Get key
-gcloud iam service-accounts keys create ${credentialsFile} --iam-account ${serviceAccount}@${project_name}.iam.gserviceaccount.com
+
+if [[ -f "${credentialsFile}" ]]; then
+  log_warn "${credentialsFile} already exists and will be overwritten!"
+  rm -rf ${credentialsFile}
+fi
+
+log_info "Creating SA ${serviceAccount}..."
+gcloud_iam_sa_create ${serviceAccount} &> /dev/null
+
+log_info "Binding roles: ["${roles}"] to ${serviceAccount}..."
+gcloud_iam_add_policy_bindings ${serviceAccount} ${roles} &> /dev/null
+
+log_info "Deleting all keys for SA ${serviceAccount}..."
+gcloud_iam_sa_delete_keys ${serviceAccount}
+
+log_info "Creating a new key..."
+
+if [[ ! -f "${credentialsFile}" ]]; then
+  log_error "Credentials generation failed!"
+  exit 1
+fi

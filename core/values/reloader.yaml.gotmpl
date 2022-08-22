@@ -1,3 +1,4 @@
+fullnameOverride: reloader
 reloader:
   isOpenshift: false
   ignoreSecrets: {{ (index .Values.releases .Release.Name "config" "ignoreSecrets") }}

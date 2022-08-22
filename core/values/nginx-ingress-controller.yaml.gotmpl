@@ -44,7 +44,12 @@ reportNodeInternalIp: false
 
 ## Name of the ingress class to route through this controller
 ##
-ingressClass: {{ index .Values.releases .Release.Name "config" "ingressClass" }}
+ingressClassResource:
+  name: {{ index .Values.releases .Release.Name "config" "ingressClass" }}
+  enabled: true
+  default: false
+  controllerClass: "k8s.io/ingress-nginx"
+  parameters: {}
 
 ## Allows customization of the external service
 ## the ingress will be bound to via DNS
@@ -125,7 +130,7 @@ service:
 metrics:
   enabled: {{ index .Values.releases .Release.Name "config" "metrics" "enabled" }}
   serviceMonitor:
-    enabled: {{ index .Values.releases .Release.Name "config" "metrics" "serviceMonitor" "enabled" }}
+    enabled: {{ coalesce (index .Values.releases .Release.Name "config" "metrics" "serviceMonitor" "enabled") .Values.core.packages.monitoring.enabled }}
     interval: 15s
     namespace: {{ index .Values.releases "kps" "release" "namespace" }}
 
@@ -144,3 +149,6 @@ podAnnotations:
 tolerations: {{ toYaml (index .Values.releases .Release.Name "config" "tolerations") | nindent 2 }}
 nodeSelector: {{ toYaml (index .Values.releases .Release.Name "config" "nodeSelector") | nindent 2 }}
 affinity: {{ toYaml (index .Values.releases .Release.Name "config" "affinity") | nindent 2 }}
+
+pdb:
+  create: true

@@ -17,5 +17,5 @@ spec:
         pathType: ImplementationSpecific
   tls:
   - hosts:
-    - prometheus.mesh.adb.{{ .Values.cluster.config.domain }}
+    - prometheus.mesh.{{ .Values.cluster.config.domain }}
     secretName: prometheus-tls

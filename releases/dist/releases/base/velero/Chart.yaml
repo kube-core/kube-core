@@ -1,11 +1,11 @@
 apiVersion: v2
-appVersion: 1.8.1
+appVersion: 1.9.1
 description: A Helm chart for velero
 home: https://github.com/vmware-tanzu/velero
 icon: https://cdn-images-1.medium.com/max/1600/1*-9mb3AKnKdcL_QD3CMnthQ.png
 kubeVersion: '>=1.16.0-0'
 maintainers:
-- email: jenting.hsiao@suse.com
+- email: hsiaoairplane@gmail.com
   name: jenting
 - email: sseago@redhat.com
   name: sseago
@@ -16,4 +16,4 @@ maintainers:
 name: velero
 sources:
 - https://github.com/vmware-tanzu/velero
-version: 2.29.4
+version: 2.31.3

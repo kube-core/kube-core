@@ -32,6 +32,7 @@ echo "source ${scriptsConfigDirPath}/src/lib/apply/config.sh"
 echo "source ${scriptsConfigDirPath}/src/lib/apply/namespaces.sh"
 echo "source ${scriptsConfigDirPath}/src/lib/apply/helmfile.sh"
 echo "source ${scriptsConfigDirPath}/src/lib/apply/kubectl.sh"
+echo "source ${scriptsConfigDirPath}/src/lib/utils.sh"
 
 # ENV
 export HELM_DIFF_IGNORE_UNKNOWN_FLAGS=true

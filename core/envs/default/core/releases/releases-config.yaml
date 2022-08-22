@@ -34,7 +34,7 @@ releases:
               return 403;
             }
         labels:
-          ingress.neo9.io/access-operator-enabled: "false"
+          ingress.neo9.io/access-filtered: "false"
         subdomain: charts
       persistence:
         enabled: true
@@ -48,18 +48,8 @@ releases:
     config:
       providers:
         aws:
-          credentials:
-            secretRef:
-              key: crossplane-aws-service-account.json
-              name: crossplane-aws-service-account
-            source: Secret
           enabled: false
         gcp:
-          credentials:
-            secretRef:
-              key: crossplane-gcp-service-account.json
-              name: crossplane-gcp-service-account
-            source: Secret
           enabled: false
           projectID:
   efk:
@@ -127,7 +117,7 @@ releases:
   ingress-access-operator:
     config:
       defaultFiltering:
-        enabled: false
+        enabled: true
       dynamicIstioSidecar:
         enabled: false
       exposer:
@@ -201,11 +191,11 @@ releases:
       opsgenie:
         alerts:
           apiKey: {}
-          enabled: true
+          enabled: false
         enabled: false
         heartbeat:
           apiKey: {}
-          enabled: true
+          enabled: false
           endpoint: {}
       prometheus:
         ingress:
@@ -263,7 +253,7 @@ releases:
       metrics:
         enabled: true
         serviceMonitor:
-          enabled: true
+          enabled: false
       minAvailable: 1
       nodeSelector: {}
       publishServiceEnabled: true
@@ -283,8 +273,7 @@ releases:
       kind: Deployment
       metrics:
         enabled: true
-        serviceMonitor:
-          enabled: true
+        serviceMonitor: {}
       minAvailable: 2
       nodeSelector: {}
       publishServiceEnabled: true
