@@ -22,13 +22,13 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: patch-operator-certs
+  name: metrics-serving-cert
 spec:
   dnsNames:
-  - patch-operator-certs-service.{{ .Release.Namespace }}.svc
-  - patch-operator-certs-service.{{ .Release.Namespace }}.svc.cluster.local
+  - patch-operator-controller-manager-metrics-service.{{ .Release.Namespace }}.svc
+  - patch-operator-controller-manager-metrics-service.{{ .Release.Namespace }}.svc.cluster.local
   issuerRef:
     kind: Issuer
     name: selfsigned-issuer
-  secretName: patch-operator-certs
+  secretName: patch-operator-certs  
 {{ end }}

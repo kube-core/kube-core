@@ -58,6 +58,22 @@
   # - "./values/{{ $value.release.name }}-secrets.yaml.gotmpl"
 {{ end }}
 
+{{ if $value.patches }}
+- name: {{ $value.release.name }}-patches
+  chart: ../releases/dist/releases/charts/raw
+  namespace: {{ $value.release.namespace }}
+  {{ if .labels }}
+  labels: {{ toYaml .labels | nindent 4 }}
+  {{ else }}
+  labels:
+  {{ end }}
+    app: {{ $value.release.name }}
+    type: patches
+  values:
+  - "./values/release-patches.yaml.gotmpl"
+  # - "./values/{{ $value.release.name }}-secrets.yaml.gotmpl"
+{{ end }}
+
 
 {{- end -}}
 {{- end -}}

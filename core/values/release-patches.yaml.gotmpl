@@ -1,0 +1,40 @@
+{{ $values := .Values }}
+{{ $patches := (index .Values.releases (.Release.Name | replace "-patches" "") "patches") }}
+manifests:
+{{ if (not (eq .Release.Namespace "patch-operator")) }}
+- apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    name: patch-operator-admin
+
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: ClusterRoleBinding
+  metadata:
+    name: patch-operator-admin-{{ .Release.Namespace }}.{{ (.Release.Name | replace "-patches" "") }}
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: ClusterRole
+    name: cluster-admin
+  subjects:
+  - kind: ServiceAccount
+    name: patch-operator-admin
+    namespace: {{ .Release.Namespace }}
+{{ end }}
+
+{{ if $patches }}
+- apiVersion: redhatcop.redhat.io/v1alpha1
+  kind: Patch
+  metadata:
+    name: {{ (.Release.Name | replace "-patches" "") }}
+  spec:
+    serviceAccountRef:
+      name: patch-operator-admin
+    patches:
+    {{ range $key, $patch := $patches }}
+      {{ $patch.name }}:
+        targetObjectRef: {{ toYaml $patch.targetObjectRef | nindent 10 }}
+        patchType: {{ coalesce (getOrNil "patchType" $patch) "application/strategic-merge-patch+json" }}
+        patchTemplate: |
+          {{ toYaml $patch.patchTemplate | nindent 10 }}
+    {{ end }}
+{{ end }}

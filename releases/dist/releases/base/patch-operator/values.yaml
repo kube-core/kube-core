@@ -8,7 +8,7 @@ image:
   repository: quay.io/redhat-cop/patch-operator
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: v0.1.1
+  tag: v0.1.7
 
 imagePullSecrets: []
 nameOverride: ""
@@ -37,31 +37,5 @@ kube_rbac_proxy:
       cpu: 100m
       memory: 20Mi
 
-# Those rules will be applied on the main serviceaccount used by
-# patch-operator : `controller-manager`. You can add any patch rules
-# you want in order to be able to patch more resources.
-rbac_rules:
-  - apiGroups:
-    - ""
-    resources:
-    - pods
-    - services
-    - namespaces
-    verbs:
-    - patch
-  - apiGroups:
-    - apps
-    resources:
-    - deployments
-    verbs:
-    - patch
-  - apiGroups:
-    - elasticsearch.k8s.elastic.co
-    resources:
-    - elasticsearches
-    verbs:
-    - patch
-
-enableMonitoring: false
-enableCertManager: true
-enableWebhooks: false
+enableMonitoring: true
+enableCertManager: false

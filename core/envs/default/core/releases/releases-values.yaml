@@ -97,3 +97,6 @@ releases:
   tekton-logging:
     values:
       installCRDs: false
+  patch-operator:
+    values:
+      enableCertManager: true
