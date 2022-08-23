@@ -1,0 +1,12 @@
+# releases:
+#   patch-operator:
+#     patches:
+#     - name: test
+#       targetObjectRef:
+#         apiVersion: v1
+#         kind: Service
+#         name: patch-operator-webhook-service
+#       patchTemplate:
+#         metadata:
+#           labels:
+#             test: abcd

@@ -161,9 +161,9 @@ directories:
       - path: patch-operator
         helmChart:
           name: patch-operator
-          version: v0.1.1
+          version: v0.1.7
           repository:
-            url: https://charts.neo9.pro
+            url: https://redhat-cop.github.io/patch-operator
 
       - path: polaris
         helmChart:

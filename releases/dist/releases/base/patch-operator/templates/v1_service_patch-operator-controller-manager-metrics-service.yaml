@@ -4,7 +4,7 @@ metadata:
   annotations:
     service.alpha.openshift.io/serving-cert-secret-name: patch-operator-certs
   labels:
-    control-plane: controller-manager
+    control-plane: patch-operator
   name: patch-operator-controller-manager-metrics-service
   namespace: {{.Release.Namespace}}
 spec:
@@ -14,5 +14,4 @@ spec:
     protocol: TCP
     targetPort: https
   selector:
-    app.kubernetes.io/name: patch-operator
-    app.kubernetes.io/instance: patch-operator
+    control-plane: patch-operator
