@@ -2,14 +2,14 @@
 git:
   tagName: "v${version}"
   commitMessage: "release: v${version}"
-  # requireBranch:
-  # - master
+  requireBranch:
+  - main
   requireCommits: true
   requireCleanWorkingDir: false
   addUntrackedFiles: false
 
-  # changelog: |-
-  #   npx auto-changelog -o CHANGELOG.md --commit-limit false
+  changelog: |-
+    npx auto-changelog -o CHANGELOG.md --commit-limit false --remote=github -u --hide-credit --release-summary --latest-version v${version} --template=compact
 
 gitlab:
   releases: true
