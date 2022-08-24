@@ -1,8 +1,116 @@
+
+# Cloud Provider information
+cloud:
+  provider: KUBE_CORE_CLOUD_PROVIDER
+  project: KUBE_CORE_CLOUD_PROJECT
+  projectShortName: KUBE_CORE_CLOUD_PROJECT_SHORT_NAME
+  registry:
+    hostname: KUBE_CORE_CLOUD_REGISTRY_HOSTNAME
+  default:
+    location: KUBE_CORE_CLOUD_DEFAULT_LOCATION
+
+# Git Repository Info (used to generate git related stuff)
+git:
+  provider: KUBE_CORE_GIT_PROVIDER
+  web: KUBE_CORE_GIT_WEB
+  api:
+    url: KUBE_CORE_GIT_API_URL
+    host: KUBE_CORE_GIT_API_HOST
+    token: KUBE_CORE_GIT_API_TOKEN
+  ssh:
+    url: KUBE_CORE_GIT_SSH_URL
+    host: KUBE_CORE_GIT_SSH_HOST
+    key: KUBE_CORE_GIT_SSH_KEY
+    known_hosts: KUBE_CORE_GIT_SSH_KNOWN_HOSTS
+  webhooks:
+    token: KUBE_CORE_GIT_WEBHOOKS_TOKEN
+  bot:
+    user: KUBE_CORE_GIT_BOT_USER
+    name: KUBE_CORE_GIT_BOT_NAME
+# Cluster configuration
 cluster:
+  config:
+    backups:
+      schedule: "0 12 * * *" #KUBE_CORE_CLUSTER_CONFIG_BACKUPS_SCHEDULE
+    name: KUBE_CORE_CLUSTER_CONFIG_NAME
+    shortName: KUBE_CORE_CLUSTER_CONFIG_SHORT_NAME
+    context: KUBE_CORE_CLUSTER_CONFIG_CONTEXT
+    contextShortName: KUBE_CORE_CLUSTER_CONFIG_CONTEXT_SHORT_NAME
+    domain: KUBE_CORE_CLUSTER_CONFIG_DOMAIN
+    additionnalDomains: [] # KUBE_CORE_CLUSTER_CONFIG_ADDITIONNAL_DOMAINS
+    cidr:
+    - name: cluster-range
+      cidr: KUBE_CORE_CLUSTER_CONFIG_CIDR_CLUSTER_RANGE
+    - name: cluster-nat
+      cidr: KUBE_CORE_CLUSTER_CONFIG_CIDR_CLUSTER_NAT
+    network:
+      type: KUBE_CORE_CLUSTER_CONFIG_NETWORK_TYPE
+    repository:
+      name: KUBE_CORE_CLUSTER_CONFIG_REPOSITORY_NAME
+      url: KUBE_CORE_CLUSTER_CONFIG_REPOSITORY_URL
+      ref: KUBE_CORE_CLUSTER_CONFIG_REPOSITORY_REF
+      path: KUBE_CORE_CLUSTER_CONFIG_REPOSITORY_PATH
+    adminEmail: KUBE_CORE_CLUSTER_CONFIG_ADMIN_EMAIL
+    schedule: "Mon-Fri 08:00-20:00 Europe/Paris" #KUBE_CORE_CLUSTER_CONFIG_SCHEDULE
+    downscalerExcludedNamespaces: "system-tools,namespace-node-affinity" #KUBE_CORE_CLUSTER_CONFIG_DOWNSCALER_EXCLUDED_NAMESPACES
+    extraVisitorGroups: []
+  common:
+    globalLabels: {}
+    defaultIngressClass: nginx
+    defaultVisitorGroups: self
+    defaultIssuerName: "letsencrypt-staging"
+    defaultIssuerKind: "ClusterIssuer"
+    # See how to refactor the following
+    # Service
+    defaultServiceAnnotations:
+      ingress.neo9.io/expose-annotations: |-
+        kubernetes.io/ingress.class: nginx
+        cert-manager.io/cluster-issuer: letsencrypt-staging
+        external-dns.alpha.kubernetes.io/ttl: 5
+        ingress.neo9.io/allowed-visitors: self
+        ingress.neo9.io/access-filtered: true
+        nginx.ingress.kubernetes.io/ssl-redirect: true
+        nginx.ingress.kubernetes.io/force-ssl-redirect: true
+        nginx.ingress.kubernetes.io/proxy-body-size: 200m
+        nginx.org/client-max-body-size: 200m
+        forecastle.stakater.com/expose: true
+        exposeIngressUrl: globally
+      ingress.neo9.io/expose-labels: |-
+        ingress.neo9.io/access-filtered: true
+    defaultServiceLabels:
+      ingress.neo9.io/expose: "true"
+    # Ingress
+    defaultIngressLabels:
+      ingress.neo9.io/access-filtered: "true"
+    defaultIngressAnnotations:
+      kubernetes.io/ingress.class: "nginx"
+      cert-manager.io/cluster-issuer: "letsencrypt-staging"
+      external-dns.alpha.kubernetes.io/ttl: "5"
+      ingress.neo9.io/allowed-visitors: "self"
+      ingress.neo9.io/access-filtered: "true"
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/proxy-body-size: "200m"
+      nginx.org/client-max-body-size: "200m"
+      forecastle.stakater.com/expose: "true"
+      exposeIngressUrl: "globally"
+
   logging:
     integrations:
       tekton:
         enabled: false
+
+  delivery:
+    namespace: integration
+    branch: develop
+    config:
+      run:
+        tests: "true"
+    node:
+      version: "14.15.4"
+      tests:
+        image: "ihebchakroun/node-14.15.4-chrome-lighthouse:latest"
+
 externalLogs:
   enabled: false
   endpoint: http://tekton-logs-server.logging.svc.cluster.local:3000/logs
@@ -51,3 +159,55 @@ tekton:
         pipelineRef: app-push-develop
       gardenPushDevelop:
         pipelineRef: garden-deploy
+
+releases:
+  tekton:
+    secrets:
+      credentials:
+        crossplaneGenerated: false
+        description: Credentials to authenticate to your Cloud Provider.
+        replicate: false
+        replicateFrom: secrets/tekton
+        secretRef:
+          key: tekton.json
+          name: tekton
+      git-webhooks-token:
+        crossplaneGenerated: false
+        description: Token to authenticate requests to your Git Provider webhooks
+        replicate: false
+        replicateFrom: secrets/git-webhooks-token
+        secretRef:
+          key: git-webhooks-token
+          name: git-webhooks-token
+      git-api-token:
+        crossplaneGenerated: false
+        description: Token to authenticate to your Git Provider API
+        replicate: false
+        replicateFrom: secrets/git-api-token
+        secretRef:
+          key: git-api-token
+          name: git-api-token
+      git-ssh:
+        crossplaneGenerated: false
+        description: SSH key & known_hosts to authenticate Git requests
+        replicate: false
+        replicateFrom: secrets/git-ssh
+        secretRef:
+          key: git-ssh
+          name: git-ssh
+      github-read-token:
+        crossplaneGenerated: false
+        description: A GitHub Token with public read scope to remove rate limiting (for Trivy)
+        replicate: false
+        replicateFrom: secrets/github-read-token
+        secretRef:
+          key: github-read-token
+          name: github-read-token
+      docker-registry:
+        crossplaneGenerated: false
+        description: Docker Registry credentials to push images
+        replicate: false
+        replicateFrom: secrets/docker-registry
+        secretRef:
+          key: known_hosts
+          name: docker-registry

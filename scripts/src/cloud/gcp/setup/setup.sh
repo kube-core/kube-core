@@ -77,13 +77,13 @@ serviceAccounts:
       - roles/dns.admin
   - name: gcr-admin
     roles:
-      - projects/${project_name}/roles/gcrAdmin
+      - projects/${cloud_project}/roles/gcrAdmin
   - name: gcs-admin
     roles:
-      - projects/${project_name}/roles/gcsAdmin
+      - projects/${cloud_project}/roles/gcsAdmin
   - name: velero
     roles:
-      - projects/${project_name}/roles/velero
+      - projects/${cloud_project}/roles/velero
   - name: thanos
     roles:
       - roles/storage.objectAdmin

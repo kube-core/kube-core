@@ -1,0 +1,39 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: kube-core
+  labels:
+    app.kubernetes.io/version: "0.0.1"
+  annotations:
+    tekton.dev/pipelines.minVersion: "0.12.1"
+    tekton.dev/tags: devops, tools
+    tekton.dev/displayName: "kube-core"
+spec:
+  description: >-
+    Runs a kube-core container
+  workspaces:
+    - name: input
+    - name: output
+    - name: source
+    - name: data
+  params:
+    - name: script
+      description: The script to execute
+      type: string
+      default: "echo kube-core"
+
+    - name: image
+      description: The image used by the task
+      type: string
+      default: neo9sas/kube-core:latest
+
+  steps:
+    - name: exec-script
+      image: $(params.image)
+      imagePullPolicy: Always
+      command: ["/bin/bash"]
+      args:
+        - -c
+        - |
+          #!/usr/bin/env bash
+          $(params.script)

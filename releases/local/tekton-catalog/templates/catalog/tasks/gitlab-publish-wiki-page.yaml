@@ -43,19 +43,19 @@ spec:
         - name: GITLAB_API_TOKEN
           valueFrom:
             secretKeyRef:
-              name: gitlab-api-token
-              key: token
+              name: {{ (index .Values.releases "tekton" "secrets" "git-api-token" "secretRef" "name") }}
+              key: {{ (index .Values.releases "tekton" "secrets" "git-api-token" "secretRef" "key") }}
       args:
         - -c
         - |
-          #!/usr/bin/env bash 
+          #!/usr/bin/env bash
           report=""
           if [ $(params.DATA_TYPE) = "HTML" ]
           then
             npm install --silent -g to-markdown-cli
             echo $(params.DATA) | html2md -g -o report.md
-            $report=(cat report.md) 
-          else 
+            $report=(cat report.md)
+          else
             $report=$(params.DATA)
           fi
 

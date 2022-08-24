@@ -88,8 +88,8 @@ kps:
         version: v0.26.0
         objectStorageConfig:
           {{- if (index .Values.releases .Release.Name "config" "thanos" "externalObjectStorageBackend" "enabled") }}
-          name: {{ index .Values.releases .Release.Name "config" "thanos" "externalObjectStorageBackend" "objstoreSecret" }}
-          key: {{ index .Values.releases .Release.Name "config" "thanos" "externalObjectStorageBackend" "objstoreSecretKey" | default "objstore.yml" }}
+          name: {{ index .Values.releases .Release.Name "secrets" "objstore" "secretRef" "name" }}
+          key: {{ index .Values.releases .Release.Name "secrets" "objstore" "secretRef" "key" }}
           {{- else }}
           name: kps-thanos-objstore-secret
           key: objstore.yml

@@ -4,6 +4,7 @@
 # Global project variables
 project:
   name: KUBE_CORE_PROJECT_NAME
+  shortName: KUBE_CORE_PROJECT_SHORT_NAME
   description: KUBE_CORE_PROJECT_DESCRIPTION
   repository: KUBE_CORE_PROJECT_REPOSITORY
   ref: KUBE_CORE_PROJECT_REF
@@ -13,17 +14,18 @@ project:
 git:
   provider: KUBE_CORE_GIT_PROVIDER
   web: KUBE_CORE_GIT_WEB
+  github_read_token: ./keys/.github-read-token #KUBE_CORE_GITHUB_READ_TOKEN
   api:
     url: KUBE_CORE_GIT_API_URL
     host: KUBE_CORE_GIT_API_HOST
-    token: KUBE_CORE_GIT_API_TOKEN
+    token: ./keys/.git-api-token #KUBE_CORE_GIT_API_TOKEN
   ssh:
     url: KUBE_CORE_GIT_SSH_URL
     host: KUBE_CORE_GIT_SSH_HOST
-    key: KUBE_CORE_GIT_SSH_KEY
-    known_hosts: KUBE_CORE_GIT_SSH_KNOWN_HOSTS
+    key: ./keys/.git-ssh-key #KUBE_CORE_GIT_SSH_KEY
+    known_hosts: ./keys/.git-ssh-hosts #KUBE_CORE_GIT_SSH_KNOWN_HOSTS
   webhooks:
-    token: KUBE_CORE_GIT_WEBHOOKS_TOKEN
+    token: ./keys/.git-webhooks-token #KUBE_CORE_GIT_WEBHOOKS_TOKEN
   bot:
     user: KUBE_CORE_GIT_BOT_USER
     name: KUBE_CORE_GIT_BOT_NAME
@@ -44,6 +46,7 @@ gitops:
 cloud:
   provider: KUBE_CORE_CLOUD_PROVIDER
   project: KUBE_CORE_CLOUD_PROJECT
+  projectShortName: KUBE_CORE_CLOUD_PROJECT_SHORT_NAME
   registry:
     hostname: KUBE_CORE_CLOUD_REGISTRY_HOSTNAME
   default:
@@ -56,7 +59,9 @@ cluster:
     backups:
       schedule: "0 12 * * *" #KUBE_CORE_CLUSTER_CONFIG_BACKUPS_SCHEDULE
     name: KUBE_CORE_CLUSTER_CONFIG_NAME
+    shortName: KUBE_CORE_CLUSTER_CONFIG_SHORT_NAME
     context: KUBE_CORE_CLUSTER_CONFIG_CONTEXT
+    contextShortName: KUBE_CORE_CLUSTER_CONFIG_CONTEXT_SHORT_NAME
     domain: KUBE_CORE_CLUSTER_CONFIG_DOMAIN
     additionnalDomains: [] # KUBE_CORE_CLUSTER_CONFIG_ADDITIONNAL_DOMAINS
     cidr:

@@ -43,7 +43,7 @@ spec:
     - name: tekton-url
       type: string
       description: The target URL to associate with this status
-  
+
   volumes:
     - name: podinfo
       downwardAPI:
@@ -64,8 +64,8 @@ spec:
         - name: gitlabApiToken
           valueFrom:
             secretKeyRef:
-              name: gitlab-api-token
-              key: token
+              name: {{ (index .Values.releases "tekton" "secrets" "git-api-token" "secretRef" "name") }}
+              key: {{ (index .Values.releases "tekton" "secrets" "git-api-token" "secretRef" "key") }}
         - name: POD_NAME
           valueFrom:
             fieldRef:
@@ -77,21 +77,21 @@ spec:
       args:
         - -c
         - |
-          #!/usr/bin/env bash 
+          #!/usr/bin/env bash
           state=""
-          if [ "$(params.aggregateStatus)"=="Succeeded" ] || [ "$(params.aggregateStatus)" == "Completed" ] 
+          if [ "$(params.aggregateStatus)"=="Succeeded" ] || [ "$(params.aggregateStatus)" == "Completed" ]
           then
             state="success"
           fi
-          if [ "$(params.aggregateStatus)" == "Failed" ] 
+          if [ "$(params.aggregateStatus)" == "Failed" ]
           then
             state="failed"
           fi
-          if [ "$(params.aggregateStatus)" == "Cancelled" ] 
+          if [ "$(params.aggregateStatus)" == "Cancelled" ]
           then
             state="cancelled"
           fi
-          if [ "$(params.aggregateStatus)" == "Running" ] 
+          if [ "$(params.aggregateStatus)" == "Running" ]
           then
             state="running"
           fi

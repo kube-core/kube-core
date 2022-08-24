@@ -104,6 +104,11 @@ scripts:
     name: cloud_gcp_setup_kubeconfig_destroy
     description: ""
     args: ""
+  cloud_gcp_setup_kubeconfig_generate:
+    path: ./src/cloud/gcp/setup/kubeconfig/generate.sh
+    name: cloud_gcp_setup_kubeconfig_generate
+    description: ""
+    args: ""
   cloud_gcp_setup_kubeconfig_get_context:
     path: ./src/cloud/gcp/setup/kubeconfig/get-context.sh
     name: cloud_gcp_setup_kubeconfig_get_context
@@ -252,6 +257,16 @@ scripts:
   gitops_ci_auto_setup:
     path: ./src/gitops/ci/auto-setup.sh
     name: gitops_ci_auto_setup
+    description: ""
+    args: ""
+  gitops_ci_kube_core_build:
+    path: ./src/gitops/ci/kube-core-build.sh
+    name: gitops_ci_kube_core_build
+    description: ""
+    args: ""
+  gitops_ci_kube_core_setup:
+    path: ./src/gitops/ci/kube-core-setup.sh
+    name: gitops_ci_kube_core_setup
     description: ""
     args: ""
   gitops_cleanup_custom:
@@ -454,9 +469,9 @@ scripts:
     name: test_validate
     description: ""
     args: ""
-  utils_argparse.bash:
-    path: ./src/utils/argparse.bash.sh
-    name: utils_argparse.bash
+  utils_argparse_bash:
+    path: ./src/utils/argparse-bash.sh
+    name: utils_argparse_bash
     description: ""
     args: ""
   utils_others_get_crash_logs:
@@ -512,6 +527,11 @@ scripts:
   apply_crds:
     path: ./commands/apply/crds.sh
     name: apply_crds
+    description: ""
+    args: ""
+  ci_build:
+    path: ./commands/ci/build.sh
+    name: ci_build
     description: ""
     args: ""
   dev_mode_cluster:
@@ -612,6 +632,11 @@ scripts:
   scripts_list:
     path: ./commands/scripts/list.sh
     name: scripts_list
+    description: ""
+    args: ""
+  test_all:
+    path: ./commands/test/all.sh
+    name: test_all
     description: ""
     args: ""
   values_all:

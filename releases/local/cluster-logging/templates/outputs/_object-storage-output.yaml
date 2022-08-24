@@ -26,7 +26,7 @@ spec:
     s3_region:  {{ coalesce .region (index .cluster.logging.integrations .objectStorageType "config" "s3_region")  }}
     force_path_style: "true"
     {{ if (eq .txtLogs true) }}
-    s3_object_key_format: {{ .cluster.logging.outputs.config.txtObjectKeyFormat }}
+    s3_object_key_format: {{ .cluster.logging.outputs.config.txtObjectKeyFormat | quote }}
     {{ else }}
     s3_object_key_format: {{ .cluster.logging.outputs.config.object_key_format | quote }}
     {{ end }}
@@ -35,7 +35,7 @@ spec:
     project: {{ coalesce .project (index .cluster.logging.integrations .objectStorageType "config" "project") }}
     bucket: {{ coalesce .bucket (printf "%s-%s-logs" (coalesce .cluster.logging.config.bucketPrefixOverride .cluster.config.name) .name) }}
     {{ if (eq .txtLogs true) }}
-    object_key_format: {{ .cluster.logging.outputs.config.txtObjectKeyFormat }}
+    object_key_format: {{ .cluster.logging.outputs.config.txtObjectKeyFormat | quote }}
     {{ else }}
     object_key_format: {{ .cluster.logging.outputs.config.object_key_format | quote }}
     {{ end }}

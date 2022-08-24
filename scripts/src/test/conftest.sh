@@ -77,20 +77,40 @@ resultsPath=${conftestOutputPath}/results
 rm -rf ${conftestOutputPath}
 mkdir -p ${conftestOutputPath}
 
-echo "conftest test ${gitOpsConfigPath} -p ${policiesPath}"
+log_debug "conftest test ${gitOpsConfigPath} -p ${policiesPath}"
+
 # OPA Validation
-conftest test ${gitOpsConfigPath} -p ${policiesPath} >> ${resultsPath} || true  
+# set +e
+conftest test ${gitOpsConfigPath} -p ${policiesPath}
+# exit_code=$?
+# set -e
 
-cat ${resultsPath}
+# echo ${exit_code}
 
-if cat ${resultsPath} | grep -q "FAIL"; then
-    echo "ERROR: conftest validation failed!"
-    if [[ "${failOnError}" == "true" ]]; then
-        exit 1
-    fi
-else 
-    echo "SUCCESS: conftest policies passed."
-fi
+
+# if $(conftest test ${gitOpsConfigPath} -p ${policiesPath}); then
+#     echo "Tests passed !"
+# else
+#     echo "Tests failed !"
+# fi
+
+# if [[ ${exit_code} -eq 1 ]]; then
+#     echo "ERROR"
+# fi
+
+# TODO: Alternative, rework it and make it available with flags
+# conftest test ${gitOpsConfigPath} -p ${policiesPath} >> ${resultsPath} || true
+
+# cat ${resultsPath}
+
+# if cat ${resultsPath} | grep -q "FAIL"; then
+#     echo "ERROR: conftest validation failed!"
+#     if [[ "${failOnError}" == "true" ]]; then
+#         exit 1
+#     fi
+# else
+#     echo "SUCCESS: conftest policies passed."
+# fi
 
 # Convert to JSONL
 # cat "${resultsPath}" | jq -r 'map(tostring) | reduce .[] as $item (""; . + $item + "\n")' | grep failures > ${resultsPath}

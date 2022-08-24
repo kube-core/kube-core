@@ -4,13 +4,17 @@ set -eou pipefail
 gcloud_iam_sa_create() {
     serviceAccount="${cluster_config_name}-${1}"
     log_info "Creating SA: ${serviceAccount}"
-    gcloud iam service-accounts create ${serviceAccount} --project ${project_name} &> /dev/null || true
+    if [[ "${LOG_LEVEL}" == "DEBUG" || "${LOG_LEVEL}" == "INSANE" ]]; then
+        gcloud iam service-accounts create ${serviceAccount} --project ${cloud_project}  || true
+    else
+        gcloud iam service-accounts create ${serviceAccount} --project ${cloud_project} &> /dev/null || true
+    fi
 }
 
 gcloud_iam_sa_delete() {
     serviceAccount="${cluster_config_name}-${1}"
     log_info "Deleting SA: ${serviceAccount}"
-    gcloud iam service-accounts delete --quiet ${serviceAccount}@${project_name}.iam.gserviceaccount.com --project ${project_name} || true
+    gcloud iam service-accounts delete --quiet ${serviceAccount}@${cloud_project}.iam.gserviceaccount.com --project ${cloud_project} || true
 }
 
 gcloud_iam_add_policy_bindings() {
@@ -20,9 +24,11 @@ gcloud_iam_add_policy_bindings() {
 
     log_info "Binding roles: [${roles}] to ${serviceAccount}"
     for role in $roles; do
-        gcloud projects add-iam-policy-binding ${project_name} \
-            --member=serviceAccount:${serviceAccount}@${project_name}.iam.gserviceaccount.com \
-            --role=${role} &> /dev/null
+        if [[ "${LOG_LEVEL}" == "DEBUG" || "${LOG_LEVEL}" == "INSANE" ]]; then
+            gcloud projects add-iam-policy-binding ${cloud_project} --member=serviceAccount:${serviceAccount}@${cloud_project}.iam.gserviceaccount.com --role=${role}
+        else
+                gcloud projects add-iam-policy-binding ${cloud_project} --member=serviceAccount:${serviceAccount}@${cloud_project}.iam.gserviceaccount.com --role=${role} &> /dev/null
+        fi
     done
 }
 
@@ -31,8 +37,12 @@ gcloud_iam_sa_delete_keys() {
     serviceAccount="${cluster_config_name}-${1}"
 
     log_info "Deleting all keys for SA: ${serviceAccount}"
-    keys=$(gcloud iam service-accounts keys list --iam-account=${serviceAccount}@${project_name}.iam.gserviceaccount.com | tail -n +2 | awk '{print $1}')
-    while read i; do gcloud iam service-accounts keys delete --iam-account=${serviceAccount}@${project_name}.iam.gserviceaccount.com --quiet $i &> /dev/null ;done <<< "$keys" || true
+    keys=$(gcloud iam service-accounts keys list --iam-account=${serviceAccount}@${cloud_project}.iam.gserviceaccount.com | tail -n +2 | awk '{print $1}')
+    if [[ "${LOG_LEVEL}" == "DEBUG" || "${LOG_LEVEL}" == "INSANE" ]]; then
+        while read i; do gcloud iam service-accounts keys delete --iam-account=${serviceAccount}@${cloud_project}.iam.gserviceaccount.com --quiet $i ;done <<< "$keys" || true
+    else
+        while read i; do gcloud iam service-accounts keys delete --iam-account=${serviceAccount}@${cloud_project}.iam.gserviceaccount.com --quiet $i &> /dev/null ;done <<< "$keys" || true
+    fi
 }
 
 gcloud_iam_sa_create_key() {
@@ -41,7 +51,11 @@ gcloud_iam_sa_create_key() {
     credentialsFile="${secrets_path}/input/${1}.json"
 
     log_info "Generating a new key for: ${serviceAccount}"
-    gcloud iam service-accounts keys create ${credentialsFile} --iam-account ${serviceAccount}@${project_name}.iam.gserviceaccount.com &> /dev/null || true
+    if [[ "${LOG_LEVEL}" == "DEBUG" || "${LOG_LEVEL}" == "INSANE" ]]; then
+        gcloud iam service-accounts keys create ${credentialsFile} --iam-account ${serviceAccount}@${cloud_project}.iam.gserviceaccount.com || true
+    else
+        gcloud iam service-accounts keys create ${credentialsFile} --iam-account ${serviceAccount}@${cloud_project}.iam.gserviceaccount.com &> /dev/null || true
+    fi
 
     if [[ ! -f "${credentialsFile}" ]]; then
         log_error "Credentials generation failed!"
@@ -53,37 +67,43 @@ gcloud_iam_sa_create_key() {
 
 gcloud_prepare_apis() {
     # enable Kubernetes API
-    gcloud --project ${project_name} services enable container.googleapis.com && true
+    gcloud --project ${cloud_project} services enable container.googleapis.com && true
 
     # enable Compute API
-    gcloud --project ${project_name} services enable compute.googleapis.com && true
+    gcloud --project ${cloud_project} services enable compute.googleapis.com && true
 
     # # enable CloudSQL API
-    # gcloud --project ${project_name} services enable sqladmin.googleapis.com && true
+    # gcloud --project ${cloud_project} services enable sqladmin.googleapis.com && true
 
     # # enable Redis API
-    # gcloud --project ${project_name} services enable redis.googleapis.com && true
+    # gcloud --project ${cloud_project} services enable redis.googleapis.com && true
 
     # # enable Service Networking API
-    # gcloud --project ${project_name} services enable servicenetworking.googleapis.com && true
+    # gcloud --project ${cloud_project} services enable servicenetworking.googleapis.com && true
 }
 
 gcloud_prepare_sa_roles() {
 
 log_info "Creating a gcrAdmin role..."
-gcloud iam roles create gcrAdmin \
-  --project ${project_name} \
-  --permissions=storage.objects.get,storage.objects.create,storage.objects.list,storage.objects.update,storage.objects.delete,storage.buckets.create,storage.buckets.get,cloudbuild.builds.get,cloudbuild.builds.list &> /dev/null || true
+if [[ "${LOG_LEVEL}" == "DEBUG" || "${LOG_LEVEL}" == "INSANE" ]]; then
+    gcloud iam roles create gcrAdmin --project ${cloud_project} --permissions=storage.objects.get,storage.objects.create,storage.objects.list,storage.objects.update,storage.objects.delete,storage.buckets.create,storage.buckets.get,cloudbuild.builds.get,cloudbuild.builds.list || true
+else
+gcloud iam roles create gcrAdmin --project ${cloud_project} --permissions=storage.objects.get,storage.objects.create,storage.objects.list,storage.objects.update,storage.objects.delete,storage.buckets.create,storage.buckets.get,cloudbuild.builds.get,cloudbuild.builds.list &> /dev/null || true
+fi
 
 log_info "Creating a gcsAdmin role..."
-gcloud iam roles create gcsAdmin \
-  --project ${project_name} \
-  --permissions=storage.objects.get,storage.objects.create,storage.objects.list,storage.objects.update,storage.objects.delete,storage.buckets.create,storage.buckets.get &> /dev/null || true
+if [[ "${LOG_LEVEL}" == "DEBUG" || "${LOG_LEVEL}" == "INSANE" ]]; then
+    gcloud iam roles create gcsAdmin --project ${cloud_project} --permissions=storage.objects.get,storage.objects.create,storage.objects.list,storage.objects.update,storage.objects.delete,storage.buckets.create,storage.buckets.get || true
+else
+gcloud iam roles create gcsAdmin --project ${cloud_project} --permissions=storage.objects.get,storage.objects.create,storage.objects.list,storage.objects.update,storage.objects.delete,storage.buckets.create,storage.buckets.get &> /dev/null || true
+fi
 
 log_info "Creating a velero role..."
-gcloud iam roles create velero \
-  --project ${project_name} \
-  --permissions=compute.disks.get,compute.disks.create,compute.disks.createSnapshot,compute.snapshots.get,compute.snapshots.create,compute.snapshots.useReadOnly,compute.snapshots.delete,compute.zones.get &> /dev/null || true
+if [[ "${LOG_LEVEL}" == "DEBUG" || "${LOG_LEVEL}" == "INSANE" ]]; then
+    gcloud iam roles create velero --project ${cloud_project} --permissions=compute.disks.get,compute.disks.create,compute.disks.createSnapshot,compute.snapshots.get,compute.snapshots.create,compute.snapshots.useReadOnly,compute.snapshots.delete,compute.zones.get || true
+else
+gcloud iam roles create velero --project ${cloud_project} --permissions=compute.disks.get,compute.disks.create,compute.disks.createSnapshot,compute.snapshots.get,compute.snapshots.create,compute.snapshots.useReadOnly,compute.snapshots.delete,compute.zones.get &> /dev/null || true
+fi
 }
 
 gcloud_destroy_sa_config() {

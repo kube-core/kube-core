@@ -7,7 +7,7 @@ metadata:
 spec:
   # serviceType: ClusterIP
   serviceAccountName: tekton
-  triggers: 
+  triggers:
     - name: core-tag
       interceptors:
       - name: "Validate GitLab Payload & Filter on EventType"
@@ -17,19 +17,20 @@ spec:
         params:
           - name: secretRef
             value:
-              secretName: "gitlab-token"
-              secretKey: "token"
+              secretName: {{ (index .Values.releases "tekton" "secrets" "git-webhooks-token" "secretRef" "name") }}
+              secretKey: {{ (index .Values.releases "tekton" "secrets" "git-webhooks-token" "secretRef" "key") }}
           - name: eventTypes
             value:
               - "Tag Push Hook"
-      - name: "Extract tag from revision"
+      - name: "Apply overlays"
         ref:
           name: "cel"
+          kind: ClusterInterceptor
         params:
         - name: "overlays"
           value:
             - key: git_tag
-              expression: "body.ref.replace('refs/tags/', '')"  
+              expression: "body.ref.replace('refs/tags/', '')"
       bindings:
         - ref: parse-gitlab-push-hook
         - ref: parse-gitlab-push-tag-extensions

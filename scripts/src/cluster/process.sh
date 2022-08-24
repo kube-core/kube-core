@@ -75,7 +75,7 @@ mkdir -p ${slicingFolder}
 
 initialPath=$(pwd)
 
-# Slicing 
+# Slicing
 # TODO: Make sure to implement filter at that level too, in order to improve performance
 find ${configPath} -mindepth 1 -maxdepth 1 -type d | while read namespace; do
 
@@ -85,11 +85,11 @@ find ${configPath} -mindepth 1 -maxdepth 1 -type d | while read namespace; do
     # TODO: Fill issue about yq unable to merge many files with long path
     cd ${namespace} &> /dev/null # Remove logs
     manifestsList=$(find . -type f -name '*.yaml')
-    
+
     # manifestsList=$(find . -type f -name '*.yaml' | grep -vE '^namespace\.yaml$') # TODO: Define if using this to simplify the tree for most releases
     log_insane "${manifestsList}"
 
-    log_debug ${namespace}  
+    log_debug ${namespace}
     # echo ${namespace}
     # exit
     tmpNamespacePath="${namespace}/${namespaceName}.manifests.tmp.yaml"
@@ -100,7 +100,7 @@ find ${configPath} -mindepth 1 -maxdepth 1 -type d | while read namespace; do
     manifestsShortPath=$(echo "${tmpNamespacePath}" | sed "s|${configPath}|./config|")
 
     if [[ ! -z "${manifestsList}" ]] ; then
-        
+
         log_info "Slicing: ./config/${namespaceName}/manifests"
         echo "${manifestsList}" | xargs yq '.' > ${tmpNamespacePath}
 
@@ -111,7 +111,7 @@ find ${configPath} -mindepth 1 -maxdepth 1 -type d | while read namespace; do
         else
             kubectl slice -f ${tmpNamespacePath} --output-dir ${outputNamespacePath} --template='{{.metadata.namespace}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml' 2> /dev/null
         fi
-        
+
         cd ${configPath}
         echo "${manifestsList}" | xargs rm -rf
         rm -rf ${tmpNamespacePath}
@@ -153,7 +153,7 @@ if [[ "$filter" != "" ]] ; then
     # Doesn't work well because it makes files go up. Need to extract folders with files that match the pattern
     # log_debug "cp -rf ${configPath}/*${filter}* ${configPath}/*/*${filter}* ${config_path}"
     # cp -rf ${configPath}/*${filter}* ${configPath}/*/*${filter}* ${config_path}
-    
+
     configFolders=$(find ${configPath} -type d -mindepth 1 -maxdepth 1)
 
     if [[ "${configFolders}" != "" ]]; then
@@ -172,10 +172,10 @@ if [[ "$filter" != "" ]] ; then
 
                 echo "${filesMatchingFilter}" | while read currentFile; do
                     destinationFile=$( echo "${currentFile}" | sed "s|$configPath||")
-                    log_debug "${currentFile} -> ${destinationFile}"           
+                    log_debug "${currentFile} -> ${destinationFile}"
 
                     if [[ ! -z "${currentFile}" ]]; then
-            
+
                         destinationDir=$(echo "${destinationFile}" | xargs dirname)
                         destinationFileName=$(echo "${destinationFile}" | xargs basename)
 
@@ -205,15 +205,26 @@ if [[ "$filter" != "" ]]; then
     if [[ -f "${clusterConfigDirPath}/.kube-core/.reportProcessFilesCopied" ]]; then
         debugOutput=$(cat "${clusterConfigDirPath}/.kube-core/.reportProcessFilesCopied")
         log_debug "${debugOutput}"
-    else 
+    else
         log_warn "No files copied! Maybe --filter is too restrictive?"
     fi
 fi
 
 
+log_info "Deleting empty files..."
+emptyFiles=$(find ${config_path} -name ".yaml")
+
+if [[ "${emptyFiles}" != "" ]]; then
+    log_debug "Empty files found, deleting them! You probably need to check the templating using debug mode."
+    log_insane "${emptyFiles}"
+    echo "${emptyFiles}" | xargs rm -rf
+fi
+
 # Cleaning cache
 log_info "Cleaning cache..."
 rm -rf ${clusterConfigDirPath}/.kube-core
+
+
 
 log_info "Done Final Post-Processing..."
 
@@ -249,3 +260,82 @@ log_info "Done Final Post-Processing..."
 # fi
 
 # log_debug "Done post-processing helmfile output!"
+
+
+
+# Check untracked files in config
+# TODO: Review and reimplement this, in final post-processing steps.
+# Irrelevant here because now this is not in git context anymore (tmp folder update)
+
+# # # Getting a clean list of all files
+# manifests=$(find ${inputConfigPath} -type f)
+
+# # # Exclude stuff
+# # # TODO: Find a way not to exclude tekton
+# excludedManifests=$(echo "$manifests" | grep tekton || true)
+# manifests=$(echo "$manifests" | grep -v tekton || true)
+
+# cd ${clusterConfigDirPath}
+# untrackedFiles=$(git ls-files ${inputConfigPath} --exclude-standard --others)
+# cd - &> /dev/null # Remove logs
+
+# if [[ "${run_kbld}" == "true" ]]
+# then
+
+#     kbldLock=${clusterConfigDirPath}/kbld.lock.yaml
+
+#     rm -rf ${kbldLock}
+#     # TODO: Better condition handling and reactivate this
+#     # If new files were added to config, delete old lockfile
+#     # if [[ ! -z "${untrackedFiles}" ]]
+#     # then
+#     #     echo "New deployments detected, deleting kbld.lock..."
+#     #     rm -rf ${kbldLock}
+#     # else
+#     #     echo "No new deployments detected, skipping kbld"
+#     # fi
+
+#     # If lockfile doesn't exist, generate it
+#     if [[ ! -s "${kbldLock}" ]]
+#     then
+#         log_debug "No kbld.lock, preparing to generate it..."
+
+
+#         # Temporarily move excluded manifests
+#         mkdir -p ${clusterConfigDirPath}/.tmp
+#         log_debug "Moving temporarily excluded files..."
+#         mv ${inputConfigPath}/tekton-pipelines ${clusterConfigDirPath}/.tmp  2>/dev/null || true
+
+#         # Check & Generate lockfile
+
+
+#         # echo "Filtering manifests to send to kbld..."
+#         # kbldArgs=$(echo "${manifests}" | xargs -i echo "-f {}")
+
+#         log_debug "Analyzing manifests..."
+#         kbld -f ${inputConfigPath} --registry-insecure --registry-verify-certs=false --lock-output ${kbldLock} > /dev/null
+#         log_debug "Lockfile Generated !"
+
+#         # Replace images
+#         echo "Start kbld"
+#         echo "${manifests}" | while read f;
+#         do
+#             log_debug "kbld: ${f}"
+#             log_debug "kbld -f ${kbldLock} -f ${f} --registry-insecure --registry-verify-certs=false > ${f}.kbld"
+#             kbld -f ${kbldLock} -f ${f} --registry-insecure --registry-verify-certs=false > ${f}.kbld
+#             mv ${f}.kbld ${f}
+#         done || true
+#         echo "Done kbld"
+
+
+#         # Moving back excluded manifests
+#         log_debug "Moving back excluded files..."
+#         cp -r ${clusterConfigDirPath}/.tmp/tekton-pipelines ${inputConfigPath} || true
+
+#         # Cleaning
+#         log_debug "Cleaning up..."
+#         rm -rf ${clusterConfigDirPath}/.tmp
+
+#     fi
+
+# fi

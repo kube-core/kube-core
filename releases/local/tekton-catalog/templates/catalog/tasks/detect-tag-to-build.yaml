@@ -40,6 +40,10 @@ spec:
       name: TARGET_IMAGE
     - description: The tag of image to build
       name: TARGET_IMAGE_TAG
+    - description: The full path of image to build
+      name: IS_BRANCH
+    - description: The tag of image to build
+      name: IS_TAG
   steps:
     - name: exec-script
       image: $(params.image)
@@ -62,10 +66,14 @@ spec:
           regexVersion='^v([0-9]+\.){0,2}(\*|[0-9]+)([-,a-z,0-9]*)$'
           targetImage=""
           targetTag="${inputTag}"
+          isTag="false"
+          isBranch="true"
 
           if [[ $(params.git-branch) =~ $regexVersion ]]; then
               detectedBranch="tag"
               targetImage="${baseImage}"
+              isTag="true"
+              isBranch="false"
           else
               detectedBranch=$(params.git-branch)
               targetImage="${baseImage}-${timestamp}"
@@ -75,9 +83,10 @@ spec:
           echo "Will build: ${targetImage}"
           echo -n "${targetImage}" > $(results.TARGET_IMAGE.path)
           echo -n "${targetTag}" > $(results.TARGET_IMAGE_TAG.path)
+          echo -n "${isBranch}" > $(results.IS_BRANCH.path)
+          echo -n "${isTag}" > $(results.IS_TAG.path)
   workspaces:
     - name: input
     - name: output
     - name: source
     - name: data
-

@@ -2,9 +2,16 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.3.0](https://github.com/neo9/kube-core/compare/v0.2.1...v0.3.0)
+
+- release: v0.3.0 [`3ddffb2`](https://github.com/neo9/kube-core/commit/3ddffb240751606a6836bb7b66f6062ab805ecd9)
+
 #### [v0.2.1](https://github.com/neo9/kube-core/compare/v0.2.0...v0.2.1)
 
+> 23 August 2022
+
 - core: Added the possibility to deploy Patches with .release.patches [`49c80c3`](https://github.com/neo9/kube-core/commit/49c80c3eba8c1f6f740f80b2cca92949b3afdf33)
+- release: v0.2.1 [`a4e18dc`](https://github.com/neo9/kube-core/commit/a4e18dc4f1edc37a5aab94dd26a4b0bfa8e8fe72)
 - scripts: Fixes kube-core apply & template commands [`b51fe42`](https://github.com/neo9/kube-core/commit/b51fe42d23c781613f591b259a3e2eec72647ff9)
 - cli: Fixed .gitignore breaking dev cli [`21f82ef`](https://github.com/neo9/kube-core/commit/21f82ef1f80929798213bc256c4187cd19456f15)
 
