@@ -30,7 +30,7 @@ spec:
       params:
       - name: debug
         value: "true"
-        
+
       - name: git-url
         value: $(tt.params.git-url)
 

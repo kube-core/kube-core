@@ -63,28 +63,17 @@ check_context "${cluster_config_context}"
 
 # kubectl create secret generic
 
-ssh_key=$(cat ${git_ssh_key} | base64 -w0 )
+ssh_key=$(cat ${git_ssh_key} | base64 )
 known_hosts=$(cat ${git_ssh_known_hosts} | base64 -w0 )
 host=$(echo ${git_ssh_host})
-token=$(echo ${git_webhooks_token} | base64 -w0 )
-api_token=$(echo ${git_api_token} | base64 -w0 )
+token=$(cat ${git_webhooks_token} | base64 -w0 )
+api_token=$(cat ${git_api_token} | base64 -w0 )
+github_read_token=$(cat ${git_github_read_token} | base64 -w0 )
 
-echo "Generating git secrets..."
+log_info "Generating git secrets..."
 
-secret_ssh=$(cat <<EOF
-apiVersion: v1
-data:
-  known_hosts: ${known_hosts}
-  ssh-privatekey: ${ssh_key}
-kind: Secret
-metadata:
-  annotations:
-    tekton.dev/git-1: ${host}
-  name: ${git_provider}-ssh
-  namespace: tekton-pipelines
-type: kubernetes.io/ssh-auth
-EOF
-)
+secret_ssh=$(kubectl create secret generic git-ssh --type kubernetes.io/ssh-auth --dry-run=client -o yaml --from-file=ssh-privatekey=${git_ssh_key} --from-file=known_hosts=${git_ssh_known_hosts} | yq '.metadata |= {"name": "git-ssh", "namespace": "secrets", "annotations" : {"replicator.v1.mittwald.de/replication-allowed": "true", "replicator.v1.mittwald.de/replication-allowed-namespaces": "*", "tekton.dev/git-1": "'"${host}"'"}}' -)
+
 
 secret_token=$(cat <<EOF
 apiVersion: v1
@@ -92,8 +81,10 @@ data:
   token: ${token}
 kind: Secret
 metadata:
-  name: ${git_provider}-token
-  namespace: tekton-pipelines
+  annotations:
+    replicator.v1.mittwald.de/replication-allowed: "true"
+    replicator.v1.mittwald.de/replication-allowed-namespaces: '*'
+  name: git-webhooks-token
 type: Opaque
 EOF
 )
@@ -104,14 +95,31 @@ data:
   token: ${api_token}
 kind: Secret
 metadata:
-  name: ${git_provider}-token
-  namespace: tekton-pipelines
+  annotations:
+    replicator.v1.mittwald.de/replication-allowed: "true"
+    replicator.v1.mittwald.de/replication-allowed-namespaces: '*'
+  name: git-api-token
 type: Opaque
 EOF
 )
 
-mkdir -p ${secrets_path}/manifests/tekton-pipelines
+secret_github_read_token=$(cat <<EOF
+apiVersion: v1
+data:
+  token: ${github_read_token}
+kind: Secret
+metadata:
+  annotations:
+    replicator.v1.mittwald.de/replication-allowed: "true"
+    replicator.v1.mittwald.de/replication-allowed-namespaces: '*'
+  name: github-read-token
+type: Opaque
+EOF
+)
 
-echo "${secret_ssh}" > ${secrets_path}/manifests/tekton-pipelines/${git_provider}-ssh.yaml
-echo "${secret_token}" > ${secrets_path}/manifests/tekton-pipelines/${git_provider}-token.yaml
-echo "${secret_token}" > ${secrets_path}/manifests/tekton-pipelines/${git_provider}-api-token.yaml
+mkdir -p ${secrets_path}/manifests/tekton-pipelines/
+echo "${secret_ssh}" > ${secrets_path}/manifests/git-ssh.yaml
+echo "${secret_ssh}" | sed 's/namespace: secrets/namespace: tekton-pipelines/' > ${secrets_path}/manifests/tekton-pipelines/git-ssh.yaml # ssh-auth can't be replicated :( TODO: Create issue on replicator
+echo "${secret_token}" > ${secrets_path}/manifests/git-webhooks-token.yaml
+echo "${secret_api_token}" > ${secrets_path}/manifests/git-api-token.yaml
+echo "${secret_github_read_token}" > ${secrets_path}/manifests/github-read-token.yaml

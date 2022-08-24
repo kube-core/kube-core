@@ -1,15 +1,24 @@
+
+# Elasticsearch
+{{ if (eq .Values.cluster.logging.integrations.es.enabled true) }}
+---
+{{ template "cluster-logging.esOutputTemplate" (dict "cluster" .Values.cluster "secrets" .Values.secrets) }}
+{{ end }}
+# Elasticsearch
+
+
 # Default integration outputs
-{{ if .Values.cluster.logging.integrations.gcs.enabled }}
+{{ if (eq .Values.cluster.logging.integrations.gcs.enabled true) }}
 ---
 {{ template "cluster-logging.objectStorageOutputTemplate" (dict "cluster" .Values.cluster "secrets" .Values.secrets "name" "default" "objectStorageType" "gcs") }}
 {{ end }}
 
-{{ if .Values.cluster.logging.integrations.minio.enabled }}
+{{ if (eq .Values.cluster.logging.integrations.minio.enabled true) }}
 ---
 {{ template "cluster-logging.objectStorageOutputTemplate" (dict "cluster" .Values.cluster "secrets" .Values.secrets "name" "default" "objectStorageType" "minio") }}
 {{ end }}
 
-{{ if .Values.cluster.logging.integrations.s3.enabled }}
+{{ if (eq .Values.cluster.logging.integrations.s3.enabled true) }}
 ---
 {{ template "cluster-logging.objectStorageOutputTemplate" (dict "cluster" .Values.cluster "secrets" .Values.secrets "name" "default" "objectStorageType" "s3") }}
 {{ end }}
@@ -17,30 +26,22 @@
 
 
 # Outputs for Tekton
-{{ if .Values.cluster.logging.integrations.tekton.enabled }}
+{{ if (eq .Values.cluster.logging.integrations.tekton.enabled true) }}
 
-{{ if .Values.cluster.logging.integrations.gcs.enabled }}
+{{ if (eq .Values.cluster.logging.integrations.gcs.enabled true) }}
 ---
 {{ template "cluster-logging.objectStorageOutputTemplate" (dict "cluster" .Values.cluster "secrets" .Values.secrets "name" "tekton" "objectStorageType" "gcs" "txtLogs" true) }}
 {{ end }}
 
-{{ if .Values.cluster.logging.integrations.minio.enabled }}
+{{ if (eq .Values.cluster.logging.integrations.minio.enabled true) }}
 ---
 {{ template "cluster-logging.objectStorageOutputTemplate" (dict "cluster" .Values.cluster "secrets" .Values.secrets "name" "tekton" "objectStorageType" "minio" "txtLogs" true) }}
 {{ end }}
 
-{{ if .Values.cluster.logging.integrations.s3.enabled }}
+{{ if (eq .Values.cluster.logging.integrations.s3.enabled true) }}
 ---
 {{ template "cluster-logging.objectStorageOutputTemplate" (dict "cluster" .Values.cluster "secrets" .Values.secrets "name" "tekton" "objectStorageType" "s3" "txtLogs" true) }}
 {{ end }}
 
 {{ end }}
 # Outputs for Tekton
-
-
-# Elasticsearch
-{{ if .Values.cluster.logging.integrations.es.enabled }}
----
-{{ template "cluster-logging.esOutputTemplate" (dict "cluster" .Values.cluster "secrets" .Values.secrets) }}
-{{ end }}
-# Elasticsearch

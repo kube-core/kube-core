@@ -1,5 +1,25 @@
 
+# v0.3.0
+
+This release brings GitOps pipelines and various fixes & improvements.
+
+- tekton: Updated tekton-pipeline to latest pre 1.22 (v0.38.3)
+- tekton: Updated tekton-trigger to v0.20.2
+- tekton: Added script to setup all secrets
+- tekton: Upgraded EventListener CRs to new spec
+- tekton: Reworked Cluster GitOps pipelines
+- repo: Added GitHub Actions workflows
+- cli: Added ``kube-core test all`` command
+- core: Added support for extraAnnotations and type on release.secrets
+- cluster-logging: Various fixes
+- dist: Removes .helmignore files
+- gitops: Added steps to clean all empty files after building secrets or all config
+
+## Upgrading
+No breaking changes.
+
 # v0.2.0
+
 
 This release brings:
 - Many chart upgrades

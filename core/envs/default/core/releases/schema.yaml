@@ -15,9 +15,9 @@ templates:
       removeIngressClassAnnotation: false
       removeIngressClassName: false
       injectReloaderAnnotations: false
+    patches: {}
     release: {}
     secrets: {}
-    patches: {}
     strategicMergePatches: {}
     transformers: {}
     values: {}

@@ -242,7 +242,8 @@ cluster:
       tekton:
         enabled: false
         config:
-          globalOutputRefs: ["nullout"]
+          globalOutputRefs:
+          - nullout
       es:
         enabled: false
         config:

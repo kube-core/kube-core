@@ -64,9 +64,75 @@ check_context "${cluster_config_context}"
 sourceBranch=${1:-"develop"}
 targetBranch=${2:-"${sourceBranch}"}
 workBranch=${3:-"gitops/update-${sourceBranch}"}
-commitMessage=${4:-"gitops: Regen (chore)"}
+commitMessage=${4:-"gitops: Regen (auto)"}
+
+# Checking out the branch
+cd ${clusterConfigDirPath}
+
+log_info "Source branch: ${sourceBranch}"
+log_info "Target branch: ${targetBranch}"
+log_info "Work branch: ${workBranch}"
+
+log_info "Checking out the target branch: ${targetBranch}"
+git checkout ${targetBranch} || true
+
+log_info "Fetching and pulling target branch: ${targetBranch}"
+git fetch -a || true
+git pull origin ${targetBranch} || true
+
+# log "Checking out ${workBranch}"
+# git checkout -b ${workBranch} || true
+# git pull origin ${workBranch} || true
+
+# log "Rebasing ${workBranch} on ${targetBranch}"
+# git rebase ${targetBranch}
+
+# log "Merging ${sourceBranch} on ${workBranch}"
+# git merge ${sourceBranch}
+
+# log "Pushing changes & Creating PR..."
+# git push --set-upstream origin ${workBranch} -o merge_request.create -o merge_request.target=${targetBranch}
+
+
+log_info "Checking if work branch already exists: origin/${workBranch}"
+if git rev-parse --quiet --verify origin/${workBranch}; then
+    if [[ "${workBranch}" != "${targetBranch}" ]]; then
+        log_error "Branch already exists, this case is not handled. Aborting!"
+        exit 1
+    fi
+    # log_warn "Deleting branch and rebuilding !"
+    # log_warn "This part should be updated to handle rebase instead of delete/recreate !"
+
+    # log_info "Deleting ${workBranch}"
+    # git push origin :${workBranch}
+
+    # log_info "Checking out ${workBranch}"
+    # git checkout --track origin/${workBranch} || true
+
+    # log_info "Rebasing ${workBranch} on ${targetBranch}"
+    # git rebase ${targetBranch}
+
+    # log_info "Merging ${sourceBranch} on ${workBranch}"
+    # git merge ${sourceBranch}
+fi
+
+
+    log_info "Creating work branch: ${workBranch}"
+
+    log_info "Checking out ${workBranch}"
+    git checkout -b ${workBranch} || true
+
+    # Disabled for now
+    # log_info "Pushing and setting upstream: ${workBranch}"
+    # git push -u origin ${workBranch} || true
+
+    # git branch --set-upstream-to=origin/${workBranch} ${workBranch} || true
+    # git pull origin ${workBranch} || true
+
+cd -
 
 somethingChanged="false"
+
 
 cd ${clusterConfigDirPath}
 gitStatus=$(git status --porcelain ${config_path})
@@ -80,7 +146,7 @@ if [[ "${somethingChanged}" == "true" ]]; then
 
     log "Changes detected in config !"
     echo "${gitStatus}"
-    
+
     log "Adding config files..."
     git add ${config_path}
 
@@ -95,11 +161,11 @@ if [[ "${somethingChanged}" == "true" ]]; then
 else
     log "No changes detected in config !"
 
-    # TODO: See how to keep a clean git (delete the branch if we did nothing ) 
+    # TODO: See how to keep a clean git (delete the branch if we did nothing )
     # Requires to implement git checks on all the repo, not only gitops config as it is now
-    # 
+    #
     # cd ${clusterConfigDirPath}
-    # if git rev-parse --quiet --verify origin/${workBranch}; then 
+    # if git rev-parse --quiet --verify origin/${workBranch}; then
     #   echo "WARNING: Deleting branch: ${workBranch}"
     #   echo "WARNING: This is because we create the branch first and then check for changes to push"
     #   echo "WARNING: This logic may change in the future"
@@ -110,4 +176,3 @@ else
     # cd -
 
 fi
-

@@ -10,7 +10,7 @@ kubectl_slice_helmfile_templated_release() {
     installed=$(echo ${release} | awk '{print $4}')
     releasePath="${templatesOutputDir}/${namespace}/${name}"
 
-    log_debug ${releasePath}  
+    log_debug ${releasePath}
     tmpReleasePath="${releasePath}.release.tmp.yaml"
     slicingFolder=${tmpFolder}/releases/slicing
     outputReleasePath="${slicingFolder}"
@@ -23,14 +23,14 @@ kubectl_slice_helmfile_templated_release() {
     log_insane "${releaseFilesList}"
     releaseShortPath=$(echo "${tmpReleasePath}" | sed "s|${config_path}|./config|")
 
-    # echo ${release}  
+    # echo ${release}
 
     if [[ ! -z "${releaseFilesList}" ]] ; then
         echo "${releaseFilesList}" | xargs yq '.' > ${tmpReleasePath}
-        
+
         # echo "${releaseFilesList}"
 
-        log_info "Slicing: ${cluster_config_name}/${namespace}/${name}"
+        log_debug "Slicing: ${cluster_config_name}/${namespace}/${name}"
         log_debug "kubectl slice -f ${tmpReleasePath} --output-dir ${outputReleasePath} --template='{{.metadata.namespace}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml'"
 
         if [[ "$LOG_LEVEL" == "DEBUG" || "$LOG_LEVEL" == "INSANE" ]] ; then
@@ -38,7 +38,7 @@ kubectl_slice_helmfile_templated_release() {
         else
             kubectl slice -f ${tmpReleasePath} --output-dir ${outputReleasePath} --template='{{.metadata.namespace}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml' 2> /dev/null
         fi
-        
+
         cd ${configPath}
         rm -rf ${releasePath} ${tmpReleasePath}
         # mv -f ${outputReleasePath} ${namespace}/${release}

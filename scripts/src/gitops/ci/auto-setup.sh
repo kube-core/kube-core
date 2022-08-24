@@ -74,7 +74,7 @@ runBuild="false"
 
 if [[ "${ENV}" == "ci" ]]; then
     configureGit="true"
-    installRequirements="true"
+    installRequirements="false"
     runBuild="false"
 fi
 
@@ -83,7 +83,7 @@ clusterPath="${clusterConfigDirPath}"
 somethingChanged="false"
 
 # Setting up Git
-if [[ "${configureGit}" == "true" ]]; then    
+if [[ "${configureGit}" == "true" ]]; then
     git config --global user.email "${git_bot_user}"
         git config --global user.name "${git_bot_name}"
 fi
@@ -91,14 +91,14 @@ fi
 # Checking out the branch
 cd ${clusterConfigDirPath}
 
-log "Source branch: ${sourceBranch}"
-log "Target branch: ${targetBranch}"
-log "Work branch: ${workBranch}"
+log_info "Source branch: ${sourceBranch}"
+log_info "Target branch: ${targetBranch}"
+log_info "Work branch: ${workBranch}"
 
-echo "Checking out the target branch: ${targetBranch}"
+log_info "Checking out the target branch: ${targetBranch}"
 git checkout ${targetBranch} || true
 
-echo "Fetching and pulling target branch: ${targetBranch}"
+log_info "Fetching and pulling target branch: ${targetBranch}"
 git fetch -a || true
 git pull origin ${targetBranch} || true
 
@@ -115,32 +115,32 @@ git pull origin ${targetBranch} || true
 # log "Pushing changes & Creating PR..."
 # git push --set-upstream origin ${workBranch} -o merge_request.create -o merge_request.target=${targetBranch}
 
-echo "Checking if work branch already exists: origin/${workBranch}"
-if git rev-parse --quiet --verify origin/${workBranch}; then 
-    echo "WARNING: Branch already exists"
-    echo "WARNING: Deleting branch and rebuilding !"
-    echo "WARNING: This part should be updated to handle rebase instead of delete/recreate !"
+log_info "Checking if work branch already exists: origin/${workBranch}"
+if git rev-parse --quiet --verify origin/${workBranch}; then
+    log_warn "Branch already exists"
+    log_warn "Deleting branch and rebuilding !"
+    log_warn "This part should be updated to handle rebase instead of delete/recreate !"
 
-    log "Deleting ${workBranch}"
+    log_info "Deleting ${workBranch}"
     git push origin :${workBranch}
 
-    # log "Checking out ${workBranch}"
+    # log_info "Checking out ${workBranch}"
     # git checkout --track origin/${workBranch} || true
 
-    # log "Rebasing ${workBranch} on ${targetBranch}"
+    # log_info "Rebasing ${workBranch} on ${targetBranch}"
     # git rebase ${targetBranch}
 
-    # log "Merging ${sourceBranch} on ${workBranch}"
+    # log_info "Merging ${sourceBranch} on ${workBranch}"
     # git merge ${sourceBranch}
 fi
 
 
-    echo "Creating work branch: ${workBranch}"
+    log_info "Creating work branch: ${workBranch}"
 
-    log "Checking out ${workBranch}"
+    log_info "Checking out ${workBranch}"
     git checkout -b ${workBranch} || true
 
-    log "Pushing and setting upstream: ${workBranch}"
+    log_info "Pushing and setting upstream: ${workBranch}"
     git push -u origin ${workBranch} || true
     # git branch --set-upstream-to=origin/${workBranch} ${workBranch} || true
     # git pull origin ${workBranch} || true
@@ -149,11 +149,11 @@ cd -
 
 # Installing requirements
 # TODO: Put in devops-tools docker image
-if [[ "${installRequirements}" == "true" ]]; then    
+if [[ "${installRequirements}" == "true" ]]; then
     ${scripts_gitops_utils_install_requirements_path}
 fi
 
 # Building
-if [[ "${runBuild}" == "true" ]]; then    
+if [[ "${runBuild}" == "true" ]]; then
     ${scripts_build_path}
 fi

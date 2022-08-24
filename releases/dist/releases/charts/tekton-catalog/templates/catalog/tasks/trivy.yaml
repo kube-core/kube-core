@@ -74,12 +74,15 @@ spec:
           value: /tmp/tekton/tekton.json
         - name: KUBECONFIG
           value: /tmp/kubeconfig-internal-gcloud/kubeconfig-internal-gcloud.yaml
-        # TODO: Use a secret or a permanent trivy server for DB. 
-        # Not a big deal, there are no scopes allowed. 
+        # TODO: Use a secret or a permanent trivy server for DB.
+        # Not a big deal, there are no scopes allowed.
         # Just to bypass GitHub public rate limiting on :
         # (https://api.github.com/repos/aquasecurity/trivy-db/releases)
         - name: GITHUB_TOKEN
-          value: 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 
+          valueFrom:
+            secretKeyRef:
+              name: {{ (index .Values.releases "tekton" "secrets" "github-read-token" "secretRef" "name") }}
+              key: {{ (index .Values.releases "tekton" "secrets" "github-read-token" "secretRef" "key") }}
       args:
         - -c
         - |
@@ -91,7 +94,7 @@ spec:
           outputPath=$(workspaces.output.path)/trivy-report
           errorPath=$(workspaces.output.path)/trivy-error
           tmpPath=$(workspaces.output.path)/trivy-tmp
-          
+
           echo ${trivyCommand}
           echo ${trivyFormat}
           echo ${targetImage}
@@ -100,8 +103,8 @@ spec:
 
           echo "trivy -q ${trivyCommand} ${trivyFlags} -f ${trivyFormat} ${targetImage} | jq -r --arg targetImage ${targetImage} 'try .[].Vulnerabilities[] | \"| \($targetImage) | \(.Severity) | \(.PkgName) | \(.InstalledVersion) | \(.FixedVersion) | \(.VulnerabilityID) | \(.PrimaryURL) |\"'"
           trivy -q ${trivyCommand} ${trivyFlags} -f ${trivyFormat} ${targetImage} > ${tmpPath} 2> ${errorPath}
-                              
-          #  
+
+          #
 
           if [ -s "${tmpPath}" ]
           then

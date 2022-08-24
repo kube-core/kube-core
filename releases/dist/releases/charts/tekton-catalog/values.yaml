@@ -1,0 +1,51 @@
+releases:
+  tekton:
+    secrets:
+      credentials:
+        crossplaneGenerated: false
+        description: Credentials to authenticate to your Cloud Provider.
+        replicate: false
+        replicateFrom: secrets/tekton
+        secretRef:
+          key: tekton.json
+          name: tekton
+      git-webhooks-token:
+        crossplaneGenerated: false
+        description: Token to authenticate requests to your Git Provider webhooks
+        replicate: false
+        replicateFrom: secrets/git-webhooks-token
+        secretRef:
+          key: git-webhooks-token
+          name: git-webhooks-token
+      git-api-token:
+        crossplaneGenerated: false
+        description: Token to authenticate to your Git Provider API
+        replicate: false
+        replicateFrom: secrets/git-api-token
+        secretRef:
+          key: git-api-token
+          name: git-api-token
+      git-ssh:
+        crossplaneGenerated: false
+        description: SSH key & known_hosts to authenticate Git requests
+        replicate: false
+        replicateFrom: secrets/git-ssh
+        secretRef:
+          key: git-ssh
+          name: git-ssh
+      github-read-token:
+        crossplaneGenerated: false
+        description: A GitHub Token with public read scope to remove rate limiting (for Trivy)
+        replicate: false
+        replicateFrom: secrets/github-read-token
+        secretRef:
+          key: github-read-token
+          name: github-read-token
+      docker-registry:
+        crossplaneGenerated: false
+        description: Docker Registry credentials to push images
+        replicate: false
+        replicateFrom: secrets/docker-registry
+        secretRef:
+          key: known_hosts
+          name: docker-registry

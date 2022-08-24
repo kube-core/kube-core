@@ -1,3 +1,4 @@
+# Source: crds/triggerbindings-triggers-tekton-dev.yaml
 # Copyright 2019 The Tekton Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,8 +20,8 @@ metadata:
   labels:
     app.kubernetes.io/instance: default
     app.kubernetes.io/part-of: tekton-triggers
-    triggers.tekton.dev/release: "v0.19.0"
-    version: "v0.19.0"
+    triggers.tekton.dev/release: "v0.20.2"
+    version: "v0.20.2"
 spec:
   group: triggers.tekton.dev
   scope: Namespaced

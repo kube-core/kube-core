@@ -71,20 +71,20 @@ configPath=${config_path}
 localPath=${localConfig_path}
 
 # By default, applies patches & doesn't regenerate secrets
-# arg1=${1:-"none"} 
+# arg1=${1:-"none"}
 # arg2=${2:-"none"}
 # arg3=${3:-"patch"}
 
 # commandArgs="${arg1} ${arg2} ${arg3}"
 
-# Deleting the config first. 
+# Deleting the config first.
 # This makes sure we can handle resource deletion, and prevents direct modification of config folder.
 
-if [[ ${filter} == "" ]]; then
+if [[ ${filter} != "" || ${helmfileSelector} != "" || ${helmfileSelectorOverride} != "" ]]; then
+    log_debug "Using filter. Not deleting anything."
+else
     log_debug "No filter. Deleting everything first..."
     rm -rf ${configPath}
-elif [[ ${filter} != "" ]]; then
-    log_debug "Using filter. Not deleting anything."
 fi
 
 # Generating manifests from helmfiles
@@ -100,7 +100,7 @@ ${scripts_gitops_gitops_path} $@
 # Runs some post-processing on all manifests.
 ${scripts_cluster_process_path} $@
 
-# Restoring all secrets. 
+# Restoring all secrets.
 # This forces to handle secrets separately. Any non-commited modification to secrets will be reverted.
 ${scripts_gitops_restore_secrets_path}
 

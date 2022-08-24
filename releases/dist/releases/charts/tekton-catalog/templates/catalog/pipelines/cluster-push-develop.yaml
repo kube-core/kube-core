@@ -4,6 +4,9 @@ metadata:
   name: cluster-push-develop
 spec:
   params:
+  - name: debug-sleep
+    default: "false"
+    description: Sleeping container while build is running, an easy way to debug
   - name: build-format
     description: The build format hint (jar / image), gives indication about what the pipeline needs to produce
     type: string
@@ -36,26 +39,71 @@ spec:
     description: Git provider API endpoint
     type: string
     default: ""
+  - name: sonar-url
+    description: Sonarqube Url
+    type: string
+    default: ""
+  - name: continuous-delivery-namespace
+    description: The CD namespace
+    type: string
+    default: ""
+  - name: continuous-delivery-branch
+    description: The CD source branch
+    type: string
+    default: "develop"
+  - name: container-image-tag
+    description: The container image tag to use (tag or hash)
+    type: string
+    default: ""
+  - name: publish
+    description: Whether or not to publish the project on nexus
+    type: string
+    default: "false"
+  - name: notify-slack
+    description: Whether or not to notify slack if the pipeline fails
+    type: string
+    default: "false"
   - name: tekton-url
     type: string
     description: "The tekton url"
-
+  - name: build-tool
+    description: Build tool override
+    default: ""
+    type: string
+  - name: dockerfile
+    description: The Dockerfile file name to look for
+    type: string
+    default: Dockerfile
   workspaces:
   - name: ws
-  
-  tasks:
 
+  tasks:
   - name: init
     taskRef:
       name: devops-tools
     params:
       - name: script
         value: |
-          echo "push on $(params.git-branch) for $(params.git-project-name), id: $(params.project-id)"
+          echo "Push on $(params.git-branch) for $(params.git-project-name), id: $(params.project-id)"
+          echo "---"
+          echo "debug-sleep: $(params.debug-sleep)"
           echo "build-format: $(params.build-format)"
-          echo "git-url: $(params.git-url)"
+          echo "git-project-name: $(params.git-project-name)"
           echo "git-sha: $(params.git-sha)"
-          echo "container images repository: $(params.container-images-repository)"
+          echo "git-url: $(params.git-url)"
+          echo "git-branch: $(params.git-branch)"
+          echo "project-id: $(params.project-id)"
+          echo "container-images-repository: $(params.container-images-repository)"
+          echo "git-api-endpoint: $(params.git-api-endpoint)"
+          echo "sonar-url: $(params.sonar-url)"
+          echo "continuous-delivery-namespace: $(params.continuous-delivery-namespace)"
+          echo "continuous-delivery-branch: $(params.continuous-delivery-branch)"
+          echo "container-image-tag: $(params.container-image-tag)"
+          echo "publish: $(params.publish)"
+          echo "notify-slack: $(params.notify-slack)"
+          echo "tekton-url: $(params.tekton-url)"
+          echo "build-tool: $(params.build-tool)"
+          echo "dockerfile: $(params.dockerfile)"
     workspaces:
       - name: input
         workspace: ws
@@ -66,23 +114,29 @@ spec:
       - name: data
         workspace: ws
 
-  - name: clone-projet
-    taskRef:
-      name: git-clone
-    workspaces:
-    - name: output
-      workspace: ws
+  - name: detect-tag-to-build
     params:
-    - name: url
-      value: $(params.git-url)
-    - name: subdirectory
-      value: $(params.git-project-name)
-    - name: revision
-      value: $(params.git-branch)
+      - name: container-images-repository
+        value: "$(params.container-images-repository)"
+      - name: git-project-name
+        value: "$(params.git-project-name)"
+      - name: container-image-tag
+        value: "$(params.container-image-tag)"
+      - name: git-branch
+        value: "$(params.git-branch)"
+    taskRef:
+      name: detect-tag-to-build
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
 
   - name: notify-build-running
-    runAfter:
-    - clone-projet
     taskRef:
       name: gitlab-notify-build
     params:
@@ -95,40 +149,219 @@ spec:
       - name: tekton-url
         value: $(params.tekton-url)
       - name: ref
-        value: $(params.git-branch) 
+        value: $(params.git-branch)
     workspaces:
-        - name: input
-          workspace: ws
-        - name: output
-          workspace: ws
-        - name: source
-          workspace: ws
-        - name: data
-          workspace: ws
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+
+  - name: clone-projet
+    runAfter:
+      - notify-build-running
+    taskRef:
+      name: git-clone-branch
+    params:
+      - name: repository
+        value: $(params.git-url)
+      - name: branch
+        value: $(params.git-branch)
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+
+######################################################
 
   - name: gitops-build
     runAfter:
     - clone-projet
+    taskRef:
+      name: kube-core
+    params:
+      - name: script
+        value: |
+          #!/usr/bin/env bash
+
+            cd $(workspaces.source.path)/$(params.git-project-name)/cluster
+          ENV=ci /app/kube-core/scripts/src/gitops/ci/kube-core-setup.sh "$(params.git-branch)"
+
+          helmfile repos
+          kube-core build all
+
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+######################################################
+
+
+  - name: gitops-test
+    runAfter:
+    - gitops-build
+    taskRef:
+      name: kube-core
+    params:
+      - name: script
+        value: |
+          #!/usr/bin/env bash
+
+          cd $(workspaces.source.path)/$(params.git-project-name)/cluster
+          ENV=ci /app/kube-core/scripts/src/gitops/ci/kube-core-setup.sh "$(params.git-branch)"
+          kube-core test all
+
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+######################################################
+
+  - name: gitops-push
+    runAfter:
+    - gitops-test
+    when:
+    - input: $(params.git-branch)
+      operator: notin
+      values: ["main", "master", "develop"]
+    - input: $(tasks.detect-tag-to-build.results.IS_BRANCH)
+      operator: in
+      values: ["true"]
+    - input: $(params.git-branch)
+      operator: notin
+      values: ["$(params.container-image-tag)"]
+    taskRef:
+      name: kube-core
+    params:
+      - name: script
+        value: |
+          #!/usr/bin/env bash
+
+          cd $(workspaces.source.path)/$(params.git-project-name)/cluster
+          ENV=ci /app/kube-core/scripts/src/gitops/ci/kube-core-setup.sh "$(params.git-branch)" "$(params.git-branch)" "$(params.git-branch)"
+          ENV=ci /app/kube-core/scripts/src/gitops/ci/auto-pr.sh "$(params.git-branch)" "$(params.git-branch)" "$(params.git-branch)"
+
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+
+######################################################
+
+  - name: gitops-pr
+    runAfter:
+    - gitops-test
+    when:
+    - input: $(params.git-branch)
+      operator: in
+      values: ["main", "master", "develop"]
+    - input: $(tasks.detect-tag-to-build.results.IS_BRANCH)
+      operator: in
+      values: ["true"]
+    - input: $(params.git-branch)
+      operator: notin
+      values: ["$(params.container-image-tag)"]
+    taskRef:
+      name: kube-core
+    params:
+      - name: script
+        value: |
+          #!/usr/bin/env bash
+
+          cd $(workspaces.source.path)/$(params.git-project-name)/cluster
+          ENV=ci /app/kube-core/scripts/src/gitops/ci/kube-core-setup.sh "$(params.git-branch)"
+          ENV=ci /app/kube-core/scripts/src/gitops/ci/auto-pr.sh "$(params.git-branch)"
+
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+######################################################
+
+  - name: gitops-package
+    runAfter:
+    - gitops-test
+    when:
+    - input: $(tasks.detect-tag-to-build.results.IS_TAG)
+      operator: in
+      values: ["true"]
+    - input: $(params.git-branch)
+      operator: in
+      values: ["$(params.container-image-tag)"]
+    taskRef:
+      name: kube-core
+    params:
+      - name: script
+        value: |
+          #!/usr/bin/env bash
+
+          cd $(workspaces.source.path)/$(params.git-project-name)/cluster
+          ENV=ci /app/kube-core/scripts/src/gitops/ci/kube-core-setup.sh "$(params.git-branch)"
+          echo "TODO: If any modifications in tree, should fail pipeline and suggest to build/debug."
+          echo "TODO: If everything is ok, should build an OCI package with cluster manifests, using kbld & imgpkg"
+
+    workspaces:
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+######################################################
+  - name: debug-sleep
+    when:
+      - input: $(params.debug-sleep)
+        operator: in
+        values:
+          - "true"
     taskRef:
       name: devops-tools
     params:
       - name: script
         value: |
           #!/usr/bin/env bash
-
-          cd $(workspaces.source.path)/$(params.git-project-name)/cluster/scripts
-
-          ENV=ci ./src/gitops/ci/auto-build.sh "$(params.git-branch)"
-
+          echo "Sleeping 600 seconds !"
+          sleep 600
     workspaces:
-        - name: input
-          workspace: ws
-        - name: output
-          workspace: ws
-        - name: source
-          workspace: ws
-        - name: data
-          workspace: ws
+      - name: input
+        workspace: ws
+      - name: output
+        workspace: ws
+      - name: source
+        workspace: ws
+      - name: data
+        workspace: ws
+
   finally:
       - name: notify-build-status
         taskRef:
@@ -145,7 +378,7 @@ spec:
           - name: tekton-url
             value: $(params.tekton-url)
           - name: ref
-            value: $(params.git-branch) 
+            value: $(params.git-branch)
         workspaces:
           - name: input
             workspace: ws
@@ -155,3 +388,25 @@ spec:
             workspace: ws
           - name: data
             workspace: ws
+
+      # - name: notify-slack
+      #   taskRef:
+      #     name: send-to-webhook-slack
+      #   when:
+      #   - input: "$(tasks.status)"
+      #     operator: in
+      #     values:
+      #     - "Failed"
+      #   - input: $(params.git-branch)
+      #     operator: in
+      #     values:
+      #     - "$(params.continuous-delivery-branch)"
+      #   - input: $(params.notify-slack)
+      #     operator: in
+      #     values:
+      #     - "true"
+      #   params:
+      #     - name: webhook-secret
+      #       value: slack-webhook-secret
+      #     - name: message
+      #       value: "Pipeline for *$(params.git-project-name)* has failed. <$(params.tekton-url)/#/namespaces/tekton-pipelines/pipelineruns/$(tasks.extract-build-config-from-source.results.PIPELINERUN_NAME)|Check Pipeline>"

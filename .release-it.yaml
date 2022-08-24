@@ -2,8 +2,8 @@
 git:
   tagName: "v${version}"
   commitMessage: "release: v${version}"
-  requireBranch:
-  - main
+  # requireBranch:
+  # - main
   requireCommits: true
   requireCleanWorkingDir: false
   addUntrackedFiles: false

@@ -5,7 +5,7 @@ import * as path from "path";
 const execa = require('execa')
 
 export async function cli(cmd, ...args) {
-  try {  
+  try {
   const { stdout } = await execa(cmd, args);
   console.log(stdout);
   } catch(error) {
@@ -66,7 +66,7 @@ export async function runCoreScriptAsync(script, args, env = {}) {
   let output
 
   try {
-    output = await execa(scriptPath, args)  
+    output = await execa(scriptPath, args)
   } catch(error) {
     console.log(error)
   }
@@ -85,7 +85,27 @@ export async function runClusterScript(script, args, env = {}) {
   } catch(error) {
     console.log(error)
   }
-  return output    
+  return output
+}
+
+export async function runClusterTestScript(script, args, env = {}) {
+  let scriptsPath = `${path.resolve(
+    `${require.main.filename}/../../../scripts`
+  )}`;
+  let scriptPath = `${path.join(scriptsPath, script)}`;
+  let output
+
+  try {
+    output = await cliPipe(scriptPath, args, env)
+  } catch(error) {
+    if(error.exitCode > 0) {
+      if(process.env.LOG_LEVEL == "DEBUG" || process.env.LOG_LEVEL == "INSANE") {
+        console.log(error)
+      }
+      process.exit(error.exitCode)
+    }
+  }
+  return output
 }
 
 export async function runClusterScriptAsync(script, args, env = {}) {
@@ -93,11 +113,11 @@ export async function runClusterScriptAsync(script, args, env = {}) {
     `${require.main.filename}/../../../scripts`
   )}`;
   let scriptPath = `${path.join(scriptsPath, script)}`;
-    
+
   let output
 
   try {
-    output = await execa(scriptPath, args)  
+    output = await execa(scriptPath, args)
   } catch(error) {
     console.log(error)
   }
@@ -168,4 +188,4 @@ export async function testKubernetesManifest(name) {
 
   // console.log(newArgsString)
   // console.log(argv)
-// 
+//

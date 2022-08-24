@@ -14,9 +14,9 @@ spec:
         spec:
           serviceAccountName: tekton
           volumes:
-          - name: ssh 
-            secret: 
-              secretName: gitlab-ssh     
+          - name: ssh
+            secret:
+              secretName: {{ (index .Values.releases "tekton" "secrets" "git-ssh" "secretRef" "name") }}
           containers:
           - name: {{ .name }}
             volumeMounts:
@@ -27,7 +27,7 @@ spec:
             args:
               - sh
               - -c
-              - |    
+              - |
                 # TODO gets last sha, it is needed to notify that the pipeline is running
                 # gitSha=$(git ls-remote {{ .values.gitUrl }} --refs {{ .values.gitBranch }} | awk '{ print $1 }' )
                 gitSha="develop"
@@ -73,7 +73,7 @@ spec:
                   - name: sonar-url
                     value: {{ .values.sonarUrl }}
                   - name: tekton-url
-                    value: {{ .values.tektonUrl }} 
+                    value: {{ .values.tektonUrl }}
                   - name: continuous-delivery-namespace
                     value: integration
                   - name: container-image-tag
@@ -81,9 +81,9 @@ spec:
                   - name: notify-slack
                     value: "true"
                   - name: node-version
-                    value: "{{ .values.nodeVersion }}" 
+                    value: "{{ .values.nodeVersion }}"
                   - name: node-tests-image
-                    value: "{{ .values.nodeTestsImage }}" 
+                    value: "{{ .values.nodeTestsImage }}"
                   - name: run-tests
                     value: "{{ .values.runTests }}"
                   - name: chart-name

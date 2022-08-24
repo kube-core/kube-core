@@ -335,7 +335,7 @@ spec:
       value: $(params.git-project-name)
     - name: ARGS
       value: ["run", "code-coverage", "--if-present"]
- 
+
 ######################################################
 
   - name: gradle-build-and-tests

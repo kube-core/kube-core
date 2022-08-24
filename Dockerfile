@@ -44,7 +44,7 @@ RUN binenv install trivy 0.30.4 && \
 # GitOps dependencies
 RUN apk add file
 
-RUN pip install PyYaml 
+RUN pip install PyYaml
 
 RUN binenv install helm 3.8.0 && \
 mv ~/.binenv/helm /usr/local/bin/
@@ -66,19 +66,28 @@ RUN pip install yamllint
 
 RUN wget https://github.com/instrumenta/kubeval/releases/download/v0.16.1/kubeval-linux-amd64.tar.gz && \
 tar xf kubeval-linux-amd64.tar.gz && \
-mv kubeval /usr/local/bin
+mv kubeval /usr/local/bin && \
+rm -rf xf kubeval-linux-amd64.tar.gz
 
 RUN wget https://github.com/Shopify/kubeaudit/releases/download/v0.14.2/kubeaudit_0.14.2_linux_amd64.tar.gz && \
 tar xf kubeaudit_0.14.2_linux_amd64.tar.gz && \
-mv kubeaudit /usr/local/bin
+mv kubeaudit /usr/local/bin && \
+rm -rf xf kubeaudit_0.14.2_linux_amd64.tar.gz
 
 RUN wget https://github.com/zegl/kube-score/releases/download/v1.11.0/kube-score_1.11.0_linux_amd64.tar.gz && \
 tar xf kube-score_1.11.0_linux_amd64.tar.gz && \
-mv kube-score /usr/local/bin
+mv kube-score /usr/local/bin && \
+rm -rf xf kube-score_1.11.0_linux_amd64.tar.gz
 
 RUN wget https://github.com/open-policy-agent/conftest/releases/download/v0.25.0/conftest_0.25.0_Linux_x86_64.tar.gz && \
 tar xzf conftest_0.25.0_Linux_x86_64.tar.gz && \
-mv conftest /usr/local/bin
+mv conftest /usr/local/bin && \
+rm -rf xzf conftest_0.25.0_Linux_x86_64.tar.gz LICENCE
+
+RUN wget https://github.com/yannh/kubeconform/releases/download/v0.4.14/kubeconform-linux-amd64.tar.gz && \
+tar xzf kubeconform-linux-amd64.tar.gz && \
+mv kubeconform /usr/local/bin && \
+rm -rf xzf kubeconform
 
 RUN curl -sL https://get.garden.io/install.sh | bash -s 0.12.25
 RUN cp -r /root/.garden/bin/* /usr/local/bin
@@ -92,15 +101,6 @@ RUN curl -L https://carvel.dev/install.sh | sed 's/.*shasum.*//' | bash
 # kube-core
 RUN pip install argparse
 
-RUN mkdir -p /app/kube-core/cli
-COPY ./cli/package.json ./cli/yarn.lock /app/kube-core/cli/
-
-RUN cd /app/kube-core/cli && yarn
-
-COPY . /app/kube-core
-
-RUN cd /app/kube-core/cli && npm link
-
 RUN apk add util-linux
 
 ENV KUBECONFIG /kube/config
@@ -109,13 +109,23 @@ ENV CLOUDSDK_CONFIG /gcloud
 RUN arkade get krew
 RUN mv /root/.arkade/bin/krew /usr/local/bin/
 RUN krew install krew
-ENv PATH="${KREW_ROOT:-/root/.krew}/bin:$PATH" 
+ENv PATH="${KREW_ROOT:-/root/.krew}/bin:$PATH"
 RUN kubectl krew install slice
 
 RUN helm plugin install https://github.com/databus23/helm-diff
 
+
+# CLI
+RUN mkdir -p /app/kube-core/cli
+COPY ./cli/package.json ./cli/yarn.lock /app/kube-core/cli/
+RUN cd /app/kube-core/cli && yarn
+
+COPY . /app/kube-core
+RUN cd /app/kube-core/cli && npm link
+
+
 # Run the container:
 # docker run -v "~/.kube:/kube -v "~/.ssh":/ssh -v "~/.config/gcloud":/gcloud -v "/projects/kubernetes/repository":/app/dev -v "/kube-core/scripts":/app/kube-core/scripts -it --rm --name kube-core-dev kube-core bash
-# Then inside container: 
+# Then inside container:
 # mkdir ~/.ssh && cp -rf /ssh/* ~/.ssh && chmod 600 ~/.ssh/id_rsa && cd /app/dev/cluster && helmfile repos && kube-core build:all
 # TODO: Rework layers, optimize, share base image with devops-tools

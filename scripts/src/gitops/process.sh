@@ -70,7 +70,7 @@ log_debug "Start Renaming: .yml => .yaml"
 find ${inputConfigPath} -name '*.yml' -type f | while read f;
 do
     newName=$(echo $f | sed 's/yml/yaml/')
-    
+
     log_debug "Moving: ${f} => ${newName}"
     mv ${f} ${newName}
 done || true
@@ -134,83 +134,5 @@ else
     log_info "No non-sealed secrets found !"
 fi
 log_info "Done checking for non-sealed secrets!"
-
-
-# Check untracked files in config
-# TODO: Review and reimplement this, in final post-processing steps.
-# Irrelevant here because now this is not in git context anymore (tmp folder update)
-
-# # Getting a clean list of all files
-# manifests=$(find ${inputConfigPath} -type f)
-
-# # Exclude stuff
-# # TODO: Find a way not to exclude tekton
-# excludedManifests=$(echo "$manifests" | grep tekton || true)
-# manifests=$(echo "$manifests" | grep -v tekton || true)
-
-# cd ${clusterConfigDirPath}
-# untrackedFiles=$(git ls-files ${inputConfigPath} --exclude-standard --others)
-# cd - &> /dev/null # Remove logs
-
-# if [[ "${run_kbld}" == "true" ]]
-# then
-
-#     kbldLock=${clusterConfigDirPath}/kbld.lock.yaml
-
-#     rm -rf ${kbldLock}
-#     # TODO: Better condition handling and reactivate this
-#     # If new files were added to config, delete old lockfile
-#     # if [[ ! -z "${untrackedFiles}" ]]
-#     # then
-#     #     echo "New deployments detected, deleting kbld.lock..."
-#     #     rm -rf ${kbldLock}
-#     # else
-#     #     echo "No new deployments detected, skipping kbld"
-#     # fi
-
-#     # If lockfile doesn't exist, generate it
-#     if [[ ! -s "${kbldLock}" ]]
-#     then
-#         log_debug "No kbld.lock, preparing to generate it..."
-
-        
-#         # Temporarily move excluded manifests
-#         mkdir -p ${clusterConfigDirPath}/.tmp
-#         log_debug "Moving temporarily excluded files..."
-#         mv ${inputConfigPath}/tekton-pipelines ${clusterConfigDirPath}/.tmp  2>/dev/null || true
-
-#         # Check & Generate lockfile
-
-
-#         # echo "Filtering manifests to send to kbld..."
-#         # kbldArgs=$(echo "${manifests}" | xargs -i echo "-f {}")
-
-#         log_debug "Analyzing manifests..."
-#         kbld -f ${inputConfigPath} --registry-insecure --registry-verify-certs=false --lock-output ${kbldLock} > /dev/null
-#         log_debug "Lockfile Generated !"
-
-#         # Replace images
-#         echo "Start kbld"
-#         echo "${manifests}" | while read f;
-#         do
-#             log_debug "kbld: ${f}"
-#             log_debug "kbld -f ${kbldLock} -f ${f} --registry-insecure --registry-verify-certs=false > ${f}.kbld"
-#             kbld -f ${kbldLock} -f ${f} --registry-insecure --registry-verify-certs=false > ${f}.kbld
-#             mv ${f}.kbld ${f}
-#         done || true
-#         echo "Done kbld"
-
-
-#         # Moving back excluded manifests
-#         log_debug "Moving back excluded files..."
-#         cp -r ${clusterConfigDirPath}/.tmp/tekton-pipelines ${inputConfigPath} || true
-
-#         # Cleaning
-#         log_debug "Cleaning up..."
-#         rm -rf ${clusterConfigDirPath}/.tmp
-
-#     fi
-
-# fi
 
 log_info "Done Post-Processing GitOps config!"

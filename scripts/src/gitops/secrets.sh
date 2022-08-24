@@ -82,27 +82,38 @@ rm -rf ${tmpFolder}/secrets/*
 
 cd ${secretsPath} &> /dev/null # Remove logs
 secrets=$(find . -type f -name '*.yaml')
+log_insane "List of secrets"
+log_insane "${secrets}"
 echo "${secrets}" | xargs yq '.' > ${tmpFolder}/secrets/secrets.yaml
 
 
 mkdir -p ${replicatedSecretsPath}
 cd ${replicatedSecretsPath} &> /dev/null # Remove logs
 replicatedSecrets=$(find . -type f -name '*.yaml')
-echo "${replicatedSecrets}" | xargs yq '.' > ${tmpFolder}/secrets/replicated-secrets.yaml
+
+
+if [[ "${replicatedSecrets}" != "" ]] ; then
+    echo "${replicatedSecrets}" | xargs yq '.' > ${tmpFolder}/secrets/replicated-secrets.yaml
+fi
+
 
 
 if [[ "$LOG_LEVEL" == "DEBUG" || "$LOG_LEVEL" == "INSANE" ]] ; then
-    if [[ ! -z "${secrets}" ]] ; then 
+    if [[ "${secrets}" != "" ]] ; then
+        log_debug "kubectl slice -f ${tmpFolder}/secrets/secrets.yaml --output-dir ${tmpFolder}/secrets/secrets --template='{{.metadata.namespace}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml'"
         kubectl slice -f ${tmpFolder}/secrets/secrets.yaml --output-dir ${tmpFolder}/secrets/secrets --template='{{.metadata.namespace}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml'
     fi
-    if [[ ! -z "${replicatedSecrets}" ]] ; then 
+    if [[ "${replicatedSecrets}" != "" ]] ; then
+        log_debug "kubectl slice -f ${tmpFolder}/secrets/replicated-secrets.yaml --output-dir ${tmpFolder}/secrets/secrets --template='{{.metadata.namespace}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml'"
         kubectl slice -f ${tmpFolder}/secrets/replicated-secrets.yaml --output-dir ${tmpFolder}/secrets/secrets --template='{{.metadata.namespace}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml'
     fi
 else
-    if [[ ! -z "${secrets}" ]] ; then 
+    if [[ "${secrets}" != "" ]] ; then
+        log_debug "kubectl slice -f ${tmpFolder}/secrets/secrets.yaml --output-dir ${tmpFolder}/secrets/secrets --template='{{.metadata.namespace}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml' 2> /dev/null"
         kubectl slice -f ${tmpFolder}/secrets/secrets.yaml --output-dir ${tmpFolder}/secrets/secrets --template='{{.metadata.namespace}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml' 2> /dev/null
     fi
-    if [[ ! -z "${replicatedSecrets}" ]] ; then 
+    if [[ "${replicatedSecrets}" != "" ]] ; then
+        log_debug "kubectl slice -f ${tmpFolder}/secrets/replicated-secrets.yaml --output-dir ${tmpFolder}/secrets/secrets --template='{{.metadata.namespace}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml' 2> /dev/null"
         kubectl slice -f ${tmpFolder}/secrets/replicated-secrets.yaml --output-dir ${tmpFolder}/secrets/secrets --template='{{.metadata.namespace}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml' 2> /dev/null
     fi
 fi
@@ -111,4 +122,14 @@ cp -fr ${tmpFolder}/secrets/secrets/* ${configPath} 2>/dev/null || true
 
 cp -rf ${configPath}/* ${config_path}
 
-log_info "Done Building: local/secrets -> config/namespace/secrets..."
+log_info "Deleting empty files..."
+emptyFiles=$(find ${config_path} -name ".yaml")
+
+if [[ "${emptyFiles}" != "" ]]; then
+    log_debug "Empty files found, deleting them! You probably need to check the templating using debug mode."
+    log_insane "${emptyFiles}"
+    echo "${emptyFiles}" | xargs rm -rf
+fi
+
+
+log_debug "Done Building: local/secrets -> config/namespace/secrets..."

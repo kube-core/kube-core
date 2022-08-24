@@ -78,17 +78,18 @@ rm -rf ${kubevalOutputPath}
 mkdir -p ${kubevalOutputPath}
 
 # Validating
-kubeval -d ${gitOpsConfigPath} --ignore-missing-schemas --strict >> ${resultsPath} || true
-cat ${resultsPath}
+kubeconform --ignore-missing-schemas --strict ${gitOpsConfigPath}
+# kubeval -d ${gitOpsConfigPath} --ignore-missing-schemas --strict >> ${resultsPath} || true
+# cat ${resultsPath} | grep -E 'PASS|WARN|ERR'
 
-if cat ${resultsPath} | grep -q "ERR"; then
-    echo "ERROR: Validation failed!"
-    if [[ "${failOnError}" == "true" ]]; then
-        exit 1
-    fi
-else 
-    echo "SUCCESS: Validation succedded."
-fi
+# if cat ${resultsPath} | grep -q "ERR"; then
+#     echo "ERROR: Validation failed!"
+#     if [[ "${failOnError}" == "true" ]]; then
+#         exit 1
+#     fi
+# else
+#     echo "SUCCESS: Validation succedded."
+# fi
 
 
 

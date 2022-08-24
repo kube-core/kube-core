@@ -18,15 +18,19 @@ spec:
         params:
           - name: secretRef
             value:
-              secretName: "gitlab-token"
-              secretKey: "token"
+              secretName: {{ (index .Values.releases "tekton" "secrets" "git-webhooks-token" "secretRef" "name") }}
+              secretKey: {{ (index .Values.releases "tekton" "secrets" "git-webhooks-token" "secretRef" "key") }}
           - name: eventTypes
             value:
               - "Push Hook"
               # - "Tag Push Hook"
-      - cel:
-          #filter: "body.ref == 'refs/heads/develop'"
-          overlays:
+      - name: "Apply overlays"
+        ref:
+          name: "cel"
+          kind: ClusterInterceptor
+        params:
+        - name: "overlays"
+          value:
             - key: build_format
               expression: "requestURL.parseURL().rawQuery.contains('buildFormat=') ? requestURL.parseURL().query['buildFormat'] : 'image'"
             - key: build_tool

@@ -28,17 +28,12 @@ spec:
     #   description: The script to execute
     #   type: string
     #   default: "echo devops-tools"
-    
+
     - name: image
       description: The image used by the task
       type: string
       default: neo9sas/devops-tools:v1.5.0
-    
-    - name: image
-      description: The image used by the task
-      type: string
-      default: neo9sas/devops-tools:v1.5.0
-    
+
   stepTemplate:
     image: $(params.image)
     imagePullPolicy: Always

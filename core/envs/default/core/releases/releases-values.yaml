@@ -41,6 +41,9 @@ releases:
   logging-stack:
     values:
       installCRDs: false
+  patch-operator:
+    values:
+      enableCertManager: true
   sealed-secrets:
     values:
       crd:
@@ -97,6 +100,3 @@ releases:
   tekton-logging:
     values:
       installCRDs: false
-  patch-operator:
-    values:
-      enableCertManager: true
