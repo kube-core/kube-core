@@ -1,20 +1,22 @@
 {
-  "name": "kube-core",
-  "version": "0.1.0",
+  "name": "@kube-core/cli",
+  "version": "0.1.3",
   "description": "CLI for kube-core",
   "author": "Damien Parbhakar",
   "bin": {
-    "kube-core": "./bin/dev"
+    "kube-core": "./bin/run",
+    "kube-core-dev": "./bin/dev"
   },
   "homepage": "https://github.com/dparbhakar/kube-core",
   "license": "MIT",
   "main": "dist/index.js",
-  "repository": "dparbhakar/kube-core",
+  "repository": "kube-core/cli",
   "files": [
     "/bin",
     "/dist",
     "/npm-shrinkwrap.json",
-    "/oclif.manifest.json"
+    "/oclif.manifest.json",
+    "/scripts"
   ],
   "dependencies": {
     "@oclif/core": "^1",
