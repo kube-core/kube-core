@@ -29,7 +29,7 @@ export async function cliPipe(cmd, args, env = {}) {
 
 export async function runScript(script, args, env = {}) {
   let scriptsPath = `${path.resolve(
-    `${require.main.filename}/../../../scripts`
+    `${require.main.filename}/../../scripts`
   )}`;
   let scriptPath = `${path.join(scriptsPath, script)}`;
   let output
@@ -44,7 +44,7 @@ export async function runScript(script, args, env = {}) {
 
 export async function runCoreScript(script, args, env = {}) {
   let scriptsPath = `${path.resolve(
-    `${require.main.filename}/../../../scripts`
+    `${require.main.filename}/../../scripts`
   )}`;
   let scriptPath = `${path.join(scriptsPath, script)}`;
   let output
@@ -59,7 +59,7 @@ export async function runCoreScript(script, args, env = {}) {
 
 export async function runCoreScriptAsync(script, args, env = {}) {
   let scriptsPath = `${path.resolve(
-    `${require.main.filename}/../../../scripts`
+    `${require.main.filename}/../../scripts`
   )}`;
   let scriptPath = `${path.join(scriptsPath, script)}`;
 
@@ -75,7 +75,7 @@ export async function runCoreScriptAsync(script, args, env = {}) {
 
 export async function runClusterScript(script, args, env = {}) {
   let scriptsPath = `${path.resolve(
-    `${require.main.filename}/../../../scripts`
+    `${require.main.filename}/../../scripts`
   )}`;
   let scriptPath = `${path.join(scriptsPath, script)}`;
   let output
@@ -90,7 +90,7 @@ export async function runClusterScript(script, args, env = {}) {
 
 export async function runClusterTestScript(script, args, env = {}) {
   let scriptsPath = `${path.resolve(
-    `${require.main.filename}/../../../scripts`
+    `${require.main.filename}/../../scripts`
   )}`;
   let scriptPath = `${path.join(scriptsPath, script)}`;
   let output
@@ -110,7 +110,7 @@ export async function runClusterTestScript(script, args, env = {}) {
 
 export async function runClusterScriptAsync(script, args, env = {}) {
   let scriptsPath = `${path.resolve(
-    `${require.main.filename}/../../../scripts`
+    `${require.main.filename}/../../scripts`
   )}`;
   let scriptPath = `${path.join(scriptsPath, script)}`;
 
