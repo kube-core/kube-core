@@ -6,8 +6,8 @@ cli/node_modules/
 .plop.out.log
 .oclif.manifest.json
 .kube-core/
-keys/
+/keys/
 vendir.lock.yaml
-dev/
-docs/
-examples/
+/dev/
+/docs/
+/examples/
