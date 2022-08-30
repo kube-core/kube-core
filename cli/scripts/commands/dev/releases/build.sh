@@ -163,7 +163,7 @@ cp -rf ${releasesGeneratedCrdsFolder}/* ${coreReleasesPath}/dist/releases/crds &
 cp -rf ${releasesProcessedFolder}/* ${coreReleasesPath}/dist/releases/charts
 cp -rf ${baseReleasesFolder}/* ${coreReleasesPath}/dist/releases/base
 
-find ${coreReleasesPath}/dist/releases/ -type f -name '.helmignore' | xargs rm -rf
+# find ${coreReleasesPath}/dist/releases/ -type f -name '.helmignore' | xargs rm -rf
 
 fi
 echo "Done building releases!"
