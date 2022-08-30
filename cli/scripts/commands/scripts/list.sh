@@ -33,7 +33,7 @@ fi
 scriptsConfigDirPath=$(dirname ${scriptsConfigPath} | xargs realpath)
 
 defaultClusterConfigPath=${scriptsConfigDirPath}/default-cluster-config.yaml
-corePath=$(echo ${scriptsConfigDirPath}/.. | xargs realpath)
+corePath=$(echo ${scriptsConfigDirPath}/../.. | xargs realpath)
 coreTmpFolder="${corePath}/.kube-core/.tmp"
 
 eval "$(${scriptsConfigDirPath}/src/includes.sh)"

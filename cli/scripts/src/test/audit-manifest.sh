@@ -33,7 +33,7 @@ fi
 scriptsConfigDirPath=$(dirname ${scriptsConfigPath} | xargs realpath)
 
 defaultClusterConfigPath=${scriptsConfigDirPath}/default-cluster-config.yaml
-corePath=$(echo ${scriptsConfigDirPath}/.. | xargs realpath)
+corePath=$(echo ${scriptsConfigDirPath}/../.. | xargs realpath)
 coreTmpFolder="${corePath}/.kube-core/.tmp"
 
 # Loading scripts
@@ -73,4 +73,4 @@ kubeAuditConfigPath=${test_audit_config_path}
 auditOutputPath=${testOutputPath}/audit
 resultsPath=${auditOutputPath}/results
 
-kubeaudit -k ${kubeAuditConfigPath} all -e 0 -m "error" -f "${gitOpsConfigPath}" --format "logrus" || true 
+kubeaudit -k ${kubeAuditConfigPath} all -e 0 -m "error" -f "${gitOpsConfigPath}" --format "logrus" || true

@@ -36,7 +36,7 @@ fi
 scriptsConfigDirPath=$(dirname ${scriptsConfigPath} | xargs realpath)
 
 defaultClusterConfigPath=${scriptsConfigDirPath}/default-cluster-config.yaml
-corePath=$(echo ${scriptsConfigDirPath}/.. | xargs realpath)
+corePath=$(echo ${scriptsConfigDirPath}/../.. | xargs realpath)
 coreTmpFolder="${corePath}/.kube-core/.tmp"
 
 # Loading scripts
@@ -70,8 +70,8 @@ log_debug "Generating cluster"
 
 # files=$(find ${clusterPath} -type f)
 
-# while read f 
-# do 
+# while read f
+# do
 #     sed -i "s/PROJECT/${project_name}/" ${f}
 #     sed -i "s/CLUSTER_NAME/${cluster_config_name}/" ${f}
 #     sed -i "s/CLUSTER_DOMAIN/${clusterDomain}/" ${f}

@@ -33,7 +33,7 @@ fi
 scriptsConfigDirPath=$(dirname ${scriptsConfigPath} | xargs realpath)
 
 defaultClusterConfigPath=${scriptsConfigDirPath}/default-cluster-config.yaml
-corePath=$(echo ${scriptsConfigDirPath}/.. | xargs realpath)
+corePath=$(echo ${scriptsConfigDirPath}/../.. | xargs realpath)
 coreTmpFolder="${corePath}/.kube-core/.tmp"
 
 # Loading scripts
@@ -86,12 +86,12 @@ releasesList=$(echo "${templatedReleases}" | while read release; do
     echo "${releaseName}"
 done || true)
 
-# echo "${releasesList}" | sort -u 
+# echo "${releasesList}" | sort -u
 
 echo "${templatedReleases}" | while read template; do
     echo "${releasesList}" | sort -u | while read release; do
         if grep -q ${release} ${template}; then
-            sed -i "s|../releases/.*/${release}|../releases/dist/releases/base/${release}|" ${template}         
+            sed -i "s|../releases/.*/${release}|../releases/dist/releases/base/${release}|" ${template}
         fi
     done
 done

@@ -33,7 +33,7 @@ fi
 scriptsConfigDirPath=$(dirname ${scriptsConfigPath} | xargs realpath)
 
 defaultClusterConfigPath=${scriptsConfigDirPath}/default-cluster-config.yaml
-corePath=$(echo ${scriptsConfigDirPath}/.. | xargs realpath)
+corePath=$(echo ${scriptsConfigDirPath}/../.. | xargs realpath)
 coreTmpFolder="${corePath}/.kube-core/.tmp"
 
 # Loading scripts
@@ -62,7 +62,7 @@ check_context "${cluster_config_context}"
 
 
 log_info "Rebuilding GitOps config..."
-# TODO: Implement filter logic here. 
+# TODO: Implement filter logic here.
 # At the moment, we rebuild all anyway and filter when copying
 
 arg1=${1:-"none"}

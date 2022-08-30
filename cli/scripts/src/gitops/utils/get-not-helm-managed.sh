@@ -33,7 +33,7 @@ fi
 scriptsConfigDirPath=$(dirname ${scriptsConfigPath} | xargs realpath)
 
 defaultClusterConfigPath=${scriptsConfigDirPath}/default-cluster-config.yaml
-corePath=$(echo ${scriptsConfigDirPath}/.. | xargs realpath)
+corePath=$(echo ${scriptsConfigDirPath}/../.. | xargs realpath)
 coreTmpFolder="${corePath}/.kube-core/.tmp"
 
 # Loading scripts
@@ -72,4 +72,3 @@ query=${1:-"kind:"}
 
 command=$(echo "grep -r -l '${query}' config")
 eval "${command}" | xargs grep -LE 'managed-by: Helm|heritage: Helm|helm\.sh\/hook'
-

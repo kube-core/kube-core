@@ -33,7 +33,7 @@ fi
 scriptsConfigDirPath=$(dirname ${scriptsConfigPath} | xargs realpath)
 
 defaultClusterConfigPath=${scriptsConfigDirPath}/default-cluster-config.yaml
-corePath=$(echo ${scriptsConfigDirPath}/.. | xargs realpath)
+corePath=$(echo ${scriptsConfigDirPath}/../.. | xargs realpath)
 coreTmpFolder="${corePath}/.kube-core/.tmp"
 
 # Loading scripts
@@ -85,9 +85,9 @@ fi
 # else
     log_info "Checking for modified/deleted secrets to restore..."
     log_debug "This should only target modified secrets that didn't change (except hashing by SealedSecrets)"
-    
+
     modifiedFiles=$(git ls-files -m) || true
-    
+
     log_insane "List of modified files :"
     log_insane "${modifiedFiles}"
 

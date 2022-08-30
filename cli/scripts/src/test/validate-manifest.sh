@@ -33,7 +33,7 @@ fi
 scriptsConfigDirPath=$(dirname ${scriptsConfigPath} | xargs realpath)
 
 defaultClusterConfigPath=${scriptsConfigDirPath}/default-cluster-config.yaml
-corePath=$(echo ${scriptsConfigDirPath}/.. | xargs realpath)
+corePath=$(echo ${scriptsConfigDirPath}/../.. | xargs realpath)
 coreTmpFolder="${corePath}/.kube-core/.tmp"
 
 # Loading scripts
@@ -71,4 +71,4 @@ kubevalOutputPath=${testOutputPath}/kubeval
 resultsPath=${kubevalOutputPath}/results
 
 # Validating
-kubeval -d ${gitOpsConfigPath} --ignore-missing-schemas --strict || true 
+kubeval -d ${gitOpsConfigPath} --ignore-missing-schemas --strict || true

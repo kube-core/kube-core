@@ -33,7 +33,7 @@ fi
 scriptsConfigDirPath=$(dirname ${scriptsConfigPath} | xargs realpath)
 
 defaultClusterConfigPath=${scriptsConfigDirPath}/default-cluster-config.yaml
-corePath=$(echo ${scriptsConfigDirPath}/.. | xargs realpath)
+corePath=$(echo ${scriptsConfigDirPath}/../.. | xargs realpath)
 coreTmpFolder="${corePath}/.kube-core/.tmp"
 
 # Loading scripts
@@ -101,10 +101,10 @@ echo "${inputList}" | grep -v .gitkeep | while read f; do
   name=$(echo "$secretName" | cut -f 1 -d '.')
 
   log_debug "Generating secret: ${name}"
-  
+
   mkdir -p  ${tmpOutputPath}/${namespace}/secrets
   mkdir -p  ${outputPath}/${namespace}/secrets
-  
+
   kubectl create secret generic ${name} \
     --namespace=${namespace} \
     --dry-run=client \

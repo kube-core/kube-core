@@ -33,7 +33,7 @@ fi
 scriptsConfigDirPath=$(dirname ${scriptsConfigPath} | xargs realpath)
 
 defaultClusterConfigPath=${scriptsConfigDirPath}/default-cluster-config.yaml
-corePath=$(echo ${scriptsConfigDirPath}/.. | xargs realpath)
+corePath=$(echo ${scriptsConfigDirPath}/../.. | xargs realpath)
 coreTmpFolder="${corePath}/.kube-core/.tmp"
 
 # Loading scripts
@@ -74,17 +74,17 @@ mkdir -p ${patchesPath}
 mkdir -p ${generatedPatchesPath}
 
 # Builds local manifests and move them to cluster config
-find ${patchesPath} -mindepth 1 -maxdepth 1 -type d | while read currentPath; do 
+find ${patchesPath} -mindepth 1 -maxdepth 1 -type d | while read currentPath; do
 
     resource=$(basename $currentPath)
     ${currentPath}/apply.sh
 
     sourceManifestsPath=${generatedPatchesPath}
     targetManifestsPath=${configPath}
-    
+
     mkdir -p ${targetManifestsPath}
     cp -nr ${sourceManifestsPath}/* ${targetManifestsPath} 2>/dev/null || true
-        
+
 done || true
 
 log_debug "${project_name} - Done generating patches output"

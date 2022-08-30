@@ -33,7 +33,7 @@ fi
 scriptsConfigDirPath=$(dirname ${scriptsConfigPath} | xargs realpath)
 
 defaultClusterConfigPath=${scriptsConfigDirPath}/default-cluster-config.yaml
-corePath=$(echo ${scriptsConfigDirPath}/.. | xargs realpath)
+corePath=$(echo ${scriptsConfigDirPath}/../.. | xargs realpath)
 coreTmpFolder="${corePath}/.kube-core/.tmp"
 
 # Loading scripts
@@ -66,7 +66,7 @@ allValuesFile="${valuesFolder}/all-values.yaml"
 
 mkdir -p ${generatedValuesFolder}
 
-# if [[ ! -f "${allValuesFile}" ]]; then 
+# if [[ ! -f "${allValuesFile}" ]]; then
 helmfile -f ${helmfilePath} build | yq e -N -P 'select(di == 0) | .renderedvalues' - > ${allValuesFile}
 # fi
 

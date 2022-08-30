@@ -33,7 +33,7 @@ fi
 scriptsConfigDirPath=$(dirname ${scriptsConfigPath} | xargs realpath)
 
 defaultClusterConfigPath=${scriptsConfigDirPath}/default-cluster-config.yaml
-corePath=$(echo ${scriptsConfigDirPath}/.. | xargs realpath)
+corePath=$(echo ${scriptsConfigDirPath}/../.. | xargs realpath)
 coreTmpFolder="${corePath}/.kube-core/.tmp"
 
 # Loading scripts
@@ -94,14 +94,14 @@ echo "${inputList}" | grep -v .gitkeep | while read f; do
   name=$(echo "$configMapName" | cut -f 1 -d '.')
 
   log_debug "Generating ConfigMap: ${name}"
-  
+
   mkdir -p  ${tmpOutputPath}/${namespace}/configmaps/
   mkdir -p  ${outputPath}/${namespace}/configmaps/
 
   kubectl create configmap ${name} \
     --namespace ${namespace} \
     --dry-run=client \
-    --from-file=${f} -o yaml | 
+    --from-file=${f} -o yaml |
     yq eval -o json - | jq '.metadata |= ({annotations: {"replicator.v1.mittwald.de/replication-allowed": "true", "replicator.v1.mittwald.de/replication-allowed-namespaces": "*"}} + .)' | \
     yq eval --prettyPrint - | \
     namespace="${namespace}" yq e '.metadata.namespace = env(namespace)' - > ${tmpOutputPath}/${namespace}/configmaps/${name}.yaml
@@ -133,11 +133,11 @@ echo "${manifestsList}" | grep -v .gitkeep | while read f; do
   name=$(echo "$configMapName" | cut -f 1 -d '.')
 
   log_debug "Generating ConfigMap: ${name}"
-  
+
   mkdir -p  ${tmpOutputPath}/${namespace}/configmaps/
   mkdir -p  ${outputPath}/${namespace}/configmaps/
 
-  cat ${f} | 
+  cat ${f} |
     yq eval -o json - | jq '.metadata |= ({annotations: {"replicator.v1.mittwald.de/replication-allowed": "true", "replicator.v1.mittwald.de/replication-allowed-namespaces": "*"}} + .)' | \
     yq eval --prettyPrint - | \
     namespace="${namespace}" yq e '.metadata.namespace = env(namespace)' - > ${tmpOutputPath}/${namespace}/configmaps/${name}.yaml

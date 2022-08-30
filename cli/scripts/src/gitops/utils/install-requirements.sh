@@ -33,7 +33,7 @@ fi
 scriptsConfigDirPath=$(dirname ${scriptsConfigPath} | xargs realpath)
 
 defaultClusterConfigPath=${scriptsConfigDirPath}/default-cluster-config.yaml
-corePath=$(echo ${scriptsConfigDirPath}/.. | xargs realpath)
+corePath=$(echo ${scriptsConfigDirPath}/../.. | xargs realpath)
 coreTmpFolder="${corePath}/.kube-core/.tmp"
 
 # Loading scripts
@@ -86,7 +86,7 @@ install() {
 
   if [[ `uname` == Darwin ]]; then
     binary_type=darwin-amd64
-    
+
     ytt_checksum=c370fab22081b17b780d4ec37fb664edb58fe6f28d635ad4beccbac7997586f9
     imgpkg_checksum=b8462c9b2b9c060e1a81c206ea9810937bf7357ae2ee150f94ec8635dff1d612
     kbld_checksum=5fd3afbe09a66fc9e91252c57448045eeeab1ee3f6d305da6f9885186b744e67
@@ -96,7 +96,7 @@ install() {
     kctrl_checksum=063963dc5957426ea67ab9e3d604e1a2eb35c1057836509457cfba6010fe830f
   else
     binary_type=linux-amd64
-    
+
     ytt_checksum=65dbc4f3a4a2ed84296dd1b323e8e7bd77e488fa7540d12dd36cf7fb2fc77c03
     imgpkg_checksum=c7190adcb8445480e4e457c899aecdf7ca98606c625493b904c0eb2ab721ce19
     kbld_checksum=67c86ece94a3747b2e011a5b72044b69f2594ca807621b1e1e4c805f6abcaeef
@@ -108,7 +108,7 @@ install() {
 
   echo "Installing ${binary_type} binaries..."
 
-  
+
   echo "Installing ytt..."
   mkdir -p ./tmp
   $dl_bin github.com/vmware-tanzu/carvel-ytt/releases/download/v0.41.1/ytt-${binary_type} > ./tmp/ytt
@@ -116,7 +116,7 @@ install() {
   sudo mv ./tmp/ytt ${dst_dir}/ytt
   chmod +x ${dst_dir}/ytt
   echo "Installed ${dst_dir}/ytt v0.41.1"
-  
+
   echo "Installing imgpkg..."
   mkdir -p ./tmp
   $dl_bin github.com/vmware-tanzu/carvel-imgpkg/releases/download/v0.29.0/imgpkg-${binary_type} > ./tmp/imgpkg
@@ -124,7 +124,7 @@ install() {
   sudo mv ./tmp/imgpkg ${dst_dir}/imgpkg
   chmod +x ${dst_dir}/imgpkg
   echo "Installed ${dst_dir}/imgpkg v0.29.0"
-  
+
   echo "Installing kbld..."
   mkdir -p ./tmp
   $dl_bin github.com/vmware-tanzu/carvel-kbld/releases/download/v0.34.0/kbld-${binary_type} > ./tmp/kbld
@@ -132,7 +132,7 @@ install() {
   sudo mv ./tmp/kbld ${dst_dir}/kbld
   chmod +x ${dst_dir}/kbld
   echo "Installed ${dst_dir}/kbld v0.34.0"
-  
+
   echo "Installing kapp..."
   mkdir -p ./tmp
   $dl_bin github.com/vmware-tanzu/carvel-kapp/releases/download/v0.49.0/kapp-${binary_type} > ./tmp/kapp
@@ -140,7 +140,7 @@ install() {
   sudo mv ./tmp/kapp ${dst_dir}/kapp
   chmod +x ${dst_dir}/kapp
   echo "Installed ${dst_dir}/kapp v0.49.0"
-  
+
   echo "Installing kwt..."
   mkdir -p ./tmp
   $dl_bin https://github.com/vmware-tanzu/carvel-kwt/releases/download/v0.0.6/kwt-${binary_type} > ./tmp/kwt
@@ -148,7 +148,7 @@ install() {
   sudo mv ./tmp/kwt ${dst_dir}/kwt
   chmod +x ${dst_dir}/kwt
   echo "Installed ${dst_dir}/kwt v0.0.6"
-  
+
   echo "Installing vendir..."
   mkdir -p ./tmp
   $dl_bin github.com/vmware-tanzu/carvel-vendir/releases/download/v0.27.0/vendir-${binary_type} > ./tmp/vendir
@@ -156,7 +156,7 @@ install() {
   sudo mv ./tmp/vendir ${dst_dir}/vendir
   chmod +x ${dst_dir}/vendir
   echo "Installed ${dst_dir}/vendir v0.27.0"
-  
+
   echo "Installing kctrl..."
   mkdir -p ./tmp
   $dl_bin github.com/vmware-tanzu/carvel-kapp-controller/releases/download/v0.38.3/kctrl-${binary_type} > ./tmp/kctrl
@@ -164,7 +164,7 @@ install() {
   sudo mv ./tmp/kctrl ${dst_dir}/kctrl
   chmod +x ${dst_dir}/kctrl
   echo "Installed ${dst_dir}/kctrl v0.38.3"
-  
+
 
   rm -rf ./tmp
 }

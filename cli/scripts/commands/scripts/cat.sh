@@ -33,7 +33,7 @@ fi
 scriptsConfigDirPath=$(dirname ${scriptsConfigPath} | xargs realpath)
 
 defaultClusterConfigPath=${scriptsConfigDirPath}/default-cluster-config.yaml
-corePath=$(echo ${scriptsConfigDirPath}/.. | xargs realpath)
+corePath=$(echo ${scriptsConfigDirPath}/../.. | xargs realpath)
 coreTmpFolder="${corePath}/.kube-core/.tmp"
 
 # Loading scripts
@@ -62,5 +62,5 @@ check_requirements
 
 corePath="${currentScriptPath}/../../.."
 
-# helmfile -f ${helmfilePath} build | 
+# helmfile -f ${helmfilePath} build |
 cat "${scriptsConfigPath}" | yq e '.scripts[]' -o json -  | jq -r -s '.'

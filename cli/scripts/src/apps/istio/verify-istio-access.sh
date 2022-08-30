@@ -33,7 +33,7 @@ fi
 scriptsConfigDirPath=$(dirname ${scriptsConfigPath} | xargs realpath)
 
 defaultClusterConfigPath=${scriptsConfigDirPath}/default-cluster-config.yaml
-corePath=$(echo ${scriptsConfigDirPath}/.. | xargs realpath)
+corePath=$(echo ${scriptsConfigDirPath}/../.. | xargs realpath)
 coreTmpFolder="${corePath}/.kube-core/.tmp"
 
 # Loading scripts
@@ -65,7 +65,7 @@ log_debug "${project_name} - Verify Istio"
 
 namespace=$1
 container=$2
-valuesFile=$3 
+valuesFile=$3
 targetHost=$4
 # ../values/istio-rules-external-services.yaml
 
@@ -92,4 +92,3 @@ grep 'host:' ${valuesFile} | awk '{print $2}' | while read externalHostname; do
         printf "${RED}WARNING:${NC} httpsCode is not the same as httpOriginationCode\n"
     fi
 done
-

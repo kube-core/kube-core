@@ -33,7 +33,7 @@ fi
 scriptsConfigDirPath=$(dirname ${scriptsConfigPath} | xargs realpath)
 
 defaultClusterConfigPath=${scriptsConfigDirPath}/default-cluster-config.yaml
-corePath=$(echo ${scriptsConfigDirPath}/.. | xargs realpath)
+corePath=$(echo ${scriptsConfigDirPath}/../.. | xargs realpath)
 coreTmpFolder="${corePath}/.kube-core/.tmp"
 
 # Loading scripts
@@ -68,7 +68,7 @@ configPath=${config_path}
 localPath=${localConfig_path}
 
 # By default, applies patches & doesn't regenerate secrets
-arg1=${1:-"none"} 
+arg1=${1:-"none"}
 arg2=${2:-"none"}
 arg3=${3:-"patch"}
 
@@ -125,10 +125,10 @@ then
 
     helmfileArgs="${helmfileArgs} -l name=sealed-secrets"
     gitOpsArgs="${gitOpsArgs} -f ${config_path}/sealed-secrets"
-    
+
     helmfileArgs="${helmfileArgs} -l name=replicator"
     gitOpsArgs="${gitOpsArgs} -f ${config_path}/replicator"
-    
+
 else
     echo "WARNING: Not installing sealed-secrets. Removing config inherited from generation"
 fi
@@ -141,7 +141,7 @@ then
 
     helmfileArgs="${helmfileArgs} -l name=tekton"
     gitOpsArgs="${gitOpsArgs} -f ${config_path}/tekton-pipelines"
-    
+
 else
     echo "WARNING: Not installing tekton. Removing config inherited from generation"
 fi
@@ -197,7 +197,7 @@ then
     # Applying CRDs
     echo "Installing CRDs !"
     ${scripts_cluster_apply_crds_path}
-    
+
     echo "Installing required services..."
     echo "WARNING: Services are installed with Helmfile !"
 
@@ -213,18 +213,18 @@ then
         echo "Getting SealedSecrets certificate"
         ${scripts_cluster_setup_sealedsecrets_get_certificate_path}
     fi
-    
+
     echo "Generating secrets for the first install !"
 
 
     ${scripts_gitops_replicated_secrets_path}
-    
+
     ${scripts_gitops_secrets_path}
     echo "Secrets generated !"
 
     # Applying Secrets - Has to be after helmfile apply because of sealed secrets requirement
-    ${scripts_cluster_apply_secrets_path}  
-    
+    ${scripts_cluster_apply_secrets_path}
+
 fi
 
 if [[ "${install_type}" == "gitops" ]]
@@ -247,7 +247,7 @@ then
     # Hack: Applies 2 times for namespaces that need time
     # TODO: Find a fix
     # kubectl apply -R ${gitOpsArgs}
-    # Secrets   
+    # Secrets
 fi
 
 # If gitops & non interactive, we need to build flux first
@@ -282,7 +282,7 @@ then
     echo "Building cluster with secrets"
     ${scripts_build_path} secrets
     echo "Done building cluster for the first time !"
-else    
+else
     echo "WARNING: Building cluster withhout secrets, handle them yourself !"
     ${scripts_build_path}
 fi
@@ -293,7 +293,7 @@ then
     echo "WARNING: Required stuff will be generated, then it's up to you !"
     # echo "Installing SealedSecrets"
     # ${scripts_cluster_setup_sealedsecrets_install_path}
-    
+
     if [[ "${install_full}" == "true"  ]]
     then
         echo "GitOps - Applying all manifests"
@@ -314,17 +314,17 @@ then
         git status
 
         echo "Adding config files..."
-        
+
         git add ${config_path}
 
         if [[ ${install_sealedsecrets} == "true" ]]
-        then    
+        then
             echo "Adding generated secrets..."
             git add ${secrets_path}/output
 
         fi
-        
-        
+
+
         echo "Commiting..."
         git commit -m "gitops: Install regeneration (cluster/setup/install.sh)"
 
@@ -371,5 +371,3 @@ fi
 echo "Done installing, have fun ! :)"
 
 ${scripts_cluster_setup_post_install_path}
-
-
