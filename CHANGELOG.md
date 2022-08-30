@@ -2,9 +2,24 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.3.1](https://github.com/neo9/kube-core/compare/v0.3.0...v0.3.1)
+
+- cli: Fixes corePath in scripts [`b0b5791`](https://github.com/neo9/kube-core/commit/b0b5791191b5554b481d2832c44320d4b1ece44d)
+- scripts: Moved scripts in cli folder to package them together [`77d78bd`](https://github.com/neo9/kube-core/commit/77d78bd9fddcf24ec61502a4e175a332ba34e3e8)
+- repo: Fixes .gitignore ignoring some files that should not be ignored [`f6b6ab0`](https://github.com/neo9/kube-core/commit/f6b6ab0d7e788bc5dcae1b3105925ace73052959)
+- cli: Reintroduced .helmignore files in releases/dist [`3a24223`](https://github.com/neo9/kube-core/commit/3a24223d3744eaba62d3bab01f1fb5c6277dd208)
+- ci: Updated GitHub Actions Workflows [`9de80b9`](https://github.com/neo9/kube-core/commit/9de80b9e871bedf076878207d812ca79097f7b6c)
+- cli: Adds basic install instructions in README [`684b232`](https://github.com/neo9/kube-core/commit/684b23204e80a260b39323cf4814fed4f9d01212)
+- repo: Fixes scripts line endings for npm release packaging [`70a43f6`](https://github.com/neo9/kube-core/commit/70a43f6b7b7045de1514bd68a2ffc469db63730f)
+- cli: Bumps version to v0.1.6 [`ecf11e9`](https://github.com/neo9/kube-core/commit/ecf11e9ee10ef564dde949691eeaaaa52823f843)
+- release-it: Fixes changelog generation [`e89adf0`](https://github.com/neo9/kube-core/commit/e89adf0cc69c1e195aaf0e6bbb04c66d653b5e28)
+- cli: Adds proper chmod on scripts [`948b260`](https://github.com/neo9/kube-core/commit/948b2609896126ebb96741c18ce4d4d1f1202aac)
+
 #### [v0.3.0](https://github.com/neo9/kube-core/compare/v0.2.1...v0.3.0)
 
-- release: v0.3.0 [`3ddffb2`](https://github.com/neo9/kube-core/commit/3ddffb240751606a6836bb7b66f6062ab805ecd9)
+> 30 August 2022
+
+- release: v0.3.0 [`a89d9be`](https://github.com/neo9/kube-core/commit/a89d9be59f973ba52a2611eedf11bee7cf4220de)
 
 #### [v0.2.1](https://github.com/neo9/kube-core/compare/v0.2.0...v0.2.1)
 

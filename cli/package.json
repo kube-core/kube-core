@@ -1,6 +1,6 @@
 {
   "name": "@kube-core/cli",
-  "version": "0.1.6",
+  "version": "0.3.1",
   "description": "CLI for kube-core",
   "author": "Damien Parbhakar",
   "bin": {
@@ -90,10 +90,10 @@
   "scripts": {
     "dev:x": "watch yarn run prepack src",
     "dev:w": "watch \"yarn run prepack\" src",
-    "build": "shx rm -rf dist && tsc -b",
+    "build": "rm -rf dist && tsc -b",
     "lint": "eslint . --ext .ts --config .eslintrc",
     "format": "yarn prettier --write src",
-    "postpack": "shx rm -f oclif.manifest.json",
+    "postpack": "rm -f oclif.manifest.json",
     "posttest": "yarn lint",
     "prepack": "yarn build && oclif manifest && oclif readme",
     "test": "mocha --forbid-only \"test/**/*.test.ts\"",
