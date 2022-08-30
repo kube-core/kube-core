@@ -121,7 +121,7 @@ COPY ./cli/package.json ./cli/yarn.lock /app/kube-core/cli/
 RUN cd /app/kube-core/cli && yarn
 
 COPY . /app/kube-core
-RUN cd /app/kube-core/cli && npm link
+RUN cd /app/kube-core/cli && npm link && yarn build && yarn prepack && yarn postpack
 
 
 # Run the container:

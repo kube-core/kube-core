@@ -192,8 +192,8 @@ spec:
         value: |
           #!/usr/bin/env bash
 
-            cd $(workspaces.source.path)/$(params.git-project-name)/cluster
-          ENV=ci /app/kube-core/scripts/src/gitops/ci/kube-core-setup.sh "$(params.git-branch)"
+          cd $(workspaces.source.path)/$(params.git-project-name)/cluster
+          ENV=ci kube-core scripts exec gitops_ci_kube_core_setup "$(params.git-branch)"
 
           helmfile repos
           kube-core build all
@@ -221,7 +221,7 @@ spec:
           #!/usr/bin/env bash
 
           cd $(workspaces.source.path)/$(params.git-project-name)/cluster
-          ENV=ci /app/kube-core/scripts/src/gitops/ci/kube-core-setup.sh "$(params.git-branch)"
+          ENV=ci kube-core scripts exec gitops_ci_kube_core_setup "$(params.git-branch)"
           kube-core test all
 
     workspaces:
@@ -256,8 +256,8 @@ spec:
           #!/usr/bin/env bash
 
           cd $(workspaces.source.path)/$(params.git-project-name)/cluster
-          ENV=ci /app/kube-core/scripts/src/gitops/ci/kube-core-setup.sh "$(params.git-branch)" "$(params.git-branch)" "$(params.git-branch)"
-          ENV=ci /app/kube-core/scripts/src/gitops/ci/auto-pr.sh "$(params.git-branch)" "$(params.git-branch)" "$(params.git-branch)"
+          ENV=ci kube-core scripts exec gitops_ci_kube_core_setup "$(params.git-branch)" "$(params.git-branch)" "$(params.git-branch)"
+          ENV=ci kube-core scripts exec gitops_ci_auto_pr "$(params.git-branch)" "$(params.git-branch)" "$(params.git-branch)"
 
     workspaces:
       - name: input
@@ -292,8 +292,8 @@ spec:
           #!/usr/bin/env bash
 
           cd $(workspaces.source.path)/$(params.git-project-name)/cluster
-          ENV=ci /app/kube-core/scripts/src/gitops/ci/kube-core-setup.sh "$(params.git-branch)"
-          ENV=ci /app/kube-core/scripts/src/gitops/ci/auto-pr.sh "$(params.git-branch)"
+          ENV=ci kube-core scripts exec gitops_ci_kube_core_setup "$(params.git-branch)"
+          ENV=ci kube-core scripts exec gitops_ci_auto_pr "$(params.git-branch)"
 
     workspaces:
       - name: input
@@ -324,7 +324,7 @@ spec:
           #!/usr/bin/env bash
 
           cd $(workspaces.source.path)/$(params.git-project-name)/cluster
-          ENV=ci /app/kube-core/scripts/src/gitops/ci/kube-core-setup.sh "$(params.git-branch)"
+          ENV=ci kube-core scripts exec gitops_ci_kube_core_setup "$(params.git-branch)"
           echo "TODO: If any modifications in tree, should fail pipeline and suggest to build/debug."
           echo "TODO: If everything is ok, should build an OCI package with cluster manifests, using kbld & imgpkg"
 
