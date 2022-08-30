@@ -33,7 +33,7 @@ fi
 scriptsConfigDirPath=$(dirname ${scriptsConfigPath} | xargs realpath)
 
 defaultClusterConfigPath=${scriptsConfigDirPath}/default-cluster-config.yaml
-corePath=$(echo ${scriptsConfigDirPath}/.. | xargs realpath)
+corePath=$(echo ${scriptsConfigDirPath}/../.. | xargs realpath)
 coreTmpFolder="${corePath}/.kube-core/.tmp"
 
 # Loading scripts
@@ -75,8 +75,8 @@ mkdir -p ${configPath}
 mkdir -p ${tmpConfigPath}
 
 # Helmfile only is not good enough. Next line is "the old way":
-# helmfile -f ${helmfilePath} ${helmfileArgs} template --skip-deps --output-dir ${configPath} --output-dir-template "{{ .OutputDir }}/{{ .Release.Namespace }}/{{ .Release.Name }}" 
-# TODO: Open Issue on Helmfile to explain why the latter is bad; and how the following, using kubectl slice, is better. 
+# helmfile -f ${helmfilePath} ${helmfileArgs} template --skip-deps --output-dir ${configPath} --output-dir-template "{{ .OutputDir }}/{{ .Release.Namespace }}/{{ .Release.Name }}"
+# TODO: Open Issue on Helmfile to explain why the latter is bad; and how the following, using kubectl slice, is better.
 # Consider proposing a PR to integrate it with Helmfile.
 
 # Listing all releases with Helmfile, extracting useful information

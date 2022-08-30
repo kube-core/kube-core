@@ -33,7 +33,7 @@ fi
 scriptsConfigDirPath=$(dirname ${scriptsConfigPath} | xargs realpath)
 
 defaultClusterConfigPath=${scriptsConfigDirPath}/default-cluster-config.yaml
-corePath=$(echo ${scriptsConfigDirPath}/.. | xargs realpath)
+corePath=$(echo ${scriptsConfigDirPath}/../.. | xargs realpath)
 coreTmpFolder="${corePath}/.kube-core/.tmp"
 
 # Loading scripts
@@ -85,7 +85,6 @@ if cat ${resultsPath} | grep -q "error"; then
     if [[ "${failOnError}" == "true" ]]; then
         exit 1
     fi
-else 
+else
     echo "SUCCESS: No linting errors found."
 fi
-

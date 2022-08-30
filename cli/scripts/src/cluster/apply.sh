@@ -33,7 +33,7 @@ fi
 scriptsConfigDirPath=$(dirname ${scriptsConfigPath} | xargs realpath)
 
 defaultClusterConfigPath=${scriptsConfigDirPath}/default-cluster-config.yaml
-corePath=$(echo ${scriptsConfigDirPath}/.. | xargs realpath)
+corePath=$(echo ${scriptsConfigDirPath}/../.. | xargs realpath)
 coreTmpFolder="${corePath}/.kube-core/.tmp"
 
 # Loading scripts
@@ -72,7 +72,7 @@ then
 
     # Applying CRDs
     # For now applying CRDs is disabled by default to mirror build behavior. Use --include-crds to apply them.
-    # TODO: Consider if we should activate it by default. 
+    # TODO: Consider if we should activate it by default.
     # At the moment, not seen as a good practice, as CRDs operations can be destructive.
     if [[ "${includeCRDs}" == "yes" ]]; then
         ${scripts_cluster_apply_crds_path} $@
@@ -86,12 +86,12 @@ then
 
     # Applying Secrets
     # For now applying Secrets is disabled by default to mirror build behavior. Use --include-secrets to apply them.
-    # TODO: Consider if we should activate it by default. 
+    # TODO: Consider if we should activate it by default.
     # At the moment, not seen as a good practice, as Secrets operations can be destructive.
     if [[ "${includeSecrets}" == "yes" ]]; then
         ${scripts_cluster_apply_secrets_path} $@
     fi
-    
+
     # Helmfile Releases
     ${scripts_cluster_apply_helmfiles_path} $@
 

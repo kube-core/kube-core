@@ -33,7 +33,7 @@ fi
 scriptsConfigDirPath=$(dirname ${scriptsConfigPath} | xargs realpath)
 
 defaultClusterConfigPath=${scriptsConfigDirPath}/default-cluster-config.yaml
-corePath=$(echo ${scriptsConfigDirPath}/.. | xargs realpath)
+corePath=$(echo ${scriptsConfigDirPath}/../.. | xargs realpath)
 coreTmpFolder="${corePath}/.kube-core/.tmp"
 
 # Loading scripts
@@ -80,4 +80,3 @@ releaseName=$(echo "${plopOutput}" | jq -r '.releaseName')
 releaseNamespace=$(echo "${plopOutput}" | jq -r '.releaseNamespace')
 
 echo "Done, you can now deploy this relase!"
-

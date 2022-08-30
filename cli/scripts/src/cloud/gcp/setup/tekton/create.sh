@@ -33,7 +33,7 @@ fi
 scriptsConfigDirPath=$(dirname ${scriptsConfigPath} | xargs realpath)
 
 defaultClusterConfigPath=${scriptsConfigDirPath}/default-cluster-config.yaml
-corePath=$(echo ${scriptsConfigDirPath}/.. | xargs realpath)
+corePath=$(echo ${scriptsConfigDirPath}/../.. | xargs realpath)
 coreTmpFolder="${corePath}/.kube-core/.tmp"
 
 # Loading scripts
@@ -78,24 +78,24 @@ gcloud projects add-iam-policy-binding ${project_name} \
 gcloud projects add-iam-policy-binding ${project_name} \
   --member=serviceAccount:${serviceAccount}@${project_name}.iam.gserviceaccount.com \
   --role=roles/container.clusterAdmin || true
-  
+
 gcloud projects add-iam-policy-binding ${project_name} \
   --member=serviceAccount:${serviceAccount}@${project_name}.iam.gserviceaccount.com \
   --role=roles/container.clusterViewer || true
-  
+
 gcloud projects add-iam-policy-binding ${project_name} \
   --member=serviceAccount:${serviceAccount}@${project_name}.iam.gserviceaccount.com \
   --role=roles/container.developer || true
-  
+
 gcloud projects add-iam-policy-binding ${project_name} \
   --member=serviceAccount:${serviceAccount}@${project_name}.iam.gserviceaccount.com \
   --role=roles/storage.objectAdmin || true
-  
+
 gcloud projects add-iam-policy-binding ${project_name} \
   --member=serviceAccount:${serviceAccount}@${project_name}.iam.gserviceaccount.com \
   --role=roles/storage.objectViewer || true
-  
-  
+
+
 
 # Delete old keys
 keys=$(gcloud iam service-accounts keys list --iam-account=${serviceAccount}@${project_name}.iam.gserviceaccount.com | tail -n +2 | awk '{print $1}') || true
@@ -112,4 +112,3 @@ gcloud iam service-accounts keys create ${credentialsFile} --iam-account ${servi
 # kubectl config rename-context gke_${project_name}_${cloud_default_location}_${cluster_config_name} ${cluster_config_name}
 
 # kubectl config view --raw --minify | sed 's/cmd-path.*/cmd-path: gcloud/' > secrets/input/kubeconfig-internal-gcloud.yaml
-

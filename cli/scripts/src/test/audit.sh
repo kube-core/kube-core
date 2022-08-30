@@ -33,7 +33,7 @@ fi
 scriptsConfigDirPath=$(dirname ${scriptsConfigPath} | xargs realpath)
 
 defaultClusterConfigPath=${scriptsConfigDirPath}/default-cluster-config.yaml
-corePath=$(echo ${scriptsConfigDirPath}/.. | xargs realpath)
+corePath=$(echo ${scriptsConfigDirPath}/../.. | xargs realpath)
 coreTmpFolder="${corePath}/.kube-core/.tmp"
 
 # Loading scripts
@@ -84,7 +84,7 @@ rm -rf ${auditOutputPath}
 mkdir -p ${auditOutputPath}
 
 
-while read i; do 
+while read i; do
     # echo "${i}"
     # echo "kubeaudit -k ${kubeAuditConfigPath} all -e 0 -m error -f ${i} --format json"
     kubeaudit -k ${kubeAuditConfigPath} all -e 0 -m "error" -f "${i}" --format "logrus" >> ${resultsPath}
@@ -97,7 +97,7 @@ if cat ${resultsPath} | grep -q "error"; then
     if [[ "${failOnError}" == "true" ]]; then
         exit 1
     fi
-else 
+else
     echo "SUCCESS: Audit completed without errors."
 fi
 

@@ -33,7 +33,7 @@ fi
 scriptsConfigDirPath=$(dirname ${scriptsConfigPath} | xargs realpath)
 
 defaultClusterConfigPath=${scriptsConfigDirPath}/default-cluster-config.yaml
-corePath=$(echo ${scriptsConfigDirPath}/.. | xargs realpath)
+corePath=$(echo ${scriptsConfigDirPath}/../.. | xargs realpath)
 coreTmpFolder="${corePath}/.kube-core/.tmp"
 
 # Loading scripts
@@ -78,15 +78,14 @@ plopOutput=$(cat ${tmpReleasesFolder}/.plop.out.data)
 chartRepository=$(echo "${plopOutput}" | jq -r '.chartRepository')
 chartName=$(echo "${plopOutput}" | jq -r '.chartName')
 chartVersion=$(echo "${plopOutput}" | jq -r '.chartVersion')
- 
+
 chartPath=$(realpath ${baseReleasesFolder})
 
 helm pull --repo ${chartRepository} ${chartName} --untar --untardir ${tmpReleasesFolder}
 
 cp -rf ${tmpReleasesFolder}/${chartName} ${chartPath}
 
-${scripts_dev_releases_build_path} ${chartName} 
+${scripts_dev_releases_build_path} ${chartName}
 ${scripts_dev_releases_cleanup_path}
 
 echo "Done, you can now use this chart by creating a release in kube-core!"
-

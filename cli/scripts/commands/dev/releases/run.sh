@@ -33,7 +33,7 @@ fi
 scriptsConfigDirPath=$(dirname ${scriptsConfigPath} | xargs realpath)
 
 defaultClusterConfigPath=${scriptsConfigDirPath}/default-cluster-config.yaml
-corePath=$(echo ${scriptsConfigDirPath}/.. | xargs realpath)
+corePath=$(echo ${scriptsConfigDirPath}/../.. | xargs realpath)
 coreTmpFolder="${corePath}/.kube-core/.tmp"
 
 # Loading scripts
@@ -75,5 +75,5 @@ mkdir -p ${coreReleasesPath}
 ${scripts_dev_releases_get_path} $@
 ${scripts_dev_releases_build_path} $@
 ${scripts_dev_releases_lint_path} $@
-${scripts_dev_releases_cleanup_path} $@ 
+${scripts_dev_releases_cleanup_path} $@
 ${scripts_dev_mode_prod_path} $@

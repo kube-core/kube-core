@@ -33,7 +33,7 @@ fi
 scriptsConfigDirPath=$(dirname ${scriptsConfigPath} | xargs realpath)
 
 defaultClusterConfigPath=${scriptsConfigDirPath}/default-cluster-config.yaml
-corePath=$(echo ${scriptsConfigDirPath}/.. | xargs realpath)
+corePath=$(echo ${scriptsConfigDirPath}/../.. | xargs realpath)
 coreTmpFolder="${corePath}/.kube-core/.tmp"
 
 # Loading scripts
@@ -80,9 +80,9 @@ rm -rf ${kubeScoreOutputPath}
 mkdir -p ${kubeScoreOutputPath}
 
 
-while read i; do 
+while read i; do
     # echo "${i}"
-    # kube-score score "${i}" -o json | jq -r 'map(tostring) | reduce .[] as $item (""; . + $item + "\n")' >> ${resultsPath} 
+    # kube-score score "${i}" -o json | jq -r 'map(tostring) | reduce .[] as $item (""; . + $item + "\n")' >> ${resultsPath}
     # kube-score score "${i}" -o json | jq -r 'map(tostring) | reduce .[] as $item (""; . + $item + "\n")' 2>/dev/null | grep . >> ${resultsPath} || true  # last
     kube-score score "${i}" -o ci >> ${resultsPath} || true
 done <<< "${files}"
@@ -94,7 +94,7 @@ if cat ${resultsPath} | grep -q "CRITICAL"; then
     if [[ "${failOnError}" == "true" ]]; then
         exit 1
     fi
-else 
+else
     echo "SUCCESS: No critical erros found in config."
 fi
 

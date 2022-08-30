@@ -33,7 +33,7 @@ fi
 scriptsConfigDirPath=$(dirname ${scriptsConfigPath} | xargs realpath)
 
 defaultClusterConfigPath=${scriptsConfigDirPath}/default-cluster-config.yaml
-corePath=$(echo ${scriptsConfigDirPath}/.. | xargs realpath)
+corePath=$(echo ${scriptsConfigDirPath}/../.. | xargs realpath)
 coreTmpFolder="${corePath}/.kube-core/.tmp"
 
 # Loading scripts
@@ -93,17 +93,17 @@ echo "${replicatedConfigMaps}" | xargs yq '.' > ${tmpFolder}/configmaps/replicat
 
 
 if [[ "$LOG_LEVEL" == "DEBUG" || "$LOG_LEVEL" == "INSANE" ]] ; then
-    if [[ ! -z "${configmaps}" ]] ; then 
+    if [[ ! -z "${configmaps}" ]] ; then
         kubectl slice -f ${tmpFolder}/configmaps/configmaps.yaml --output-dir ${tmpFolder}/configmaps/configmaps --template='{{.metadata.namespace}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml'
     fi
-    if [[ ! -z "${replicatedConfigMaps}" ]] ; then 
+    if [[ ! -z "${replicatedConfigMaps}" ]] ; then
         kubectl slice -f ${tmpFolder}/configmaps/replicated-configmaps.yaml --output-dir ${tmpFolder}/configmaps/configmaps --template='{{.metadata.namespace}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml'
     fi
 else
-    if [[ ! -z "${configmaps}" ]] ; then 
+    if [[ ! -z "${configmaps}" ]] ; then
         kubectl slice -f ${tmpFolder}/configmaps/configmaps.yaml --output-dir ${tmpFolder}/configmaps/configmaps --template='{{.metadata.namespace}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml' 2> /dev/null
     fi
-    if [[ ! -z "${replicatedConfigMaps}" ]] ; then 
+    if [[ ! -z "${replicatedConfigMaps}" ]] ; then
         kubectl slice -f ${tmpFolder}/configmaps/replicated-configmaps.yaml --output-dir ${tmpFolder}/configmaps/configmaps --template='{{.metadata.namespace}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml' 2> /dev/null
     fi
 fi

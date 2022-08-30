@@ -33,7 +33,7 @@ fi
 scriptsConfigDirPath=$(dirname ${scriptsConfigPath} | xargs realpath)
 
 defaultClusterConfigPath=${scriptsConfigDirPath}/default-cluster-config.yaml
-corePath=$(echo ${scriptsConfigDirPath}/.. | xargs realpath)
+corePath=$(echo ${scriptsConfigDirPath}/../.. | xargs realpath)
 coreTmpFolder="${corePath}/.kube-core/.tmp"
 
 # Loading scripts
@@ -70,4 +70,4 @@ conftestOutputPath=${testOutputPath}/conftest
 resultsPath=${conftestOutputPath}/results
 
 # OPA Validation
-conftest test ${gitOpsConfigPath} -p ${policiesPath} || true 
+conftest test ${gitOpsConfigPath} -p ${policiesPath} || true

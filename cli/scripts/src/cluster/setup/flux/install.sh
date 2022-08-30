@@ -33,7 +33,7 @@ fi
 scriptsConfigDirPath=$(dirname ${scriptsConfigPath} | xargs realpath)
 
 defaultClusterConfigPath=${scriptsConfigDirPath}/default-cluster-config.yaml
-corePath=$(echo ${scriptsConfigDirPath}/.. | xargs realpath)
+corePath=$(echo ${scriptsConfigDirPath}/../.. | xargs realpath)
 coreTmpFolder="${corePath}/.kube-core/.tmp"
 
 # Loading scripts
@@ -103,7 +103,7 @@ echo "gcloud projects add-iam-policy-binding ${cloud_project} --member=serviceAc
 echo "To create a key for Flux SA:"
 credentialsFile="${secrets_path}/input/flux-system/flux.json"
 echo "gcloud iam service-accounts keys create ${credentialsFile} --iam-account ${serviceAccount}@${cloud_project}.iam.gserviceaccount.com"
-# flux create image repository podinfo --image=ghcr.io/stefanprodan/podinfo --interval=1m 
+# flux create image repository podinfo --image=ghcr.io/stefanprodan/podinfo --interval=1m
 
 
 echo "To create a webhook token for gcr push receiver"
@@ -127,7 +127,7 @@ EOF
 )
 
 echo "${visitorGroup}" > visitorgroup-gcp.yaml
-  
+
 
 
 log_info "Done Installing Flux!"
