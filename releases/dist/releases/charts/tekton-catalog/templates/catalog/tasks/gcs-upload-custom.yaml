@@ -29,11 +29,8 @@ spec:
   - name: path
     description: The path to files or directories relative to the source workspace that you'd like to upload.
     type: string
-  - name: bucketAddressConfigMap
-    description: The configmap that has the address (including "gs://") where you'd like to upload files to.
-  - name: bucketAddressConfigMapKeyName
-    description: The key name of the bucketAddressConfigMap.
-    type: string
+  - name: bucket
+    description: The bucket name
   - name: deleteExtraFiles
     description: |
       When "true", delete extra files under location not found under path.
@@ -73,7 +70,7 @@ spec:
     imagePullPolicy: IfNotPresent
     script: |
       #!/usr/bin/env bash
-      set -xe      
+      set -xe
       cp /tmp/$(params.serviceAccountSecretName)/$(params.serviceAccountSecretKeyName) $(params.serviceAccountSecretKeyName)
 
   - name: upload
@@ -83,10 +80,7 @@ spec:
       - name: SOURCE
         value: "$(workspaces.source.path)/$(params.path)"
       - name: LOCATION
-        valueFrom:
-          configMapKeyRef:
-            name: $(params.bucketAddressConfigMap)
-            key: $(params.bucketAddressConfigMapKeyName) 
+        value: "gs://$(params.bucket)"
       - name: DELETE_EXTRA_FILES
         value: $(params.deleteExtraFiles)
       - name: REPLACE_EXISTING_FILES
@@ -127,7 +121,7 @@ spec:
         # Copying one file
         gsutil cp ${CP_PARAMS} "${SOURCE}" "${LOCATION}"
       fi
-    
+
   - name: echo-uploaded-links
     volumeMounts:
     - name: $(params.serviceAccountSecretName)
@@ -135,16 +129,13 @@ spec:
       mountPath: /tmp/$(params.serviceAccountSecretName)
     env:
     - name: LOCATION
-      valueFrom:
-        configMapKeyRef:
-          name: $(params.bucketAddressConfigMap)
-          key: $(params.bucketAddressConfigMapKeyName) 
+      value: "gs://$(params.bucket)"
     workingDir: $(workspaces.source.path)/$(params.path)
     image: gcr.io/google.com/cloudsdktool/cloud-sdk:379.0.0-slim@sha256:d844877c7aaa06a0072979230c68417ddb0f27087277f29747c7169d6ed0d2b9 #tag: 379.0.0-slim
     imagePullPolicy: IfNotPresent
     script: |
       #!/usr/bin/env bash
-      set -xe     
-      for report in *.html; do                             
+      set -xe
+      for report in *.html; do
         echo "https://storage.cloud.google.com/$(echo $LOCATION | awk '{ print substr($0,6) }')/lhci/$report"
       done

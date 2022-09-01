@@ -353,6 +353,8 @@ spec:
         value: [build, test]
       - name: git-project-name
         value: $(params.git-project-name)
+      - name: nexus-secret
+        value: {{ index .Values.releases "tekton" "secrets" "nexus" "secretRef" "name" }}
     workspaces:
       - name: input
         workspace: ws
@@ -778,6 +780,8 @@ spec:
       value: [currentVersion, publish]
     - name: git-project-name
       value: $(params.git-project-name)
+    - name: nexus-secret
+      value: {{ index .Values.releases "tekton" "secrets" "nexus" "secretRef" "name" }}
     workspaces:
     - name: input
       workspace: ws
@@ -874,15 +878,13 @@ spec:
       workspace: ws
     params:
     - name: path
-      value: $(params.git-project-name)/lhci
-    - name: bucketAddressConfigMap
-      value: tekton-storage
-    - name: bucketAddressConfigMapKeyName
-      value: address
+      value: artifacts/lhci/$(params.git-project-name)
+    - name: bucket
+      value: {{ index .Values.cluster.delivery.config.lighthouse.bucket }}
     - name: serviceAccountSecretName
-      value: gcr-admin
+      value: {{ index .Values.releases "tekton" "secrets" "credentials" "secretRef" "name" }}
     - name: serviceAccountSecretKeyName
-      value: gcr-admin.json
+      value: {{ index .Values.releases "tekton" "secrets" "credentials" "secretRef" "key" }}
 
 ######################################################
 
@@ -991,6 +993,6 @@ spec:
           - "true"
         params:
           - name: webhook-secret
-            value: slack-webhook-secret
+            value: {{ index .Values.releases "tekton" "secrets" "slack-webhook" "secretRef" "name" }}
           - name: message
             value: "Pipeline for *$(params.git-project-name)* has failed. <$(params.tekton-url)/#/namespaces/tekton-pipelines/pipelineruns/$(tasks.extract-build-config-from-source.results.PIPELINERUN_NAME)|Check Pipeline>"

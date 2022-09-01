@@ -828,6 +828,6 @@ spec:
           - "develop"
         params:
           - name: webhook-secret
-            value: slack-webhook-secret
+            value:  {{ index .Values.releases "tekton" "secrets" "slack-webhook" "secretRef" "name" }}
           - name: message
             value: "Pipeline for *$(params.git-project-name)* has failed. <$(params.tekton-url)/#/namespaces/tekton-pipelines/pipelineruns/$(tasks.extract-build-config-from-source.results.PIPELINERUN_NAME)|Check Pipeline>"
