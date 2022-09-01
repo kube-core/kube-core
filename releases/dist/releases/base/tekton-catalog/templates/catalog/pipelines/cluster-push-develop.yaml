@@ -74,6 +74,10 @@ spec:
     description: The Dockerfile file name to look for
     type: string
     default: Dockerfile
+  - name: auto-merge
+    description: If we merge automatically the changes after tests pass or not
+    type: string
+    default: "false"
   workspaces:
   - name: ws
 
@@ -257,7 +261,11 @@ spec:
 
           cd $(workspaces.source.path)/$(params.git-project-name)/cluster
           ENV=ci kube-core scripts exec gitops_ci_kube_core_setup "$(params.git-branch)" "$(params.git-branch)" "$(params.git-branch)"
-          ENV=ci kube-core scripts exec gitops_ci_auto_pr "$(params.git-branch)" "$(params.git-branch)" "$(params.git-branch)"
+          if [[ "$(params.auto-merge)" == "true" ]]; then
+            ENV=ci PR_AUTO_MERGE=true kube-core scripts exec gitops_ci_auto_pr "$(params.git-branch)" "$(params.git-branch)" "$(params.git-branch)"
+          else
+            ENV=ci kube-core scripts exec gitops_ci_auto_pr "$(params.git-branch)" "$(params.git-branch)" "$(params.git-branch)"
+          fi
 
     workspaces:
       - name: input
@@ -293,7 +301,11 @@ spec:
 
           cd $(workspaces.source.path)/$(params.git-project-name)/cluster
           ENV=ci kube-core scripts exec gitops_ci_kube_core_setup "$(params.git-branch)"
-          ENV=ci kube-core scripts exec gitops_ci_auto_pr "$(params.git-branch)"
+          if [[ "$(params.auto-merge)" == "true" ]]; then
+            ENV=ci PR_AUTO_MERGE=true kube-core scripts exec gitops_ci_auto_pr "$(params.git-branch)"
+          else
+            ENV=ci kube-core scripts exec gitops_ci_auto_pr "$(params.git-branch)"
+          fi
 
     workspaces:
       - name: input

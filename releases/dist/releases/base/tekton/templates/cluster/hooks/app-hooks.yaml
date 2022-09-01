@@ -18,8 +18,8 @@ spec:
         params:
           - name: secretRef
             value:
-              secretName: "gitlab-token"
-              secretKey: "token"
+              secretName: {{ (index .Values.releases "tekton" "secrets" "git-webhooks-token" "secretRef" "name") }}
+              secretKey: {{ (index .Values.releases "tekton" "secrets" "git-webhooks-token" "secretRef" "key") }}
           - name: eventTypes
             value:
               - "Push Hook"
@@ -30,7 +30,7 @@ spec:
               #The build format hint (jar / image), gives indication about what the pipeline needs to produce. default: image
             - key: build_format
               expression: "requestURL.parseURL().rawQuery.contains('buildFormat=') ? requestURL.parseURL().query['buildFormat'] : 'image'"
-              #The build tool to use (docker, npm, gradle, maven). if not specified, task extract-build-config-from-source will detect it 
+              #The build tool to use (docker, npm, gradle, maven). if not specified, task extract-build-config-from-source will detect it
             - key: build_tool
               expression: "requestURL.parseURL().rawQuery.contains('buildTool=') ? requestURL.parseURL().query['buildTool'] : ''"
               #whether to publish on nexus or not. default: false

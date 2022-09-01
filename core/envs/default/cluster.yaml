@@ -242,3 +242,9 @@ cluster:
           value: "system"
           effect: "NoExecute"
         affinity: {}
+
+  delivery:
+    namespace: apps
+    branch: main
+    config:
+      autoMerge: "false"
