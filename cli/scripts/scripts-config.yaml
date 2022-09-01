@@ -134,6 +134,11 @@ scripts:
     name: cloud_gcp_setup_tekton_git
     description: ""
     args: ""
+  cloud_gcp_setup_tekton_sf:
+    path: ./src/cloud/gcp/setup/tekton/sf.sh
+    name: cloud_gcp_setup_tekton_sf
+    description: ""
+    args: ""
   cloud_gcp_setup_tekton_storage:
     path: ./src/cloud/gcp/setup/tekton/storage.sh
     name: cloud_gcp_setup_tekton_storage

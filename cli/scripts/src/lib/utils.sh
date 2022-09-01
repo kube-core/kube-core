@@ -157,6 +157,11 @@ gcloud_setup_thanos_bucket() {
     gsutil iam ch serviceAccount:${cluster_config_name}-thanos@${cloud_project}.iam.gserviceaccount.com:objectAdmin gs://${cluster_config_name}-thanos-storage || true
 }
 
+gcloud_setup_tekton_bucket() {
+    make_bucket tekton-storage || true
+    gsutil iam ch serviceAccount:${cluster_config_name}-tekton@${cloud_project}.iam.gserviceaccount.com:objectAdmin gs://${cluster_config_name}-tekton-storage || true
+}
+
 gcloud_setup_generate_thanos_secret() {
 
 secret=$(cat <<EOF

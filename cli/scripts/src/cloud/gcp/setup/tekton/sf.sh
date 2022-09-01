@@ -60,61 +60,24 @@ check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
 
+log_info "Generating sf secrets..."
 
-if [[ "${cloud_provider}" == "gcp" ]]; then
+secretName="nexus"
+secret=$(kubectl create secret generic ${secretName} --dry-run=client -o yaml --from-env-file=${keys_path}/.${secretName}  | yq '.metadata |= {"name": "'"${secretName}"'", "namespace": "secrets", "annotations" : {"replicator.v1.mittwald.de/replication-allowed": "true", "replicator.v1.mittwald.de/replication-allowed-namespaces": "*"}}' -)
+echo "${secret}"  > ${secrets_path}/manifests/${secretName}.yaml
 
-serviceAccountsConfig="$(cat <<EOF
-serviceAccounts:
-  - name: cluster-manager
-    roles:
-      - roles/container.admin
-      - roles/container.clusterAdmin
-      - roles/container.clusterViewer
-      - roles/container.developer
-      - roles/compute.admin
-  - name: dns-admin
-    roles:
-      - roles/dns.admin
-  - name: gcr-admin
-    roles:
-      - projects/${cloud_project}/roles/gcrAdmin
-  - name: gcs-admin
-    roles:
-      - projects/${cloud_project}/roles/gcsAdmin
-  - name: velero
-    roles:
-      - projects/${cloud_project}/roles/velero
-  - name: thanos
-    roles:
-      - roles/storage.objectAdmin
-  - name: tekton
-    roles:
-      - roles/container.admin
-      - roles/container.clusterAdmin
-      - roles/container.clusterViewer
-      - roles/container.developer
-      - roles/storage.objectAdmin
-      - roles/storage.objectViewer
-  - name: crossplane
-    roles:
-      - roles/iam.serviceAccountUser
-      - roles/iam.serviceAccountAdmin
-      - roles/iam.serviceAccountKeyAdmin
-      - roles/cloudsql.admin
-      - roles/container.admin
-      - roles/redis.admin
-      - roles/compute.networkAdmin
-      - roles/storage.admin
-EOF
-)"
+secretName="npm-reader"
+secret=$(kubectl create secret generic ${secretName} --dry-run=client -o yaml --from-file=.nmprc=${keys_path}/.${secretName}  | yq '.metadata |= {"name": "'"${secretName}"'", "namespace": "secrets", "annotations" : {"replicator.v1.mittwald.de/replication-allowed": "true", "replicator.v1.mittwald.de/replication-allowed-namespaces": "*"}}' -)
+echo "${secret}"  > ${secrets_path}/manifests/${secretName}.yaml
 
-gcloud_prepare_sa_roles
-gcloud_generate_sa_config
-gcloud_setup_velero_bucket
-gcloud_setup_thanos_bucket
-gcloud_setup_tekton_bucket
-gcloud_setup_generate_thanos_secret
 
-else
-  log_warn "Scripted setup only works with GCP / GKE for now."
-fi
+secretName="npm-publisher"
+secret=$(kubectl create secret generic ${secretName} --dry-run=client -o yaml --from-file=.nmprc=${keys_path}/.${secretName}  | yq '.metadata |= {"name": "'"${secretName}"'", "namespace": "secrets", "annotations" : {"replicator.v1.mittwald.de/replication-allowed": "true", "replicator.v1.mittwald.de/replication-allowed-namespaces": "*"}}' -)
+echo "${secret}"  > ${secrets_path}/manifests/${secretName}.yaml
+
+
+secretName="slack-webhook"
+secret=$(kubectl create secret generic ${secretName} --dry-run=client -o yaml --from-env-file=${keys_path}/.${secretName}  | yq '.metadata |= {"name": "'"${secretName}"'", "namespace": "secrets", "annotations" : {"replicator.v1.mittwald.de/replication-allowed": "true", "replicator.v1.mittwald.de/replication-allowed-namespaces": "*"}}' -)
+echo "${secret}"  > ${secrets_path}/manifests/${secretName}.yaml
+
+log_info "Done Generating sf secrets!"
