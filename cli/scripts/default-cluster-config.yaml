@@ -1,4 +1,4 @@
-### These should be implemented in each project. 
+### These should be implemented in each project.
 # Keep these up to date to help implementing quickly.
 
 # Global project variables
@@ -46,20 +46,20 @@ cloud:
   project: KUBE_CORE_CLOUD_PROJECT
   registry:
     hostname: KUBE_CORE_CLOUD_REGISTRY_HOSTNAME
-  default: 
+  default:
     location: KUBE_CORE_CLOUD_DEFAULT_LOCATION
 
 
 # Cluster configuration
 cluster:
   config:
-    backups: 
+    backups:
       schedule: "0 12 * * *"
     name: KUBE_CORE_CLUSTER_CONFIG_NAME
     context: KUBE_CORE_CLUSTER_CONFIG_CONTEXT
     domain: KUBE_CORE_CLUSTER_CONFIG_DOMAIN
     additionnalDomains: [] # KUBE_CORE_CLUSTER_CONFIG_ADDITIONNAL_DOMAINS
-    cidr: 
+    cidr:
     - name: cluster-range
       cidr: KUBE_CORE_CLUSTER_CONFIG_CIDR_CLUSTER_RANGE
     - name: cluster-nat
@@ -78,6 +78,9 @@ cluster:
 
 config:
   path: ./config
+
+keys:
+  path: ./keys
 
 helmfile:
   path: ./helmfile.yaml
@@ -99,18 +102,18 @@ crds:
 
 configmaps:
   path: ./local/configmaps
-  
+
 secrets:
   path: ./local/secrets
   cert:
     path: ./local/secrets/sealed-secrets-cert.pem
-  
+
 overlays:
   path: ./local/overlays
-  
+
 patches:
   path: ./local/patches
-  
+
 test:
   path: ./test
   lint:
