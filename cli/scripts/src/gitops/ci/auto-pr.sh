@@ -96,27 +96,27 @@ git pull origin ${targetBranch} || true
 
 log_info "Checking if work branch already exists: origin/${workBranch}"
 if git rev-parse --quiet --verify origin/${workBranch}; then
-    if [[ "${workBranch}" != "${targetBranch}" ]]; then
-        log_error "Branch already exists, this case is not handled. Aborting!"
-        exit 1
+    if [[ "${workBranch}" == "gitops/update-${targetBranch}" ]]; then
+        # log_error "Branch already exists, this case is not handled. Aborting!"
+        # exit 1
+
+        log_warn "Deleting branch and rebuilding !"
+        log_warn "This part should be updated to handle rebase instead of delete/recreate !"
+
+        log_info "Deleting ${workBranch}"
+        git push origin :${workBranch}
+
+        # log_info "Checking out ${workBranch}"
+        # git checkout --track origin/${workBranch} || true
+
+        # log_info "Rebasing ${workBranch} on ${targetBranch}"
+        # git rebase ${targetBranch}
+
+        # log_info "Merging ${sourceBranch} on ${workBranch}"
+        # git merge ${sourceBranch}
     fi
-    # log_warn "Deleting branch and rebuilding !"
-    # log_warn "This part should be updated to handle rebase instead of delete/recreate !"
-
-    # log_info "Deleting ${workBranch}"
-    # git push origin :${workBranch}
-
-    # log_info "Checking out ${workBranch}"
-    # git checkout --track origin/${workBranch} || true
-
-    # log_info "Rebasing ${workBranch} on ${targetBranch}"
-    # git rebase ${targetBranch}
-
-    # log_info "Merging ${sourceBranch} on ${workBranch}"
-    # git merge ${sourceBranch}
 fi
-
-
+if [[ "${workBranch}" == "gitops/update-${targetBranch}" ]]; then
     log_info "Creating work branch: ${workBranch}"
 
     log_info "Checking out ${workBranch}"
@@ -128,6 +128,7 @@ fi
 
     # git branch --set-upstream-to=origin/${workBranch} ${workBranch} || true
     # git pull origin ${workBranch} || true
+fi
 
 cd -
 
@@ -155,7 +156,13 @@ if [[ "${somethingChanged}" == "true" ]]; then
 
     log "Pushing changes & Updating PR..."
     git pull origin ${workBranch} || true
-    git push --set-upstream origin ${workBranch} -o merge_request.create -o merge_request.target=${targetBranch}
+
+    gitPushOpts="-o merge_request.create -o merge_request.target=${targetBranch}"
+    if [[ "PR_AUTO_MERGE" == "true" ]]; then
+        gitPushOpts="${gitPushOpts} -o merge_request.merge_when_pipeline_succeeds"
+    fi
+    git push --set-upstream origin ${workBranch} ${gitPushOpts}
+    #-o merge_request.title="" -o merge_request.description="<description>"
 
     cd -
 else

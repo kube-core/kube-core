@@ -28,16 +28,16 @@ spec:
   - name: run-tests
   - name: chart-name
   - name: chart-version
-  - name: run-namespace
-  - name: run-name-template
+  # - name: run-namespace
+  # - name: run-name-template
   - name: run-storage-requests
   - name: run-service-account
   resourcetemplates:
   - apiVersion: tekton.dev/v1beta1
     kind: PipelineRun
     metadata:
-      generateName: $(tt.params.run-name-template)
-      namespace: $(tt.params.run-namespace)
+      generateName: {{ .Values.cluster.delivery.config.run.nameTemplate | quote }}
+      namespace: {{ .Values.cluster.delivery.config.run.namespace | quote }}
     spec:
       serviceAccountName: $(tt.params.run-service-account)
       workspaces:

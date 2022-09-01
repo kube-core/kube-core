@@ -2,8 +2,18 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.3.2](https://github.com/neo9/kube-core/compare/v0.3.1...v0.3.2)
+
+- releases/tekton: Reintroduces core-tag pipeline [`b5110e4`](https://github.com/neo9/kube-core/commit/b5110e48db0b3ebb31dc1af3a2aaa81288279dd6)
+- releases/tekton: Improves resource name templating and brings more variables in hooks [`b67847e`](https://github.com/neo9/kube-core/commit/b67847e75b53b3f4914bb2731129711ae7584a19)
+- cli/scripts: Updated bump script to automatically patch cli version [`52a8349`](https://github.com/neo9/kube-core/commit/52a8349cf3bdb7dd6661c91411dfd7a216da2489)
+- releases/tekton: Fixes app-hooks git-webhooks-token reference missing [`7b395ed`](https://github.com/neo9/kube-core/commit/7b395ed88b6ec5fbbc004935389a6427813561f0)
+
 #### [v0.3.1](https://github.com/neo9/kube-core/compare/v0.3.0...v0.3.1)
 
+> 30 August 2022
+
+- release: v0.3.1 [`142ad91`](https://github.com/neo9/kube-core/commit/142ad91bfee476ca8ed56f9c038abc90a15328a8)
 - cli: Fixes corePath in scripts [`b0b5791`](https://github.com/neo9/kube-core/commit/b0b5791191b5554b481d2832c44320d4b1ece44d)
 - scripts: Moved scripts in cli folder to package them together [`77d78bd`](https://github.com/neo9/kube-core/commit/77d78bd9fddcf24ec61502a4e175a332ba34e3e8)
 - repo: Fixes .gitignore ignoring some files that should not be ignored [`f6b6ab0`](https://github.com/neo9/kube-core/commit/f6b6ab0d7e788bc5dcae1b3105925ace73052959)

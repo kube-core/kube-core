@@ -23,8 +23,9 @@ spec:
   - name: notify-slack
   - name: tekton-url
   - name: dockerfile
-  - name: run-namespace
-  - name: run-name-template
+  - name: auto-merge
+  # - name: run-namespace
+  # - name: run-name-template
   - name: run-storage-requests
   - name: run-service-account
   # - name: node-version
@@ -36,8 +37,8 @@ spec:
   - apiVersion: tekton.dev/v1beta1
     kind: PipelineRun
     metadata:
-      generateName: $(tt.params.run-name-template)
-      namespace: $(tt.params.run-namespace)
+      generateName: {{ .Values.cluster.delivery.config.run.nameTemplate | quote }}
+      namespace: {{ .Values.cluster.delivery.config.run.namespace | quote }}
     spec:
       serviceAccountName: $(tt.params.run-service-account)
       workspaces:
@@ -90,6 +91,8 @@ spec:
         value: $(tt.params.build-tool)
       - name: dockerfile
         value: $(tt.params.dockerfile)
+      - name: auto-merge
+        value: $(tt.params.auto-merge)
       # - name: node-version
       #   value: $(tt.params.node-version)
       # - name: node-tests-image
