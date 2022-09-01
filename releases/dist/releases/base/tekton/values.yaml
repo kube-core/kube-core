@@ -103,7 +103,9 @@ cluster:
     namespace: integration
     branch: develop
     config:
+      autoMerge: "false"
       run:
+        timeout: "60"
         tests: "true"
         storage:
           requests: 10Gi
