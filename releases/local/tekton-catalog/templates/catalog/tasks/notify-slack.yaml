@@ -17,16 +17,15 @@ spec:
     - name: source
     - name: data
   params:
-    
+
     - name: channel
       description: The channel
       type: string
       default: "#devops-test"
-    
+
     - name: hook
       description: The hook
       type: string
-      default: https://hooks.slack.com/services/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
 
     - name: message
       description: The message to write

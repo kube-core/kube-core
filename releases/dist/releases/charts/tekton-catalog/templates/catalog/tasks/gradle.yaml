@@ -29,6 +29,10 @@ spec:
       description: The git project name which is at the origin of the push
       type: string
       default: ""
+    - name: nexus-secret
+      description: The git project name which is at the origin of the push
+      type: string
+      default: "nexus"
   steps:
     - name: gradle-goals
       image: $(params.gradle_image)
@@ -38,12 +42,12 @@ spec:
         - name: nexusUsername
           valueFrom:
             secretKeyRef:
-              name: nexus
+              name: $(params.nexus-secret)
               key: username
         - name: nexusPassword
           valueFrom:
             secretKeyRef:
-              name: nexus
+              name: $(params.nexus-secret)
               key: password
       args:
         - "$(params.goals)"

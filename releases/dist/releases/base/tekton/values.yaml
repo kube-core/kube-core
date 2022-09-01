@@ -104,6 +104,8 @@ cluster:
     branch: develop
     config:
       autoMerge: "false"
+      lighthouse:
+        bucket: tekton-storage
       run:
         timeout: "60"
         tests: "true"

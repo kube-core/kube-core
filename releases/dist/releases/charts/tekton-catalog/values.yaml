@@ -1,51 +1,133 @@
+cluster:
+  delivery:
+    namespace: integration
+    branch: develop
+    config:
+      autoMerge: "false"
+      lighthouse:
+        bucket: tekton-storage
+      run:
+        timeout: "60"
+        tests: "true"
+        storage:
+          requests: 10Gi
+        serviceAccount: tekton
+        nameTemplate: $(tt.params.git-project-name)-$(tt.params.git-branch-sanitized)-
+        namespace: tekton-pipelines
+    node:
+      version: "14.15.4"
+      tests:
+        image: "ihebchakroun/node-14.15.4-chrome-lighthouse:latest"
 releases:
-  tekton:
+   tekton:
     secrets:
       credentials:
         crossplaneGenerated: false
         description: Credentials to authenticate to your Cloud Provider.
-        replicate: false
+        enabled: true
+        extraAnnotations: {}
+        replicate: true
         replicateFrom: secrets/tekton
         secretRef:
           key: tekton.json
           name: tekton
-      git-webhooks-token:
+        type: "Opaque"
+      npm-reader:
         crossplaneGenerated: false
-        description: Token to authenticate requests to your Git Provider webhooks
-        replicate: false
-        replicateFrom: secrets/git-webhooks-token
+        description: .npmrc for a reader user
+        enabled: true # Enabled true but not replicated because container-registry-operator does it
+        replicate: true
+        extraAnnotations: {}
+        type: Opaque
+        replicateFrom: secrets/npm-reader
         secretRef:
-          key: git-webhooks-token
-          name: git-webhooks-token
+          key: .npmrc
+          name: npm-reader
+      npm-publisher:
+        crossplaneGenerated: false
+        description: .npmrc for a publisher user
+        enabled: true # Enabled true but not replicated because container-registry-operator does it
+        replicate: true
+        extraAnnotations: {}
+        type: Opaque
+        replicateFrom: secrets/npm-publisher
+        secretRef:
+          key: .npmrc
+          name: npm-publisher
+      nexus:
+        crossplaneGenerated: false
+        description: username/password for a Nexus user
+        enabled: true # Enabled true but not replicated because container-registry-operator does it
+        replicate: true
+        extraAnnotations: {}
+        type: Opaque
+        replicateFrom: secrets/nexus
+        secretRef:
+          key: nexus
+          name: nexus
+      slack-webhook:
+        crossplaneGenerated: false
+        description: Token to authenticate requests to Slack API
+        enabled: true # Enabled true but not replicated because container-registry-operator does it
+        replicate: true
+        extraAnnotations: {}
+        type: Opaque
+        replicateFrom: secrets/slack-webhook
+        secretRef:
+          key: url
+          name: slack-webhook
+      docker-registry:
+        crossplaneGenerated: false
+        description: Docker Registry credentials to push images
+        enabled: true # Enabled true but not replicated because container-registry-operator does it
+        replicate: false
+        replicateFrom: secrets/docker-registry-gcr-admin
+        type: kubernetes.io/dockerconfigjson
+        secretRef:
+          key: .dockerconfigjson
+          name: docker-registry-gcr-admin
       git-api-token:
         crossplaneGenerated: false
         description: Token to authenticate to your Git Provider API
-        replicate: false
+        enabled: true
+        extraAnnotations: {}
+        replicate: true
         replicateFrom: secrets/git-api-token
         secretRef:
-          key: git-api-token
+          key: token
           name: git-api-token
+        type: "Opaque"
       git-ssh:
         crossplaneGenerated: false
         description: SSH key & known_hosts to authenticate Git requests
+        enabled: true
+        extraAnnotations: {}
+        # ssh-auth can't be replicated :( TODO: Create issue on replicator
         replicate: false
         replicateFrom: secrets/git-ssh
         secretRef:
           key: git-ssh
           name: git-ssh
+        type: "kubernetes.io/ssh-auth"
+      git-webhooks-token:
+        crossplaneGenerated: false
+        description: Token to authenticate requests to your Git Provider webhooks
+        enabled: true
+        extraAnnotations: {}
+        replicate: true
+        replicateFrom: secrets/git-webhooks-token
+        secretRef:
+          key: token
+          name: git-webhooks-token
+        type: "Opaque"
       github-read-token:
         crossplaneGenerated: false
         description: A GitHub Token with public read scope to remove rate limiting (for Trivy)
-        replicate: false
+        enabled: true
+        extraAnnotations: {}
+        replicate: true
         replicateFrom: secrets/github-read-token
         secretRef:
-          key: github-read-token
+          key: token
           name: github-read-token
-      docker-registry:
-        crossplaneGenerated: false
-        description: Docker Registry credentials to push images
-        replicate: false
-        replicateFrom: secrets/docker-registry
-        secretRef:
-          key: known_hosts
-          name: docker-registry
+        type: "Opaque"
