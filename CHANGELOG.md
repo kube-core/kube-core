@@ -2,9 +2,19 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.3.5](https://github.com/neo9/kube-core/compare/v0.3.4...v0.3.5)
+
+- releases/tekton: Improves secret configuration [`b745bcc`](https://github.com/neo9/kube-core/commit/b745bcc1897add4e981984b0b0e7f07ec55e57cc)
+- cli/scripts: Adds tekton & SF setup script [`7be3816`](https://github.com/neo9/kube-core/commit/7be3816404beff8e0120ea6552af475d452d9143)
+- cli/scripts: Adds option to delete PR source branch by default on cluster auto PR [`450454a`](https://github.com/neo9/kube-core/commit/450454ae2d02ee0c6e9dc385bca3b788352dbd66)
+- cli/scripts: Adds variable for local keys path [`75fd5b5`](https://github.com/neo9/kube-core/commit/75fd5b5d7991c3dff146c6273a2a3f5a744a33f6)
+
 #### [v0.3.4](https://github.com/neo9/kube-core/compare/v0.3.3...v0.3.4)
 
+> 1 September 2022
+
 - releases/tekton: Changes default run timeout and makes it configurable [`43261b6`](https://github.com/neo9/kube-core/commit/43261b6fe639d715e6f5c27f3187558cdd257153)
+- release: v0.3.4 [`d902266`](https://github.com/neo9/kube-core/commit/d90226601c8088df4b8df24e4db9aa93b37c82dd)
 
 #### [v0.3.3](https://github.com/neo9/kube-core/compare/v0.3.2...v0.3.3)
 
