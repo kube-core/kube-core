@@ -9,7 +9,7 @@ spec:
   triggers:
     ### Develop
     ## Push Hook
-    - name: cluster-push-develop
+    - name: cluster-push
       interceptors:
       - name: "Validate GitLab Payload & Filter on EventType"
         ref:
@@ -74,4 +74,4 @@ spec:
         - ref: parse-param-dockerfile-extensions
         - ref: parse-param-chart-extensions
       template:
-        ref: cluster-push-develop
+        ref: cluster-push

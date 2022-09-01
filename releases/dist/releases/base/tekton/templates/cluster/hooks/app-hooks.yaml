@@ -9,7 +9,7 @@ spec:
   triggers:
     ### Develop
     ## Push Hook
-    - name: app-push-develop
+    - name: app-push
       interceptors:
       - name: "Validate GitLab Payload & Filter on EventType"
         ref:

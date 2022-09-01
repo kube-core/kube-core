@@ -1,7 +1,7 @@
 apiVersion: triggers.tekton.dev/v1alpha1
 kind: TriggerTemplate
 metadata:
-  name: cluster-push-develop
+  name: cluster-push
 spec:
   params:
   - name: build-format
@@ -51,7 +51,7 @@ spec:
               requests:
                 storage: $(tt.params.run-storage-requests)
       pipelineRef:
-        name: cluster-push-develop
+        name: cluster-push
       params:
       - name: debug
         value: "true"

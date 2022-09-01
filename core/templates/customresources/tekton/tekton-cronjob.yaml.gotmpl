@@ -40,7 +40,7 @@ spec:
                 apiVersion: tekton.dev/v1beta1
                 kind: PipelineRun
                 metadata:
-                  name: app-push-develop-cron-run-%s
+                  name: app-push-cron-run-%s
                   namespace: {{ .namespace }}
                 spec:
                   serviceAccountName: tekton
@@ -54,7 +54,7 @@ spec:
                           requests:
                             storage: 1Gi
                   pipelineRef:
-                    name: app-push-develop
+                    name: app-push
                   params:
                   - name: git-project-name
                     value: {{ .values.gitProjectName }}
@@ -91,9 +91,9 @@ spec:
                   - name: chart-version
                     value: "{{ .values.chartVersion }}"
 
-                ' "$date" "$gitSha" "$gitSha" >> app-push-develop-run.yaml
-                cat app-push-develop-run.yaml
+                ' "$date" "$gitSha" "$gitSha" >> app-push-run.yaml
+                cat app-push-run.yaml
 
                 # apply new configuration
-                kubectl create -n tekton-pipelines -f app-push-develop-run.yaml
+                kubectl create -n tekton-pipelines -f app-push-run.yaml
           restartPolicy: OnFailure
