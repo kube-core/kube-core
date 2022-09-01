@@ -59,8 +59,6 @@ check_requirements
 # check_args "$@"
 ## Header End
 
-
-
 nextVersion=${1}
 currentVersion=$(cat "${corePath}/cli/package.json" | jq '.version')
 
@@ -68,5 +66,5 @@ currentVersion=$(cat "${corePath}/cli/package.json" | jq '.version')
 # yq -i e '.core.version |= "v'${nextVersion}'"' ${corePath}/core/envs/globals.yaml
 yq -i e '.core.version |= "v1.0.0"' ${corePath}/core/envs/globals.yaml
 
-# sed -i "s/v${currentVersion}/v${nextVersion}/" ${corePath}/core/envs/globals.yaml
-sed -i "s/\"version\": \"${currentVersion}\"/\"version\": \"${nextVersion}\"/" ${corePath}/cli/package.json
+cat ${corePath}/cli/package.json | jq '.version |= "'"${nextVersion}"'"' | sed 's/\r$//' > ${coreTmpFolder}/package.json.tmp
+mv -f ${coreTmpFolder}/package.json.tmp  ${corePath}/cli/package.json
