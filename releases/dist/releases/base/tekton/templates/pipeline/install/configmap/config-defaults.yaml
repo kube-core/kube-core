@@ -22,7 +22,7 @@ metadata:
     app.kubernetes.io/part-of: tekton-pipelines
 data:
   default-service-account: "tekton"
-  default-timeout-minutes: "10"
+  default-timeout-minutes: {{ .Values.cluster.delivery.config.run.timeout | quote }}
   _example: |
     ################################
     #                              #
