@@ -2,10 +2,17 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.3.3](https://github.com/neo9/kube-core/compare/v0.3.2...v0.3.3)
+
+- releases/tekton: Renamed and removed some resources [`23cf029`](https://github.com/neo9/kube-core/commit/23cf029d2715131febfdc7c799ab085eb508b2e6)
+
 #### [v0.3.2](https://github.com/neo9/kube-core/compare/v0.3.1...v0.3.2)
+
+> 1 September 2022
 
 - releases/tekton: Reintroduces core-tag pipeline [`b5110e4`](https://github.com/neo9/kube-core/commit/b5110e48db0b3ebb31dc1af3a2aaa81288279dd6)
 - releases/tekton: Improves resource name templating and brings more variables in hooks [`b67847e`](https://github.com/neo9/kube-core/commit/b67847e75b53b3f4914bb2731129711ae7584a19)
+- release: v0.3.2 [`2fac095`](https://github.com/neo9/kube-core/commit/2fac0957119744065c2031462361d23ef6d98573)
 - cli/scripts: Updated bump script to automatically patch cli version [`52a8349`](https://github.com/neo9/kube-core/commit/52a8349cf3bdb7dd6661c91411dfd7a216da2489)
 - releases/tekton: Fixes app-hooks git-webhooks-token reference missing [`7b395ed`](https://github.com/neo9/kube-core/commit/7b395ed88b6ec5fbbc004935389a6427813561f0)
 
