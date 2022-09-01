@@ -25,7 +25,7 @@ spec:
 
   - name: sonar-url
     value: https://sonarqube.{{ .Values.cluster.config.domain }}/
-  
+
   - name: tekton-url
     value: https://tekton-dashboard.tekton-pipelines.{{ .Values.cluster.config.domain }}
 
@@ -37,9 +37,21 @@ spec:
 
   - name: node-version
     value: {{ .Values.cluster.delivery.node.version | quote }}
-  
+
   - name: node-tests-image
     value: {{ .Values.cluster.delivery.node.tests.image | quote }}
-  
+
   - name: run-tests
     value: {{ .Values.cluster.delivery.config.run.tests | quote }}
+
+  - name: run-namespace
+    value: {{ .Values.cluster.delivery.config.run.namespace | quote }}
+
+  - name: run-name-template
+    value: {{ .Values.cluster.delivery.config.run.nameTemplate | quote }}
+
+  - name: run-storage-requests
+    value: {{ .Values.cluster.delivery.config.run.storage.requests | quote }}
+
+  - name: run-service-account
+    value: {{ .Values.cluster.delivery.config.run.serviceAccount | quote }}

@@ -23,6 +23,10 @@ spec:
   - name: notify-slack
   - name: tekton-url
   - name: dockerfile
+  - name: run-namespace
+  - name: run-name-template
+  - name: run-storage-requests
+  - name: run-service-account
   # - name: node-version
   # - name: node-tests-image
   # - name: run-tests
@@ -32,9 +36,10 @@ spec:
   - apiVersion: tekton.dev/v1beta1
     kind: PipelineRun
     metadata:
-      generateName: cluster-push-$(tt.params.git-branch-sanitized)-$(tt.params.git-project-name)-
+      generateName: $(tt.params.run-name-template)
+      namespace: $(tt.params.run-namespace)
     spec:
-      serviceAccountName: tekton
+      serviceAccountName: $(tt.params.run-service-account)
       workspaces:
       - name: ws
         volumeClaimTemplate:
@@ -43,7 +48,7 @@ spec:
               - ReadWriteOnce
             resources:
               requests:
-                storage: 10Gi
+                storage: $(tt.params.run-storage-requests)
       pipelineRef:
         name: cluster-push-develop
       params:

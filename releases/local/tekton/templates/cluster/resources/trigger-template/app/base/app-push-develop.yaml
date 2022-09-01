@@ -28,13 +28,18 @@ spec:
   - name: run-tests
   - name: chart-name
   - name: chart-version
+  - name: run-namespace
+  - name: run-name-template
+  - name: run-storage-requests
+  - name: run-service-account
   resourcetemplates:
   - apiVersion: tekton.dev/v1beta1
     kind: PipelineRun
     metadata:
-      generateName: app-push-$(tt.params.git-branch-sanitized)-$(tt.params.git-project-name)-
+      generateName: $(tt.params.run-name-template)
+      namespace: $(tt.params.run-namespace)
     spec:
-      serviceAccountName: tekton
+      serviceAccountName: $(tt.params.run-service-account)
       workspaces:
       - name: ws
         volumeClaimTemplate:
@@ -43,7 +48,7 @@ spec:
               - ReadWriteOnce
             resources:
               requests:
-                storage: 10Gi
+                storage: $(tt.params.run-storage-requests)
       pipelineRef:
         name: {{ .Values.tekton.config.templates.appPushDevelop.pipelineRef }}
       params:

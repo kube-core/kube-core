@@ -99,17 +99,22 @@ cluster:
     integrations:
       tekton:
         enabled: false
-
   delivery:
     namespace: integration
     branch: develop
     config:
       run:
         tests: "true"
+        storage:
+          requests: 10Gi
+        serviceAccount: tekton
+        nameTemplate: $(tt.params.git-project-name)-$(tt.params.git-branch-sanitized)-
+        namespace: tekton-pipelines
     node:
       version: "14.15.4"
       tests:
         image: "ihebchakroun/node-14.15.4-chrome-lighthouse:latest"
+
 
 externalLogs:
   enabled: false
