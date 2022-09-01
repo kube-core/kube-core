@@ -2,9 +2,16 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.3.4](https://github.com/neo9/kube-core/compare/v0.3.3...v0.3.4)
+
+- releases/tekton: Changes default run timeout and makes it configurable [`43261b6`](https://github.com/neo9/kube-core/commit/43261b6fe639d715e6f5c27f3187558cdd257153)
+
 #### [v0.3.3](https://github.com/neo9/kube-core/compare/v0.3.2...v0.3.3)
 
+> 1 September 2022
+
 - releases/tekton: Renamed and removed some resources [`23cf029`](https://github.com/neo9/kube-core/commit/23cf029d2715131febfdc7c799ab085eb508b2e6)
+- release: v0.3.3 [`3df8d5a`](https://github.com/neo9/kube-core/commit/3df8d5a6623370b03408ecac179dfd4d933e7e21)
 
 #### [v0.3.2](https://github.com/neo9/kube-core/compare/v0.3.1...v0.3.2)
 
