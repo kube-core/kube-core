@@ -242,14 +242,3 @@ cluster:
           value: "system"
           effect: "NoExecute"
         affinity: {}
-
-  delivery:
-    namespace: integration
-    branch: develop
-    config:
-      run:
-        tests: "true"
-    node:
-      version: "14.15.4"
-      tests:
-        image: "ihebchakroun/node-14.15.4-chrome-lighthouse:latest"
