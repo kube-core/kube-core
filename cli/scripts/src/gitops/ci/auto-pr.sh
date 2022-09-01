@@ -157,7 +157,7 @@ if [[ "${somethingChanged}" == "true" ]]; then
     log "Pushing changes & Updating PR..."
     git pull origin ${workBranch} || true
 
-    gitPushOpts="-o merge_request.create -o merge_request.target=${targetBranch}"
+    gitPushOpts="-o merge_request.create -o merge_request.target=${targetBranch} -o merge_request.remove_source_branch"
     if [[ "PR_AUTO_MERGE" == "true" ]]; then
         gitPushOpts="${gitPushOpts} -o merge_request.merge_when_pipeline_succeeds"
     fi
