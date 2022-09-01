@@ -35,7 +35,7 @@ releases:
       npm-reader:
         crossplaneGenerated: false
         description: .npmrc for a reader user
-        enabled: true # Enabled true but not replicated because container-registry-operator does it
+        enabled: true
         replicate: true
         extraAnnotations: {}
         type: Opaque
@@ -46,7 +46,7 @@ releases:
       npm-publisher:
         crossplaneGenerated: false
         description: .npmrc for a publisher user
-        enabled: true # Enabled true but not replicated because container-registry-operator does it
+        enabled: true
         replicate: true
         extraAnnotations: {}
         type: Opaque
@@ -57,7 +57,7 @@ releases:
       nexus:
         crossplaneGenerated: false
         description: username/password for a Nexus user
-        enabled: true # Enabled true but not replicated because container-registry-operator does it
+        enabled: true
         replicate: true
         extraAnnotations: {}
         type: Opaque
@@ -68,7 +68,7 @@ releases:
       slack-webhook:
         crossplaneGenerated: false
         description: Token to authenticate requests to Slack API
-        enabled: true # Enabled true but not replicated because container-registry-operator does it
+        enabled: true
         replicate: true
         extraAnnotations: {}
         type: Opaque
@@ -79,7 +79,8 @@ releases:
       docker-registry:
         crossplaneGenerated: false
         description: Docker Registry credentials to push images
-        enabled: true # Enabled true but not replicated because container-registry-operator does it
+        # Enabled true but not replicated because container-registry-operator does it
+        enabled: true
         replicate: false
         replicateFrom: secrets/docker-registry-gcr-admin
         type: kubernetes.io/dockerconfigjson
