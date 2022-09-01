@@ -1,7 +1,7 @@
 apiVersion: triggers.tekton.dev/v1alpha1
 kind: TriggerTemplate
 metadata:
-  name: app-push-develop
+  name: cluster-push
 spec:
   params:
   - name: build-format
@@ -23,15 +23,16 @@ spec:
   - name: notify-slack
   - name: tekton-url
   - name: dockerfile
-  - name: node-version
-  - name: node-tests-image
-  - name: run-tests
-  - name: chart-name
-  - name: chart-version
+  - name: auto-merge
   # - name: run-namespace
   # - name: run-name-template
   - name: run-storage-requests
   - name: run-service-account
+  # - name: node-version
+  # - name: node-tests-image
+  # - name: run-tests
+  # - name: chart-name
+  # - name: chart-version
   resourcetemplates:
   - apiVersion: tekton.dev/v1beta1
     kind: PipelineRun
@@ -50,7 +51,7 @@ spec:
               requests:
                 storage: $(tt.params.run-storage-requests)
       pipelineRef:
-        name: {{ .Values.tekton.config.templates.appPushDevelop.pipelineRef }}
+        name: cluster-push
       params:
       - name: debug
         value: "true"
@@ -90,13 +91,15 @@ spec:
         value: $(tt.params.build-tool)
       - name: dockerfile
         value: $(tt.params.dockerfile)
-      - name: node-version
-        value: $(tt.params.node-version)
-      - name: node-tests-image
-        value: $(tt.params.node-tests-image)
-      - name: run-tests
-        value: $(tt.params.run-tests)
-      - name: chart-name
-        value: $(tt.params.chart-name)
-      - name: chart-version
-        value: $(tt.params.chart-version)
+      - name: auto-merge
+        value: $(tt.params.auto-merge)
+      # - name: node-version
+      #   value: $(tt.params.node-version)
+      # - name: node-tests-image
+      #   value: $(tt.params.node-tests-image)
+      # - name: run-tests
+      #   value: $(tt.params.run-tests)
+      # - name: chart-name
+      #   value: $(tt.params.chart-name)
+      # - name: chart-version
+      #   value: $(tt.params.chart-version)

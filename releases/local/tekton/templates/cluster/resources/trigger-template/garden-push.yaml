@@ -1,7 +1,7 @@
 apiVersion: triggers.tekton.dev/v1alpha1
 kind: TriggerTemplate
 metadata:
-  name: garden-push-develop
+  name: garden-push
 spec:
   params:
   - name: build-format

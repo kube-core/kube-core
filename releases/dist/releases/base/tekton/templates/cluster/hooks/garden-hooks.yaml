@@ -9,7 +9,7 @@ spec:
   triggers:
     ### Develop
     ## Push Hook
-    - name: garden-push-develop
+    - name: garden-push
       interceptors:
       - name: "Validate GitLab Payload & Filter on EventType"
         ref:

@@ -63,12 +63,12 @@ releases:
       config:
         hooks:
           appPushDevelop:
-            templateRef: app-push-develop
+            templateRef: app-push
           gardenPushDevelop:
-            templateRef: garden-push-develop
+            templateRef: garden-push
         templates:
           appPushDevelop:
-            pipelineRef: app-push-develop
+            pipelineRef: app-push
           gardenPushDevelop:
             pipelineRef: garden-deploy
       core-hooks:
