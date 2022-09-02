@@ -65,26 +65,27 @@ check_context "${cluster_config_context}"
 ENV=${ENV:-"local"}
 
 coreTag=${1:-"v0.1.0"}
-sourceBranch=${2:-"develop"}
-targetBranch=${3:-"${sourceBranch}"}
-workBranch=${4:-"core/update-${coreTag}"}
-
-
-ENV="${ENV}" ${scripts_gitops_ci_auto_setup_path} ${sourceBranch} ${targetBranch} ${workBranch}
+# sourceBranch=${2:-"develop"}
+# targetBranch=${3:-"${sourceBranch}"}
+# workBranch=${4:-"core/update-${coreTag}"}
 
 cd ${clusterConfigDirPath}
 
+fileList=$(grep -R kube-core.git@ -l)
+log_debug "${fileList}"
+
 # Replacing Core version
-sed -i.bak "/.*@common\/core.*/ s/=.*/=${coreTag}/" ${clusterConfigDirPath}/helmfile.yaml
-git add ${clusterConfigDirPath}/helmfile.yaml
+echo "${fileList}" | xargs -i sed -i "/kube-core.git@.*/ s|\?ref=.*|\?ref=${coreTag}|" '{}'
 
-cd -
+log_info "Done updating kube-core references in cluster files"
 
-# Building
-${scripts_build_path}
+cd - > /dev/null
 
-# Testing
-${scripts_test_path}
+# # Building
+# ${scripts_build_path}
 
-commitMessage="gitops: core/update-${coreTag} (auto-core-updates)"
-${scripts_gitops_ci_auto_pr_path} ${sourceBranch} ${targetBranch} ${workBranch} "${commitMessage}"
+# # Testing
+# ${scripts_test_path}
+
+# commitMessage="gitops: core/update-${coreTag} (auto-core-updates)"
+# ${scripts_gitops_ci_auto_pr_path} ${sourceBranch} ${targetBranch} ${workBranch} "${commitMessage}"
