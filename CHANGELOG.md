@@ -4,15 +4,14 @@ All notable changes to this project will be documented in this file. Dates are d
 
 #### [v0.3.8](https://github.com/neo9/kube-core/compare/v0.3.8...v0.3.8)
 
-- releases/tekton: Enables build on core-tag pipeline [`0602bf2`](https://github.com/neo9/kube-core/commit/0602bf2d89683ac7e89184f870b04702c0f7f742)
+- releases/tekton: Updates core-tag & PR workflow [`b52c328`](https://github.com/neo9/kube-core/commit/b52c3285dedfe87442ea2053df956e0a31dceb3b)
 
 #### [v0.3.8](https://github.com/neo9/kube-core/compare/v0.3.7...v0.3.8)
 
 > 3 September 2022
 
-- releases/tekton: Adds option to add all files in auto-pr steps [`dfe0a60`](https://github.com/neo9/kube-core/commit/dfe0a609672cbf3ff46e04501ed1c14b63d16797)
-- releases/tekton: Enables build on core-tag pipeline [`41b57b2`](https://github.com/neo9/kube-core/commit/41b57b2c91e84d0fb1fe75177dea052460fe1e6f)
-- release: v0.3.8 [`e5a4428`](https://github.com/neo9/kube-core/commit/e5a4428ac6262c1edc67c49877e836bd9368d242)
+- releases/tekton: Updates core-tag & PR workflow [`156e5fc`](https://github.com/neo9/kube-core/commit/156e5fc74ff29a7a12d711db6c04f4edb96068ee)
+- release: v0.3.8 [`f84380c`](https://github.com/neo9/kube-core/commit/f84380c4c885e75265649882f640a46e70492eae)
 
 #### [v0.3.7](https://github.com/neo9/kube-core/compare/v0.3.6...v0.3.7)
 
