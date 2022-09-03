@@ -57,6 +57,14 @@ releases:
       chart: ../releases/dist/releases/charts/container-registry-operator
       name: container-registry-operator
       namespace: container-registry-operator
+  container-registry-config:
+    labels:
+      component: registry
+      group: cluster
+    release:
+      chart: ../releases/dist/releases/charts/container-registry-config
+      name: container-registry-config
+      namespace: container-registry-operator
   crossplane:
     labels:
       component: crossplane

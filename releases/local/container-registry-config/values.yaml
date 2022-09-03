@@ -1,0 +1,15 @@
+cloud:
+  project: kube-core
+  provider: gcp
+
+cluster:
+  registries:
+    self:
+      enabled: true
+      cleanup:
+        schedule: "0 9 * * 1"
+    dockerhub:
+      enabled: false
+    catalogue:
+      enabled: false
+    extraRegistries: []

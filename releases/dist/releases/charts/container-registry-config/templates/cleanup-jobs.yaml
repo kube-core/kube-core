@@ -1,0 +1,19 @@
+{{ if (eq .Values.cloud.provider "gcp") }}
+{{ if (eq .Values.cluster.registries.self.enabled true) }}
+---
+apiVersion: neo9.io/v1
+kind: ContainerRegistryCleanupJob
+metadata:
+  name: self
+  labels:
+    registry: {{ .Values.cloud.project }}
+    environnement: default
+spec:
+  schedule: {{ .Values.cluster.registries.self.cleanup.schedule }}
+  args: ["--format=json", "-r=gcr"]
+  selector:
+    registrySelector:
+      registry: {{ .Values.cloud.project }}
+      environnement: default
+{{ end }}
+{{ end }}

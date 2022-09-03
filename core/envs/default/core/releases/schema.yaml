@@ -29,6 +29,7 @@ releases:
   cluster-logging: *release
   container-registry-cleaner: *release
   container-registry-operator: *release
+  container-registry-config: *release
   crossplane: *release
   crossplane-buckets: *release
   crossplane-provider: *release
