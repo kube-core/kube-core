@@ -2,10 +2,25 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.3.8](https://github.com/neo9/kube-core/compare/v0.3.8...v0.3.8)
+
+- releases/tekton: Enables build on core-tag pipeline [`0602bf2`](https://github.com/neo9/kube-core/commit/0602bf2d89683ac7e89184f870b04702c0f7f742)
+
+#### [v0.3.8](https://github.com/neo9/kube-core/compare/v0.3.7...v0.3.8)
+
+> 3 September 2022
+
+- releases/tekton: Adds option to add all files in auto-pr steps [`dfe0a60`](https://github.com/neo9/kube-core/commit/dfe0a609672cbf3ff46e04501ed1c14b63d16797)
+- releases/tekton: Enables build on core-tag pipeline [`41b57b2`](https://github.com/neo9/kube-core/commit/41b57b2c91e84d0fb1fe75177dea052460fe1e6f)
+- release: v0.3.8 [`e5a4428`](https://github.com/neo9/kube-core/commit/e5a4428ac6262c1edc67c49877e836bd9368d242)
+
 #### [v0.3.7](https://github.com/neo9/kube-core/compare/v0.3.6...v0.3.7)
+
+> 3 September 2022
 
 - releases: Adds container-registry-config to allow easy use of GCR in the cluster [`182cb37`](https://github.com/neo9/kube-core/commit/182cb37bd521cf6f3f7aab7453e8f4a9c7d25ade)
 - releases/tekton: Fixes core-tag pipeline & Makes kube-core image variable [`b492d96`](https://github.com/neo9/kube-core/commit/b492d967341091dc7b47ed59143d9fb2dc3575ed)
+- release: v0.3.7 [`4121154`](https://github.com/neo9/kube-core/commit/4121154e9a140455f0118f9de781cda26c371c96)
 
 #### [v0.3.6](https://github.com/neo9/kube-core/compare/v0.3.5...v0.3.6)
 

@@ -104,6 +104,10 @@ spec:
     default: "/cluster"
   - name: git-tag
 
+  - name: git-add-all-files
+    description: If adding all files or only config folder
+    type: string
+    default: "true"
   workspaces:
   - name: ws
 
@@ -246,9 +250,9 @@ spec:
           ENV=ci kube-core scripts exec gitops_ci_auto_core_updates "${coreTag}"
 
           if [[ "$(params.auto-merge)" == "true" ]]; then
-            ENV=ci PR_AUTO_MERGE=true kube-core scripts exec gitops_ci_auto_pr "${coreTag}" "${sourceBranch}" "core/update-${coreTag}" "gitops: core/update-${coreTag} (auto-core-updates)"
+            ENV=ci GIT_ADD_ALL_FILES=$(params.git-add-all-files) PR_AUTO_MERGE=true kube-core scripts exec gitops_ci_auto_pr "${coreTag}" "${sourceBranch}" "core/update-${coreTag}" "gitops: core/update-${coreTag} (auto-core-updates)"
           else
-            ENV=ci kube-core scripts exec gitops_ci_auto_pr "${coreTag}" "${sourceBranch}" "core/update-${coreTag}" "gitops: core/update-${coreTag} (auto-core-updates)"
+            ENV=ci GIT_ADD_ALL_FILES=$(params.git-add-all-files) kube-core scripts exec gitops_ci_auto_pr "${coreTag}" "${sourceBranch}" "core/update-${coreTag}" "gitops: core/update-${coreTag} (auto-core-updates)"
           fi
     workspaces:
       - name: input

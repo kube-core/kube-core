@@ -102,6 +102,8 @@ log_info "Work branch: ${workBranch}"
 log_info "Checking out the target branch: ${targetBranch}"
 git checkout ${targetBranch} || true
 
-log_info "Fetching and pulling target branch: ${targetBranch}"
+log_info "Fetching and pulling all refs"
 git fetch -a || true
+
+log_info "Pulling target branch: ${targetBranch}"
 git pull origin ${targetBranch} || true
