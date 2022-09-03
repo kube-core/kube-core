@@ -58,3 +58,6 @@ spec:
 
   - name: auto-merge
     value: {{ .Values.cluster.delivery.config.autoMerge | quote }}
+
+  - name: kube-core-image
+    value: {{ .Values.cluster.delivery.config.kubeCoreImage | quote }}

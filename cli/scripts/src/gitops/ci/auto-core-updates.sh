@@ -71,7 +71,7 @@ coreTag=${1:-"v0.1.0"}
 
 cd ${clusterConfigDirPath}
 
-fileList=$(grep -R kube-core.git@ -l)
+fileList=$(grep -R kube-core.git@ -l .)
 log_debug "${fileList}"
 
 # Replacing Core version
