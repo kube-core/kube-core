@@ -248,3 +248,8 @@ cluster:
     branch: main
     config:
       autoMerge: "false"
+      kubeCoreImage: neo9sas/kube-core:latest
+    node:
+      version: "16.14.2"
+      tests:
+        image: "node:16.14.2"

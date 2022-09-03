@@ -78,6 +78,10 @@ spec:
     description: If we merge automatically the changes after tests pass or not
     type: string
     default: "false"
+  - name: kube-core-image
+    description: kube-core image used
+    type: string
+    default: "neo9sas/kube-core:latest"
   workspaces:
   - name: ws
 
@@ -192,6 +196,8 @@ spec:
     taskRef:
       name: kube-core
     params:
+      - name: image
+        value: $(params.kube-core-image)
       - name: script
         value: |
           #!/usr/bin/env bash
@@ -220,6 +226,8 @@ spec:
     taskRef:
       name: kube-core
     params:
+      - name: image
+        value: $(params.kube-core-image)
       - name: script
         value: |
           #!/usr/bin/env bash
@@ -255,6 +263,8 @@ spec:
     taskRef:
       name: kube-core
     params:
+      - name: image
+        value: $(params.kube-core-image)
       - name: script
         value: |
           #!/usr/bin/env bash
@@ -295,6 +305,8 @@ spec:
     taskRef:
       name: kube-core
     params:
+      - name: image
+        value: $(params.kube-core-image)
       - name: script
         value: |
           #!/usr/bin/env bash
@@ -331,6 +343,8 @@ spec:
     taskRef:
       name: kube-core
     params:
+      - name: image
+        value: $(params.kube-core-image)
       - name: script
         value: |
           #!/usr/bin/env bash

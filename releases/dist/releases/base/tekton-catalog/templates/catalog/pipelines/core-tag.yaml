@@ -78,6 +78,10 @@ spec:
     description: If we merge automatically the changes after tests pass or not
     type: string
     default: "false"
+  - name: kube-core-image
+    description: kube-core image used
+    type: string
+    default: "neo9sas/kube-core:latest"
 
   - name: cluster-repository-name
     description: Git repository for the cluster
@@ -226,6 +230,8 @@ spec:
     taskRef:
       name: kube-core
     params:
+      - name: image
+        value: $(params.kube-core-image)
       - name: script
         value: |
           #!/usr/bin/env bash
@@ -240,22 +246,10 @@ spec:
           ENV=ci kube-core scripts exec gitops_ci_auto_core_updates "${coreTag}"
 
           if [[ "$(params.auto-merge)" == "true" ]]; then
-            ENV=ci PR_AUTO_MERGE=true kube-core scripts exec gitops_ci_auto_pr "$(params.git-branch)"
+            ENV=ci PR_AUTO_MERGE=true kube-core scripts exec gitops_ci_auto_pr "${coreTag}" "${sourceBranch}" "core/update-${coreTag}" "gitops: core/update-${coreTag} (auto-core-updates)"
           else
             ENV=ci kube-core scripts exec gitops_ci_auto_pr "${coreTag}" "${sourceBranch}" "core/update-${coreTag}" "gitops: core/update-${coreTag} (auto-core-updates)"
           fi
-
-      # - name: script
-      #   value: |
-      #     #!/usr/bin/env bash
-
-      #     coreTag=$(params.git-tag)
-      #     sourceBranch=$(params.cluster-repository-ref)
-
-      #     cd $(workspaces.source.path)/$(params.cluster-repository-name)$(params.cluster-repository-path)/scripts
-
-      #     ENV=ci ./src/gitops/ci/auto-core-updates.sh "${coreTag}" "${sourceBranch}"
-
     workspaces:
       - name: input
         workspace: ws
