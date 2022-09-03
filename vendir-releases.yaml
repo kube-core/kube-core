@@ -298,6 +298,9 @@ directories:
       - path: container-registry-operator
         directory:
           path: ../../../releases/local/container-registry-operator
+      - path: container-registry-config
+        directory:
+          path: ../../../releases/local/container-registry-config
       - path: flux
         directory:
           path: ../../../releases/local/flux

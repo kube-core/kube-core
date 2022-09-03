@@ -1,0 +1,53 @@
+{{ if (eq .Values.cloud.provider "gcp") }}
+{{ if (eq .Values.cluster.registries.self.enabled true) }}
+---
+apiVersion: neo9.io/v1
+kind: ContainerRegistry
+metadata:
+  labels:
+    registry: {{ .Values.cloud.project }}
+    environnement: default
+  name: self
+spec:
+  imageRegistry: 'gcr'
+  hostname: 'eu.gcr.io'
+  project: {{ .Values.cloud.project }}
+  secretName: docker-registry-gcr-admin
+  secretRef: gcr-admin
+  namespaces: ["*"]
+{{ end }}
+{{ end }}
+{{ if (eq .Values.cluster.registries.catalogue.enabled true) }}
+---
+apiVersion: neo9.io/v1
+kind: ContainerRegistry
+metadata:
+  labels:
+    registry: {{ .Values.cloud.project }}
+    environnement: catalogue
+  name: catalogue
+spec:
+  imageRegistry: 'gcr'
+  hostname: 'eu.gcr.io'
+  project: {{ .Values.cloud.project }}
+  secretName: docker-registry-gcr-catalogue-read
+  secretRef: gcr-catalogue-read
+  namespaces: ["*"]
+{{ end }}
+{{ range .Values.cluster.registries.extraRegistries }}
+---
+apiVersion: neo9.io/v1
+kind: ContainerRegistry
+metadata:
+  labels:
+    registry: {{ . }}
+    environnement: default
+  name: self
+spec:
+  imageRegistry: 'gcr'
+  hostname: 'eu.gcr.io'
+  project: {{ $.Values.cloud.project }}
+  secretName: docker-registry-{{ . }}
+  secretRef: gcr-{{ . }}
+  namespaces: ["*"]
+{{ end }}
