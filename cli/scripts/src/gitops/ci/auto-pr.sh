@@ -69,30 +69,6 @@ commitMessage=${4:-"gitops: Regen (auto)"}
 # Checking out the branch
 cd ${clusterConfigDirPath}
 
-log_info "Source branch: ${sourceBranch}"
-log_info "Target branch: ${targetBranch}"
-log_info "Work branch: ${workBranch}"
-
-log_info "Checking out the target branch: ${targetBranch}"
-git checkout ${targetBranch} || true
-
-log_info "Fetching and pulling target branch: ${targetBranch}"
-git fetch -a || true
-git pull origin ${targetBranch} || true
-
-# log "Checking out ${workBranch}"
-# git checkout -b ${workBranch} || true
-# git pull origin ${workBranch} || true
-
-# log "Rebasing ${workBranch} on ${targetBranch}"
-# git rebase ${targetBranch}
-
-# log "Merging ${sourceBranch} on ${workBranch}"
-# git merge ${sourceBranch}
-
-# log "Pushing changes & Creating PR..."
-# git push --set-upstream origin ${workBranch} -o merge_request.create -o merge_request.target=${targetBranch}
-
 
 log_info "Checking if work branch already exists: origin/${workBranch}"
 if git rev-parse --quiet --verify origin/${workBranch}; then
@@ -106,28 +82,15 @@ if git rev-parse --quiet --verify origin/${workBranch}; then
         log_info "Deleting ${workBranch}"
         git push origin :${workBranch}
 
-        # log_info "Checking out ${workBranch}"
-        # git checkout --track origin/${workBranch} || true
-
-        # log_info "Rebasing ${workBranch} on ${targetBranch}"
-        # git rebase ${targetBranch}
-
-        # log_info "Merging ${sourceBranch} on ${workBranch}"
-        # git merge ${sourceBranch}
     fi
 fi
-if [[ "${workBranch}" == "gitops/update-${targetBranch}" ]]; then
+
+if [[ "${workBranch}" == "gitops/update-${targetBranch}" || "${workBranch}" == "core/update-${sourceBranch}" ]]; then
     log_info "Creating work branch: ${workBranch}"
 
     log_info "Checking out ${workBranch}"
     git checkout -b ${workBranch} || true
 
-    # Disabled for now
-    # log_info "Pushing and setting upstream: ${workBranch}"
-    # git push -u origin ${workBranch} || true
-
-    # git branch --set-upstream-to=origin/${workBranch} ${workBranch} || true
-    # git pull origin ${workBranch} || true
 fi
 
 cd -
@@ -149,7 +112,11 @@ if [[ "${somethingChanged}" == "true" ]]; then
     echo "${gitStatus}"
 
     log "Adding config files..."
-    git add ${config_path}
+    if [[ "${GIT_ADD_ALL_FILES}" == "true" ]]; then
+        git add .
+    else
+        git add ${config_path}
+    fi
 
     log "Committing..."
     git commit -m "${commitMessage}"
