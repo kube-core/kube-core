@@ -2,15 +2,17 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
-#### [v0.3.6](https://github.com/neo9/kube-core/compare/v0.3.6...v0.3.6)
+#### [v0.3.7](https://github.com/neo9/kube-core/compare/v0.3.6...v0.3.7)
+
+- releases: Adds container-registry-config to allow easy use of GCR in the cluster [`182cb37`](https://github.com/neo9/kube-core/commit/182cb37bd521cf6f3f7aab7453e8f4a9c7d25ade)
+- releases/tekton: Fixes core-tag pipeline & Makes kube-core image variable [`b492d96`](https://github.com/neo9/kube-core/commit/b492d967341091dc7b47ed59143d9fb2dc3575ed)
 
 #### [v0.3.6](https://github.com/neo9/kube-core/compare/v0.3.5...v0.3.6)
 
 > 2 September 2022
 
 - releases/tekton: Updates core-tag pipeline to use kube-core [`460b2e3`](https://github.com/neo9/kube-core/commit/460b2e38779fea36acbc4b6ec8f61becf6777834)
-- cli/scripts: Updated bump script to replace image references [`b452e3d`](https://github.com/neo9/kube-core/commit/b452e3d669bdf5435fef925571681a9c23590e1b)
-- release: v0.3.6 [`1db018f`](https://github.com/neo9/kube-core/commit/1db018f35b6c8eaefee44da4197a0a48b3323edf)
+- release: v0.3.6 [`0d7cdb4`](https://github.com/neo9/kube-core/commit/0d7cdb4bcbe34fc0905808dba08ec48d19b328c9)
 
 #### [v0.3.5](https://github.com/neo9/kube-core/compare/v0.3.4...v0.3.5)
 

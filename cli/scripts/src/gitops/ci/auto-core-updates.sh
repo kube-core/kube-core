@@ -75,7 +75,7 @@ fileList=$(grep -R kube-core.git@ -l .)
 log_debug "${fileList}"
 
 # Replacing Core version
-echo "${fileList}" | xargs -i sed -i "/kube-core.git@.*/ s|\?ref=.*|\?ref=${coreTag}|" '{}'
+echo "${fileList}" | xargs -i sed -i "/kube-core.git@.*/ s|?ref=.*|?ref=${coreTag}|" '{}'
 
 log_info "Done updating kube-core references in cluster files"
 
