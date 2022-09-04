@@ -1,8 +1,0 @@
-apiVersion: keycloak.org/v1alpha1
-kind: Keycloak
-metadata:
-  name: "{{ .Values.name }}"
-  labels:
-    app: "{{ .Values.name }}"
-spec:
-  {{- toYaml .Values.keycloak | nindent 2 }}

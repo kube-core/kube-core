@@ -1,3 +1,0 @@
-{{ if .Values.cluster.logging.flows.default.enabled }}
-{{- template "cluster-logging.flowTemplate" (dict "cluster" .Values.cluster "flow" .Values.cluster.logging.flows.default "flowType" "default" "flowName" "default") }}
-{{ end }}

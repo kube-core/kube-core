@@ -72,6 +72,6 @@ releasesProcessedFolder=${tmpReleasesFolder}/releases-processed
 
 echo "Cleaning up ..."
 
-rm -rf ${tmpReleasesFolder}
+rm -rf ${tmpReleasesFolder} ${baseReleasesFolder}
 
 echo "Done, enjoy !"

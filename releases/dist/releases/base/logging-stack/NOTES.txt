@@ -1,5 +1,0 @@
-# Get Kibana user
-kubectl get secrets -n logging logging-es-elastic-user -o go-template='{{.data.elastic | base64decode}}'
-
-# Tail fluentd logs
-kubectl -n logging exec -it logging-fluentd-0 -c fluentd -- tail -f ./fluentd/log/out
