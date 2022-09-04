@@ -1,3 +1,0 @@
-Kube-fledged installed successfully.
-Refer to https://github.com/senthilrch/kube-fledged#how-to-use
-Happy Image caching!!

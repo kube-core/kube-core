@@ -1,6 +1,0 @@
-apiVersion: v2
-appVersion: v2.7.3
-description: Controller for replicating secrets+configmaps across namespaces
-name: kubernetes-replicator
-type: application
-version: 2.7.3
