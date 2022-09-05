@@ -99,7 +99,11 @@ somethingChanged="false"
 
 
 cd ${clusterConfigDirPath}
-gitStatus=$(git status --porcelain ${config_path})
+if [[ "${GIT_ADD_ALL_FILES}" == "true" ]]; then
+    gitStatus=$(git status --porcelain .)
+else
+    gitStatus=$(git status --porcelain ${config_path})
+fi
 if [[ ! -z "${gitStatus}" ]]; then
   somethingChanged="true"
 fi
