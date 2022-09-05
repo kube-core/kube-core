@@ -2,16 +2,21 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
-#### [v0.3.8](https://github.com/neo9/kube-core/compare/v0.3.8...v0.3.8)
+#### [v0.3.9](https://github.com/neo9/kube-core/compare/v0.3.8...v0.3.9)
 
-- releases/tekton: Updates core-tag & PR workflow [`b52c328`](https://github.com/neo9/kube-core/commit/b52c3285dedfe87442ea2053df956e0a31dceb3b)
+- releases: Removed base folder as it is not used anymore [`94b44ed`](https://github.com/neo9/kube-core/commit/94b44ed66262e52049a221caede64b8a6f466642)
+- cli/scripts: Updates flux install & Various fixes and improvements [`a8939bc`](https://github.com/neo9/kube-core/commit/a8939bc0170bae1423e219e279fc353c68c9a078)
+- releases: Adds flux-config to manage default flux resources [`eb5846d`](https://github.com/neo9/kube-core/commit/eb5846dfb4987217f4f8f23c0ec0d6b8767db84e)
+- core/templates: Moved namespace field on the kube-core release wrapper [`9d6bdd8`](https://github.com/neo9/kube-core/commit/9d6bdd8c78cdc9ab7bd9d03591db194b11116024)
+- releases/flux: Adds podmonitor config to monitor all flux controllers [`1cb7dc7`](https://github.com/neo9/kube-core/commit/1cb7dc7f3bc08dc79b0af2680060f7b7469ee8ad)
+- releases/schema: Updated schema to include new releases [`abba1c6`](https://github.com/neo9/kube-core/commit/abba1c6bfd4b5d171c223723b3647bbee8557be4)
 
 #### [v0.3.8](https://github.com/neo9/kube-core/compare/v0.3.7...v0.3.8)
 
 > 3 September 2022
 
-- releases/tekton: Updates core-tag & PR workflow [`156e5fc`](https://github.com/neo9/kube-core/commit/156e5fc74ff29a7a12d711db6c04f4edb96068ee)
-- release: v0.3.8 [`f84380c`](https://github.com/neo9/kube-core/commit/f84380c4c885e75265649882f640a46e70492eae)
+- releases/tekton: Updates core-tag & PR workflow [`b52c328`](https://github.com/neo9/kube-core/commit/b52c3285dedfe87442ea2053df956e0a31dceb3b)
+- release: v0.3.8 [`a786f00`](https://github.com/neo9/kube-core/commit/a786f00a6d271553f68b47b7a03e4bbd5e109606)
 
 #### [v0.3.7](https://github.com/neo9/kube-core/compare/v0.3.6...v0.3.7)
 
