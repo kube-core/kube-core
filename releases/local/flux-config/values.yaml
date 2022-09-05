@@ -1,0 +1,29 @@
+git:
+  bot:
+    user: ""
+    name: ""
+
+cluster:
+  config:
+    repository:
+      path: "/"
+
+gitops:
+  bot:
+    user: ""
+    name: ""
+  ref: "main"
+  repository: https://github.com/dparbhakar/kube-core
+  config:
+    default:
+      kustomization:
+        force: true
+        interval: 1m0s
+        prune: true
+        sourceRef:
+          kind: GitRepository
+          name: self
+secrets:
+  flux-ssh:
+    secretRef:
+      name: flux-ssh
