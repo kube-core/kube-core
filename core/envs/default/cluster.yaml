@@ -57,6 +57,8 @@ cloud:
 # Cluster configuration
 cluster:
   config:
+    corePoliciesEnabled: false
+    clusterPoliciesEnabled: true
     backups:
       schedule: "0 12 * * *" #KUBE_CORE_CLUSTER_CONFIG_BACKUPS_SCHEDULE
     name: KUBE_CORE_CLUSTER_CONFIG_NAME
