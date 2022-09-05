@@ -32,16 +32,17 @@ git:
 
 # GitOps Repository Info - Can differ from git repo !
 gitops:
+  enabled: false
   api: KUBE_CORE_GITOPS_API
   ssh: KUBE_CORE_GITOPS_SSH
   web: KUBE_CORE_GITOPS_WEB
   repository: KUBE_CORE_GITOPS_REPOSITORY
+  mode: full
   ref: KUBE_CORE_GITOPS_REF
-  path: KUBE_CORE_GITOPS_PATH
-  refresh: 1m #KUBE_CORE_GITOPS_REFRESH
-  ssh_key: KUBE_CORE_GITOPS_SSH_KEY
+  path: /config
+  refresh: 1m0s #KUBE_CORE_GITOPS_REFRESH
+  ssh_key: ./keys/.flux-ssh-key
   autocommit: false #KUBE_CORE_GITOPS_AUTOCOMMIT
-
 # Cloud Provider information
 cloud:
   provider: KUBE_CORE_CLOUD_PROVIDER

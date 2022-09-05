@@ -4,46 +4,51 @@
 # Global project variables
 project:
   name: KUBE_CORE_PROJECT_NAME
+  shortName: KUBE_CORE_PROJECT_SHORT_NAME
   description: KUBE_CORE_PROJECT_DESCRIPTION
   repository: KUBE_CORE_PROJECT_REPOSITORY
-  ref: main
-  path: /cluster
+  ref: KUBE_CORE_PROJECT_REF
+  path: KUBE_CORE_PROJECT_PATH
 
 # Git Repository Info (used to generate git related stuff)
 git:
   provider: KUBE_CORE_GIT_PROVIDER
   web: KUBE_CORE_GIT_WEB
+  github_read_token: ./keys/.github-read-token #KUBE_CORE_GITHUB_READ_TOKEN
   api:
     url: KUBE_CORE_GIT_API_URL
     host: KUBE_CORE_GIT_API_HOST
-    token: KUBE_CORE_GIT_API_TOKEN
+    token: ./keys/.git-api-token #KUBE_CORE_GIT_API_TOKEN
   ssh:
     url: KUBE_CORE_GIT_SSH_URL
     host: KUBE_CORE_GIT_SSH_HOST
-    key: KUBE_CORE_GIT_SSH_KEY
-    known_hosts: KUBE_CORE_GIT_SSH_KNOWN_HOSTS
+    key: ./keys/.git-ssh-key #KUBE_CORE_GIT_SSH_KEY
+    known_hosts: ./keys/.git-ssh-hosts #KUBE_CORE_GIT_SSH_KNOWN_HOSTS
   webhooks:
-    token: KUBE_CORE_GIT_WEBHOOKS_TOKEN
+    token: ./keys/.git-webhooks-token #KUBE_CORE_GIT_WEBHOOKS_TOKEN
   bot:
     user: KUBE_CORE_GIT_BOT_USER
     name: KUBE_CORE_GIT_BOT_NAME
 
 # GitOps Repository Info - Can differ from git repo !
 gitops:
+  enabled: false
   api: KUBE_CORE_GITOPS_API
   ssh: KUBE_CORE_GITOPS_SSH
   web: KUBE_CORE_GITOPS_WEB
   repository: KUBE_CORE_GITOPS_REPOSITORY
+  mode: full
   ref: KUBE_CORE_GITOPS_REF
   path: KUBE_CORE_GITOPS_PATH
-  refresh: 1m
-  ssh_key: KUBE_CORE_GITOPS_SSH_KEY
-  autocommit: false
+  refresh: 1m0s #KUBE_CORE_GITOPS_REFRESH
+  ssh_key: ./keys/.flux-ssh-key
+  autocommit: false #KUBE_CORE_GITOPS_AUTOCOMMIT
 
 # Cloud Provider information
 cloud:
   provider: KUBE_CORE_CLOUD_PROVIDER
   project: KUBE_CORE_CLOUD_PROJECT
+  projectShortName: KUBE_CORE_CLOUD_PROJECT_SHORT_NAME
   registry:
     hostname: KUBE_CORE_CLOUD_REGISTRY_HOSTNAME
   default:
