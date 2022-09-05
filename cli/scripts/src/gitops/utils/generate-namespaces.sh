@@ -63,18 +63,42 @@ check_context "${cluster_config_context}"
 tmpConfigPath=${tmpFolder}/config
 
 
-log_debug "${project_name} - Generating namespaces"
+log_debug "Generating namespaces..."
+arg=${1:-""}
+# TODO: Include this logic directly in kube-core build namespaces
+# Requires to handle the cases: if running in kube-core build all or independently, and if the project is at initial setup stage or later update
+if [[ "$arg" == "with-helmfile" ]]; then
+    log_warn "Using only helmfile list to build namespaces"
+    filter=""
+    helmfileSelector=""
+    helmfileSelectorOverride=""
+    namespaces=$(helmfile_list | awk '{print $2}' | tail -n +2 | sort -u)
+    mkdir -p ${config_path}/namespace
+    while read namespace; do
+cat <<YAML > ${config_path}/namespace/${namespace}.yaml
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ${namespace}
+YAML
+    done <<< "${namespaces}"
+    log_debug "Done Generating namespaces!"
+    exit
+fi
 
 find ${tmpConfigPath} -mindepth 1 -maxdepth 1 -type d | while read namespacePath; do
     namespace=$(basename $namespacePath)
     # add namespace creation
 if [[ ! -e ${namespacePath}/namespace.yaml && "${namespace}" != "namespace" ]]; then
 cat <<YAML > ${namespacePath}/namespace.yaml
+---
 apiVersion: v1
 kind: Namespace
 metadata:
   name: ${namespace}
----
 YAML
 fi
 done
+
+log_debug "Done Generating namespaces!"

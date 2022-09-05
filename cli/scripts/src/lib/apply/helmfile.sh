@@ -99,7 +99,7 @@ helmfile_build_command() {
 
     # TODO: Put everything here in a function in the lib (apply_helmfiles). Feed all the paths and process them.
     # TODO: Improve filtering.
-    if [[ "$filter" != "" ]] ; then
+    if [[ "${filter}" != "" ]] ; then
         helmfileSelectorExpression=" -l name=${filter} -l namespace=${filter}"
     fi
 

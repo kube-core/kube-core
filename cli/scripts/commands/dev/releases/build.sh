@@ -112,6 +112,7 @@ do
     rm -rf ${releaseCRDsPath}/README.md
 
     # Generating CRDs
+    # TODO: Fix robusta default values
     helm template --include-crds ${releasePath} --set crd.create=true --set installCRDs=true --set kps-robusta.clusterName="default" --set kps-robusta.enableServiceMonitors=true \
     -f ${corePath}/core/envs/default/cluster.yaml \
     -f ${corePath}/core/envs/default/core.yaml \

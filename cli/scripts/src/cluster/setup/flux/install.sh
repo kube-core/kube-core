@@ -76,58 +76,73 @@ log_info "Installing Flux!"
 # if [[ "${install_gitops}" == "true" ]]
 # then
 
-echo "Config - Flux - Source"
-echo "To install your cluster's source, you can run:"
-echo "flux create source git ${cluster_config_name} --url=${gitops_repository} --branch=${gitops_ref} --interval=${gitops_refresh} --private-key-file ${gitops_ssh_key}"
+# echo "Config - Flux - Source"
+# echo "To install your cluster's source, you can run:"
+# echo "flux create source git ${cluster_config_name} --url=${gitops_repository} --branch=${gitops_ref} --interval=${gitops_refresh} --private-key-file ${gitops_ssh_key}"
 
-echo "Config - Flux - Kustomization"
-echo "To install some apps, you can run:"
-echo "flux create kustomization ${cluster_config_name} --source=GitRepository/${cluster_config_name} --path=".${gitops_path}" --prune=true --interval=${gitops_refresh} --validation=client"
-
-echo "Config - GCR - Notifications (https://cloud.google.com/container-registry/docs/configuring-notifications)"
-echo "To create a topic:"
-# echo "gcloud pubsub topics create ${cluster_config_name}-gcr --project=${cloud_project}"
-echo "gcloud pubsub topics create gcr --project=${cloud_project}"
-
-echo "To create a subscription for the cluster:"
-# echo "gcloud pubsub subscriptions create ${cluster_config_name}-flux-gcr-receiver --topic=${cluster_config_name}-gcr --project=${cloud_project}"
-echo "gcloud pubsub subscriptions create ${cluster_config_name}-flux-gcr-receiver --topic=gcr --project=${cloud_project}"
-
-echo "To create SA for Flux:"
-serviceAccount="${cluster_config_name}-flux"
-echo "gcloud iam service-accounts create ${serviceAccount} --project ${cloud_project}"
-
-echo "To add permissions for Flux SA to subscribe to topics:"
-echo "gcloud projects add-iam-policy-binding ${cloud_project} --member=serviceAccount:${serviceAccount}@${cloud_project}.iam.gserviceaccount.com --role=roles/pubsub.subscriber"
-
-echo "To create a key for Flux SA:"
-credentialsFile="${secrets_path}/input/flux-system/flux.json"
-echo "gcloud iam service-accounts keys create ${credentialsFile} --iam-account ${serviceAccount}@${cloud_project}.iam.gserviceaccount.com"
-# flux create image repository podinfo --image=ghcr.io/stefanprodan/podinfo --interval=1m
+secretName="flux-ssh"
+mkdir -p ${keys_path}
+if [[ ! -f "${keys_path}/.${secretName}-key" ]]; then
+    log_info "Generating new SSH key for flux..."
+    ssh-keygen -t rsa -N '' -q -f ${keys_path}/.${secretName}-key
+    log_info "Flux SSH key generated!"
+    log_warn "You need to add ${keys_path}/.${secretName}-key.pub as a deploy key to your repositories!"
+fi
 
 
-echo "To create a webhook token for gcr push receiver"
-token=$(head -c 12 /dev/urandom | shasum | cut -d ' ' -f1)
+secret=$(kubectl create secret generic ${secretName} --dry-run=client -o yaml --from-file=identity=${keys_path}/.${secretName}-key --from-file=identity.pub=${keys_path}/.${secretName}-key.pub --from-file=known_hosts=${keys_path}/.git-ssh-hosts  | yq '.metadata |= {"name": "'"${secretName}"'", "namespace": "secrets", "annotations" : {"replicator.v1.mittwald.de/replication-allowed": "true", "replicator.v1.mittwald.de/replication-allowed-namespaces": "*"}}' -)
 
-echo "kubectl create secret generic webhook-token -n flux-system --from-literal=token=${token}"
-
-echo "To generate a visitorgroup to allow GCP to push on Flux webhook:"
-region="europe"
-sourceRanges=$(curl --silent https://www.gstatic.com/ipranges/cloud.json | jq -r '.prefixes[] | select(.ipv4Prefix) | select(.scope | contains("'${region}'")) | {"cidr": .ipv4Prefix, "name": "\(.service) - \(.scope)"}' | jq -s '{sources: .}' | yq e - -P)
+echo "${secret}" > ${secrets_path}/manifests/${secretName}.yaml
 
 
-visitorGroup=$(cat <<EOF
-apiVersion: ingress.neo9.io/v1
-kind: VisitorGroup
-metadata:
-  name: gcp
-spec:
-  ${sourceRanges}
-EOF
-)
+# echo "Config - Flux - Kustomization"
+# echo "To install some apps, you can run:"
+# echo "flux create kustomization ${cluster_config_name} --source=GitRepository/${cluster_config_name} --path=".${gitops_path}" --prune=true --interval=${gitops_refresh} --validation=client"
 
-echo "${visitorGroup}" > visitorgroup-gcp.yaml
+# echo "Config - GCR - Notifications (https://cloud.google.com/container-registry/docs/configuring-notifications)"
+# echo "To create a topic:"
+# # echo "gcloud pubsub topics create ${cluster_config_name}-gcr --project=${cloud_project}"
+# echo "gcloud pubsub topics create gcr --project=${cloud_project}"
+
+# echo "To create a subscription for the cluster:"
+# # echo "gcloud pubsub subscriptions create ${cluster_config_name}-flux-gcr-receiver --topic=${cluster_config_name}-gcr --project=${cloud_project}"
+# echo "gcloud pubsub subscriptions create ${cluster_config_name}-flux-gcr-receiver --topic=gcr --project=${cloud_project}"
+
+# echo "To create SA for Flux:"
+# serviceAccount="${cluster_config_name}-flux"
+# echo "gcloud iam service-accounts create ${serviceAccount} --project ${cloud_project}"
+
+# echo "To add permissions for Flux SA to subscribe to topics:"
+# echo "gcloud projects add-iam-policy-binding ${cloud_project} --member=serviceAccount:${serviceAccount}@${cloud_project}.iam.gserviceaccount.com --role=roles/pubsub.subscriber"
+
+# echo "To create a key for Flux SA:"
+# credentialsFile="${secrets_path}/input/flux-system/flux.json"
+# echo "gcloud iam service-accounts keys create ${credentialsFile} --iam-account ${serviceAccount}@${cloud_project}.iam.gserviceaccount.com"
+# # flux create image repository podinfo --image=ghcr.io/stefanprodan/podinfo --interval=1m
+
+
+# echo "To create a webhook token for gcr push receiver"
+# token=$(head -c 12 /dev/urandom | shasum | cut -d ' ' -f1)
+
+# echo "kubectl create secret generic webhook-token -n flux-system --from-literal=token=${token}"
+
+# echo "To generate a visitorgroup to allow GCP to push on Flux webhook:"
+# region="europe"
+# sourceRanges=$(curl --silent https://www.gstatic.com/ipranges/cloud.json | jq -r '.prefixes[] | select(.ipv4Prefix) | select(.scope | contains("'${region}'")) | {"cidr": .ipv4Prefix, "name": "\(.service) - \(.scope)"}' | jq -s '{sources: .}' | yq e - -P)
+
+
+# visitorGroup=$(cat <<EOF
+# apiVersion: ingress.neo9.io/v1
+# kind: VisitorGroup
+# metadata:
+#   name: gcp
+# spec:
+#   ${sourceRanges}
+# EOF
+# )
+
+# echo "${visitorGroup}" > visitorgroup-gcp.yaml
 
 
 
-log_info "Done Installing Flux!"
+# log_info "Done Installing Flux!"
