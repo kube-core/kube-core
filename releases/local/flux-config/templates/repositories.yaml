@@ -1,0 +1,90 @@
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: GitRepository
+metadata:
+  name: self
+spec:
+  gitImplementation: go-git
+  interval: 1m0s
+  ref:
+    branch: {{ .Values.gitops.ref }}
+  secretRef:
+    name: {{ index .Values.secrets "flux-ssh" "secretRef" "name" }}
+  timeout: 60s
+  url: {{ .Values.gitops.repository }}
+
+{{ if (eq .Values.gitops.enabled true) }}
+
+{{ if (eq .Values.gitops.mode "full") }}
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+kind: Kustomization
+metadata:
+  name: self
+spec:
+  force: true
+  interval: 1m0s
+  path: {{ .Values.gitops.path }}
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: self
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta1
+kind: ImageUpdateAutomation
+metadata:
+  name: self
+spec:
+  interval: 1m0s
+  sourceRef:
+    kind: GitRepository
+    name: self
+  git:
+    checkout:
+      ref:
+        branch: {{ .Values.gitops.ref }}
+    commit:
+      author:
+        email: {{ coalesce .Values.gitops.bot.user .Values.git.bot.user }}
+        name: {{ coalesce .Values.gitops.bot.name .Values.git.bot.name }}
+      messageTemplate: "gitops: Updates Images in: {{ .Values.cluster.config.repository.path }} (flux-self)"
+    push:
+      branch: {{ .Values.gitops.ref }}
+  update:
+    path: {{ .Values.cluster.config.repository.path }}
+    strategy: Setters
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta1
+kind: ImagePolicy
+metadata:
+  name: kube-core
+spec:
+  imageRepositoryRef:
+    name: kube-core
+  policy:
+    semver:
+      range: '>=0.0.0-0'
+---
+# Source: n9-api/templates/flux/imagerepository.yaml
+apiVersion: image.toolkit.fluxcd.io/v1beta1
+kind: ImageRepository
+metadata:
+  name: kube-core
+spec:
+  image: neo9sas/kube-core
+  interval: 1h
+  # secretRef:
+  #   name: docker-registry-gcr-admin
+
+{{ else if (eq .Values.gitops.mode "releases") }}
+{{ range $releaseName, $releaseConfig := .Values.releases }}
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+kind: Kustomization
+metadata:
+  name: {{ toYaml $releaseConfig.namespace }}-{{ $releaseName }}
+spec: {{ toYaml $.Values.gitops.config.default.kustomization | nindent 2 }}
+  path: /cluster/config/{{ $releaseConfig.namespace }}/{{ $releaseName }}
+{{ end }}
+{{ end }}
+
+{{ end }}

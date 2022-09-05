@@ -304,6 +304,9 @@ directories:
       - path: flux
         directory:
           path: ../../../releases/local/flux
+      - path: flux-config
+        directory:
+          path: ../../../releases/local/flux-config
       - path: imagecache
         directory:
           path: ../../../releases/local/imagecache
