@@ -100,8 +100,10 @@ somethingChanged="false"
 
 cd ${clusterConfigDirPath}
 if [[ "${GIT_ADD_ALL_FILES}" == "true" ]]; then
+    log_info "Checking all files"
     gitStatus=$(git status --porcelain .)
 else
+    log_info "Checking only config"
     gitStatus=$(git status --porcelain ${config_path})
 fi
 if [[ ! -z "${gitStatus}" ]]; then
@@ -117,8 +119,10 @@ if [[ "${somethingChanged}" == "true" ]]; then
 
     log "Adding config files..."
     if [[ "${GIT_ADD_ALL_FILES}" == "true" ]]; then
+        log_info "Applying all files"
         git add .
     else
+        log_info "Applying only config"
         git add ${config_path}
     fi
 
@@ -130,10 +134,11 @@ if [[ "${somethingChanged}" == "true" ]]; then
 
     gitPushOpts="-o merge_request.create -o merge_request.target=${targetBranch} -o merge_request.remove_source_branch"
     if [[ "PR_AUTO_MERGE" == "true" ]]; then
+        log_info "Merging when pipeline will succeed!"
         gitPushOpts="${gitPushOpts} -o merge_request.merge_when_pipeline_succeeds"
     fi
+    log_info "Push command: git push --set-upstream origin ${workBranch} ${gitPushOpts}"
     git push --set-upstream origin ${workBranch} ${gitPushOpts}
-    #-o merge_request.title="" -o merge_request.description="<description>"
 
     cd -
 else

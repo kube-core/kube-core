@@ -81,7 +81,16 @@ log_debug "conftest test ${gitOpsConfigPath} -p ${policiesPath}"
 
 # OPA Validation
 # set +e
-conftest test ${gitOpsConfigPath} -p ${policiesPath}
+
+if [[ "${cluster_config_corePoliciesEnabled}" == "true" ]]; then
+    log_info "Running kube-core tests..."
+    conftest test ${gitOpsConfigPath} -p ${corePath}/policies/default
+fi
+
+if [[ "${cluster_config_clusterPoliciesEnabled}" == "true" ]]; then
+    log_info "Running cluster tests..."
+    conftest test ${gitOpsConfigPath} -p ${policiesPath}
+fi
 # exit_code=$?
 # set -e
 
