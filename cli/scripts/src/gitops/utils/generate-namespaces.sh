@@ -84,6 +84,14 @@ metadata:
 YAML
     done <<< "${namespaces}"
     log_debug "Done Generating namespaces!"
+    mkdir -p ${config_path}/namespace
+    cat <<YAML > ${config_path}/namespace/secrets.yaml
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: secrets
+YAML
     exit
 fi
 
@@ -100,5 +108,14 @@ metadata:
 YAML
 fi
 done
+
+mkdir -p ${tmpConfigPath}/namespace
+cat <<YAML > ${tmpConfigPath}/namespace/secrets.yaml
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: secrets
+YAML
 
 log_debug "Done Generating namespaces!"
