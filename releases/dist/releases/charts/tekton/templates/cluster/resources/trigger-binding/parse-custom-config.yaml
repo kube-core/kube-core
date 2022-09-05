@@ -61,3 +61,9 @@ spec:
 
   - name: kube-core-image
     value: {{ .Values.cluster.delivery.config.kubeCoreImage | quote }}
+
+  - name: apply
+    value: {{ .Values.cluster.delivery.config.apply.enabled | quote }}
+
+  - name: apply-dry-run
+    value: {{ .Values.cluster.delivery.config.apply.dry | quote }}

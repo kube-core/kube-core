@@ -250,6 +250,9 @@ cluster:
     config:
       autoMerge: "false"
       kubeCoreImage: neo9sas/kube-core:latest
+      apply:
+        enabled: false
+        dry: ""
     node:
       version: "16.14.2"
       tests:

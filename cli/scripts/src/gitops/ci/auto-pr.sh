@@ -138,19 +138,30 @@ if [[ "${somethingChanged}" == "true" ]]; then
     cd -
 else
     log "No changes detected in config !"
+    if [[ -z "${APPLY}" ]]; then
+        APPLY=""
+    fi
 
-    # TODO: See how to keep a clean git (delete the branch if we did nothing )
-    # Requires to implement git checks on all the repo, not only gitops config as it is now
-    #
-    # cd ${clusterConfigDirPath}
-    # if git rev-parse --quiet --verify origin/${workBranch}; then
-    #   echo "WARNING: Deleting branch: ${workBranch}"
-    #   echo "WARNING: This is because we create the branch first and then check for changes to push"
-    #   echo "WARNING: This logic may change in the future"
+    if [[ -z "${APPLY_DRY_RUN}" ]]; then
+        APPLY_DRY_RUN=""
+    fi
 
-    #   log "Deleting ${workBranch}"
-    #   git push origin :${workBranch} || true
-    # fi
-    # cd -
+    if [[ "${APPLY}" == "true" ]]; then
+        if [[ "${workBranch}" == "${gitops_ref}" ]]; then
+            log_info "Applying..."
+            kube-core apply all --dry-run=${APPLY_DRY_RUN}
+        else
+            log_info "Apply is enabled but requires work branch to be: ${gitops_ref}"
+        fi
+
+        if [[ "${APPLY_DRY_RUN}" == "client" || "${APPLY_DRY_RUN}" == "server" ]]; then
+            if [[ "${workBranch}" == "${gitops_ref}" ]]; then
+                log_info "Applying..."
+                kube-core apply all --dry-run=${APPLY_DRY_RUN}
+            else
+                log_info "Apply is enabled but requires work branch to be: ${gitops_ref}"
+            fi
+        fi
+    fi
 
 fi
