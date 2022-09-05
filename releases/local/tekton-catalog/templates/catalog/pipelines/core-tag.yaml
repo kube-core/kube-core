@@ -108,6 +108,14 @@ spec:
     description: If adding all files or only config folder
     type: string
     default: "true"
+  - name: apply
+    description: If applying when tests pass and no changes are detected
+    type: string
+    default: "false"
+  - name: apply-dry-run
+    description: If applying, the type of dry-run
+    type: string
+    default: "server"
   workspaces:
   - name: ws
 
@@ -239,21 +247,20 @@ spec:
       - name: script
         value: |
           #!/usr/bin/env bash
+          export ENV=ci
+          export GIT_ADD_ALL_FILES=$(params.git-add-all-files)
+          export PR_AUTO_MERGE=$(params.auto-merge)
+          export APPLY=$(params.apply)
+          export APPLY_DRY_RUN=$(params.apply-dry-run)
 
           coreTag=$(params.git-tag)
           sourceBranch=$(params.cluster-repository-ref)
 
           cd $(workspaces.source.path)/$(params.cluster-repository-name)$(params.cluster-repository-path)
 
-          ENV=ci kube-core scripts exec gitops_ci_kube_core_setup "${coreTag}" "${sourceBranch}" "core/update-${coreTag}"
-
-          ENV=ci kube-core scripts exec gitops_ci_auto_core_updates "${coreTag}"
-
-          if [[ "$(params.auto-merge)" == "true" ]]; then
-            ENV=ci GIT_ADD_ALL_FILES=$(params.git-add-all-files) PR_AUTO_MERGE=true kube-core scripts exec gitops_ci_auto_pr "${coreTag}" "${sourceBranch}" "core/update-${coreTag}" "gitops: core/update-${coreTag} (auto-core-updates)"
-          else
-            ENV=ci GIT_ADD_ALL_FILES=$(params.git-add-all-files) kube-core scripts exec gitops_ci_auto_pr "${coreTag}" "${sourceBranch}" "core/update-${coreTag}" "gitops: core/update-${coreTag} (auto-core-updates)"
-          fi
+          kube-core scripts exec gitops_ci_kube_core_setup "${coreTag}" "${sourceBranch}" "core/update-${coreTag}"
+          kube-core scripts exec gitops_ci_auto_core_updates "${coreTag}"
+          kube-core scripts exec gitops_ci_auto_pr "${coreTag}" "${sourceBranch}" "core/update-${coreTag}" "gitops: core/update-${coreTag} (auto-core-updates)"
     workspaces:
       - name: input
         workspace: ws

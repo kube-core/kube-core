@@ -24,6 +24,8 @@ spec:
   - name: tekton-url
   - name: dockerfile
   - name: auto-merge
+  - name: apply
+  - name: apply-dry-run
   # - name: run-namespace
   # - name: run-name-template
   - name: run-storage-requests
@@ -93,6 +95,10 @@ spec:
         value: $(tt.params.dockerfile)
       - name: auto-merge
         value: $(tt.params.auto-merge)
+      - name: apply
+        value: $(tt.params.apply)
+      - name: apply-dry-run
+        value: $(tt.params.apply-dry-run)
       # - name: node-version
       #   value: $(tt.params.node-version)
       # - name: node-tests-image
