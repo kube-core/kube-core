@@ -2,9 +2,30 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.3.12](https://github.com/neo9/kube-core/compare/v0.3.12...v0.3.12)
+
+- gitops: Adds apply logic on gitops pipelines [`0877856`](https://github.com/neo9/kube-core/commit/087785610b332446053fd120282e2ea71d83f36a)
+
+#### [v0.3.12](https://github.com/neo9/kube-core/compare/v0.3.11...v0.3.12)
+
+> 5 September 2022
+
+- gitops: Adds apply logic on gitops pipelines [`d61d39f`](https://github.com/neo9/kube-core/commit/d61d39fff9e1e73dce325064d94cb7bec75c541e)
+- release: v0.3.12 [`5e3a028`](https://github.com/neo9/kube-core/commit/5e3a02864786747d85f4088cef618c982f1a5b23)
+
+#### [v0.3.11](https://github.com/neo9/kube-core/compare/v0.3.10...v0.3.11)
+
+> 5 September 2022
+
+- release: v0.3.11 [`e032152`](https://github.com/neo9/kube-core/commit/e032152e4785def8eb137148054d024adfaf4474)
+- cli/scripts: Fixes detection of changes in auto-pr if all files are targeted instead of gitops config only [`227cb3b`](https://github.com/neo9/kube-core/commit/227cb3b37d66bc02f7b9bb6b53d7960b8fb2965e)
+
 #### [v0.3.10](https://github.com/neo9/kube-core/compare/v0.3.9...v0.3.10)
 
+> 5 September 2022
+
 - cli/scripts: Forced secrets namespace generation to avoid CI builds deleting it [`a1e58cb`](https://github.com/neo9/kube-core/commit/a1e58cb5b99a9b82f553d1a9d6f8d89adb232ab5)
+- release: v0.3.10 [`106579e`](https://github.com/neo9/kube-core/commit/106579ee75b1b549a5cc04e5fadda5aee096c44a)
 
 #### [v0.3.9](https://github.com/neo9/kube-core/compare/v0.3.8...v0.3.9)
 
