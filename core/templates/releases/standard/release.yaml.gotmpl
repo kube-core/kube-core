@@ -1,7 +1,8 @@
 - {{ toYaml .item.release | nindent 2 | trim }} {{/*# Allow to use all standard helmfile properties*/}}
   installed: {{ .item.enabled }} {{/*# Controls installation & removal*/}}
   kubeContext: {{ .coreValues.cluster.config.context }}
-  {{/* forceNamespace: {{ .item.release.namespace }} # Doesn't work */}}
+  namespace: {{ .item.namespace }}
+  {{/* forceNamespace: {{ .item.namespace }} # Doesn't work */}}
   {{ if .item.labels }}
   labels: {{ toYaml .item.labels | nindent 4 }}
     app: {{ .item.release.name }}

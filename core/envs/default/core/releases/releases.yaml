@@ -5,80 +5,80 @@ releases:
       group: cluster
     options:
       injectReloaderAnnotations: true
+    namespace: cert-manager
     release:
       chart: ../releases/dist/releases/charts/cert-manager
       name: cert-manager
-      namespace: cert-manager
   chaos:
     labels:
       component: chaos
       group: chaos
+    namespace: litmus
     release:
       chart: ../releases/dist/releases/charts/chaos
       name: chaos
-      namespace: litmus
   chartmuseum:
     labels:
       component: chartmuseum
       group: devops
+    namespace: chartmuseum
     release:
       chart: ../releases/dist/releases/charts/chartmuseum
       name: chartmuseum
-      namespace: chartmuseum
   cluster-issuers:
     labels:
       component: certificates
       group: cluster
+    namespace: cert-manager
     release:
       chart: ../releases/dist/releases/charts/raw
       name: cluster-issuers
-      namespace: cert-manager
   cluster-logging:
     labels:
       component: cluster
       group: logging-v2
+    namespace: logging
     release:
       chart: ../releases/dist/releases/charts/cluster-logging
       name: cluster-logging
-      namespace: logging
   container-registry-cleaner:
     labels:
       component: registry
       group: cluster
+    namespace: system-tools
     release:
       chart: ../releases/dist/releases/charts/container-registry-cleaner
       name: container-registry-cleaner
-      namespace: system-tools
-  container-registry-operator:
-    labels:
-      component: registry
-      group: cluster
-    release:
-      chart: ../releases/dist/releases/charts/container-registry-operator
-      name: container-registry-operator
-      namespace: container-registry-operator
   container-registry-config:
     labels:
       component: registry
       group: cluster
+    namespace: container-registry-operator
     release:
       chart: ../releases/dist/releases/charts/container-registry-config
       name: container-registry-config
-      namespace: container-registry-operator
+  container-registry-operator:
+    labels:
+      component: registry
+      group: cluster
+    namespace: container-registry-operator
+    release:
+      chart: ../releases/dist/releases/charts/container-registry-operator
+      name: container-registry-operator
   crossplane:
     labels:
       component: crossplane
       group: devops
+    namespace: crossplane-system
     release:
       chart: ../releases/dist/releases/charts/crossplane
       name: crossplane
-      namespace: crossplane-system
   crossplane-buckets:
     labels: {}
+    namespace: crossplane-system
     release:
       chart: ../releases/dist/releases/charts/crossplane-buckets
       name: crossplane-buckets
-      namespace: crossplane-system
   crossplane-provider:
     hooks:
       - args:
@@ -103,10 +103,10 @@ releases:
     labels:
       component: crossplane
       group: devops
+    namespace: crossplane-system
     release:
       chart: ../releases/dist/releases/charts/raw
       name: crossplane-provider
-      namespace: crossplane-system
       needs:
         - crossplane-system/crossplane
       wait: true
@@ -141,10 +141,10 @@ releases:
     labels:
       component: crossplane
       group: devops
+    namespace: crossplane-system
     release:
       chart: ../releases/dist/releases/charts/raw
       name: crossplane-provider-config
-      namespace: crossplane-system
       needs:
         - crossplane-system/crossplane
         - crossplane-system/crossplane-provider
@@ -153,20 +153,20 @@ releases:
     labels:
       component: eck
       group: operators
+    namespace: elastic-system
     release:
       chart: ../releases/dist/releases/charts/eck-operator
       name: eck-operator
-      namespace: elastic-system
   efk:
     labels:
       component: efk
       group: logging
     options:
       removeIngressClassAnnotation: true
+    namespace: efk
     release:
       chart: ../releases/dist/releases/charts/efk
       name: efk
-      namespace: efk
   estafette-gke-node-pool-shifter:
     labels:
       cloud: gke
@@ -174,10 +174,10 @@ releases:
       group: estafette
     options:
       injectReloaderAnnotations: true
+    namespace: estafette
     release:
       chart: ../releases/dist/releases/charts/estafette-gke-node-pool-shifter
       name: estafette-gke-node-pool-shifter
-      namespace: estafette
   estafette-gke-preemptible-killer:
     labels:
       cloud: gke
@@ -185,10 +185,10 @@ releases:
       group: estafette
     options:
       injectReloaderAnnotations: true
+    namespace: estafette
     release:
       chart: ../releases/dist/releases/charts/estafette-gke-preemptible-killer
       name: estafette-gke-preemptible-killer
-      namespace: estafette
   estafette-k8s-node-compactor:
     labels:
       cloud: gke
@@ -196,263 +196,271 @@ releases:
       group: estafette
     options:
       injectReloaderAnnotations: true
+    namespace: estafette
     release:
       chart: ../releases/dist/releases/charts/estafette-k8s-node-compactor
       name: estafette-k8s-node-compactor
-      namespace: estafette
   estafette-vulnerability-scanner:
     labels:
       component: scanner
       group: estafette
+    namespace: estafette
     release:
       chart: ../releases/dist/releases/charts/estafette-vulnerability-scanner
       name: estafette-vulnerability-scanner
-      namespace: estafette
   external-dns:
     labels:
       component: dns
       group: cluster
     options:
       injectReloaderAnnotations: true
+    namespace: external-dns
     release:
       chart: ../releases/dist/releases/charts/external-dns
       name: external-dns
-      namespace: external-dns
   external-secrets:
     labels:
       component: external-secrets
       group: cluster
+    namespace: external-secrets
     release:
       chart: ../releases/dist/releases/charts/external-secrets
       name: external-secrets
-      namespace: external-secrets
   flux:
     labels:
       component: flux
       group: devops
+    namespace: flux-system
     release:
       chart: ../releases/dist/releases/charts/flux
       name: flux
-      namespace: flux-system
+  flux-config:
+    labels:
+      component: flux
+      group: devops
+    namespace: flux-system
+    release:
+      chart: ../releases/dist/releases/charts/flux-config
+      name: flux-config
   forecastle:
     labels:
       component: admin
       group: cluster
     options:
       applyDefaultLabelsOnIngress: true
+    namespace: forecastle
     release:
       chart: ../releases/dist/releases/charts/forecastle
       name: forecastle
-      namespace: forecastle
   imagecache:
     labels:
       component: registry
       group: cluster
+    namespace: kube-fledged
     release:
       chart: ../releases/dist/releases/charts/imagecache
       name: imagecache
-      namespace: kube-fledged
   ingress-access-operator:
     labels:
       component: ingress
       group: operators
+    namespace: ingress-access-operator
     release:
       chart: ../releases/dist/releases/charts/n9-api
       name: ingress-access-operator
-      namespace: ingress-access-operator
   istio-base:
     labels:
       component: base
       group: istio
+    namespace: istio-system
     release:
       chart: ../releases/dist/releases/charts/istio-base
       name: istio-base
-      namespace: istio-system
   istio-grafana:
     labels:
       component: grafana
       group: istio
+    namespace: istio-system
     release:
       chart: ../releases/dist/releases/charts/istio-grafana
       name: istio-grafana
-      namespace: istio-system
   istio-ingress-sidecar:
     labels:
       component: ingress
       group: istio
+    namespace: nginx-istio-ingress
     release:
       chart: ../releases/dist/releases/charts/raw
       name: istio-ingress-sidecar
-      namespace: nginx-istio-ingress
       wait: true
   istio-kiali:
     labels:
       component: kiali
       group: istio
+    namespace: istio-system
     release:
       chart: ../releases/dist/releases/charts/istio-kiali
       name: istio-kiali
-      namespace: istio-system
   istio-prometheus:
     labels:
       component: prometheus
       group: istio
+    namespace: istio-system
     release:
       chart: ../releases/dist/releases/charts/istio-prometheus
       name: istio-prometheus
-      namespace: istio-system
   istio-rules-external-services:
     labels:
       component: egress
       group: istio
+    namespace: istio-system
     release:
       chart: ../releases/dist/releases/charts/istio-rules-external-services
       name: istio-rules-external-services
-      namespace: istio-system
   istiod:
     labels:
       component: discovery
       group: istio
+    namespace: istio-system
     release:
       chart: ../releases/dist/releases/charts/istio-discovery
       name: istiod
-      namespace: istio-system
   keycloak:
     labels:
       component: keycloak
       group: auth
+    namespace: keycloak
     release:
       chart: ../releases/dist/releases/charts/keycloak
       name: keycloak
-      namespace: keycloak
   keycloak-dev:
     labels:
       component: keycloak
       group: auth
+    namespace: keycloak
     release:
       chart: ../releases/dist/releases/charts/keycloak
       name: keycloak-dev
-      namespace: keycloak
   kps:
     labels:
       component: kps
       group: monitoring
     options:
       injectReloaderAnnotations: true
+    namespace: monitoring
     release:
       chart: ../releases/dist/releases/charts/kps
       name: kps
-      namespace: monitoring
   kube-cleanup-operator:
     labels:
       component: cleanup
       group: operators
+    namespace: kube-cleanup-operator
     release:
       chart: ../releases/dist/releases/charts/kube-cleanup-operator
       name: kube-cleanup-operator
-      namespace: kube-cleanup-operator
   kube-downscaler:
     labels:
       component: scaling
       group: cluster
+    namespace: kube-downscaler
     release:
       chart: ../releases/dist/releases/charts/kube-downscaler
       name: kube-downscaler
-      namespace: kube-downscaler
   kube-fledged:
     labels:
       component: registry
       group: cluster
+    namespace: kube-fledged
     release:
       chart: ../releases/dist/releases/charts/kube-fledged
       name: kube-fledged
-      namespace: kube-fledged
   kubernetes-dashboard:
     labels:
       component: admin
       group: cluster
+    namespace: kubernetes-dashboard
     release:
       chart: ../releases/dist/releases/charts/kubernetes-dashboard
       name: kubernetes-dashboard
-      namespace: kubernetes-dashboard
   logging-gcs:
     labels: {}
+    namespace: crossplane-system
     release:
       chart: ../releases/dist/releases/charts/crossplane-buckets
       name: logging-gcs
-      namespace: crossplane-system
   logging-operator:
     labels:
       component: logging
       group: operators
+    namespace: logging-operator
     release:
       chart: ../releases/dist/releases/charts/logging-operator
       name: logging-operator
-      namespace: logging-operator
   logging-stack:
     labels:
       component: stack
       group: logging
+    namespace: logging
     release:
       chart: ../releases/dist/releases/charts/logging-stack
       name: logging-stack
-      namespace: logging
   metrics-server:
     labels:
       component: metrics
       group: cluster
+    namespace: system-tools
     release:
       chart: ../releases/dist/releases/charts/metrics-server
       name: metrics-server
-      namespace: system-tools
   minio-operator:
     labels:
       component: minio
       group: operators
+    namespace: minio-operator
     release:
       chart: ../releases/dist/releases/charts/minio-operator
       name: minio-operator
-      namespace: minio-operator
   minio-tenants:
     labels:
       component: tenant
       group: minio
+    namespace: minio
     release:
       chart: ../releases/dist/releases/charts/minio-tenants
       name: minio-tenants
-      namespace: minio
   mongodb-operator:
     labels:
       component: mongodb
       group: operators
+    namespace: mongodb-operator
     release:
       chart: ../releases/dist/releases/charts/mongodb-kubernetes-operator
       name: mongodb-operator
-      namespace: mongodb-operator
   nexus:
     labels:
       component: repository
       group: dev
+    namespace: nexus
     release:
       chart: ../releases/dist/releases/charts/sonatype-nexus
       name: nexus
-      namespace: nexus
   nginx:
     labels:
       component: nginx
       group: test
+    namespace: nginx
     release:
       chart: ../releases/dist/releases/charts/nginx
       name: nginx
-      namespace: nginx
   nginx-ingress-controller:
     labels:
       component: controller
       group: ingress
+    namespace: nginx-ingress
     release:
       chart: ../releases/dist/releases/charts/nginx-ingress-controller
       name: nginx-ingress-controller
-      namespace: nginx-ingress
   nginx-istio-ingress-controller:
     extraReleaseValues:
       - ./values/nginx-ingress-controller.yaml.gotmpl
@@ -461,26 +469,26 @@ releases:
       group: ingress
     options:
       injectReloaderAnnotations: true
+    namespace: nginx-istio-ingress
     release:
       chart: ../releases/dist/releases/charts/nginx-ingress-controller
       name: nginx-istio-ingress-controller
-      namespace: nginx-istio-ingress
   node-initializer:
     labels:
       component: init
       group: system
+    namespace: node-initializer
     release:
       chart: ../releases/dist/releases/charts/node-initializer
       name: node-initializer
-      namespace: node-initializer
   patch-operator:
     labels:
       component: admin
       group: cluster
+    namespace: patch-operator
     release:
       chart: ../releases/dist/releases/charts/patch-operator
       name: patch-operator
-      namespace: patch-operator
     strategicMergePatches:
       - apiVersion: admissionregistration.k8s.io/v1
         kind: MutatingWebhookConfiguration
@@ -523,175 +531,177 @@ releases:
       group: cluster
     options:
       applyDefaultLabelsOnIngress: true
+    namespace: polaris
     release:
       chart: ../releases/dist/releases/charts/polaris
       name: polaris
-      namespace: polaris
   predator:
     labels:
       component: predator
       group: dev
+    namespace: predator
     release:
       chart: ../releases/dist/releases/charts/predator
       name: predator
-      namespace: predator
   priority-class:
     labels:
       component: config
       group: system
+    namespace: system-tools
     release:
       chart: ../releases/dist/releases/charts/priority-class
       name: priority-class
-      namespace: system-tools
   rabbitmq-cluster:
     labels:
       component: cluster
       group: rabbitmq
+    namespace: rabbitmq
     release:
       chart: ../releases/dist/releases/charts/rabbitmq-cluster
       name: rabbitmq-cluster
-      namespace: rabbitmq
   rabbitmq-config:
     labels:
       component: config
       group: rabbitmq
+    namespace: rabbitmq
     release:
       chart: ../releases/dist/releases/charts/rabbitmq-config
       name: rabbitmq-config
-      namespace: rabbitmq
   rabbitmq-operators:
+    hooks:
+      - args: ["WARNING: Deleting validating webhook configuration for RabbitMQ Topology Operator. This should not be done, but it doesn't work without it for now."]
+        command: "echo"
+        events: ["postsync"]
+        showlogs: true
+      - args: ["delete", "validatingwebhookconfiguration", "rabbitmq-operators-rabbitmq-messaging-topology-operator-webhook"]
+        command: "kubectl"
+        events: ["postsync"]
+        showlogs: true
     labels:
       component: rabbitmq
       group: operators
+    namespace: rabbitmq-system
     release:
       chart: ../releases/dist/releases/charts/rabbitmq-cluster-operator
-      hooks:
-        - args: ["WARNING: Deleting validating webhook configuration for RabbitMQ Topology Operator. This should not be done, but it doesn't work without it for now."]
-          command: "echo"
-          events: ["postsync"]
-          showlogs: true
-        - args: ["delete", "validatingwebhookconfiguration", "rabbitmq-operators-rabbitmq-messaging-topology-operator-webhook"]
-          command: "kubectl"
-          events: ["postsync"]
-          showlogs: true
       name: rabbitmq-operators
-      namespace: rabbitmq-system
   reloader:
     labels:
       component: tool
       group: cluster
+    namespace: reloader
     release:
       chart: ../releases/dist/releases/charts/reloader
       name: reloader
-      namespace: reloader
   replicator:
     labels:
       component: tool
       group: cluster
+    namespace: replicator
     release:
       chart: ../releases/dist/releases/charts/kubernetes-replicator
       name: replicator
-      namespace: replicator
   sealed-secrets:
     labels:
       component: secrets
       group: cluster
+    namespace: sealed-secrets
     release:
       chart: ../releases/dist/releases/charts/sealed-secrets
       name: sealed-secrets
-      namespace: sealed-secrets
   secret-generator:
     labels:
       component: secret-generator
       group: cluster
+    namespace: secret-generator
     release:
       chart: ../releases/dist/releases/charts/kubernetes-secret-generator
       name: secret-generator
-      namespace: secret-generator
   sloop:
     labels:
       component: events
       group: monitoring
+    namespace: sloop
     release:
       chart: ../releases/dist/releases/charts/sloop
       name: sloop
-      namespace: sloop
   sloth:
     labels:
       component: sre
       group: monitoring
+    namespace: sloth
     release:
       chart: ../releases/dist/releases/charts/sloth
       name: sloth
-      namespace: sloth
   sonarqube:
     labels:
       component: qa
       group: dev
+    namespace: sonarqube
     release:
       chart: ../releases/dist/releases/charts/sonarqube
       name: sonarqube
-      namespace: sonarqube
   starboard-operator:
     labels:
       component: cvs
       group: security
+    namespace: starboard-operator
     release:
       chart: ../releases/dist/releases/charts/starboard-operator
       name: starboard-operator
-      namespace: starboard-operator
   system-config:
     labels:
       component: config
       group: system
+    namespace: system-tools
     release:
       chart: ../releases/dist/releases/charts/raw
       name: system-config
-      namespace: system-tools
   system-jobs:
     labels:
       component: config
       group: system
+    namespace: system-tools
     release:
       chart: ../releases/dist/releases/charts/system-jobs
       name: system-jobs
-      namespace: system-tools
   tekton:
     labels:
       component: tekton
       group: devops
     options:
       injectReloaderAnnotations: true
+    namespace: tekton-pipelines
     release:
       chart: ../releases/dist/releases/charts/tekton
       name: tekton
-      namespace: tekton-pipelines
   tekton-catalog:
     labels:
       component: tekton
       group: devops
+    namespace: tekton-pipelines
     release:
       chart: ../releases/dist/releases/charts/tekton-catalog
       name: tekton-catalog
-      namespace: tekton-pipelines
+      needs:
+        - tekton-pipelines/tekton
   tekton-logging:
     labels:
       component: tekton
       group: logging
+    namespace: logging
     release:
       chart: ../releases/dist/releases/charts/tekton-logging
       name: tekton-logging
-      namespace: logging
   velero:
     labels:
       component: backups
       group: cluster
     options:
       injectReloaderAnnotations: true
+    namespace: velero
     release:
       chart: ../releases/dist/releases/charts/velero
       name: velero
-      namespace: velero
     strategicMergePatches:
       - apiVersion: apps/v1
         kind: Deployment
@@ -710,23 +720,23 @@ releases:
     labels:
       component: visitors
       group: ingress
+    namespace: ingress-access-operator
     release:
       chart: ../releases/dist/releases/charts/raw
       name: visitor-groups
-      namespace: ingress-access-operator
   zeebe:
     labels:
       component: zeebe
       group: middleware
+    namespace: zeebe
     release:
       chart: ../releases/dist/releases/charts/zeebe-cluster-helm
       name: zeebe
-      namespace: zeebe
   zeebe-operate:
     labels:
       component: zeebe
       group: middleware
+    namespace: zeebe
     release:
       chart: ../releases/dist/releases/charts/zeebe-operate-helm
       name: zeebe-operate
-      namespace: zeebe

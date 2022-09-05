@@ -29,7 +29,7 @@
 {{ if $value.manifests }}
 - name: {{ $value.release.name }}-manifests
   chart: ../releases/dist/releases/charts/raw
-  namespace: {{ $value.release.namespace }}
+  namespace: {{ $value.namespace }}
   {{ if .labels }}
   labels: {{ toYaml .labels | nindent 4 }}
   {{ else }}
@@ -45,7 +45,7 @@
 {{ if $value.secrets }}
 - name: {{ $value.release.name }}-secrets
   chart: ../releases/dist/releases/charts/raw
-  namespace: {{ $value.release.namespace }}
+  namespace: {{ $value.namespace }}
   {{ if .labels }}
   labels: {{ toYaml .labels | nindent 4 }}
   {{ else }}
@@ -61,7 +61,7 @@
 {{ if $value.patches }}
 - name: {{ $value.release.name }}-patches
   chart: ../releases/dist/releases/charts/raw
-  namespace: {{ $value.release.namespace }}
+  namespace: {{ $value.namespace }}
   {{ if .labels }}
   labels: {{ toYaml .labels | nindent 4 }}
   {{ else }}
@@ -73,7 +73,6 @@
   - "./values/release-patches.yaml.gotmpl"
   # - "./values/{{ $value.release.name }}-secrets.yaml.gotmpl"
 {{ end }}
-
 
 {{- end -}}
 {{- end -}}
