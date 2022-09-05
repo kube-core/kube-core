@@ -2,13 +2,20 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.3.10](https://github.com/neo9/kube-core/compare/v0.3.9...v0.3.10)
+
+- cli/scripts: Forced secrets namespace generation to avoid CI builds deleting it [`a1e58cb`](https://github.com/neo9/kube-core/commit/a1e58cb5b99a9b82f553d1a9d6f8d89adb232ab5)
+
 #### [v0.3.9](https://github.com/neo9/kube-core/compare/v0.3.8...v0.3.9)
+
+> 5 September 2022
 
 - releases: Removed base folder as it is not used anymore [`94b44ed`](https://github.com/neo9/kube-core/commit/94b44ed66262e52049a221caede64b8a6f466642)
 - cli/scripts: Updates flux install & Various fixes and improvements [`a8939bc`](https://github.com/neo9/kube-core/commit/a8939bc0170bae1423e219e279fc353c68c9a078)
 - releases: Adds flux-config to manage default flux resources [`eb5846d`](https://github.com/neo9/kube-core/commit/eb5846dfb4987217f4f8f23c0ec0d6b8767db84e)
 - core/templates: Moved namespace field on the kube-core release wrapper [`9d6bdd8`](https://github.com/neo9/kube-core/commit/9d6bdd8c78cdc9ab7bd9d03591db194b11116024)
 - releases/flux: Adds podmonitor config to monitor all flux controllers [`1cb7dc7`](https://github.com/neo9/kube-core/commit/1cb7dc7f3bc08dc79b0af2680060f7b7469ee8ad)
+- release: v0.3.9 [`660fc5f`](https://github.com/neo9/kube-core/commit/660fc5f4b433aa86318af14d240f8988118f2b30)
 - releases/schema: Updated schema to include new releases [`abba1c6`](https://github.com/neo9/kube-core/commit/abba1c6bfd4b5d171c223723b3647bbee8557be4)
 
 #### [v0.3.8](https://github.com/neo9/kube-core/compare/v0.3.7...v0.3.8)
