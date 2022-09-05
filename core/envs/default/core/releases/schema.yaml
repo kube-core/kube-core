@@ -8,6 +8,7 @@ templates:
     jsonPatches: {}
     labels: {}
     manifests: []
+    namespace: "default"
     needs: []
     options:
       applyDefaultLabelsOnIngress: false
@@ -28,8 +29,8 @@ releases:
   cluster-issuers: *release
   cluster-logging: *release
   container-registry-cleaner: *release
-  container-registry-operator: *release
   container-registry-config: *release
+  container-registry-operator: *release
   crossplane: *release
   crossplane-buckets: *release
   crossplane-provider: *release
@@ -43,6 +44,7 @@ releases:
   external-dns: *release
   external-secrets: *release
   flux: *release
+  flux-config: *release
   forecastle: *release
   imagecache: *release
   ingress-access-operator: *release
