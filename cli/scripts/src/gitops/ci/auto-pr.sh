@@ -160,21 +160,24 @@ else
         APPLY_DRY_RUN=""
     fi
 
+    # TODO: Make this an independent script and step in CI instead. Integrate better kube-core tasks with CLI arguments.
     if [[ "${APPLY}" == "true" ]]; then
         log_info "Updating Helm repos..."
-        helmfile repos
-        log_info "Applying..."
         if [[ "${APPLY_DRY_RUN}" == "client" || "${APPLY_DRY_RUN}" == "server" ]]; then
-            if [[ "${workBranch}" == "${gitops_ref}" ]]; then
+            if [[ "${workBranch}" == "gitops/update-${gitops_ref}" && "${sourceBranch}" == "${gitops_ref}" && "${targetBranch}" == "${gitops_ref}" ]]; then
+                helmfile repos
+                log_info "Applying..."
                 kube-core apply all --dry-run=${APPLY_DRY_RUN}
             else
-                log_info "Apply is enabled but requires work branch to be: ${gitops_ref}"
+                log_info "Apply is enabled but source and target branch to be: ${gitops_ref}"
             fi
         else
-            if [[ "${workBranch}" == "${gitops_ref}" ]]; then
+            if [[ "${workBranch}" == "gitops/update-${gitops_ref}" && "${sourceBranch}" == "${gitops_ref}" && "${targetBranch}" == "${gitops_ref}" ]]; then
+                helmfile repos
+                log_info "Applying... (dry-run)"
                 kube-core apply all --dry-run=${APPLY_DRY_RUN}
             else
-                log_info "Apply is enabled but requires work branch to be: ${gitops_ref}"
+                log_info "Apply is enabled but source and target branch to be: ${gitops_ref}"
             fi
         fi
     fi
