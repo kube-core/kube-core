@@ -85,7 +85,7 @@ spec:
   - name: git-add-all-files
     description: If adding all files or only config folder
     type: string
-    default: "false"
+    default: "true"
   - name: apply
     description: If applying when tests pass and no changes are detected
     type: string
@@ -280,15 +280,9 @@ spec:
       - name: script
         value: |
           #!/usr/bin/env bash
-          export ENV=ci
-          export GIT_ADD_ALL_FILES=$(params.git-add-all-files)
-          export PR_AUTO_MERGE=$(params.auto-merge)
-          export APPLY=$(params.apply)
-          export APPLY_DRY_RUN=$(params.apply-dry-run)
-
           cd $(workspaces.source.path)/$(params.git-project-name)/cluster
-          kube-core scripts exec gitops_ci_kube_core_setup "$(params.git-branch)" "$(params.git-branch)" "$(params.git-branch)"
-          kube-core scripts exec gitops_ci_auto_pr "$(params.git-branch)" "$(params.git-branch)" "$(params.git-branch)"
+          ENV=ci GIT_ADD_ALL_FILES=$(params.git-add-all-files) PR_AUTO_MERGE=$(params.auto-merge) APPLY=$(params.apply) APPLY_DRY_RUN=$(params.apply-dry-run) kube-core scripts exec gitops_ci_kube_core_setup "$(params.git-branch)" "$(params.git-branch)" "$(params.git-branch)"
+          ENV=ci GIT_ADD_ALL_FILES=$(params.git-add-all-files) PR_AUTO_MERGE=$(params.auto-merge) APPLY=$(params.apply) APPLY_DRY_RUN=$(params.apply-dry-run) kube-core scripts exec gitops_ci_auto_pr "$(params.git-branch)" "$(params.git-branch)" "$(params.git-branch)"
 
     workspaces:
       - name: input
@@ -323,15 +317,10 @@ spec:
       - name: script
         value: |
           #!/usr/bin/env bash
-          export ENV=ci
-          export GIT_ADD_ALL_FILES=$(params.git-add-all-files)
-          export PR_AUTO_MERGE=$(params.auto-merge)
-          export APPLY=$(params.apply)
-          export APPLY_DRY_RUN=$(params.apply-dry-run)
 
           cd $(workspaces.source.path)/$(params.git-project-name)/cluster
-          kube-core scripts exec gitops_ci_kube_core_setup "$(params.git-branch)"
-          kube-core scripts exec gitops_ci_auto_pr "$(params.git-branch)"
+          ENV=ci GIT_ADD_ALL_FILES=$(params.git-add-all-files) PR_AUTO_MERGE=$(params.auto-merge) APPLY=$(params.apply) APPLY_DRY_RUN=$(params.apply-dry-run) kube-core scripts exec gitops_ci_kube_core_setup "$(params.git-branch)"
+          ENV=ci GIT_ADD_ALL_FILES=$(params.git-add-all-files) PR_AUTO_MERGE=$(params.auto-merge) APPLY=$(params.apply) APPLY_DRY_RUN=$(params.apply-dry-run) kube-core scripts exec gitops_ci_auto_pr "$(params.git-branch)"
 
     workspaces:
       - name: input

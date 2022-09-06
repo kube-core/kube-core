@@ -69,20 +69,23 @@ commitMessage=${4:-"gitops: Regen (auto)"}
 # Checking out the branch
 cd ${clusterConfigDirPath}
 
-
+branchExisted="false"
+branchDeleted="false"
 log_info "Checking if work branch already exists: origin/${workBranch}"
 if git rev-parse --quiet --verify origin/${workBranch}; then
+    branchExisted="true"
+    log_info "Work branch already exists: origin/${workBranch}"
     if [[ "${workBranch}" == "gitops/update-${targetBranch}" || "${workBranch}" == "core/update-${sourceBranch}" ]]; then
-        # log_error "Branch already exists, this case is not handled. Aborting!"
-        # exit 1
 
-        log_warn "Deleting branch and rebuilding !"
+        log_warn "Deleting branch and rebuilding ! (outdated auto-generated update branch)"
         log_warn "This part should be updated to handle rebase instead of delete/recreate !"
 
         log_info "Deleting ${workBranch}"
         git push origin :${workBranch}
-
+        branchDeleted="true"
     fi
+else
+    log_info "Work branch does not exists: origin/${workBranch}"
 fi
 
 if [[ "${workBranch}" == "gitops/update-${targetBranch}" || "${workBranch}" == "core/update-${sourceBranch}" ]]; then
@@ -117,12 +120,12 @@ if [[ "${somethingChanged}" == "true" ]]; then
     log "Changes detected in config !"
     echo "${gitStatus}"
 
-    log "Adding config files..."
+    log "Adding files to git..."
     if [[ "${GIT_ADD_ALL_FILES}" == "true" ]]; then
-        log_info "Applying all files"
+        log_info "Adding all files"
         git add .
     else
-        log_info "Applying only config"
+        log_info "Adding only config"
         git add ${config_path}
     fi
 
@@ -132,11 +135,17 @@ if [[ "${somethingChanged}" == "true" ]]; then
     log "Pushing changes & Updating PR..."
     git pull origin ${workBranch} || true
 
-    gitPushOpts="-o merge_request.create -o merge_request.target=${targetBranch} -o merge_request.remove_source_branch"
-    if [[ "PR_AUTO_MERGE" == "true" ]]; then
-        log_info "Merging when pipeline will succeed!"
-        gitPushOpts="${gitPushOpts} -o merge_request.merge_when_pipeline_succeeds"
+    if [[ "${branchExisted}" == "false" || "${branchDeleted}" == "true" ]]; then
+        gitPushOpts="-o merge_request.create -o merge_request.target=${targetBranch} -o merge_request.remove_source_branch"
+        if [[ "${PR_AUTO_MERGE}" == "true" ]]; then
+            log_info "Merging when pipeline will succeed!"
+            gitPushOpts="${gitPushOpts} -o merge_request.merge_when_pipeline_succeeds"
+        fi
+    else
+        gitPushOpts=""
     fi
+
+
     log_info "Push command: git push --set-upstream origin ${workBranch} ${gitPushOpts}"
     git push --set-upstream origin ${workBranch} ${gitPushOpts}
 
@@ -152,16 +161,17 @@ else
     fi
 
     if [[ "${APPLY}" == "true" ]]; then
-        if [[ "${workBranch}" == "${gitops_ref}" ]]; then
-            log_info "Applying..."
-            kube-core apply all --dry-run=${APPLY_DRY_RUN}
-        else
-            log_info "Apply is enabled but requires work branch to be: ${gitops_ref}"
-        fi
-
+        log_info "Updating Helm repos..."
+        helmfile repos
+        log_info "Applying..."
         if [[ "${APPLY_DRY_RUN}" == "client" || "${APPLY_DRY_RUN}" == "server" ]]; then
             if [[ "${workBranch}" == "${gitops_ref}" ]]; then
-                log_info "Applying..."
+                kube-core apply all --dry-run=${APPLY_DRY_RUN}
+            else
+                log_info "Apply is enabled but requires work branch to be: ${gitops_ref}"
+            fi
+        else
+            if [[ "${workBranch}" == "${gitops_ref}" ]]; then
                 kube-core apply all --dry-run=${APPLY_DRY_RUN}
             else
                 log_info "Apply is enabled but requires work branch to be: ${gitops_ref}"
