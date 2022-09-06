@@ -2,16 +2,23 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
-#### [v0.3.12](https://github.com/neo9/kube-core/compare/v0.3.12...v0.3.12)
+#### [v0.3.13](https://github.com/neo9/kube-core/compare/v0.3.13...v0.3.13)
 
-- gitops: Adds apply logic on gitops pipelines [`0877856`](https://github.com/neo9/kube-core/commit/087785610b332446053fd120282e2ea71d83f36a)
+- policies: Adds possibility to toggle kube-core policies and cluster policies [`2bc8d98`](https://github.com/neo9/kube-core/commit/2bc8d98f01ba5831eb5a38d79c15a267b47b6aa2)
+
+#### [v0.3.13](https://github.com/neo9/kube-core/compare/v0.3.12...v0.3.13)
+
+> 5 September 2022
+
+- policies: Adds possibility to toggle kube-core policies and cluster policies [`31753a7`](https://github.com/neo9/kube-core/commit/31753a7b6a0032e851c7fb5c4e5dfbabaf6e32d0)
+- release: v0.3.13 [`467dc92`](https://github.com/neo9/kube-core/commit/467dc920216ab90418d814944b2ac2de32bf9e5e)
 
 #### [v0.3.12](https://github.com/neo9/kube-core/compare/v0.3.11...v0.3.12)
 
 > 5 September 2022
 
-- gitops: Adds apply logic on gitops pipelines [`d61d39f`](https://github.com/neo9/kube-core/commit/d61d39fff9e1e73dce325064d94cb7bec75c541e)
-- release: v0.3.12 [`5e3a028`](https://github.com/neo9/kube-core/commit/5e3a02864786747d85f4088cef618c982f1a5b23)
+- gitops: Adds apply logic on gitops pipelines [`0877856`](https://github.com/neo9/kube-core/commit/087785610b332446053fd120282e2ea71d83f36a)
+- release: v0.3.12 [`00f4e85`](https://github.com/neo9/kube-core/commit/00f4e85d0b8086ade6569e1055350ca32bb0cf5b)
 
 #### [v0.3.11](https://github.com/neo9/kube-core/compare/v0.3.10...v0.3.11)
 
