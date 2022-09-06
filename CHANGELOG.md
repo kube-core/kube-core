@@ -2,9 +2,16 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.3.15](https://github.com/neo9/kube-core/compare/v0.3.15...v0.3.15)
+
+- releases/tekton: Fixes apply & auto-merge logic in core-tag and cluster-push [`be92e9c`](https://github.com/neo9/kube-core/commit/be92e9c18023891fd8847ba74240ea25cd753eaa)
+
 #### [v0.3.15](https://github.com/neo9/kube-core/compare/v0.3.14...v0.3.15)
 
-- releases/tekton: Fixes apply & auto-merge logic in core-tag and cluster-push [`7afdd2f`](https://github.com/neo9/kube-core/commit/7afdd2f3b859567b8704a736dac6679934ba16a8)
+> 6 September 2022
+
+- releases/tekton: Fixes apply & auto-merge logic in core-tag and cluster-push [`b66c0f9`](https://github.com/neo9/kube-core/commit/b66c0f97b5301ae15857826ce31498e47a70b1f8)
+- release: v0.3.15 [`a8337c1`](https://github.com/neo9/kube-core/commit/a8337c17d6889728837bec3b3fce25fd8aa908bf)
 
 #### [v0.3.14](https://github.com/neo9/kube-core/compare/v0.3.13...v0.3.14)
 
