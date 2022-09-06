@@ -2,16 +2,16 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
-#### [v0.3.13](https://github.com/neo9/kube-core/compare/v0.3.13...v0.3.13)
+#### [v0.3.14](https://github.com/neo9/kube-core/compare/v0.3.13...v0.3.14)
 
-- policies: Adds possibility to toggle kube-core policies and cluster policies [`2bc8d98`](https://github.com/neo9/kube-core/commit/2bc8d98f01ba5831eb5a38d79c15a267b47b6aa2)
+- releases/tekton: Makes kube-core image in CI variable [`4547792`](https://github.com/neo9/kube-core/commit/4547792de17170979e3871ec2ec40664d752f059)
 
 #### [v0.3.13](https://github.com/neo9/kube-core/compare/v0.3.12...v0.3.13)
 
-> 5 September 2022
+> 6 September 2022
 
-- policies: Adds possibility to toggle kube-core policies and cluster policies [`31753a7`](https://github.com/neo9/kube-core/commit/31753a7b6a0032e851c7fb5c4e5dfbabaf6e32d0)
-- release: v0.3.13 [`467dc92`](https://github.com/neo9/kube-core/commit/467dc920216ab90418d814944b2ac2de32bf9e5e)
+- policies: Adds possibility to toggle kube-core policies and cluster policies [`2bc8d98`](https://github.com/neo9/kube-core/commit/2bc8d98f01ba5831eb5a38d79c15a267b47b6aa2)
+- release: v0.3.13 [`89e28b6`](https://github.com/neo9/kube-core/commit/89e28b687b355c996090e9978009176e6e2c24cf)
 
 #### [v0.3.12](https://github.com/neo9/kube-core/compare/v0.3.11...v0.3.12)
 
