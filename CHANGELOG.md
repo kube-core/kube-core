@@ -2,9 +2,16 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.3.15](https://github.com/neo9/kube-core/compare/v0.3.14...v0.3.15)
+
+- releases/tekton: Fixes apply & auto-merge logic in core-tag and cluster-push [`7afdd2f`](https://github.com/neo9/kube-core/commit/7afdd2f3b859567b8704a736dac6679934ba16a8)
+
 #### [v0.3.14](https://github.com/neo9/kube-core/compare/v0.3.13...v0.3.14)
 
+> 6 September 2022
+
 - releases/tekton: Makes kube-core image in CI variable [`4547792`](https://github.com/neo9/kube-core/commit/4547792de17170979e3871ec2ec40664d752f059)
+- release: v0.3.14 [`a81758b`](https://github.com/neo9/kube-core/commit/a81758bd1bddfae3ba45ea76714fef096539c706)
 
 #### [v0.3.13](https://github.com/neo9/kube-core/compare/v0.3.12...v0.3.13)
 
