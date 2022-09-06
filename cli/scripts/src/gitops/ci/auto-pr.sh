@@ -72,7 +72,7 @@ cd ${clusterConfigDirPath}
 
 log_info "Checking if work branch already exists: origin/${workBranch}"
 if git rev-parse --quiet --verify origin/${workBranch}; then
-    if [[ "${workBranch}" == "gitops/update-${targetBranch}" ]]; then
+    if [[ "${workBranch}" == "gitops/update-${targetBranch}" || "${workBranch}" == "core/update-${sourceBranch}" ]]; then
         # log_error "Branch already exists, this case is not handled. Aborting!"
         # exit 1
 

@@ -26,6 +26,8 @@ spec:
   - name: auto-merge
   - name: apply
   - name: apply-dry-run
+  - name: kube-core-image
+
   # - name: run-namespace
   # - name: run-name-template
   - name: run-storage-requests
@@ -99,6 +101,8 @@ spec:
         value: $(tt.params.apply)
       - name: apply-dry-run
         value: $(tt.params.apply-dry-run)
+      - name: kube-core-image
+        value: $(tt.params.kube-core-image)
       # - name: node-version
       #   value: $(tt.params.node-version)
       # - name: node-tests-image
