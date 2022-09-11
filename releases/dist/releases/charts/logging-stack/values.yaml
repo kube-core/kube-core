@@ -1,8 +1,55 @@
 es-exporter:
   enabled: false
 
+monitoring:
+  enabled: true
+
+scaling:
+  enabled: true
+
 cluster:
   logging:
     stack:
+      esStackVersion: 8.3.3
+      es:
+        enabled: true
+        nodes:
+          count: 3
+          storageSize: 120Gi
+          esJavaOpts: -Xms2g -Xmx2g # Always 50% of requested memory
+          resources:
+            requests:
+              memory: 4Gi
+              cpu: 1
+            limits:
+              memory: 4Gi
+      fluentbit:
+        enabled: true
+        metrics:
+          serviceMonitor: true
+          prometheusRules: true
+        buffer:
+          mem_limit: 250M
+        resources:
+          requests:
+            cpu: 50m
+            memory: 50M
+          limits:
+            memory: 1Gi
       fluentd:
-        drain: false
+        enabled: true
+        bufferVolumeMetrics:
+          serviceMonitor: true
+        metrics:
+          serviceMonitor: true
+          prometheusRules: true
+        buffer:
+          storageSize: 20Gi
+        replicas: 3 # Only used if scaling is disabled
+        drain: true
+        resources:
+          requests:
+            cpu: 1
+            memory: 1Gi
+          limits:
+            memory: 2Gi

@@ -1,0 +1,34 @@
+{{ if .Values.cluster.logging.integrations.tekton.enabled }}
+apiVersion: logging.banzaicloud.io/v1beta1
+kind: ClusterFlow
+metadata:
+  name: tekton
+  labels:
+    logging.kube-core.io/flow-name: "tekton"
+    logging.kube-core.io/flow-type: "default"
+spec:
+  globalOutputRefs: {{ toYaml .Values.cluster.logging.integrations.tekton.config.globalOutputRefs | nindent 4 }}
+  filters:
+  - tag_normaliser:
+      format: ${namespace_name}/${pod_name}/${container_name}
+  - record_modifier:
+      records:
+      - cluster: {{ .Values.cluster.config.name }}
+        log_type: 'tekton'
+  match:
+    - select:
+        labels:
+          triggers.tekton.dev/eventlistener: cluster-hooks
+    - select:
+        labels:
+          triggers.tekton.dev/eventlistener: app-hooks
+    - select:
+        labels:
+          triggers.tekton.dev/eventlistener: core-hooks
+    - select:
+        labels:
+          triggers.tekton.dev/eventlistener: garden-hooks
+    - select:
+        labels:
+          logging.kube-core.io/flow-name: tekton
+{{ end }}
