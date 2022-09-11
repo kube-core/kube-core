@@ -140,7 +140,18 @@ cluster:
     outputs:
       outputs: [] # Not implemented
       config:
+        txtLogsPath: "logs/${tag}/"
+        txtObjectKeyFormat: "%{path}%{time_slice}_%{index}.%{file_extension}"
+        path: "logs/%Y-%m-%d/${tag}"
+
+        # TODO: Merge those two and make them completely implicit, with possibility to overwrite
+        object_key_format: "%{path}-%{time_slice}-%{uuid_flush}-%{index}.%{file_extension}" # GCS
+        s3_object_key_format: "%{path}-%{time_slice}-%{uuid_hash}-%{index}.%{file_extension}" # S3
+        # object_key_format: "%{path}/%{index}.%{file_extension}" # => 159.log
+        # object_key_format: "%{path}/%{time_slice}%{uuid_hash}%{index}.%{file_extension}" => my-api2022081514202.json
+        # object_key_format: "%{path}/%{index}-${chunk_id}.log" # => 0-5e6405b27529c86fcfb00cd1bebb98be.log
         buffer:
+<<<<<<< Updated upstream
           tags: tag,time
           timekey: 10m
           timekey_wait: 1m
@@ -155,10 +166,13 @@ cluster:
         # object_key_format: "%{path}/%{time_slice}%{uuid_hash}%{index}.%{file_extension}" => aon-aqua-bite-api2022081514202.json
         # object_key_format: "%{path}/%{index}-${chunk_id}.log" # => 0-5e6405b27529c86fcfb00cd1bebb98be.log
           # Old default:
+=======
+>>>>>>> Stashed changes
           # tags: tag,time
           # timekey: 10m
           # timekey_wait: 1m
           # timekey_use_utc: true
+<<<<<<< Updated upstream
           # flush_thread_count: 2
           # flush_mode: interval
           # flush_interval: 60s
@@ -180,6 +194,42 @@ cluster:
           # flush_thread_count: 2
           # flush_mode: interval
           # flush_interval: 60s
+=======
+          # flush_thread_count: 1
+          # flush_mode: interval
+          # flush_interval: 10m
+          # disable_chunk_backup: true
+          tags: tag,time
+          timekey: 1m
+          timekey_wait: 1m
+          timekey_use_utc: true
+
+          # Flush Configuration
+          flush_mode: interval
+          flush_interval: 60s
+
+          flush_thread_count: 4 # Multithreaded requires to use chunk-id with s3 to avoid collisions and data loss
+          flush_at_shutdown: true # This specifies whether to flush/write all buffer chunks on shutdown or not
+          disable_chunk_backup: true # Instead of storing unrecoverable chunks in the backup directory, just discard them. This option is new in Fluentd v1.2.6.
+
+
+          retry_type: exponential_backoff
+          retry_max_interval: "30"
+
+          # Buffer at most 128 buffer chunks. Make sure you have enough disk space
+          # to store buffer_chunk_limit * buffer_queue_limit bytes. In this case, 32MB * 128 = 4096MB.
+          chunk_limit_records: 128 # The max number of events that each chunks can store in it
+          chunk_limit_size: 32M # The max size of each chunks: events will be written into chunks until the size of chunks become this size (default: 8MB)
+          # total_limit_size: 500M
+
+          overflow_action: drop_oldest_chunk # drops/purges the oldest chunk to accept newly incoming chunk.
+
+          retry_type: exponential_backoff
+
+          # Here in case retry_type is changed to something else than exponential_backoff
+          retry_max_interval: "30"
+          retry_forever: false # Don't retry forever
+>>>>>>> Stashed changes
     flows:
       flows: []
       # - name: dev
