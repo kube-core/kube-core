@@ -11,6 +11,10 @@ spec:
   filters:
   - tag_normaliser:
       format: ${namespace_name}/${pod_name}/${container_name}
+  - record_modifier:
+      records:
+      - cluster: {{ .Values.cluster.config.name }}
+        log_type: 'tekton'
   match:
     - select:
         labels:
