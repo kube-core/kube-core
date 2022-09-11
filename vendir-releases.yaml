@@ -4,6 +4,18 @@ directories:
   - path: releases/base
     contents:
       # Base Releases
+      - path: prometheus-adapter
+        helmChart:
+          name: prometheus-adapter
+          version: 3.4.0
+          repository:
+            url: https://prometheus-community.github.io/helm-charts
+      - path: keda
+        helmChart:
+          name: keda
+          version: 2.8.2
+          repository:
+            url: https://kedacore.github.io/charts
       - path: crossplane-buckets
         helmChart:
           name: crossplane-buckets

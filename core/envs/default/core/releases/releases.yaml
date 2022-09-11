@@ -740,3 +740,17 @@ releases:
     release:
       chart: ../releases/dist/releases/charts/zeebe-operate-helm
       name: zeebe-operate
+
+  keda:
+    labels: {}
+    release:
+      chart: ../releases/dist/releases/charts/keda
+      name: keda
+    namespace: keda
+
+  prometheus-adapter:
+    labels: {}
+    namespace: monitoring
+    release:
+      chart: ../releases/dist/releases/charts/prometheus-adapter
+      name: prometheus-adapter
