@@ -23,7 +23,7 @@ spec:
     logstash_prefix: "{{ .cluster.config.name }}.{{ coalesce .name "default" }}"
     template_name: "{{ .cluster.config.name }}.{{ coalesce .name "default" }}"
     index_name: "{{ .cluster.config.name }}.{{ coalesce .name "default" }}"
-    application_name: "logs"
+    application_name: "{{ coalesce .applicationName "logs" }}"
     suppress_type_name: true
     template_file:
       mountFrom:
@@ -52,18 +52,5 @@ spec:
     # fail_on_detecting_es_version_retry_exceed: false
     # selector_class_name: "Fluent::Plugin::ElasticseatchFallbackSelector"
     # */}}
-    buffer:
-      tags: tag,time
-      timekey: 24h
-      timekey_wait: 1m
-      timekey_use_utc: true
-      flush_at_shutdown: true
-      flush_thread_count: 4
-      flush_mode: interval
-      flush_interval: 60s
-      retry_type: exponential_backoff
-      retry_max_interval: "30"
-      chunk_limit_size: 2M
-      total_limit_size: 500M
-      overflow_action: block
+    buffer: {{ toYaml .cluster.logging.outputs.config.buffer | nindent 6 }}
 {{ end }}

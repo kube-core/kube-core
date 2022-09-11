@@ -28,11 +28,11 @@ spec:
     {{ if (eq .txtLogs true) }}
     s3_object_key_format: {{ .cluster.logging.outputs.config.txtObjectKeyFormat | quote }}
     {{ else }}
-    s3_object_key_format: {{ .cluster.logging.outputs.config.object_key_format | quote }}
+    s3_object_key_format: {{ .cluster.logging.outputs.config.s3_object_key_format | quote }}
     {{ end }}
 {{ else if (eq .objectStorageType "gcs" )}}
   gcs:
-    project: {{ coalesce .project (index .cluster.logging.integrations .objectStorageType "config" "project") }}
+    project: {{ coalesce .project (index .cluster.logging.integrations .objectStorageType "config" "project") .cloud.project }}
     bucket: {{ coalesce .bucket (printf "%s-%s-logs" (coalesce .cluster.logging.config.bucketPrefixOverride .cluster.config.name) .name) }}
     {{ if (eq .txtLogs true) }}
     object_key_format: {{ .cluster.logging.outputs.config.txtObjectKeyFormat | quote }}
