@@ -98,3 +98,5 @@ releases:
   visitor-groups: *release
   zeebe: *release
   zeebe-operate: *release
+  keda: *release
+  prometheus-adapter: *release
