@@ -145,30 +145,10 @@ cluster:
       es:
         enabled: true
     stack:
-      esStackVersion: 8.3.3
       es:
-        enabled: true
         nodes:
-          count: 3
-          storageSize: 50Gi
           storageClass: gcp-sc-retain-wait-ssd
-          # esJavaOpts: -Xms512m -Xmx512m # Always 50% of requested memory
-          esJavaOpts: -Xms2g -Xmx2g # Always 50% of requested memory
-          resources:
-            requests:
-              memory: 4Gi
-              cpu: 1
-            limits:
-              memory: 4Gi
           affinity: {}
-            # nodeAffinity:
-            #   requiredDuringSchedulingIgnoredDuringExecution:
-            #     nodeSelectorTerms:
-            #     - matchExpressions:
-            #       - key: type
-            #         operator: In
-            #         values:
-            #         - search
           nodeSelector: {}
           tolerations:
           - key: "type"
@@ -200,10 +180,7 @@ cluster:
       minio:
         enabled: true
       fluentd:
-        enabled: true
-        replicas: 3
         buffer:
-          storageSize: 10Gi
           storageClass: gcp-sc-retain-wait-ssd
         tolerations:
         - key: "type"
@@ -217,8 +194,6 @@ cluster:
         affinity: {}
       fluentbit:
         enabled: true
-        buffer:
-          mem_limit: 250M
         tolerations:
         - key: "type"
           operator: "Equal"
@@ -236,14 +211,14 @@ cluster:
           operator: "Equal"
           value: "production"
           effect: "NoExecute"
-        - key: "type"
-          operator: "Equal"
-          value: "system"
-          effect: "NoSchedule"
-        - key: "type"
-          operator: "Equal"
-          value: "system"
-          effect: "NoExecute"
+        # - key: "type"
+        #   operator: "Equal"
+        #   value: "system"
+        #   effect: "NoSchedule"
+        # - key: "type"
+        #   operator: "Equal"
+        #   value: "system"
+        #   effect: "NoExecute"
         affinity: {}
 
   delivery:

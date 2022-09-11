@@ -1,2 +1,3 @@
 cluster: {{ toYaml .Values.cluster | nindent 2 }}
+cloud: {{ toYaml .Values.cloud | nindent 2 }}
 secrets: {{ toYaml (index .Values.releases .Release.Name "secrets") | nindent 2 }}
