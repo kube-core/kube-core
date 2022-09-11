@@ -2,6 +2,6 @@
 {{ $values := .Values }}
 {{ range .Values.cluster.logging.flows.flows }}
 ---
-{{- template "cluster-logging.flowTemplate" (dict "cluster" $values.cluster "flow" . "flowType" "dynamic" "flowName" .name) }}
+{{- template "cluster-logging.flowTemplate" (dict "cluster" $values.cluster "cloud" $values.cloud "flow" . "flowType" "dynamic" "flowName" .name) }}
 {{ end }}
 {{ end}}

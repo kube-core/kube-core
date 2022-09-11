@@ -3,8 +3,23 @@ kind: Logging
 metadata:
   name: logging
 spec:
+  enableRecreateWorkloadOnImmutableFieldChange: true
+  # fluentbit:
+  # Doesn't work - see : https://github.com/banzaicloud/logging-operator/issues/731
+  # bufferStorageVolume:
+  #   hostPath:
+  #     path: "" # leave it empty to automatically generate
+  # positiondb:
+  #   hostPath:
+  #     path: "" # leave it empty to automatically generate
   {{ if .Values.cluster.logging.stack.fluentd.enabled }}
   fluentd:
+    bufferVolumeMetrics:
+      serviceMonitor: {{ .Values.cluster.logging.stack.fluentd.bufferVolumeMetrics.serviceMonitor }}
+    metrics:
+      serviceMonitor: {{ .Values.cluster.logging.stack.fluentd.metrics.serviceMonitor }}
+      prometheusRules: {{ .Values.cluster.logging.stack.fluentd.metrics.prometheusRules }}
+    resources: {{ toYaml .Values.cluster.logging.stack.fluentd.resources | nindent 6 }}
     bufferStorageVolume:
       pvc:
         spec:
@@ -16,9 +31,11 @@ spec:
           storageClassName: {{ .Values.cluster.logging.stack.fluentd.buffer.storageClass }}
           volumeMode: Filesystem
     scaling:
+      {{ if (not (eq .Values.scaling.enabled true)) }}
       replicas: {{ .Values.cluster.logging.stack.fluentd.replicas }}
+      {{ end }}
       {{ if (eq .Values.cluster.logging.stack.fluentd.drain true) }}
-      drain: 
+      drain:
         enabled: true
       {{ end }}
     tolerations: {{ toYaml .Values.cluster.logging.stack.fluentd.tolerations | nindent 6 }}
@@ -26,9 +43,27 @@ spec:
   {{ end }}
   {{ if .Values.cluster.logging.stack.fluentbit.enabled }}
   fluentbit:
+    bufferStorageVolume:
+      emptyDir: {}
+    positiondb:
+      emptyDir: {}
+    metrics:
+      serviceMonitor: {{ .Values.cluster.logging.stack.fluentbit.metrics.serviceMonitor }}
+      prometheusRules: {{ .Values.cluster.logging.stack.fluentbit.metrics.prometheusRules }}
+    resources: {{ toYaml .Values.cluster.logging.stack.fluentbit.resources | nindent 6 }}
+    inputTail:
+      storage.type: filesystem # default is memory
+      Buffer_Chunk_Size: 32k # Default value
+      # Rotate_Wait: 10 # TODO: Test
+      Skip_Long_Lines: "On" # Default is Off
+      Mem_Buf_Limit: 5MB
     bufferStorage:
+      storage.path: /buffers # Set an optional location in the file system to store streams and chunks of data. If this parameter is not set, Input plugins can only use in-memory buffering.
+      storage.sync: normal # Configure the synchronization mode used to store the data into the file system. It can take the values normal or full.
       storage.backlog.mem_limit: {{ .Values.cluster.logging.stack.fluentbit.buffer.mem_limit }}
     tolerations: {{ toYaml .Values.cluster.logging.stack.fluentbit.tolerations | nindent 6 }}
     affinity: {{ toYaml .Values.cluster.logging.stack.fluentbit.affinity | nindent 6 }}
+    nodeSelector:
+      type: main
   {{ end }}
   controlNamespace: {{ .Release.Namespace }}
