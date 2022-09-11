@@ -64,8 +64,6 @@ spec:
                 - /bin/bash
                 - -c
                 - |
-                  set -x
-
                   # Cleans up workloads
                   TO_DELETE="$(kubectl get pods -A --no-headers {{ if .Values.cleaner.excludeTekton }}| grep -vE "tekton"{{ end }}{{ if .Values.cleaner.excludeCatalogue }}| grep -vE "catalogue"{{ end }}| grep -E "{{ .Values.cleaner.includes }}" | awk '{ns=$1;pod=$2;cmd=""pod" -n "ns; print cmd}')"
                   while read i; do test -n "$TO_DELETE" && kubectl delete pod $i || true; done <<< "$TO_DELETE"
@@ -81,7 +79,7 @@ spec:
                 - /bin/bash
                 - -c
                 - |
-                  set -x
+
                   {{- range .Values.taints }}
                   kubectl taint node -l {{ .selector.key }}={{ .selector.value }} {{ .taint.key }}={{ .taint.value }}:{{ .taint.effect }} --overwrite
                   {{- end }}
@@ -100,7 +98,6 @@ spec:
               - /bin/sh
               - -c
               - |
-                set -ex
                 # A safety check, to avoid deleting too much!
                 if [[ $KEEP -eq 0 || $KEEP == "" ]]; then
                   echo "This task cannot be used to delete *all* resources from a cluster" >&2
