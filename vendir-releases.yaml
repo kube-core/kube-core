@@ -300,6 +300,10 @@ directories:
         directory:
           path: ../../../releases/local/cluster-logging
 
+      - path: test-logging
+        directory:
+          path: ../../../releases/local/test-logging
+
       - path: oauth2-proxy
         directory:
           path: ../../../releases/local/oauth2-proxy

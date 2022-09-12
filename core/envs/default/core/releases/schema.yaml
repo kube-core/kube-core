@@ -28,6 +28,7 @@ releases:
   chartmuseum: *release
   cluster-issuers: *release
   cluster-logging: *release
+  test-logging: *release
   container-registry-cleaner: *release
   container-registry-config: *release
   container-registry-operator: *release

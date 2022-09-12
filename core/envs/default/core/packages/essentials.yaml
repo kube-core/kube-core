@@ -60,6 +60,10 @@ releases:
     labels:
       package: essentials
     enabled: true
+  keda:
+    labels:
+      package: essentials
+    enabled: true
 
   # Backups
   velero:

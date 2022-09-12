@@ -1,0 +1,37 @@
+{{ range $i := until (int .Values.instances) }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "log-gen-{{ $i }}"
+  labels:
+    app.kubernetes.io/name: "log-gen-{{ $i }}"
+    app.kubernetes.io/instance: "log-gen-{{ $i }}"
+spec:
+  replicas: {{ $.Values.replicas }}
+  strategy:
+    rollingUpdate: {}
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: "log-gen-{{ $i }}"
+      app.kubernetes.io/instance: "log-gen-{{ $i }}"
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: "log-gen-{{ $i }}"
+        app.kubernetes.io/instance: "log-gen-{{ $i }}"
+    spec:
+      containers:
+        - name: "log-gen-{{ $i }}"
+          env: {{ toYaml $.Values.env | nindent 12 }}
+          image: {{ $.Values.image }}
+          command:
+          {{ range $.Values.command }}
+          - {{ . }}
+          {{ end }}
+          args:
+          {{ range $.Values.args }}
+          - {{ . }}
+          {{ end }}
+{{ end }}

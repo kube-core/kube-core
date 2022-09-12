@@ -106,8 +106,8 @@
 - ./envs/default/core/packages/crds.yaml
 {{ end }}
 
-{{ if (.Values | get "core.packages.logging-v2.enabled" false) }}
-- ./envs/default/core/packages/logging-v2.yaml
+{{ if (.Values | get "core.packages.logging.enabled" false) }}
+- ./envs/default/core/packages/logging.yaml
 {{ end }}
 
 {{ if (.Values | get "core.packages.minio.enabled" false) }}
