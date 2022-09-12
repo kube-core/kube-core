@@ -2,29 +2,23 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
-#### [v0.3.17](https://github.com/neo9/kube-core/compare/v0.3.17...v0.3.17)
+#### [v0.3.18](https://github.com/neo9/kube-core/compare/v0.3.17...v0.3.18)
 
-- releases: Added prometheus-adapter & KEDA [`72c189d`](https://github.com/neo9/kube-core/commit/72c189dba7398b58de8f3fa609fc7a7743c912a5)
-- releases: Rebuilt releases [`7b2425e`](https://github.com/neo9/kube-core/commit/7b2425ed375ef3763fd0d18ede29f75deb61ecb8)
-- releases/cluster-logging: Improved buffer and flush configuration to have more resilient and scalable event streams [`98868d0`](https://github.com/neo9/kube-core/commit/98868d04a1dc1e803057d7dbe1c27d4ee01c75a3)
-- releases/logging-stack: Improved scalability, observability and resiliency of fluentd and fluentbit [`db49b9b`](https://github.com/neo9/kube-core/commit/db49b9b04390c37f917bed2e368a9581abb6e340)
-- core/config: Cleaned up some default values from core env as they are now in the underlying logging charts [`7c940b9`](https://github.com/neo9/kube-core/commit/7c940b9ddc12f578d48d11c0daaddd738f25412e)
-- releases/logging-stack: Added EventTailer resource to the stack [`a582d64`](https://github.com/neo9/kube-core/commit/a582d64a65c4787208d36629ee0597f2eb33695d)
-- releases/system-jobs: Removes excessive logging in all system-jobs containers [`e392cfb`](https://github.com/neo9/kube-core/commit/e392cfbcf47ddacef196b09874d2d56fa37ed0a5)
+- releases: Added test-logging package [`9b68b3b`](https://github.com/neo9/kube-core/commit/9b68b3bfcb1d74037fb550635b66756aaa19c430)
 
 #### [v0.3.17](https://github.com/neo9/kube-core/compare/v0.3.16...v0.3.17)
 
 > 11 September 2022
 
-- releases: Added prometheus-adapter & KEDA [`03233ec`](https://github.com/neo9/kube-core/commit/03233ec39ff4b133b3424cfc5c6d780e56000f94)
-- releases: Rebuilt releases [`c8ea4f2`](https://github.com/neo9/kube-core/commit/c8ea4f2e7c7820cd265eef41222091d7495fb463)
+- releases: Added prometheus-adapter & KEDA [`72c189d`](https://github.com/neo9/kube-core/commit/72c189dba7398b58de8f3fa609fc7a7743c912a5)
+- releases: Rebuilt releases [`7b2425e`](https://github.com/neo9/kube-core/commit/7b2425ed375ef3763fd0d18ede29f75deb61ecb8)
 - releases/cluster-logging: Added events integration that allows to parse and forward Kubernetes Events [`9af087b`](https://github.com/neo9/kube-core/commit/9af087b50195ba3280d59da9fa05fafff9112d09)
-- releases/logging-stack: Improved scalability, observability and resiliency of fluentd and fluentbit [`0222271`](https://github.com/neo9/kube-core/commit/02222711d168347ef4450c224187f0b7484543b4)
-- releases/cluster-logging: Improved buffer and flush configuration to have more resilient and scalable event streams [`ec3463d`](https://github.com/neo9/kube-core/commit/ec3463d705010a9532e2514b2ec0c21b2a08f723)
-- core/config: Cleaned up some default values from core env as they are now in the underlying logging charts [`a9759f8`](https://github.com/neo9/kube-core/commit/a9759f8544699461f41d949eab96f4f12a246d12)
-- release: v0.3.17 [`b9b35d0`](https://github.com/neo9/kube-core/commit/b9b35d05ea416f8902a740358ee1fb8b298691ab)
-- releases/logging-stack: Added EventTailer resource to the stack [`3c503bb`](https://github.com/neo9/kube-core/commit/3c503bbdfe5b059d9ddae274b82bdd7a941f22a7)
-- releases/system-jobs: Removes excessive logging in all system-jobs containers [`6a64ac5`](https://github.com/neo9/kube-core/commit/6a64ac5236ecb4483da2433696b05252d3022a73)
+- releases/cluster-logging: Improved buffer and flush configuration to have more resilient and scalable event streams [`98868d0`](https://github.com/neo9/kube-core/commit/98868d04a1dc1e803057d7dbe1c27d4ee01c75a3)
+- releases/logging-stack: Improved scalability, observability and resiliency of fluentd and fluentbit [`db49b9b`](https://github.com/neo9/kube-core/commit/db49b9b04390c37f917bed2e368a9581abb6e340)
+- core/config: Cleaned up some default values from core env as they are now in the underlying logging charts [`7c940b9`](https://github.com/neo9/kube-core/commit/7c940b9ddc12f578d48d11c0daaddd738f25412e)
+- release: v0.3.17 [`1cc3fc2`](https://github.com/neo9/kube-core/commit/1cc3fc2bb0ee8a6b6beb70a34dd5dcaac8bcedfd)
+- releases/logging-stack: Added EventTailer resource to the stack [`a582d64`](https://github.com/neo9/kube-core/commit/a582d64a65c4787208d36629ee0597f2eb33695d)
+- releases/system-jobs: Removes excessive logging in all system-jobs containers [`e392cfb`](https://github.com/neo9/kube-core/commit/e392cfbcf47ddacef196b09874d2d56fa37ed0a5)
 - cli/generators: Updated release template for add release command [`654bfdc`](https://github.com/neo9/kube-core/commit/654bfdcea4062344c4af9116fdebb38699880282)
 
 #### [v0.3.16](https://github.com/neo9/kube-core/compare/v0.3.15...v0.3.16)
