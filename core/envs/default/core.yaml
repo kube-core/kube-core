@@ -8,7 +8,7 @@ core:
       enabled: false
     logging:
       enabled: false
-    logging-v2:
+    logging:
       enabled: false
     estafette:
       enabled: false

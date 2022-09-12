@@ -33,10 +33,18 @@ releases:
     release:
       chart: ../releases/dist/releases/charts/raw
       name: cluster-issuers
+  test-logging:
+    labels:
+      component: test
+      group: test-logging
+    namespace: test-logging
+    release:
+      chart: ../releases/dist/releases/charts/test-logging
+      name: test-logging
   cluster-logging:
     labels:
       component: cluster
-      group: logging-v2
+      group: logging
     namespace: logging
     release:
       chart: ../releases/dist/releases/charts/cluster-logging

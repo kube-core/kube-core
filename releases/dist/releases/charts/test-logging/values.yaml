@@ -1,0 +1,17 @@
+instances: 30
+replicas: 3
+env: []
+image: banzaicloud/log-generator:0.3.2
+command:
+- /loggen
+args:
+- --event-per-sec=100
+# OR
+# image: k8s.gcr.io/logs-generator:v0.1.1
+# env:
+# - name: LOGS_GENERATOR_LINES_TOTAL
+#   # value: "1000000" # => Too much lol (1666 logs per sec)
+#   # value: "2000" # ~3 logs per sec if 10m
+#   value: "6000" # ~100 logs per sec
+# - name: LOGS_GENERATOR_DURATION
+#   value: "1m"

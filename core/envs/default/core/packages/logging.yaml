@@ -1,5 +1,17 @@
 releases:
-  efk:
+  logging-operator:
+    labels:
+      package: logging
+    enabled: true
+  eck-operator:
+    labels:
+      package: logging
+    enabled: true
+  logging-stack:
+    labels:
+      package: logging
+    enabled: true
+  cluster-logging:
     labels:
       package: logging
     enabled: true
