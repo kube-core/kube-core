@@ -65,6 +65,29 @@ spec:
             description: ElasticsearchSpec holds the specification of an Elasticsearch
               cluster.
             properties:
+              selector:
+                description: "test"
+                type: object
+                properties:
+                  matchLabels:
+                    description: "test"
+                    type: object
+                    properties:
+                      common.k8s.elastic.co/type:
+                        description: "test"
+                        type: string
+                      elasticsearch.k8s.elastic.co/cluster-name:
+                        description: "test"
+                        type: string
+                      elasticsearch.k8s.elastic.co/statefulset-name:
+                        description: "test"
+                        type: string
+              replicas:
+                description: Count of Elasticsearch nodes to deploy.
+                format: int32
+                minimum: 1
+                type: integer
+                default: 1
               auth:
                 description: Auth contains user authentication and authorization security
                   settings for Elasticsearch.
@@ -1612,6 +1635,23 @@ spec:
           status:
             description: ElasticsearchStatus represents the observed state of Elasticsearch.
             properties:
+              selector:
+                description: "test"
+                type: object
+                properties:
+                  matchLabels:
+                    description: "test"
+                    type: object
+                    properties:
+                      common.k8s.elastic.co/type:
+                        description: "test"
+                        type: string
+                      elasticsearch.k8s.elastic.co/cluster-name:
+                        description: "test"
+                        type: string
+                      elasticsearch.k8s.elastic.co/statefulset-name:
+                        description: "test"
+                        type: string
               availableNodes:
                 description: AvailableNodes is the number of available instances.
                 format: int32
@@ -1804,6 +1844,13 @@ spec:
     served: true
     storage: true
     subresources:
+      scale:
+        # specReplicasPath defines the JSONPath inside of a custom resource that corresponds to Scale.Spec.Replicas.
+        specReplicasPath: .spec.replicas
+        # statusReplicasPath defines the JSONPath inside of a custom resource that corresponds to Scale.Status.Replicas.
+        statusReplicasPath: .status.availableNodes
+        # labelSelectorPath defines the JSONPath inside of a custom resource that corresponds to Scale.Status.Selector.
+        labelSelectorPath: .status.selector
       status: {}
   - additionalPrinterColumns:
     - jsonPath: .status.health
@@ -1844,6 +1891,30 @@ spec:
           spec:
             description: ElasticsearchSpec holds the specification of an Elasticsearch
               cluster.
+            properties:
+              selector:
+                description: "test"
+                type: object
+                properties:
+                  matchLabels:
+                    description: "test"
+                    type: object
+                    properties:
+                      common.k8s.elastic.co/type:
+                        description: "test"
+                        type: string
+                      elasticsearch.k8s.elastic.co/cluster-name:
+                        description: "test"
+                        type: string
+                      elasticsearch.k8s.elastic.co/statefulset-name:
+                        description: "test"
+                        type: string
+              replicas:
+                description: Count of Elasticsearch nodes to deploy.
+                format: int32
+                minimum: 1
+                type: integer
+                default: 1
             properties:
               http:
                 description: HTTP holds HTTP layer settings for Elasticsearch.
@@ -2792,6 +2863,23 @@ spec:
           status:
             description: ElasticsearchStatus defines the observed state of Elasticsearch
             properties:
+              selector:
+                description: "test"
+                type: object
+                properties:
+                  matchLabels:
+                    description: "test"
+                    type: object
+                    properties:
+                      common.k8s.elastic.co/type:
+                        description: "test"
+                        type: string
+                      elasticsearch.k8s.elastic.co/cluster-name:
+                        description: "test"
+                        type: string
+                      elasticsearch.k8s.elastic.co/statefulset-name:
+                        description: "test"
+                        type: string
               availableNodes:
                 format: int32
                 type: integer
@@ -2808,6 +2896,13 @@ spec:
     served: true
     storage: false
     subresources:
+      scale:
+        # specReplicasPath defines the JSONPath inside of a custom resource that corresponds to Scale.Spec.Replicas.
+        specReplicasPath: .spec.replicas
+        # statusReplicasPath defines the JSONPath inside of a custom resource that corresponds to Scale.Status.Replicas.
+        statusReplicasPath: .status.availableNodes
+        # labelSelectorPath defines the JSONPath inside of a custom resource that corresponds to Scale.Status.Selector.
+        labelSelectorPath: .status.selector
       status: {}
   - name: v1alpha1
     schema:
@@ -2817,4 +2912,3 @@ spec:
         type: object
     served: false
     storage: false
-

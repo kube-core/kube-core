@@ -1,0 +1,55 @@
+{{ if (eq .Values.scaling.fluentd.enabled true) }}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: logging-fluentd-hpa.rules
+spec:
+  groups:
+  - name: logging-fluentd-hpa.rules
+    rules:
+    - expr: (node_filesystem_size_bytes{container="buffer-metrics-sidecar",mountpoint="/buffers"}-node_filesystem_free_bytes{container="buffer-metrics-sidecar",mountpoint="/buffers"})/node_filesystem_size_bytes{container="buffer-metrics-sidecar",mountpoint="/buffers"}
+      record: fluentd_buffer_space_usage_ratio
+    - expr: rate(container_cpu_usage_seconds_total{pod=~"logging-fluentd-.*", image!="", container="fluentd"}[5m])
+      record: fluentd_cpu_usage_ratio
+    # - expr: container_cpu_usage_seconds_total{pod=~"logging-fluentd-.*", image!="", container="fluentd"}
+    #   record: fluentd_cpu_usage
+    # - expr: container_memory_working_set_bytes{pod=~"logging-fluentd-.*", image!="", container="fluentd"}
+    #   record: fluentd_memory_usage
+    - expr: sum(container_memory_working_set_bytes{namespace="logging", pod=~"logging-fluentd-.*", image!="", container="fluentd"}) / sum(cluster:namespace:pod_memory:active:kube_pod_container_resource_requests{namespace="logging", pod=~"logging-fluentd-.*", container="fluentd"})
+      record: fluentd_memory_usage_ratio
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: logging-fluentd
+spec:
+  scaleTargetRef:
+    name: logging-fluentd
+    kind: StatefulSet
+    apiVersion: apps/v1
+  triggers:
+  - type: prometheus
+    metricType: Value # https://keda.sh/docs/2.8/faq/ => search HPA
+    metadata:
+      serverAddress: http://prometheus-operated.monitoring.svc.cluster.local:9090
+      metricName: fluentd_buffer_space_usage_ratio
+      threshold: '0.80'
+      query: avg(fluentd_buffer_space_usage_ratio)
+  - type: prometheus
+    metricType: Value # https://keda.sh/docs/2.8/faq/ => search HPA
+    metadata:
+      serverAddress: http://prometheus-operated.monitoring.svc.cluster.local:9090
+      metricName: fluentd_memory_usage_ratio
+      threshold: '0.80'
+      query: avg(fluentd_memory_usage_ratio)
+  - type: prometheus
+    metricType: Value # https://keda.sh/docs/2.8/faq/ => search HPA
+    metadata:
+      serverAddress: http://prometheus-operated.monitoring.svc.cluster.local:9090
+      metricName: fluentd_memory_usage_ratio
+      threshold: '0.80'
+      query: avg(fluentd_cpu_usage_ratio)
+  minReplicaCount: 1
+  maxReplicaCount: 10
+{{ end }}
