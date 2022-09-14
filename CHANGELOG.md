@@ -2,9 +2,20 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.3.19](https://github.com/neo9/kube-core/compare/v0.3.18...v0.3.19)
+
+- releases/eck-operator: Upgrades to v2.4.0 and adds logic for autoscaling [`f9a9e61`](https://github.com/neo9/kube-core/commit/f9a9e6143566762dfea097be53214bdc7865a252)
+- releases: Rebuilt releases [`6bc80c5`](https://github.com/neo9/kube-core/commit/6bc80c5a417eca2a4ed11d12d9d991b6f6994175)
+- releases/logging: Improved default values [`e0bfbe4`](https://github.com/neo9/kube-core/commit/e0bfbe474c414c92e38f9e72d39191665dc30c71)
+- core/packages: Fixed test-logging package [`6f4a7f5`](https://github.com/neo9/kube-core/commit/6f4a7f5571e2d28f2f21a50733e1da5377565ee9)
+- releases/logging-stack: Improved fluentbit default configuration [`b65a538`](https://github.com/neo9/kube-core/commit/b65a5389d46d9434de16741b5c0e7ce849a3972c)
+
 #### [v0.3.18](https://github.com/neo9/kube-core/compare/v0.3.17...v0.3.18)
 
+> 12 September 2022
+
 - releases: Added test-logging package [`9b68b3b`](https://github.com/neo9/kube-core/commit/9b68b3bfcb1d74037fb550635b66756aaa19c430)
+- release: v0.3.18 [`b8013db`](https://github.com/neo9/kube-core/commit/b8013dbf0f0ca4799d7943586fb82a1a28e91f18)
 
 #### [v0.3.17](https://github.com/neo9/kube-core/compare/v0.3.16...v0.3.17)
 
