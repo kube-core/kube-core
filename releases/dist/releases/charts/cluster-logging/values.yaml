@@ -178,11 +178,22 @@ cluster:
           retry_max_interval: "30"
 
           # Buffer at most 128 buffer chunks. Make sure you have enough disk space
-          # to store buffer_chunk_limit * buffer_queue_limit bytes. In this case, 32MB * 128 = 4096MB.
+          # to store buffer_chunk_limit * buffer_queue_limit bytes.
+          # 32MB * 128 = 4096MB.
+          # 32MB * 512 = 16384MB.
+          # 8MB * 1024 = 8192MB.
+          # 8MB * 2048 = 16384MB.
           chunk_limit_records: 128 # The max number of events that each chunks can store in it
           chunk_limit_size: 32M # The max size of each chunks: events will be written into chunks until the size of chunks become this size (default: 8MB)
+          # 32 / 128 causes the following: #0 [clusterflow:logging:app:clusteroutput:logging:app-es] chunk size limit exceeds for an emitted event stream: 2426records
+
+          # chunk_limit_records: 2048
+          # chunk_limit_size: 8M
+
           # total_limit_size: 500M
 
+          # Use the following instead if you need to make sure all logs are processed
+          # overflow_action: block
           overflow_action: drop_oldest_chunk # drops/purges the oldest chunk to accept newly incoming chunk.
 
           retry_type: exponential_backoff

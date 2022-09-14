@@ -5,25 +5,32 @@ monitoring:
   enabled: true
 
 scaling:
-  enabled: true
+  fluentd:
+    enabled: true
+  es:
+    enabled: false # TODO: Doesn't work, fix it
 
 cluster:
+  config:
+    name: test
   logging:
     stack:
       esStackVersion: 8.3.3
       es:
         enabled: true
         nodes:
-          count: 3
+          count: 3 # TODO: Make KEDA control it (when /scale implemented on ECK)
           storageSize: 120Gi
           esJavaOpts: -Xms2g -Xmx2g # Always 50% of requested memory
           resources:
             requests:
-              memory: 4Gi
               cpu: 1
+              memory: 4Gi
             limits:
+              cpu: 2
               memory: 4Gi
       fluentbit:
+        nodeSelector: {}
         enabled: true
         metrics:
           serviceMonitor: true
@@ -37,6 +44,7 @@ cluster:
           limits:
             memory: 1Gi
       fluentd:
+        nodeSelector: {}
         enabled: true
         bufferVolumeMetrics:
           serviceMonitor: true
@@ -46,10 +54,11 @@ cluster:
         buffer:
           storageSize: 20Gi
         replicas: 3 # Only used if scaling is disabled
-        drain: true
+        drain: true # Sometimes seems to get stuck at the very end of draining
         resources:
           requests:
             cpu: 1
-            memory: 1Gi
+            memory: 1.5Gi
           limits:
-            memory: 2Gi
+            cpu: 2
+            memory: 3Gi
