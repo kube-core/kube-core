@@ -4,6 +4,14 @@ kind: Elasticsearch
 metadata:
   name: logging
 spec:
+{{ if (eq .Values.scaling.es.enabled true) }}
+  replicas: {{ .Values.cluster.logging.stack.es.nodes.count }}
+  selector:
+    matchLabels:
+      common.k8s.elastic.co/type: elasticsearch
+      elasticsearch.k8s.elastic.co/cluster-name: logging
+      elasticsearch.k8s.elastic.co/statefulset-name: logging-es-default
+{{ end }}
   volumeClaimDeletePolicy: DeleteOnScaledownOnly
   http:
     tls:
