@@ -137,6 +137,7 @@ cluster:
         - preprod
         - production
         - prod
+        - test-logging
       - name: cluster
         namespaces:
         - nginx-ingress

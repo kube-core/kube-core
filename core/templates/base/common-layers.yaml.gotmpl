@@ -110,6 +110,10 @@
 - ./envs/default/core/packages/logging.yaml
 {{ end }}
 
+{{ if (.Values | get "core.packages.test-logging.enabled" false) }}
+- ./envs/default/core/packages/test-logging.yaml
+{{ end }}
+
 {{ if (.Values | get "core.packages.minio.enabled" false) }}
 - ./envs/default/core/packages/minio.yaml
 {{ end }}

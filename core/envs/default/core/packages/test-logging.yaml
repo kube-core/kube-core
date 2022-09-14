@@ -1,21 +1,5 @@
 releases:
-  logging-operator:
-    labels:
-      test-logging-package: "true"
-    enabled: true
-  eck-operator:
-    labels:
-      test-logging-package: "true"
-    enabled: true
-  logging-stack:
-    labels:
-      test-logging-package: "true"
-    enabled: true
-  cluster-logging:
-    labels:
-      test-logging-package: "true"
-    enabled: true
   test-logging:
     labels:
-      test-logging-package: "true"
+      package: test-logging
     enabled: true
