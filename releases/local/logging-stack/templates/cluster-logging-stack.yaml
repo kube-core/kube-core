@@ -57,6 +57,10 @@ spec:
       # Rotate_Wait: 10 # TODO: Test
       Skip_Long_Lines: "On" # Default is Off
       Mem_Buf_Limit: 5MB
+    filterKubernetes:
+      Buffer_Size: "0" # To suppress warning
+    forwardOptions:
+      Retry_Limit: "3" # Seems to be no_limits by default and to make fluentbit busy over nothing
     bufferStorage:
       storage.path: /buffers # Set an optional location in the file system to store streams and chunks of data. If this parameter is not set, Input plugins can only use in-memory buffering.
       storage.sync: normal # Configure the synchronization mode used to store the data into the file system. It can take the values normal or full.
