@@ -40,6 +40,7 @@ spec:
       {{ end }}
     tolerations: {{ toYaml .Values.cluster.logging.stack.fluentd.tolerations | nindent 6 }}
     affinity: {{ toYaml .Values.cluster.logging.stack.fluentd.affinity | nindent 6 }}
+    nodeSelector: {{ toYaml .Values.cluster.logging.stack.fluentd.nodeSelector | nindent 6 }}
   {{ end }}
   {{ if .Values.cluster.logging.stack.fluentbit.enabled }}
   fluentbit:
@@ -67,7 +68,6 @@ spec:
       storage.backlog.mem_limit: {{ .Values.cluster.logging.stack.fluentbit.buffer.mem_limit }}
     tolerations: {{ toYaml .Values.cluster.logging.stack.fluentbit.tolerations | nindent 6 }}
     affinity: {{ toYaml .Values.cluster.logging.stack.fluentbit.affinity | nindent 6 }}
-    nodeSelector:
-      type: main
+    nodeSelector: {{ toYaml .Values.cluster.logging.stack.fluentbit.nodeSelector | nindent 6 }}
   {{ end }}
   controlNamespace: {{ .Release.Namespace }}
