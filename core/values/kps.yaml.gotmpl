@@ -240,6 +240,66 @@ kps:
             orgId: 1
             type: file
           {{- end }}
+          {{- if index $.Values.releases "logging-stack" "enabled" }}
+          - disableDeletion: true
+            editable: false
+            folder: Logging
+            name: logging
+            options:
+              path: /var/lib/grafana/dashboards/logging
+            orgId: 1
+            type: file
+          {{- end }}
+          {{- if index $.Values.releases "flux" "enabled" }}
+          - disableDeletion: true
+            editable: false
+            folder: Flux
+            name: flux
+            options:
+              path: /var/lib/grafana/dashboards/flux
+            orgId: 1
+            type: file
+          {{- end }}
+          {{- if index $.Values.releases "cert-manager" "enabled" }}
+          - disableDelection: true
+            editable: false
+            folder: Cert manager
+            name: cert-manager
+            options:
+              path: /var/lib/grafana/dashboards/cert-manager
+            orgId: 1
+            type: file
+          {{- end }}
+          {{- if index $.Values.releases "sealed-secrets" "enabled" }}
+          - disableDelection: true
+            editable: false
+            folder: Sealed secrets
+            name: sealed-secrets
+            options:
+              path: /var/lib/grafana/dashboards/sealed-secrets
+            orgId: 1
+            type: file
+          {{- end }}
+          {{- if index $.Values.releases "external-dns" "enabled" }}
+          - disableDelection: true
+            editable: false
+            folder: External DNS Controller
+            name: external-dns
+            options:
+              path: /var/lib/grafana/dashboards/external-dns
+            orgId: 1
+            type: file
+          {{- end }}
+          {{- if index $.Values.releases "external-secrets" "enabled" }}
+          - disableDelection: true
+            editable: false
+            folder: External secrets Operator
+            name: external-secrets
+            options:
+              path: /var/lib/grafana/dashboards/external-secrets
+            orgId: 1
+            type: file
+          {{- end }}
           {{- if index $.Values.releases "mongodb-operator" "enabled" }}
           - disableDeletion: true
             editable: false
@@ -278,6 +338,51 @@ kps:
           gnetId: 12680
           revision: 1
       {{- end }}
+      {{- if index $.Values.releases "logging-stack" "enabled" }}
+      logging:
+        logging-operator:
+          datasource: Thanos
+          revision: 5
+          gnetId: 7752
+        fluentd:
+          datasource: Thanos
+          revision: 2
+          gnetId: 13042
+      {{- end }}
+      {{- if index $.Values.releases "flux" "enabled" }}
+      flux:
+        cluster:
+          url: https://raw.githubusercontent.com/fluxcd/flux2/main/manifests/monitoring/monitoring-config/dashboards/cluster.json
+        control-plane:
+          url: https://raw.githubusercontent.com/fluxcd/flux2/main/manifests/monitoring/monitoring-config/dashboards/control-plane.json
+      {{- end }}
+      {{- if index $.Values.releases "cert-manager" "enabled" }}
+      cert-manager:
+        cert-manager:
+          url: https://raw.githubusercontent.com/monitoring-mixins/website/master/assets/cert-manager/dashboards/cert-manager.json
+
+      {{- end }}
+      {{- if index $.Values.releases "sealed-secrets" "enabled" }}
+      sealed-secrets:
+        sealed-secrets:
+          url: https://raw.githubusercontent.com/monitoring-mixins/website/master/assets/sealed-secrets/dashboards/sealed-secrets-controller.json
+
+      {{- end }}
+      {{- if index $.Values.releases "external-dns" "enabled" }}
+      external-dns:
+        external-dns:
+          datasource: Thanos
+          gnetId: 15038
+          revision: 1
+      {{- end }}
+      {{- if index $.Values.releases "external-secrets" "enabled" }}
+      external-secrets:
+        external-secrets:
+          url: https://raw.githubusercontent.com/neo9/grafana-dashboards/master/external-secrets/dashboard.yaml
+
+      {{- end }}
+
+
       {{- if index $.Values.releases "rabbitmq-operators" "enabled" }}
       rabbitmq:
       # https://github.com/rabbitmq/cluster-operator/tree/main/observability/grafana/dashboards
