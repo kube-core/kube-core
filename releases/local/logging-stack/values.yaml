@@ -53,7 +53,7 @@ cluster:
           prometheusRules: true
         buffer:
           storageSize: 20Gi
-        replicas: 3
+        replicas: 1
         maxReplicas: 10
         drain: true # Sometimes seems to get stuck at the very end of draining
         resources:
