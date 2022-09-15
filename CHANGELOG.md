@@ -2,9 +2,16 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.3.22](https://github.com/neo9/kube-core/compare/v0.3.21...v0.3.22)
+
+- releases/cluster-logging: Changed default buffer parameters to have better AWS S3 support [`188785e`](https://github.com/neo9/kube-core/commit/188785e3ddc1dc0dd237e29d859134cb0cc6ad67)
+
 #### [v0.3.21](https://github.com/neo9/kube-core/compare/v0.3.20...v0.3.21)
 
+> 15 September 2022
+
 - releases/cluster-logging: Fixed some unsafe conditions [`d610537`](https://github.com/neo9/kube-core/commit/d61053700e1b142301e4f1312a0b5cc5729d76b4)
+- release: v0.3.21 [`069f0d8`](https://github.com/neo9/kube-core/commit/069f0d83b1da1d0f6a160a7d6df07f38d6f7d961)
 
 #### [v0.3.20](https://github.com/neo9/kube-core/compare/v0.3.19...v0.3.20)
 
