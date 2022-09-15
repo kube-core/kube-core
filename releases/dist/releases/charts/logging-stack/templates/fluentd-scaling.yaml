@@ -50,6 +50,6 @@ spec:
       metricName: fluentd_memory_usage_ratio
       threshold: '0.80'
       query: avg(fluentd_cpu_usage_ratio)
-  minReplicaCount: 1
-  maxReplicaCount: 10
+  minReplicaCount: {{ .Values.cluster.logging.stack.fluentd.replicas }}
+  maxReplicaCount: {{ .Values.cluster.logging.stack.fluentd.maxReplicas }}
 {{ end }}

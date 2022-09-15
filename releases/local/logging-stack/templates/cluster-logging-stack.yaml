@@ -31,7 +31,7 @@ spec:
           storageClassName: {{ .Values.cluster.logging.stack.fluentd.buffer.storageClass }}
           volumeMode: Filesystem
     scaling:
-      {{ if (not (eq .Values.scaling.enabled true)) }}
+      {{ if (not (eq .Values.scaling.fluentd.enabled true)) }}
       replicas: {{ .Values.cluster.logging.stack.fluentd.replicas }}
       {{ end }}
       {{ if (eq .Values.cluster.logging.stack.fluentd.drain true) }}
