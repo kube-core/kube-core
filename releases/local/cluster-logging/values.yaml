@@ -209,6 +209,7 @@ cluster:
       dynamicFlowsEnabled: true
       dynamicOutputsEnabled: true
       simpleDynamicFlowsOutputMapping: true
+      extraFilters: []
       default:
         enabled: false
         nullout: true
