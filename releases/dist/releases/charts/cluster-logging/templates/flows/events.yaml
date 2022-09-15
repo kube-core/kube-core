@@ -1,3 +1,5 @@
+{{ if (eq .Values.cluster.logging.integrations.events.enabled true) }}
+
 apiVersion: logging.banzaicloud.io/v1beta1
 kind: ClusterFlow
 metadata:
@@ -38,3 +40,4 @@ spec:
   {{ if .Values.cluster.logging.integrations.es.enabled }}
   - events-es
   {{ end }}
+{{ end }}

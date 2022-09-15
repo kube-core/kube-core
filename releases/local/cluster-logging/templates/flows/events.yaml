@@ -1,4 +1,4 @@
-{{ if .Values.cluster.logging.integrations.events.enabled }}
+{{ if (eq .Values.cluster.logging.integrations.events.enabled true) }}
 
 apiVersion: logging.banzaicloud.io/v1beta1
 kind: ClusterFlow

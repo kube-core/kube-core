@@ -1,4 +1,4 @@
-{{ if .Values.cluster.logging.integrations.tekton.enabled }}
+{{ if (eq .Values.cluster.logging.integrations.tekton.enabled true) }}
 apiVersion: logging.banzaicloud.io/v1beta1
 kind: ClusterFlow
 metadata:
