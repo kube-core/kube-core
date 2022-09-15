@@ -2,9 +2,18 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.3.23](https://github.com/neo9/kube-core/compare/v0.3.22...v0.3.23)
+
+- releases/kps: Adds multiple dashboards [`a093aef`](https://github.com/neo9/kube-core/commit/a093aef821c904d9c6c75fcd82f01c829e768839)
+- releases/logging-stack: Added possibility to control min/max fluentd replicas [`6e7912d`](https://github.com/neo9/kube-core/commit/6e7912dd22764c68d1caf7a5db252286ac3dcd94)
+- core/cluster: Removed some namespaces that were included in log streams by default [`cb2a849`](https://github.com/neo9/kube-core/commit/cb2a849912b5c8cf5e78740b0ce9c364b2da30ae)
+
 #### [v0.3.22](https://github.com/neo9/kube-core/compare/v0.3.21...v0.3.22)
 
+> 15 September 2022
+
 - releases/cluster-logging: Changed default buffer parameters to have better AWS S3 support [`188785e`](https://github.com/neo9/kube-core/commit/188785e3ddc1dc0dd237e29d859134cb0cc6ad67)
+- release: v0.3.22 [`4b45f9e`](https://github.com/neo9/kube-core/commit/4b45f9e971acb1e93683be8c5d0b1570a4c1e8cf)
 
 #### [v0.3.21](https://github.com/neo9/kube-core/compare/v0.3.20...v0.3.21)
 
