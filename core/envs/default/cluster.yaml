@@ -129,19 +129,8 @@ cluster:
       flows:
       - name: app
         namespaces:
-        - dev
-        - integration
-        - validation
-        - staging
-        - preproduction
-        - preprod
-        - production
-        - prod
         - test-logging
       - name: cluster
-        namespaces:
-        - nginx-ingress
-        - nginx-istio-ingress
     integrations:
       es:
         enabled: true
