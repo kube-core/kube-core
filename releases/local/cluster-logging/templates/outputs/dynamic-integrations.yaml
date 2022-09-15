@@ -1,4 +1,4 @@
-{{ if .Values.cluster.logging.flows.dynamicOutputsEnabled }}
+{{ if (eq .Values.cluster.logging.flows.dynamicOutputsEnabled true) }}
 {{ $values := .Values }}
 {{ range .Values.cluster.logging.flows.flows }}
 
