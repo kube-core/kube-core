@@ -2,16 +2,16 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
-#### [v0.3.20](https://github.com/neo9/kube-core/compare/v0.3.20...v0.3.20)
+#### [v0.3.21](https://github.com/neo9/kube-core/compare/v0.3.20...v0.3.21)
 
-- releases/cluster-logging: Disabled events integration by default [`0123f9d`](https://github.com/neo9/kube-core/commit/0123f9d913ae5afabd80937be157e598a7a3d869)
+- releases/cluster-logging: Fixed some unsafe conditions [`d610537`](https://github.com/neo9/kube-core/commit/d61053700e1b142301e4f1312a0b5cc5729d76b4)
 
 #### [v0.3.20](https://github.com/neo9/kube-core/compare/v0.3.19...v0.3.20)
 
 > 15 September 2022
 
-- release: v0.3.20 [`d87a5a9`](https://github.com/neo9/kube-core/commit/d87a5a9b0ee8884e9d043922e21bbd080f12a655)
-- releases/cluster-logging: Disabled events integration by default [`4dd830a`](https://github.com/neo9/kube-core/commit/4dd830afaaa07feceebb0356ec1beb9131995b19)
+- release: v0.3.20 [`294eed3`](https://github.com/neo9/kube-core/commit/294eed340eb6771af086c433b04e9a9c6880b465)
+- releases/cluster-logging: Disabled events integration by default [`0123f9d`](https://github.com/neo9/kube-core/commit/0123f9d913ae5afabd80937be157e598a7a3d869)
 
 #### [v0.3.19](https://github.com/neo9/kube-core/compare/v0.3.18...v0.3.19)
 
