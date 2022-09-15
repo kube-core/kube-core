@@ -261,7 +261,7 @@ cluster:
             # - format: multiline
     integrations:
       events:
-        enabled: true
+        enabled: false
       tekton:
         enabled: false
         config:
