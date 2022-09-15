@@ -9,6 +9,7 @@ metadata:
 spec:
 {{ if (or (eq .objectStorageType "s3") (eq .objectStorageType "minio")) }}
   s3:
+    auto_create_bucket: {{ index .cluster.logging.integrations .objectStorageType "config" "auto_create_bucket"  | quote }}
     aws_key_id:
       valueFrom:
         secretKeyRef:
@@ -30,8 +31,12 @@ spec:
     {{ else }}
     s3_object_key_format: {{ .cluster.logging.outputs.config.s3_object_key_format | quote }}
     {{ end }}
+    buffer:
+      type: memory # For s3 we override to memory because file buffer never cleans the files => https://github.com/fluent/fluent-plugin-s3/issues/339
+{{ toYaml .cluster.logging.outputs.config.buffer | nindent 6 }}
 {{ else if (eq .objectStorageType "gcs" )}}
   gcs:
+    auto_create_bucket: {{ index .cluster.logging.integrations .objectStorageType "config" "auto_create_bucket" }}
     project: {{ coalesce .project (index .cluster.logging.integrations .objectStorageType "config" "project") .cloud.project }}
     bucket: {{ coalesce .bucket (printf "%s-%s-logs" (coalesce .cluster.logging.config.bucketPrefixOverride .cluster.config.name) .name) }}
     {{ if (eq .txtLogs true) }}
@@ -44,6 +49,7 @@ spec:
         secretKeyRef:
           name: {{ coalesce .gcsSecretName (index .secrets "gcs" "secretRef" "name") (index .cluster.logging.integrations .objectStorageType "config" "credentials" "secretKeyRef" "secretName") }}
           key:  {{ coalesce .gcsSecretKey (index .secrets "gcs" "secretRef" "key") (index .cluster.logging.integrations .objectStorageType "config" "credentials" "secretKeyRef" "secretKey") }}
+    buffer: {{ toYaml .cluster.logging.outputs.config.buffer | nindent 6 }}
 {{ end }}
 {{ if (eq .txtLogs true) }}
     store_as: text
@@ -52,8 +58,6 @@ spec:
     store_as: json
     path: {{ .cluster.logging.outputs.config.path | quote }}
 {{ end }}
-    auto_create_bucket: {{ index .cluster.logging.integrations .objectStorageType "config" "auto_create_bucket" }}
-    buffer: {{ toYaml .cluster.logging.outputs.config.buffer | nindent 6 }}
     format:
 {{ if (eq .txtLogs true) }}
       type: single_value
