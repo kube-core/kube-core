@@ -14,6 +14,15 @@ cluster:
   config:
     name: test
   logging:
+    dashboards:
+      enabled: true
+      commons:
+        enabled: true
+      configMap:
+        name: kibana-dashboards
+        data: {}
+          # cluster.ndjson: "{}" # in JSON
+          # cluster.url:  "https://example.com/my-dashboard" # has to return JSON
     stack:
       esStackVersion: 8.3.3
       es:
@@ -63,3 +72,8 @@ cluster:
           limits:
             cpu: 2
             memory: 3Gi
+    integrations:
+      events:
+        enabled: false
+      tekton:
+        enabled: false
