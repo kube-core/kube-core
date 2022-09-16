@@ -1,4 +1,8 @@
 releases:
+  nginx-ingress-controller:
+    values:
+      podLabels:
+        logging.kube-core.io/flow-name: cluster
   chartmuseum:
     values:
       extraArgs:
