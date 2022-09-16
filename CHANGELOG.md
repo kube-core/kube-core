@@ -2,10 +2,21 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.3.24](https://github.com/neo9/kube-core/compare/v0.3.23...v0.3.24)
+
+- releases/logging-stack: Added Kibana dashboard auto-provisionning [`2090eff`](https://github.com/neo9/kube-core/commit/2090eff48ebde084d3bf3f299d228496c455cb3f)
+- releases/cluster-logging: Allows to inject extra shared filters for all flows [`f9bc6c0`](https://github.com/neo9/kube-core/commit/f9bc6c085c50e9c4558f2b5b69cba486632e87a9)
+- releases/cluster-logging: Added output integrations on tekton default flow [`3adc4cf`](https://github.com/neo9/kube-core/commit/3adc4cff319f15b8a90d683ab16999aa2c3850a8)
+- core/releases: Added kube-core logging labels on nginx-ingress-controller [`915ab7b`](https://github.com/neo9/kube-core/commit/915ab7b73b898b855084a10409f7c6d308c712f9)
+- releases/logging-stack: Changed min fluentd replicas to 1 by default [`4ac2fc1`](https://github.com/neo9/kube-core/commit/4ac2fc186aaf4812a73580824564b35e31e1d9d5)
+
 #### [v0.3.23](https://github.com/neo9/kube-core/compare/v0.3.22...v0.3.23)
+
+> 15 September 2022
 
 - releases/kps: Adds multiple dashboards [`a093aef`](https://github.com/neo9/kube-core/commit/a093aef821c904d9c6c75fcd82f01c829e768839)
 - releases/logging-stack: Added possibility to control min/max fluentd replicas [`6e7912d`](https://github.com/neo9/kube-core/commit/6e7912dd22764c68d1caf7a5db252286ac3dcd94)
+- release: v0.3.23 [`c37ead5`](https://github.com/neo9/kube-core/commit/c37ead5cd5f4938ac91d66bebae84c47a7049623)
 - core/cluster: Removed some namespaces that were included in log streams by default [`cb2a849`](https://github.com/neo9/kube-core/commit/cb2a849912b5c8cf5e78740b0ce9c364b2da30ae)
 
 #### [v0.3.22](https://github.com/neo9/kube-core/compare/v0.3.21...v0.3.22)
