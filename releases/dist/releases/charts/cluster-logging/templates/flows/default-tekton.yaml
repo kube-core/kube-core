@@ -7,7 +7,19 @@ metadata:
     logging.kube-core.io/flow-name: "tekton"
     logging.kube-core.io/flow-type: "default"
 spec:
-  globalOutputRefs: {{ toYaml .Values.cluster.logging.integrations.tekton.config.globalOutputRefs | nindent 4 }}
+  globalOutputRefs:
+  {{ if .Values.cluster.logging.integrations.gcs.enabled }}
+  - tekton-gcs
+  {{ end }}
+  {{ if .Values.cluster.logging.integrations.minio.enabled }}
+  - tekton-minio
+  {{ end }}
+  {{ if .Values.cluster.logging.integrations.s3.enabled }}
+  - tekton-s3
+  {{ end }}
+  {{ if .Values.cluster.logging.integrations.es.enabled }}
+  - tekton-es
+  {{ end }}
   filters:
   - tag_normaliser:
       format: ${namespace_name}/${pod_name}/${container_name}
@@ -15,6 +27,7 @@ spec:
       records:
       - cluster: {{ .Values.cluster.config.name }}
         log_type: 'tekton'
+  # TODO: Refactor the following to make sure all tekton pods are always targeted
   match:
     - select:
         labels:
