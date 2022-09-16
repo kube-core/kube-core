@@ -265,9 +265,6 @@ cluster:
         enabled: false
       tekton:
         enabled: false
-        config:
-          globalOutputRefs:
-          - nullout
       es:
         enabled: false
         config:
