@@ -664,3 +664,9 @@ scripts:
     name: values_keys
     description: ""
     args: ""
+
+  cluster_terraform_generate:
+    path: ./src/cluster/terraform/generate.sh
+    name: "cluster_terraform_generate"
+    description: "Generates terraform files for your cluster"
+    args: ""
