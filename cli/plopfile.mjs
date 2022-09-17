@@ -4,9 +4,9 @@ import path, { dirname } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// console.log(path.join(`${__dirname}`, `../core/envs/default/core/releases/schema.yaml`))
+// console.log(path.join(`${__dirname}`, `./core/envs/default/core/releases/schema.yaml`))
 // process.exit()
-// console.log(path.join(`${__dirname}`, `../core/releases/vendir-releases.yaml`))
+// console.log(path.join(`${__dirname}`, `./core/releases/vendir-releases.yaml`))
 export default function (plop) {
 	// Release Generator
 
@@ -198,45 +198,45 @@ function getExternalChartActions(data) {
 
 const appendScriptToScriptConfigAction = {
     type: "append",
-    path: path.join(`${__dirname}`, `../scripts/scripts-config.yaml`),
+    path: path.join(`${__dirname}`, `./scripts/scripts-config.yaml`),
     templateFile: "plop-templates/scripts-config-entry.hbs"
 }
 
 const addCoreScriptFileAction = {
     type: "add",
-    path: path.join(`${__dirname}`, `../scripts/{{ scriptPath }}`),
+    path: path.join(`${__dirname}`, `./scripts/{{ scriptPath }}`),
     templateFile: "plop-templates/core-script.hbs"
 }
 
 const addClusterScriptFileAction = {
     type: "add",
-    path: path.join(`${__dirname}`, `../scripts/{{ scriptPath }}`),
+    path: path.join(`${__dirname}`, `./scripts/{{ scriptPath }}`),
     templateFile: "plop-templates/cluster-script.hbs"
 }
 
 const appendReleaseToSchemaAction = {
     type: 'append',
-    path: path.join(`${__dirname}`, `../core/envs/default/core/releases/schema.yaml`),
+    path: path.join(`${__dirname}`, `./core/envs/default/core/releases/schema.yaml`),
     // pattern: /\# RELEASE/,
     templateFile: 'plop-templates/release-schema-entry.hbs'
 }
 
 const addReleaseValuesFileAction = {
     type: 'add',
-    path: path.join(`${__dirname}`, `../core/values/{{ releaseName }}.yaml.gotmpl`),
+    path: path.join(`${__dirname}`, `./core/values/{{ releaseName }}.yaml.gotmpl`),
     templateFile: 'plop-templates/release-values.hbs'
 }
 
 const appendVendirBaseChartAction = {
     type: 'append',
-    path: path.join(`${__dirname}`, `../vendir-releases.yaml`),
+    path: path.join(`${__dirname}`, `./vendir-releases.yaml`),
     pattern: /\# Base Releases/,
     templateFile: 'plop-templates/vendir-base-release.hbs'
 }
 
 const appendReleaseAction = {
     type: 'append',
-    path: path.join(`${__dirname}`, `../core/envs/default/core/releases/releases.yaml`),
+    path: path.join(`${__dirname}`, `./core/envs/default/core/releases/releases.yaml`),
     templateFile: 'plop-templates/release.hbs'
 }
 
