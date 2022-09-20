@@ -2,11 +2,26 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.3.25](https://github.com/neo9/kube-core/compare/v0.3.24...v0.3.25)
+
+- releases/chaos: Removed litmus-chaos and introduced chaos-mesh [`99cf697`](https://github.com/neo9/kube-core/commit/99cf69787c46758abf730c882977641bbf963097)
+- releases: Updated releases/dist [`3924687`](https://github.com/neo9/kube-core/commit/392468769f8ca3a16021ff27232202263e971975)
+- releases/mongodb-atlas-operator: Added mongodb-atlas-operator release [`205a0fa`](https://github.com/neo9/kube-core/commit/205a0fa8a468531f64a5ed55c45b3ce599018580)
+- cli/generators: Adds terraform generator [`634be32`](https://github.com/neo9/kube-core/commit/634be32e26a493cc5d30e427e695f35423bf5dcb)
+- releases/logging: Improved logging-stack and cluster-logging default configuration, scaling and performance [`1ffe458`](https://github.com/neo9/kube-core/commit/1ffe45864b66f2cd2fbe15e0a89acab99fa3e375)
+- core/config: Reformatted some files [`9939020`](https://github.com/neo9/kube-core/commit/9939020732a12312a5b9cedc2cf526e723de0cb0)
+- releases/kps: Added some Grafana dashbords and reorganized some folders [`3f642c3`](https://github.com/neo9/kube-core/commit/3f642c3caa169352d6cd58fc036be932e3441290)
+- cli/generators: Fixes path in cli plopfile [`410cc42`](https://github.com/neo9/kube-core/commit/410cc42057bc9faae9443bd8251a3fe7be30fe10)
+- releases/kps: Updated mongodb and external-dns dashboards [`8ba275f`](https://github.com/neo9/kube-core/commit/8ba275fc0d3d501500a18682d750b09f61267b0c)
+
 #### [v0.3.24](https://github.com/neo9/kube-core/compare/v0.3.23...v0.3.24)
+
+> 16 September 2022
 
 - releases/logging-stack: Added Kibana dashboard auto-provisionning [`2090eff`](https://github.com/neo9/kube-core/commit/2090eff48ebde084d3bf3f299d228496c455cb3f)
 - releases/cluster-logging: Allows to inject extra shared filters for all flows [`f9bc6c0`](https://github.com/neo9/kube-core/commit/f9bc6c085c50e9c4558f2b5b69cba486632e87a9)
 - releases/cluster-logging: Added output integrations on tekton default flow [`3adc4cf`](https://github.com/neo9/kube-core/commit/3adc4cff319f15b8a90d683ab16999aa2c3850a8)
+- release: v0.3.24 [`c600301`](https://github.com/neo9/kube-core/commit/c6003017d1d92b214de7df08a30c05cb5ec3f3f6)
 - core/releases: Added kube-core logging labels on nginx-ingress-controller [`915ab7b`](https://github.com/neo9/kube-core/commit/915ab7b73b898b855084a10409f7c6d308c712f9)
 - releases/logging-stack: Changed min fluentd replicas to 1 by default [`4ac2fc1`](https://github.com/neo9/kube-core/commit/4ac2fc186aaf4812a73580824564b35e31e1d9d5)
 
