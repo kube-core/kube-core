@@ -9,14 +9,6 @@ releases:
     release:
       chart: ../releases/dist/releases/charts/cert-manager
       name: cert-manager
-  chaos:
-    labels:
-      component: chaos
-      group: chaos
-    namespace: litmus
-    release:
-      chart: ../releases/dist/releases/charts/chaos
-      name: chaos
   chartmuseum:
     labels:
       component: chartmuseum
@@ -762,3 +754,14 @@ releases:
     release:
       chart: ../releases/dist/releases/charts/prometheus-adapter
       name: prometheus-adapter
+
+  chaos-mesh:
+    labels: {}
+    namespace: chaos-mesh
+    options:
+      applyDefaultLabelsOnIngress: true
+      applyDefaultAnnotationsOnIngress: true
+      injectReloaderAnnotations: true
+    release:
+      chart: ../releases/dist/releases/charts/chaos-mesh
+      name: chaos-mesh

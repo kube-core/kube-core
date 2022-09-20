@@ -74,5 +74,21 @@
   # - "./values/{{ $value.release.name }}-secrets.yaml.gotmpl"
 {{ end }}
 
+{{ if (and $value.scaling $releases.keda.enabled $releases.kps.enabled $releases.sloth.enabled) }}
+- name: {{ $value.release.name }}-scaling
+  chart: ../releases/dist/releases/charts/app-scaling
+  namespace: {{ $value.namespace }}
+  {{ if .labels }}
+  labels: {{ toYaml .labels | nindent 4 }}
+  {{ else }}
+  labels:
+  {{ end }}
+    app: {{ $value.release.name }}
+    type: scaling
+  values:
+  - "./values/release-scaling.yaml.gotmpl"
+  # - "./values/{{ $value.release.name }}-secrets.yaml.gotmpl"
+{{ end }}
+
 {{- end -}}
 {{- end -}}

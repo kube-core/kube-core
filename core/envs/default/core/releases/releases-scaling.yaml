@@ -1,0 +1,51 @@
+releases:
+  nginx-ingress-controller:
+    scaling:
+      nginx-ingress-controller:
+        autoscaling:
+          scaleTargetRef:
+            name: nginx-ingress-controller
+            kind: Deployment
+            apiVersion: apps/v1
+          minReplicaCount: 3
+          maxReplicaCount: 6
+        rules:
+          cpuAvg:
+            container: controller
+          memoryAvg:
+            container: controller
+        serviceLevel:
+          objective: 99.5
+          errorQuery: sum(rate(nginx_ingress_controller_request_duration_seconds_count{status=~"(5..|429)"}[{{.window}}]))
+          totalQuery: sum(rate(nginx_ingress_controller_request_duration_seconds_count{}[{{.window}}]))
+
+  logging-stack:
+    scaling:
+      logging-es:
+        rules:
+          cpuAvg:
+            container: elasticsearch
+          memoryAvg:
+            container: elasticsearch
+          esDiskUsage:
+            threshold: 0.80
+          ingressAccessFreq:
+            ingressName: logging-es-http
+
+      logging-fluentd:
+        autoscaling:
+          scaleTargetRef:
+            name: logging-fluentd
+            kind: StatefulSet
+            apiVersion: apps/v1
+          minReplicaCount: 1
+          maxReplicaCount: 6
+        rules:
+          cpuAvg:
+            threshold: 0.80
+            container: fluentd
+          memoryAvg:
+            threshold: 0.80
+            container: fluentd
+          fluentdDiskUsage:
+            threshold: 0.80

@@ -22,9 +22,9 @@ templates:
     strategicMergePatches: {}
     transformers: {}
     values: {}
+    scaling: {}
 releases:
   cert-manager: *release
-  chaos: *release
   chartmuseum: *release
   cluster-issuers: *release
   cluster-logging: *release
@@ -101,3 +101,6 @@ releases:
   zeebe-operate: *release
   keda: *release
   prometheus-adapter: *release
+
+  chaos: *release
+  chaos-mesh: *release

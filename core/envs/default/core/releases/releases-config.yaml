@@ -9,6 +9,13 @@ releases:
         hostNetwork: false
         replicaCount: 1
         securePort: 10250
+  chaos-mesh:
+    config:
+      ingress:
+        annotations:
+          # nginx.ingress.kubernetes.io/rewrite-target: /$1
+        labels: {}
+        subdomain: chaos-mesh
   chaos:
     config:
       ingress:

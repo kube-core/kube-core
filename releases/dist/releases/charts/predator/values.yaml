@@ -68,7 +68,7 @@ serviceAccount:
   create: true
 rbac:
   create: true
-
+maxUploadFileSizeMB: 10
 
 streaming:
   platform:
