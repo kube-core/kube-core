@@ -1,0 +1,22 @@
+mongodb-atlas-operator-crds:
+  enabled: false
+
+# Used to specify connection for a whole atlas organization, else use atlasproject.spec.connectionSecretRef
+# Do not set into values, use releases-secrets to provide the corresponding secret
+# Any credentials need the label: atlas.mongodb.com/type: credentials
+globalConnectionSecret:
+  orgId: ""
+  publicApiKey: ""
+  privateApiKey: ""
+
+# watchNamespaces is the set of namespaces that are watched by the Operator.
+# The only possible values are:
+# - empty (watch all namespaces) or
+# - the name of the same namespace where the Operator is installed to.
+watchNamespaces: ""
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

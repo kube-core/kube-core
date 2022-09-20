@@ -101,6 +101,5 @@ releases:
   zeebe-operate: *release
   keda: *release
   prometheus-adapter: *release
-
-  chaos: *release
   chaos-mesh: *release
+  mongodb-atlas-operator: *release
