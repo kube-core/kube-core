@@ -37,7 +37,10 @@ data:
   STREAMING_PLATFORM_HEALTH_CHECK_TIMEOUT_MS: {{ .Values.streaming.platformHealthCheckTimeoutMs | quote }}
 {{ end }}
 {{ if .Values.streaming.excludedAttributes }}
-STREAMING_EXCLUDED_ATTRIBUTES: {{ .Values.streaming.excludedAttributes }}
+  STREAMING_EXCLUDED_ATTRIBUTES: {{ .Values.streaming.excludedAttributes }}
+{{ end }}
+{{ if .Values.maxUploadFileSizeMB }}
+  MAX_UPLOAD_FILE_SIZE_MB: {{ .Values.maxUploadFileSizeMB | quote }}
 {{ end }}
 {{ if .Values.streaming.kafka.brokers }}
   KAFKA_BROKERS: {{ .Values.streaming.kafka.brokers }}

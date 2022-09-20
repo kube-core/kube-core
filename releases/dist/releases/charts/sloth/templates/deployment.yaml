@@ -41,7 +41,7 @@ spec:
             - --label-selector={{ .Values.sloth.labelSelector }}
             {{- end}}
             {{- range $key, $val := .Values.sloth.extraLabels }}
-            - --extra-lables={{ $key }}={{ $val }}
+            - --extra-labels={{ $key }}={{ $val }}
             {{- end}}
             {{- if .Values.commonPlugins.enabled }}
             - --sli-plugins-path=/plugins
@@ -49,9 +49,15 @@ spec:
             {{- with .Values.sloth.defaultSloPeriod }}
             - --default-slo-period={{ . }}
             {{- end }}
+            {{- if not .Values.sloth.optimizedRules }}
+            - --disable-optimized-rules
+            {{- end }}
             {{- if .Values.customSloConfig.enabled }}
             - --slo-period-windows-path={{ .Values.customSloConfig.path }}
             {{- end }}
+            {{- if .Values.sloth.debug.enabled }}
+            - --debug
+            {{- end}}
           {{- if .Values.metrics.enabled }}
           ports:
             - containerPort: 8081
@@ -77,7 +83,7 @@ spec:
               memory: 75Mi
         {{- if .Values.commonPlugins.enabled }}
         - name: git-sync-plugins
-          image: k8s.gcr.io/git-sync/git-sync:v3.3.4
+          image: {{ .Values.commonPlugins.image.repository }}:{{ .Values.commonPlugins.image.tag }}
           args:
             - --repo={{.Values.commonPlugins.gitRepo.url}}
             - --branch={{.Values.commonPlugins.gitRepo.branch}}

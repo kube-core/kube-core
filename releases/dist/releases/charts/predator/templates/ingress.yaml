@@ -2,7 +2,7 @@
 {{- $fullName := include "predator.fullname" . -}}
 {{- $servicePort := .Values.service.port -}}
 {{- $ingressPath := .Values.ingress.path -}}
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ $fullName }}
@@ -32,9 +32,12 @@ spec:
     - host: {{ . }}
       http:
         paths:
-          - path: {{ $ingressPath }}
-            backend:
-              serviceName: {{ $fullName }}
-              servicePort: {{ $servicePort }}
+        - backend:
+            service:
+              name: {{ $fullName }}
+              port:
+                number: {{ $servicePort }}
+          path: {{ $ingressPath }}
+          pathType: ImplementationSpecific
   {{- end }}
 {{- end }}

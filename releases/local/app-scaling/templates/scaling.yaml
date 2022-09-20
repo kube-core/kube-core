@@ -1,0 +1,134 @@
+{{ $values := .Values }}
+{{ $releaseName := (.Release.Name | replace "-scaling" "") }}
+{{ $releaseNamespace := .Release.Namespace }}
+{{ $scaling := (index .Values "scaling") }}
+
+{{ range $scalingName, $config := $scaling }}
+{{ if $config.rules }}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: {{ $releaseName }}-{{ $scalingName }}-hpa.rules
+spec:
+  groups:
+  - name: {{ $releaseName }}-{{ $scalingName }}-hpa.rules
+    rules:
+    {{- if $config.rules.fluentdDiskUsage }}
+    - expr: (node_filesystem_size_bytes{namespace="{{ $releaseNamespace }}", container="buffer-metrics-sidecar",mountpoint="/buffers"}-node_filesystem_free_bytes{namespace="{{ $releaseNamespace }}", container="buffer-metrics-sidecar",mountpoint="/buffers"})/node_filesystem_size_bytes{namespace="{{ $releaseNamespace }}", container="buffer-metrics-sidecar",mountpoint="/buffers"}
+      record: "{{ snakecase $releaseNamespace }}_{{ snakecase $releaseName }}_{{ snakecase $scalingName }}_fd_disk_usage_ratio"
+    {{- end }}
+    {{- if $config.rules.esDiskUsage }}
+    - expr: elasticsearch_filesystem_data_used_percent
+      record: "{{ snakecase $releaseNamespace }}_{{ snakecase $releaseName }}_{{ snakecase $scalingName }}_es_disk_usage_ratio"
+    {{- end }}
+    {{- if $config.rules.cpuAvg }}
+    - expr: rate(container_cpu_usage_seconds_total{namespace="{{ $releaseNamespace }}", pod=~"{{ coalesce $config.rules.cpuAvg.podQuery $scalingName }}-.*", image!="", container="{{ coalesce $config.rules.cpuAvg.container $scalingName }}"}[{{ coalesce $config.rules.cpuAvg.window "5m" }}])
+      record: "{{ snakecase $releaseNamespace }}_{{ snakecase $releaseName }}_{{ snakecase $scalingName }}_cpu_usage_ratio"
+    {{- end }}
+    {{- if $config.rules.memoryAvg }}
+    - expr: sum(container_memory_working_set_bytes{namespace="{{ $releaseNamespace }}", pod=~"{{ coalesce $config.rules.memoryAvg.podQuery $scalingName }}-.*", image!="", container="{{ coalesce $config.rules.memoryAvg.container $scalingName }}"}) / sum(cluster:namespace:pod_memory:active:kube_pod_container_resource_requests{namespace="logging", pod=~"{{ coalesce $config.rules.memoryAvg.podQuery $scalingName }}-.*", container="{{ coalesce $config.rules.memoryAvg.container $scalingName }}"})
+      record: "{{ snakecase $releaseNamespace }}_{{ snakecase $releaseName }}_{{ snakecase $scalingName }}_memory_usage_ratio"
+    {{- end }}
+    {{- if $config.rules.ingressAccessFreq }}
+    - expr: sum(rate(nginx_ingress_controller_requests{exported_namespace="{{ $releaseNamespace }}", ingress="{{ coalesce $config.rules.ingressAccessFreq.ingressName $scalingName }}"}[{{ coalesce $config.rules.ingressAccessFreq.window "5m" }}]))
+      record: "{{ snakecase $releaseNamespace }}_{{ snakecase $releaseName }}_{{ snakecase $scalingName }}_ingress_access_frequency"
+    {{- end }}
+    {{- if $config.extraRules }}
+    {{- range $config.extraRules }}
+    - expr: {{ .expr }}
+      record: {{ .record }}
+    {{- end }}
+    {{- end }}
+{{ end }}
+{{ if $config.autoscaling }}
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: {{ $releaseName }}-{{ $scalingName }}
+spec:
+  scaleTargetRef: {{ toYaml $config.autoscaling.scaleTargetRef | nindent 6}}
+  triggers:
+  {{- if $config.rules.fluentdDiskUsage }}
+  - type: prometheus
+    metricType: Value
+    metadata:
+      serverAddress: http://prometheus-operated.monitoring.svc.cluster.local:9090
+      metricName: {{ snakecase $releaseNamespace }}_{{ snakecase $releaseName }}_{{ snakecase $scalingName }}_fd_disk_usage_ratio
+      threshold: {{ coalesce $config.rules.fluentdDiskUsage.threshold "0.90" | quote }}
+      query: avg({{snakecase $releaseNamespace }}_{{ snakecase $releaseName }}_{{ snakecase $scalingName }}_fd_disk_usage_ratio)
+  {{- end }}
+  {{- if $config.rules.esDiskUsage }}
+  - type: prometheus
+    metricType: Value
+    metadata:
+      serverAddress: http://prometheus-operated.monitoring.svc.cluster.local:9090
+      metricName: {{ snakecase $releaseNamespace }}_{{ snakecase $releaseName }}_{{ snakecase $scalingName }}_es_disk_usage_ratio
+      threshold: {{ coalesce $config.rules.esDiskUsage.threshold "0.90" | quote }}
+      query: avg({{snakecase $releaseNamespace }}_{{ snakecase $releaseName }}_{{ snakecase $scalingName }}_es_disk_usage_ratio)
+  {{- end }}
+  {{- if $config.rules.memoryAvg }}
+  - type: prometheus
+    metricType: Value
+    metadata:
+      serverAddress: http://prometheus-operated.monitoring.svc.cluster.local:9090
+      metricName: {{ $releaseNamespace }}_{{ snakecase $releaseName }}_{{ snakecase $scalingName }}_memory_usage_ratio
+      threshold: {{ coalesce $config.rules.memoryAvg.threshold "0.90" | quote }}
+      query: avg({{ $releaseNamespace }}_{{ snakecase $releaseName }}_{{ snakecase $scalingName }}_memory_usage_ratio)
+  {{- end }}
+  {{- if $config.rules.cpuAvg }}
+  - type: prometheus
+    metricType: Value
+    metadata:
+      serverAddress: http://prometheus-operated.monitoring.svc.cluster.local:9090
+      metricName: {{ snakecase $releaseNamespace }}_{{ snakecase $releaseName }}_{{ snakecase $scalingName }}_cpu_usage_ratio
+      threshold: {{ coalesce $config.rules.cpuAvg.threshold "0.90" | quote }}
+      query: avg({{ snakecase $releaseNamespace }}_{{ snakecase $releaseName }}_{{ snakecase $scalingName }}_cpu_usage_ratio)
+  {{- end }}
+  {{- if $config.rules.ingressAccessFreq }}
+  - type: prometheus
+    metadata:
+      serverAddress: http://prometheus-operated.monitoring.svc.cluster.local:9090
+      metricName:  {{ snakecase $releaseNamespace }}_{{ snakecase $releaseName }}_{{ snakecase $scalingName }}_ingress_access_frequency
+      threshold: {{ coalesce $config.rules.ingressAccessFreq.threshold "1000" | quote }}
+      query: {{ snakecase $releaseNamespace }}_{{ snakecase $releaseName }}_{{ snakecase $scalingName }}_ingress_access_frequency
+  {{- end }}
+  minReplicaCount: {{ $config.autoscaling.minReplicaCount }}
+  maxReplicaCount: {{ $config.autoscaling.maxReplicaCount }}
+{{ end }}
+---
+{{ if $config.serviceLevel }}
+apiVersion: sloth.slok.dev/v1
+kind: PrometheusServiceLevel
+metadata:
+  name: {{ $releaseNamespace }}-{{ $releaseName }}-{{ $scalingName }}
+spec:
+  service: "{{ $releaseNamespace }}-{{ $releaseName }}-{{ $scalingName }}"
+  labels:
+    type: app
+    app: "{{ $releaseNamespace }}-{{ $releaseName }}-{{ $scalingName }}"
+    env: "{{ $releaseNamespace }}-{{ $releaseName }}-{{ $scalingName }}"
+  slos:
+    - name: "requests-availability"
+      objective: {{ coalesce $config.serviceLevel.objective "99" }}
+      description: "SLO: HTTP requests response availability"
+      sli:
+        events:
+          errorQuery: {{ if $config.serviceLevel.errorQuery }}{{ $config.serviceLevel.errorQuery }}{{else}}sum(rate(nginx_ingress_controller_request_duration_seconds_count{exported_namespace="{{ $releaseNamespace }}", ingress="{{ coalesce $config.rules.ingressAccessFreq.ingressName $scalingName }}", status=~"(5..|429)"}[{{`{{.window}}`}}])){{ end }}
+          totalQuery: {{ if $config.serviceLevel.totalQuery }}{{ $config.serviceLevel.totalQuery }}{{else}}sum(rate(nginx_ingress_controller_request_duration_seconds_count{exported_namespace="{{ $releaseNamespace }}", ingress="{{ coalesce $config.rules.ingressAccessFreq.ingressName $scalingName }}"}[{{`{{.window}}`}}])){{ end }}
+      alerting:
+        name: {{ $releaseNamespace }}-{{ $releaseName }}-{{ $scalingName }}-nginx-ingress-high-error-rate
+        labels:
+          category: "availability"
+          type: app
+          app: "{{ $releaseNamespace }}-{{ $releaseName }}-{{ $scalingName }}"
+          env: "{{ $releaseNamespace }}"
+        annotations:
+          summary: "SLO: High error rate on '{{ $releaseNamespace }}-{{ $releaseName }}-{{ $scalingName }}-nginx' requests responses"
+        pageAlert:
+          disable: true
+        ticketAlert:
+          disable: true
+{{ end }}
+{{ end }}

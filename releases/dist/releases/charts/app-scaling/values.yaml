@@ -1,0 +1,60 @@
+scaling: {}
+# Example:
+# scaling:
+#   logging-es:
+#     rules:
+#       enabled: true
+#       cpuAvg:
+#         enabled: true
+#         threshold: 0.80
+#         window: 5m
+#         # podQuery: ""
+#         container: elasticsearch
+#       memoryAvg:
+#         enabled: true
+#         threshold: 0.80
+#         # podQuery: ""
+#         container: elasticsearch
+#       diskUsage:
+#         enabled: false
+#         threshold: 0.80
+#       ingressAccessFreq:
+#         enabled: true
+#         ingressName: logging-es-http
+#         threshold: 10
+#         window: 1m
+#     autoscaling:
+#       enabled: false
+#     extraRules: []
+
+#   logging-fluentd:
+#     autoscaling:
+#       scaleTargetRef:
+#         name: logging-fluentd
+#         kind: StatefulSet
+#         apiVersion: apps/v1
+#       enabled: true
+#       minReplicaCount: 2
+#       maxReplicaCount: 6
+#     rules:
+#       enabled: true
+#       cpuAvg:
+#         enabled: true
+#         threshold: 0.80
+#         window: 5m
+#         # podQuery: ""
+#         container: fluentd
+#       memoryAvg:
+#         enabled: true
+#         threshold: 0.80
+#         # podQuery: ""
+#         container: fluentd
+#       diskUsage:
+#         threshold: 0.80
+#         enabled: true
+#         container: buffer-metrics-sidecar
+#         mountpoint: /buffers
+#       ingressAccessFreq:
+#         enabled: false
+#         threshold: 10
+#     extraRules: []

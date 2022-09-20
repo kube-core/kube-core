@@ -4,6 +4,18 @@ directories:
   - path: releases/base
     contents:
       # Base Releases
+      - path: chaos-mesh
+        helmChart:
+          name: chaos-mesh
+          version: 2.3.1
+          repository:
+            url: https://charts.chaos-mesh.org
+      - path: sloth
+        helmChart:
+          name: sloth
+          version: 0.5.2
+          repository:
+            url: https://slok.github.io/sloth
       - path: prometheus-adapter
         helmChart:
           name: prometheus-adapter
@@ -187,7 +199,7 @@ directories:
       - path: predator
         helmChart:
           name: predator
-          version: 1.6.1
+          version: 1.6.3
           repository:
             url: https://zooz.github.io/helm/
 
@@ -276,9 +288,9 @@ directories:
             url: https://bitnami-labs.github.io/sealed-secrets
 
       # Local Releases
-      - path: chaos
-        directory:
-          path: ../../../releases/local/litmus
+      # - path: chaos
+      #   directory:
+      #     path: ../../../releases/local/litmus
 
       - path: raw
         directory:
@@ -380,9 +392,6 @@ directories:
       - path: sloop
         directory:
           path: ../../../releases/local/sloop
-      - path: sloth
-        directory:
-          path: ../../../releases/local/sloth
       - path: system-jobs
         directory:
           path: ../../../releases/local/system-jobs
@@ -395,14 +404,17 @@ directories:
       - path: tekton-logging
         directory:
           path: ../../../releases/local/tekton-logging
+      - path: app-scaling
+        directory:
+          path: ../../../releases/local/app-scaling
 
-  - path: releases/crds
-    contents:
-      # CRD Releases
-      - path: chaos
-        helmChart:
-          name: litmus-core
-          version: 2.9.0
-          repository:
-            url: https://litmuschaos.github.io/litmus-helm/
-        includePaths: ["crds/*", "crds", "Chart.yaml", "values.yaml"]
+  # - path: releases/crds
+  #   contents:
+  #     # CRD Releases
+  #     - path: chaos
+  #       helmChart:
+  #         name: litmus-core
+  #         version: 2.9.0
+  #         repository:
+  #           url: https://litmuschaos.github.io/litmus-helm/
+  #       includePaths: ["crds/*", "crds", "Chart.yaml", "values.yaml"]
