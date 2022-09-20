@@ -5,10 +5,12 @@ monitoring:
   enabled: true
 
 scaling:
-  fluentd:
-    enabled: true
-  es:
-    enabled: false # TODO: Doesn't work, fix it
+  logging-fluentd:
+    autoscaling:
+      enabled: true
+  logging-es:
+    autoscaling:
+      enabled: false # TODO: Doesn't work, fix it
 
 cluster:
   config:

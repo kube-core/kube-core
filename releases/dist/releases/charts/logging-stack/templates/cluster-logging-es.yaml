@@ -4,7 +4,7 @@ kind: Elasticsearch
 metadata:
   name: logging
 spec:
-{{ if (eq .Values.scaling.es.enabled true) }}
+{{ if (eq (index .Values.scaling "logging-es" "autoscaling" "enabled") true) }}
   replicas: {{ .Values.cluster.logging.stack.es.nodes.count }}
   selector:
     matchLabels:
