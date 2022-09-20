@@ -1,61 +1,61 @@
 releases:
   predator:
     manifests:
-    - apiVersion: rbac.authorization.k8s.io/v1
-      kind: ClusterRoleBinding
-      metadata:
-        name: predator-admin
-      subjects:
-      - kind: ServiceAccount
-        name: predator
-        namespace: predator
-      roleRef:
-        apiGroup: rbac.authorization.k8s.io
-        kind: ClusterRole
-        name: cluster-admin
+      - apiVersion: rbac.authorization.k8s.io/v1
+        kind: ClusterRoleBinding
+        metadata:
+          name: predator-admin
+        roleRef:
+          apiGroup: rbac.authorization.k8s.io
+          kind: ClusterRole
+          name: cluster-admin
+        subjects:
+          - kind: ServiceAccount
+            name: predator
+            namespace: predator
     strategicMergePatches:
-    - apiVersion: apps/v1
-      kind: Deployment
-      metadata:
-        name: predator
-        namespace: predator
-      spec:
-        template:
-          spec:
-            initContainers:
-            - name: predator-setup
-              image: neo9sas/devops-tools:latest
-              env:
-                - name: CLEANUP
-                  value: "false"
-              command:
-              - /bin/bash
-              - -c
-              - |
-                # set -x
-                domains=$(kubectl get ingress -A --no-headers | awk '{print $1" "$2" "$4}')
+      - apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+          name: predator
+          namespace: predator
+        spec:
+          template:
+            spec:
+              initContainers:
+                - command:
+                    - /bin/bash
+                    - -c
+                    - |
+                      # set -x
+                      domains=$(kubectl get ingress -A --no-headers | awk '{print $1" "$2" "$4}')
 
-                protocol="https"
-                url="/"
-                count=0
+                      protocol="https"
+                      url="/"
+                      count=0
 
-                # Cleanup jobs and tests
-                if [[ "$CLEANUP" == "true" ]]; then
-                  curl http://predator:80/v1/jobs | jq '.[].id' -r | xargs -i curl -X DELETE http://predator:80/v1/jobs/'{}'
-                  curl http://predator:80/v1/tests | jq '.[].id' -r | xargs -i curl -X DELETE http://predator:80/v1/tests/'{}'
-                fi
+                      # Cleanup jobs and tests
+                      if [[ "$CLEANUP" == "true" ]]; then
+                        curl http://predator:80/v1/jobs | jq '.[].id' -r | xargs -i curl -X DELETE http://predator:80/v1/jobs/'{}'
+                        curl http://predator:80/v1/tests | jq '.[].id' -r | xargs -i curl -X DELETE http://predator:80/v1/tests/'{}'
+                      fi
 
-                existingTestsIds=$(curl http://predator:80/v1/tests | jq '.[].id' -r)
+                      existingTestsIds=$(curl http://predator:80/v1/tests | jq '.[].id' -r)
 
-                if [[ -z "${existingTestsIds}" ]]; then
-                  echo "No existing tests, provisionning default stuff ..."
-                  while read -r namespace name domain; do
+                      if [[ -z "${existingTestsIds}" ]]; then
+                        echo "No existing tests, provisionning default stuff ..."
+                        while read -r namespace name domain; do
 
-                      testId=$(curl -s -X POST -H 'Content-Type: application/json' http://predator:80/v1/tests -d '{"id":"'"${count}"'","name":"'"${namespace}/${name}"'","description":"Auto-generated: '"${protocol}://${domain}${url}"'","type":"basic","artillery_test":{"config":{"target":"'"${protocol}://${domain}"'","plugins":{"expect":{}}},"scenarios":[{"name":"Scenario 1","weight":100,"flow":[{"get":{"url":"'"${url}"'","headers":{},"capture":[],"expect":[{"statusCode":"200"}],"gzip":true,"forever":true,"probability":100}}]}]}}' | jq -r '.id')
+                            testId=$(curl -s -X POST -H 'Content-Type: application/json' http://predator:80/v1/tests -d '{"id":"'"${count}"'","name":"'"${namespace}/${name}"'","description":"Auto-generated: '"${protocol}://${domain}${url}"'","type":"basic","artillery_test":{"config":{"target":"'"${protocol}://${domain}"'","plugins":{"expect":{}}},"scenarios":[{"name":"Scenario 1","weight":100,"flow":[{"get":{"url":"'"${url}"'","headers":{},"capture":[],"expect":[{"statusCode":"200"}],"gzip":true,"forever":true,"probability":100}}]}]}}' | jq -r '.id')
 
-                      curl -s -X POST -H 'Content-Type: application/json' http://predator:80/v1/jobs -d '{"test_id":"'"${testId}"'","type":"load_test","cron_expression":"*/10 * * * *","parallelism":1,"max_virtual_users":250,"arrival_rate":100,"duration":600,"environment":"test","enabled":false,"test_name":"'"${namespace}/${name}"'"}'
+                            curl -s -X POST -H 'Content-Type: application/json' http://predator:80/v1/jobs -d '{"test_id":"'"${testId}"'","type":"load_test","cron_expression":"*/10 * * * *","parallelism":1,"max_virtual_users":250,"arrival_rate":100,"duration":600,"environment":"test","enabled":false,"test_name":"'"${namespace}/${name}"'"}'
 
-                  (( count ++ ))
-                  done <<< "${domains}"
-                fi
-                # sleep 600
+                        (( count ++ ))
+                        done <<< "${domains}"
+                      fi
+                      # sleep 600
+                  env:
+                    - name: CLEANUP
+                      value: "false"
+                  image: neo9sas/devops-tools:latest
+                  name: predator-setup
