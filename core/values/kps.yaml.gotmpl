@@ -210,6 +210,14 @@ kps:
               path: /var/lib/grafana/dashboards/thanos
             orgId: 1
             type: file
+          - disableDeletion: true
+            editable: false
+            folder: Others
+            name: others
+            options:
+              path: /var/lib/grafana/dashboards/others
+            orgId: 1
+            type: file
           {{- if or (index $.Values.releases "nginx-ingress-controller" "config" "metrics" "serviceMonitor" "enabled") (index $.Values.releases "nginx-istio-ingress-controller" "config" "metrics" "serviceMonitor" "enabled") }}
           - disableDeletion: true
             editable: false
@@ -260,46 +268,6 @@ kps:
             orgId: 1
             type: file
           {{- end }}
-          {{- if index $.Values.releases "cert-manager" "enabled" }}
-          - disableDelection: true
-            editable: false
-            folder: Cert manager
-            name: cert-manager
-            options:
-              path: /var/lib/grafana/dashboards/cert-manager
-            orgId: 1
-            type: file
-          {{- end }}
-          {{- if index $.Values.releases "sealed-secrets" "enabled" }}
-          - disableDelection: true
-            editable: false
-            folder: Sealed secrets
-            name: sealed-secrets
-            options:
-              path: /var/lib/grafana/dashboards/sealed-secrets
-            orgId: 1
-            type: file
-          {{- end }}
-          {{- if index $.Values.releases "external-dns" "enabled" }}
-          - disableDelection: true
-            editable: false
-            folder: External DNS Controller
-            name: external-dns
-            options:
-              path: /var/lib/grafana/dashboards/external-dns
-            orgId: 1
-            type: file
-          {{- end }}
-          {{- if index $.Values.releases "external-secrets" "enabled" }}
-          - disableDelection: true
-            editable: false
-            folder: External secrets Operator
-            name: external-secrets
-            options:
-              path: /var/lib/grafana/dashboards/external-secrets
-            orgId: 1
-            type: file
-          {{- end }}
           {{- if index $.Values.releases "mongodb-operator" "enabled" }}
           - disableDeletion: true
             editable: false
@@ -307,6 +275,16 @@ kps:
             name: mongodb
             options:
               path: /var/lib/grafana/dashboards/mongodb
+            orgId: 1
+            type: file
+          {{- end }}
+          {{- if index $.Values.releases "sloth" "enabled" }}
+          - disableDeletion: true
+            editable: false
+            folder: Sloth
+            name: sloth
+            options:
+              path: /var/lib/grafana/dashboards/sloth
             orgId: 1
             type: file
           {{- end }}
@@ -356,31 +334,7 @@ kps:
         control-plane:
           url: https://raw.githubusercontent.com/fluxcd/flux2/main/manifests/monitoring/monitoring-config/dashboards/control-plane.json
       {{- end }}
-      {{- if index $.Values.releases "cert-manager" "enabled" }}
-      cert-manager:
-        cert-manager:
-          url: https://raw.githubusercontent.com/monitoring-mixins/website/master/assets/cert-manager/dashboards/cert-manager.json
 
-      {{- end }}
-      {{- if index $.Values.releases "sealed-secrets" "enabled" }}
-      sealed-secrets:
-        sealed-secrets:
-          url: https://raw.githubusercontent.com/monitoring-mixins/website/master/assets/sealed-secrets/dashboards/sealed-secrets-controller.json
-
-      {{- end }}
-      {{- if index $.Values.releases "external-dns" "enabled" }}
-      external-dns:
-        external-dns:
-          datasource: Thanos
-          gnetId: 15038
-          revision: 1
-      {{- end }}
-      {{- if index $.Values.releases "external-secrets" "enabled" }}
-      external-secrets:
-        external-secrets:
-          url: https://raw.githubusercontent.com/neo9/grafana-dashboards/master/external-secrets/dashboard.yaml
-
-      {{- end }}
 
 
       {{- if index $.Values.releases "rabbitmq-operators" "enabled" }}
@@ -432,6 +386,35 @@ kps:
           # gnetId: 12079
           # revision: 1
       {{- end }}
+      {{- if index $.Values.releases "sloth" "enabled" }}
+      sloth:
+        sloth-overview:
+          datasource: Thanos
+          gnetId: 14643
+          revision: 2
+        slo-detailed:
+          url: https://raw.githubusercontent.com/neo9/grafana-dashboards/master/sloth/slo-detailed.json
+      {{- end }}
+      others:
+      {{- if index $.Values.releases "cert-manager" "enabled" }}
+        cert-manager:
+          url: https://raw.githubusercontent.com/monitoring-mixins/website/master/assets/cert-manager/dashboards/cert-manager.json
+      {{- end }}
+      {{- if index $.Values.releases "sealed-secrets" "enabled" }}
+        sealed-secrets:
+          url: https://raw.githubusercontent.com/monitoring-mixins/website/master/assets/sealed-secrets/dashboards/sealed-secrets-controller.json
+      {{- end }}
+      {{- if index $.Values.releases "external-dns" "enabled" }}
+        external-dns:
+          datasource: Thanos
+          gnetId: 15038
+          revision: 1
+      {{- end }}
+      {{- if index $.Values.releases "external-secrets" "enabled" }}
+        external-secrets:
+          url: https://raw.githubusercontent.com/neo9/grafana-dashboards/master/external-secrets/dashboard.yaml
+      {{- end }}
+
       {{- if ( .Values | get (printf "releases.%s.config.grafana.dashboards" .Release.Name ) false) }}
       {{- toYaml (index .Values.releases .Release.Name "config" "grafana" "dashboards") | nindent 6 }}
       {{- end }}
