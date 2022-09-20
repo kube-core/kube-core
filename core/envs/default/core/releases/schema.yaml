@@ -18,17 +18,17 @@ templates:
       injectReloaderAnnotations: false
     patches: {}
     release: {}
+    scaling: {}
     secrets: {}
     strategicMergePatches: {}
     transformers: {}
     values: {}
-    scaling: {}
 releases:
   cert-manager: *release
+  chaos-mesh: *release
   chartmuseum: *release
   cluster-issuers: *release
   cluster-logging: *release
-  test-logging: *release
   container-registry-cleaner: *release
   container-registry-config: *release
   container-registry-operator: *release
@@ -56,6 +56,7 @@ releases:
   istio-prometheus: *release
   istio-rules-external-services: *release
   istiod: *release
+  keda: *release
   keycloak: *release
   keycloak-dev: *release
   kps: *release
@@ -69,6 +70,7 @@ releases:
   metrics-server: *release
   minio-operator: *release
   minio-tenants: *release
+  mongodb-atlas-operator: *release
   mongodb-operator: *release
   nexus: *release
   nginx: *release
@@ -79,6 +81,7 @@ releases:
   polaris: *release
   predator: *release
   priority-class: *release
+  prometheus-adapter: *release
   rabbitmq-cluster: *release
   rabbitmq-config: *release
   rabbitmq-operators: *release
@@ -95,11 +98,8 @@ releases:
   tekton: *release
   tekton-catalog: *release
   tekton-logging: *release
+  test-logging: *release
   velero: *release
   visitor-groups: *release
   zeebe: *release
   zeebe-operate: *release
-  keda: *release
-  prometheus-adapter: *release
-  chaos-mesh: *release
-  mongodb-atlas-operator: *release

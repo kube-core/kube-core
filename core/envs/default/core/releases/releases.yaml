@@ -3,12 +3,22 @@ releases:
     labels:
       component: certificates
       group: cluster
+    namespace: cert-manager
     options:
       injectReloaderAnnotations: true
-    namespace: cert-manager
     release:
       chart: ../releases/dist/releases/charts/cert-manager
       name: cert-manager
+  chaos-mesh:
+    labels: {}
+    namespace: chaos-mesh
+    options:
+      applyDefaultAnnotationsOnIngress: true
+      applyDefaultLabelsOnIngress: true
+      injectReloaderAnnotations: true
+    release:
+      chart: ../releases/dist/releases/charts/chaos-mesh
+      name: chaos-mesh
   chartmuseum:
     labels:
       component: chartmuseum
@@ -25,14 +35,6 @@ releases:
     release:
       chart: ../releases/dist/releases/charts/raw
       name: cluster-issuers
-  test-logging:
-    labels:
-      component: test
-      group: test-logging
-    namespace: test-logging
-    release:
-      chart: ../releases/dist/releases/charts/test-logging
-      name: test-logging
   cluster-logging:
     labels:
       component: cluster
@@ -161,9 +163,9 @@ releases:
     labels:
       component: efk
       group: logging
+    namespace: efk
     options:
       removeIngressClassAnnotation: true
-    namespace: efk
     release:
       chart: ../releases/dist/releases/charts/efk
       name: efk
@@ -172,9 +174,9 @@ releases:
       cloud: gke
       component: preemptible
       group: estafette
+    namespace: estafette
     options:
       injectReloaderAnnotations: true
-    namespace: estafette
     release:
       chart: ../releases/dist/releases/charts/estafette-gke-node-pool-shifter
       name: estafette-gke-node-pool-shifter
@@ -183,9 +185,9 @@ releases:
       cloud: gke
       component: preemptible
       group: estafette
+    namespace: estafette
     options:
       injectReloaderAnnotations: true
-    namespace: estafette
     release:
       chart: ../releases/dist/releases/charts/estafette-gke-preemptible-killer
       name: estafette-gke-preemptible-killer
@@ -194,9 +196,9 @@ releases:
       cloud: gke
       component: preemptible
       group: estafette
+    namespace: estafette
     options:
       injectReloaderAnnotations: true
-    namespace: estafette
     release:
       chart: ../releases/dist/releases/charts/estafette-k8s-node-compactor
       name: estafette-k8s-node-compactor
@@ -212,9 +214,9 @@ releases:
     labels:
       component: dns
       group: cluster
+    namespace: external-dns
     options:
       injectReloaderAnnotations: true
-    namespace: external-dns
     release:
       chart: ../releases/dist/releases/charts/external-dns
       name: external-dns
@@ -246,9 +248,9 @@ releases:
     labels:
       component: admin
       group: cluster
+    namespace: forecastle
     options:
       applyDefaultLabelsOnIngress: true
-    namespace: forecastle
     release:
       chart: ../releases/dist/releases/charts/forecastle
       name: forecastle
@@ -325,6 +327,12 @@ releases:
     release:
       chart: ../releases/dist/releases/charts/istio-discovery
       name: istiod
+  keda:
+    labels: {}
+    namespace: keda
+    release:
+      chart: ../releases/dist/releases/charts/keda
+      name: keda
   keycloak:
     labels:
       component: keycloak
@@ -345,9 +353,9 @@ releases:
     labels:
       component: kps
       group: monitoring
+    namespace: monitoring
     options:
       injectReloaderAnnotations: true
-    namespace: monitoring
     release:
       chart: ../releases/dist/releases/charts/kps
       name: kps
@@ -429,6 +437,14 @@ releases:
     release:
       chart: ../releases/dist/releases/charts/minio-tenants
       name: minio-tenants
+  mongodb-atlas-operator:
+    labels:
+      component: atlas
+      group: operators
+    namespace: mongodb-atlas-operator
+    release:
+      chart: ../releases/dist/releases/charts/mongodb-atlas-operator
+      name: mongodb-atlas-operator
   mongodb-operator:
     labels:
       component: mongodb
@@ -467,9 +483,9 @@ releases:
     labels:
       component: controller
       group: ingress
+    namespace: nginx-istio-ingress
     options:
       injectReloaderAnnotations: true
-    namespace: nginx-istio-ingress
     release:
       chart: ../releases/dist/releases/charts/nginx-ingress-controller
       name: nginx-istio-ingress-controller
@@ -529,9 +545,9 @@ releases:
     labels:
       component: admin
       group: cluster
+    namespace: polaris
     options:
       applyDefaultLabelsOnIngress: true
-    namespace: polaris
     release:
       chart: ../releases/dist/releases/charts/polaris
       name: polaris
@@ -551,6 +567,12 @@ releases:
     release:
       chart: ../releases/dist/releases/charts/priority-class
       name: priority-class
+  prometheus-adapter:
+    labels: {}
+    namespace: monitoring
+    release:
+      chart: ../releases/dist/releases/charts/prometheus-adapter
+      name: prometheus-adapter
   rabbitmq-cluster:
     labels:
       component: cluster
@@ -668,9 +690,9 @@ releases:
     labels:
       component: tekton
       group: devops
+    namespace: tekton-pipelines
     options:
       injectReloaderAnnotations: true
-    namespace: tekton-pipelines
     release:
       chart: ../releases/dist/releases/charts/tekton
       name: tekton
@@ -692,13 +714,21 @@ releases:
     release:
       chart: ../releases/dist/releases/charts/tekton-logging
       name: tekton-logging
+  test-logging:
+    labels:
+      component: test
+      group: test-logging
+    namespace: test-logging
+    release:
+      chart: ../releases/dist/releases/charts/test-logging
+      name: test-logging
   velero:
     labels:
       component: backups
       group: cluster
+    namespace: velero
     options:
       injectReloaderAnnotations: true
-    namespace: velero
     release:
       chart: ../releases/dist/releases/charts/velero
       name: velero
@@ -740,36 +770,3 @@ releases:
     release:
       chart: ../releases/dist/releases/charts/zeebe-operate-helm
       name: zeebe-operate
-
-  keda:
-    labels: {}
-    release:
-      chart: ../releases/dist/releases/charts/keda
-      name: keda
-    namespace: keda
-
-  prometheus-adapter:
-    labels: {}
-    namespace: monitoring
-    release:
-      chart: ../releases/dist/releases/charts/prometheus-adapter
-      name: prometheus-adapter
-
-  chaos-mesh:
-    labels: {}
-    namespace: chaos-mesh
-    options:
-      applyDefaultLabelsOnIngress: true
-      applyDefaultAnnotationsOnIngress: true
-      injectReloaderAnnotations: true
-    release:
-      chart: ../releases/dist/releases/charts/chaos-mesh
-      name: chaos-mesh
-  mongodb-atlas-operator:
-    labels:
-      component: atlas
-      group: operators
-    namespace: mongodb-atlas-operator
-    release:
-      chart: ../releases/dist/releases/charts/mongodb-atlas-operator
-      name: mongodb-atlas-operator

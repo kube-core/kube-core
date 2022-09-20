@@ -4,7 +4,7 @@ kind: ValidatingWebhookConfiguration
 metadata:
   name: {{ include "kubefledged.validatingWebhookName" . }}
   labels:
-    {{ include "kubefledged.labels" . | nindent 4 }}  
+    {{ include "kubefledged.labels" . | nindent 4 }}
   annotations:
     helm.sh/hook: "pre-install"
     helm.sh/hook-delete-policy: "before-hook-creation"
