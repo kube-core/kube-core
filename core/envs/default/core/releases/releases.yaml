@@ -765,3 +765,11 @@ releases:
     release:
       chart: ../releases/dist/releases/charts/chaos-mesh
       name: chaos-mesh
+  mongodb-atlas-operator:
+    labels:
+      component: atlas
+      group: operators
+    namespace: mongodb-atlas-operator
+    release:
+      chart: ../releases/dist/releases/charts/mongodb-atlas-operator
+      name: mongodb-atlas-operator

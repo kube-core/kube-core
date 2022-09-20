@@ -287,6 +287,13 @@ directories:
           repository:
             url: https://bitnami-labs.github.io/sealed-secrets
 
+      - path: mongodb-atlas-operator
+        helmChart:
+          name: mongodb-atlas-operator
+          version: 1.3.0
+          repository:
+            url: https://mongodb.github.io/helm-charts
+
       # Local Releases
       # - path: chaos
       #   directory:

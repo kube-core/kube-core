@@ -117,4 +117,11 @@
   namespace: crds
   chart: ../releases/dist/releases/crds/velero
   values: []
+
+- name: mongodb-atlas-operator-crds
+  labels:
+    type: crd
+  namespace: crds
+  chart: ../releases/dist/releases/crds/mongodb-atlas-operator
+  values: []
 {{ end }}
