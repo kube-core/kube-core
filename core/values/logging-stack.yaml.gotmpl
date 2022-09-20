@@ -1,4 +1,5 @@
 cluster: {{ toYaml .Values.cluster | nindent 2 }}
+scaling: {{ toYaml (index .Values.releases .Release.Name "scaling") | nindent 2 }}
 
 es-exporter:
   enabled: true

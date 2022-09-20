@@ -120,6 +120,82 @@ cluster:
                         }
                       }
                     },
+                    "container_image": {
+                      "type": "text",
+                      "fields": {
+                        "keyword": {
+                          "type": "keyword",
+                          "normalizer": "lowercase_normalizer"
+                        }
+                      }
+                    },
+                    "container_image_id": {
+                      "type": "text",
+                      "fields": {
+                        "keyword": {
+                          "type": "keyword",
+                          "normalizer": "lowercase_normalizer"
+                        }
+                      }
+                    },
+                    "host": {
+                      "type": "text",
+                      "index": false,
+                      "fields": {
+                        "keyword": {
+                          "type": "keyword",
+                          "normalizer": "lowercase_normalizer"
+                        }
+                      }
+                    },
+                    "pod_id": {
+                      "type": "text",
+                      "index": false,
+                      "fields": {
+                        "keyword": {
+                          "type": "keyword",
+                          "normalizer": "lowercase_normalizer"
+                        }
+                      }
+                    },
+                    "pod_ip": {
+                      "type": "text",
+                      "index": false,
+                      "fields": {
+                        "keyword": {
+                          "type": "keyword",
+                          "normalizer": "lowercase_normalizer"
+                        }
+                      }
+                    },
+                    "pod_name": {
+                      "type": "text",
+                      "fields": {
+                        "keyword": {
+                          "type": "keyword",
+                          "normalizer": "lowercase_normalizer"
+                        }
+                      }
+                    },
+                    "namespace_name": {
+                      "type": "text",
+                      "fields": {
+                        "keyword": {
+                          "type": "keyword",
+                          "normalizer": "lowercase_normalizer"
+                        }
+                      }
+                    },
+                    "namespace_id": {
+                      "type": "text",
+                      "index": false,
+                      "fields": {
+                        "keyword": {
+                          "type": "keyword",
+                          "normalizer": "lowercase_normalizer"
+                        }
+                      }
+                    },
                     "labels": {
                       "type": "object",
                       "subobjects": false,
@@ -152,14 +228,6 @@ cluster:
         # object_key_format: "%{path}/%{time_slice}%{uuid_hash}%{index}.%{file_extension}" => my-api2022081514202.json
         # object_key_format: "%{path}/%{index}-${chunk_id}.log" # => 0-5e6405b27529c86fcfb00cd1bebb98be.log
         buffer:
-          # tags: tag,time
-          # timekey: 10m
-          # timekey_wait: 1m
-          # timekey_use_utc: true
-          # flush_thread_count: 1
-          # flush_mode: interval
-          # flush_interval: 10m
-          # disable_chunk_backup: true
           tags: tag,time
           timekey: 1m
           timekey_wait: 1m
@@ -169,7 +237,7 @@ cluster:
           flush_mode: interval
           flush_interval: 60s
 
-          flush_thread_count: 4 # Multithreaded requires to use chunk-id with s3 to avoid collisions and data loss
+          flush_thread_count: 16 # Multithreaded requires to use chunk-id with s3 to avoid collisions and data loss
           flush_at_shutdown: true # This specifies whether to flush/write all buffer chunks on shutdown or not
           disable_chunk_backup: true # Instead of storing unrecoverable chunks in the backup directory, just discard them. This option is new in Fluentd v1.2.6.
 
@@ -183,20 +251,21 @@ cluster:
           # 32MB * 512 = 16384MB.
           # 8MB * 1024 = 8192MB.
           # 8MB * 2048 = 16384MB.
-          chunk_limit_records: 128 # The max number of events that each chunks can store in it
+          chunk_limit_records: 512 # The max number of events that each chunks can store in it
           chunk_limit_size: 32M # The max size of each chunks: events will be written into chunks until the size of chunks become this size (default: 8MB)
-          # 32 / 128 causes the following: #0 [clusterflow:logging:app:clusteroutput:logging:app-es] chunk size limit exceeds for an emitted event stream: 2426records
+          # problem: #0 [clusterflow:logging:app:clusteroutput:logging:app-es] chunk size limit exceeds for an emitted event stream: 2426records
 
           # chunk_limit_records: 2048
           # chunk_limit_size: 8M
 
-          # total_limit_size: 500M
+          total_limit_size: 16384M
 
           # Use the following instead if you need to make sure all logs are processed
           # overflow_action: block
           overflow_action: drop_oldest_chunk # drops/purges the oldest chunk to accept newly incoming chunk.
 
           retry_type: exponential_backoff
+          retry_timeout: 1h
 
           # Here in case retry_type is changed to something else than exponential_backoff
           retry_max_interval: "30"

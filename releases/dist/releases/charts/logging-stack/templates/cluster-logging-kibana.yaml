@@ -25,16 +25,6 @@ spec:
           - mountPath: /usr/share/kibana/dashboards
             name: kibana-dashboards
             readOnly: true
-          - mountPath: /mnt/elastic-internal/kibana-config
-            name: elastic-internal-kibana-config
-            readOnly: true
-          - mountPath: /usr/share/kibana/config
-            name: elastic-internal-kibana-config-local
-          - mountPath: /usr/share/kibana/config/elasticsearch-certs
-            name: elasticsearch-certs
-            readOnly: true
-          - mountPath: /usr/share/kibana/data
-            name: kibana-data
         env:
           - name: ESUSER
             value: elastic
@@ -119,25 +109,12 @@ spec:
           successThreshold: 1
           timeoutSeconds: 5
       volumes:
-      - name: elastic-internal-kibana-config
-        secret:
-          defaultMode: 420
-          optional: false
-          secretName: logging-kb-config
-      - emptyDir: {}
-        name: elastic-internal-kibana-config-local
-      - name: elasticsearch-certs
-        secret:
-          defaultMode: 420
-          optional: false
-          secretName: logging-kb-es-ca
       - name: kibana-dashboards
         configMap:
           defaultMode: 420
           optional: false
           name: {{ .Values.cluster.logging.dashboards.configMap.name }}
-      - emptyDir: {}
-        name: kibana-data
+
   http:
     tls:
       selfSignedCertificate:

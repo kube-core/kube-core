@@ -14,11 +14,13 @@ spec:
     ssl_verify: false
     ssl_version: TLSv1_2
     # More Params
+    request_timeout: 60s
     include_timestamp: true
     reconnect_on_error: true
     reload_on_failure: true
     enable_ilm: true
     logstash_format: true
+    with_transporter_log: false # Set to true if you need to debug
     ilm_policy_id: {{ coalesce .ilmPolicyName .cluster.logging.integrations.es.config.ilm_policy_id | quote }}
     logstash_prefix: "{{ .cluster.config.name }}.{{ coalesce .name "default" }}"
     template_name: "{{ .cluster.config.name }}.{{ coalesce .name "default" }}"
