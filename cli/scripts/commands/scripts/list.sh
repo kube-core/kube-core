@@ -57,6 +57,10 @@ check_requirements
 # check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
+## Docs Start ##
+## Lists scripts. Wrapped by: kube-core scripts list
+## Docs End ##
 
 
-cat "${scriptsConfigPath}" | yq e '.scripts[]' -o json - | jq 'del(.path) | del(.args)' | jq -r -s '.[] | "\(.name): \(.description)"' | column -t -s :
+# TODO: Implement args
+cat "${scriptsConfigPath}" | yq e '.scripts[]' -o json - | jq 'del(.path) | del(.args)' | jq -r -s '.[] | "\(.name) === \(.description)"' | column -t -s ===

@@ -58,6 +58,9 @@ check_requirements
 # check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
+## Docs Start ##
+## For kube-core development. Bumps kube-core references. To use before a release.
+## Docs End ##
 
 nextVersion=${1}
 currentVersion=$(cat "${corePath}/cli/package.json" | jq '.version')

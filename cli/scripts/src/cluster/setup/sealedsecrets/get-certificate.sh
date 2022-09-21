@@ -59,10 +59,12 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
+## Docs Start ##
+## Gets a local copy of SealedSecrets controller certificate. Allows to seal/unseal secrets offline.
+## Docs End ##
 
-
-log_debug "${project_name} - SealedSecrets - Getting certificate"
-echo "WARNING: Make sure SealedSecrets Controller is up and running for that step to work !"
+log_info "SealedSecrets - Getting certificate"
+log_warn "Make sure SealedSecrets Controller is up and running for that step to work !"
 
 kubectl get secrets -n sealed-secrets | \
     grep sealed-secrets-key | \
@@ -74,4 +76,4 @@ kubectl get secrets -n sealed-secrets | \
 
 # TODO: Check why base64 -d gives "invalid input" message
 
-echo "Done getting certificate !"
+log_info "SealedSecrets - Done getting certificate!"

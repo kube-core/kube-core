@@ -59,7 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## Gets helmfile env top level keys. Wrapped by: kube-core values keys
+## Docs End ##
 
 # Script
 args=${1:-""}

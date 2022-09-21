@@ -59,7 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## Generates a kubeconfig for a GKE cluster, and sets up local access to this cluster
+## Docs End ##
 
 gcloud container clusters get-credentials ${cluster_config_name} --zone ${cloud_default_location} --project ${project_name}
 kubectl config delete-context ${cluster_config_name} || true

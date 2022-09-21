@@ -59,6 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
+## Docs Start ##
+## Gets all helmfile env values
+## Docs End ##
 
 
 corePath="${currentScriptPath}/../"

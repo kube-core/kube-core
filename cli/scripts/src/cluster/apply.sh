@@ -59,7 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 check_args "$@"
 ## Header End
-
+## Docs Start ##
+## Applies cluster config (everything)
+## Docs End ##
 
 
 log_info "${cluster_config_name} - Applying cluster config ..."

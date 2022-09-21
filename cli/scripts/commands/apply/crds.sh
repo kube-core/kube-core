@@ -59,7 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 check_args "$@"
 ## Header End
-
+## Docs Start ##
+## Wrapped by CLI. Applies CRDs.
+## Docs End ##
 
 # TODO: Fix some duplicate CRDs in manifests
 crdsPath="${corePath}/releases/dist/manifests/crds"

@@ -1,5 +1,8 @@
 #!/bin/bash
 # set -eou pipefail
+## Docs Start ##
+## Removes current cluster context from kubeconfig
+## Docs End ##
 
 # load conf from yaml
 currentScriptPath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"

@@ -1,4 +1,7 @@
-#!/bin/bash
+#!/bin/
+## Docs Start ##
+## Checks if input context matches current cluster config. Args: context
+## Docs End ##
 set -eou pipefail
 
 check_context() {

@@ -59,7 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## Sets up Cloud Provider IAM/Secrets. GCP only for now.
+## Docs End ##
 
 if [[ "${cloud_provider}" == "gcp" ]]; then
 

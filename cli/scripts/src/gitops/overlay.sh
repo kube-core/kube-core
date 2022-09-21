@@ -59,7 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## Applies overlays over gitops config
+## Docs End ##
 
 log_debug "${project_name} - Copy build generated manifests to config"
 

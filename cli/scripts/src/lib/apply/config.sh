@@ -1,11 +1,14 @@
 #!/bin/bash
+## Docs Start ##
+## A lib of utils apply config
+## Docs End ##
 set -eou pipefail
 
 apply_config() {
     configPath=${1}
     mkdir -p ${configPath}
     inputList=$(find ${configPath} -type f) || true
-    
+
     log_info "Applying config from: ${configPath}"
 
     if [[ "$filter" != "" ]] ; then
@@ -31,7 +34,7 @@ replace_config() {
     configPath=${1}
     mkdir -p ${configPath}
     inputList=$(find ${configPath} -type f) || true
-    
+
     log_info "Replacing config from: ${configPath}"
 
     if [[ "$filter" != "" ]] ; then
@@ -57,7 +60,7 @@ create_config() {
     configPath=${1}
     mkdir -p ${configPath}
     inputList=$(find ${configPath} -type f) || true
-    
+
     log_info "Creating config from: ${configPath}"
 
     if [[ "$filter" != "" ]] ; then
@@ -83,7 +86,7 @@ delete_config() {
     configPath=${1}
     mkdir -p ${configPath}
     inputList=$(find ${configPath} -type f) || true
-    
+
     log_info "Deleting config from: ${configPath}"
 
     if [[ "$filter" != "" ]] ; then

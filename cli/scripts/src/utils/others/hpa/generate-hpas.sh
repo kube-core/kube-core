@@ -1,9 +1,13 @@
+## Docs Start ##
+## Generates HPAs for all deployments in cluster
+## Docs End ##
+
 deployments=$(kubectl get deploy -A -o json | jq -r '.items[] | "\(.metadata.namespace) \(.metadata.name) \(.spec.replicas)"' | grep -vE "kube\-system" | grep -E "2$")
 
 # echo $deployments
 
 while read i
-do 
+do
     ns=$(echo $i | awk '{print $1}')
     name=$(echo $i | awk '{print $2}')
     replicas=$(echo $i | awk '{print $3}')
@@ -29,11 +33,4 @@ EOF
 
 echo "$hpa"
 
-
-echo "$hpa" | kubectl apply -f - 
-
 done <<< "$deployments"
-
-
-
-

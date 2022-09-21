@@ -59,6 +59,9 @@ prepare_workspace
 # check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
+## Docs Start ##
+## Used in CI. Builds gitops config.
+## Docs End ##
 
 
 # gitBranch=$(params.git-branch)

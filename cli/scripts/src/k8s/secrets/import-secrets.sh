@@ -59,7 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## Imports secrets. Args: namespace filter
+## Docs End ##
 
 log_debug "${project_name} - Imports existing secrets"
 

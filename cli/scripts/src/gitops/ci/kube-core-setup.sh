@@ -59,7 +59,9 @@ prepare_workspace
 # check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## Sets up everything needed to run kube-core in CI.
+## Docs End ##
 
 ENV=${ENV:-"local"}
 

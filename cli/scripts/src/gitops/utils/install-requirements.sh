@@ -58,7 +58,9 @@ eval "${absolutePaths}"
 # check_context "${cluster_config_context}"
 # # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## DEPRECATED. Checks and installs requirements for kube-core.
+## Docs End ##
 
 # TODO: Reimplement it
 

@@ -59,7 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## DEPRECATED. Applies common overlays on the config
+## Docs End ##
 
 log_debug "${project_name} - Applies Common Overlays (Disabled for now, see script)"
 

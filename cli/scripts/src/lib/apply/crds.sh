@@ -1,4 +1,7 @@
 #!/bin/bash
+## Docs Start ##
+## A lib of utils apply crds
+## Docs End ##
 set -eou pipefail
 
 apply_crds() {
@@ -6,7 +9,7 @@ apply_crds() {
     # Create if not exists
     mkdir -p ${crdsPath}
     inputList=$(find ${crdsPath} -type f) || true
-    
+
     log_info "Upgrading CRDs from: ${crdsPath}"
 
     if [[ "$filter" != "" ]] ; then
@@ -36,7 +39,7 @@ delete_crds() {
     # Create if not exists
     mkdir -p ${crdsPath}
     inputList=$(find ${crdsPath} -type f) || true
-    
+
     log_info "Deleting CRDs from: ${crdsPath}"
 
     if [[ "$filter" != "" ]] ; then

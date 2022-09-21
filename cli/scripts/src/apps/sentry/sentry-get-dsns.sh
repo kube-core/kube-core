@@ -1,3 +1,7 @@
+## Docs Start ##
+## Generates Sentry DSNs for proejct. Args: projectName appName apiKey
+## Docs End ##
+
 projectName=$1
 appName=$2
 apiKey=$3

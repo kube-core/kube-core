@@ -59,7 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## Checks if istio is working as expected. Args: namespace container valuesFile targetHost
+## Docs End ##
 
 log_debug "${project_name} - Verify Istio"
 

@@ -59,6 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
+## Docs Start ##
+## Generates secrets for Tekton/SF features
+## Docs End ##
 
 log_info "Generating sf secrets..."
 

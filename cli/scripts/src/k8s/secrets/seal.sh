@@ -60,7 +60,7 @@ check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
 ## Docs Start ##
-## Seals a Secret locally using sealed-secrets certificate
+## Seals a Secret locally using sealed-secrets certificate. Reads from stdin.
 ## Docs End ##
 
 cat | \

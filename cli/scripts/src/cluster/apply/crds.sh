@@ -59,7 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 check_args "$@"
 ## Header End
-
+## Docs Start ##
+## Applies cluster local crds: crds_path
+## Docs End ##
 
 # TODO: Fix some duplicate CRDs in manifests
 crdsPath="${crds_path}"

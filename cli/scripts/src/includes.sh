@@ -1,4 +1,5 @@
 #!/bin/bash
+
 set -eou pipefail
 
 ## Header Start
@@ -20,6 +21,10 @@ else
     scriptsConfigPath=$(eval find "${currentScriptPath}"/$(printf "{$(echo %{1..7}q,)}" | sed 's/ /\.\.\//g') -maxdepth 1 -name scripts-config.yaml | head -n 1 | xargs realpath)
 fi
 scriptsConfigDirPath=$(dirname ${scriptsConfigPath} | xargs realpath)
+## Header End
+## Docs Start ##
+## Common includes for sh scripts
+## Docs End ##
 
 echo "source ${scriptsConfigDirPath}/src/utils/yaml/parse_yaml.sh"
 echo "source ${scriptsConfigDirPath}/src/utils/yaml/get_config.sh"

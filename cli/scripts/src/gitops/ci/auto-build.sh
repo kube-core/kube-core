@@ -59,7 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## DEPRECATED. Builds all config in CI.
+## Docs End ##
 
 # gitBranch=$(params.git-branch)
 # clusterPath=$(workspaces.source.path)/$(params.git-project-name)/cluster

@@ -59,6 +59,8 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## Prints: clusterConfigDirPath
+## Docs End ##
 
 echo ${clusterConfigDirPath}

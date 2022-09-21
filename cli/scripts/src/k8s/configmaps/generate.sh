@@ -59,7 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## Generates configmaps from input to output
+## Docs End ##
 
 log_info "Building: local/configmaps/input -> local/configmaps/output..."
 

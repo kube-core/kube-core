@@ -58,7 +58,9 @@ check_requirements
 # check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## For kube-core releases development. Gets base releases from vendir.
+## Docs End ##
 
 releasesPath="${corePath}/core/envs/core/releases"
 

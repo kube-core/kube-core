@@ -1,3 +1,7 @@
+## Docs Start ##
+## Creates sentry project. Args: projectName appName apiKey
+## Docs End ##
+
 projectName=$1
 appName=$2
 apiKey=$3

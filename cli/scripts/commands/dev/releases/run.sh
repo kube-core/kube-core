@@ -58,6 +58,9 @@ check_requirements
 # check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
+## Docs Start ##
+## For kube-core releases development. Builds all dist releases.
+## Docs End ##
 
 releasesPath="${corePath}/core/envs/default/core/releases"
 coreReleasesPath=${corePath}/releases

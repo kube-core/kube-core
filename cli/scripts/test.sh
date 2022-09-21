@@ -59,7 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## Tests all cluster manifests. Used by: kube-core test all
+## Docs End ##
 
 log_info "Running all tests..."
 

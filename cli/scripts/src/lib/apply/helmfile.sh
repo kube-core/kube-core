@@ -1,4 +1,7 @@
 #!/bin/bash
+## Docs Start ##
+## A lib of utils to wrap helmfile
+## Docs End ##
 set -eou pipefail
 
 helmfile_apply() {

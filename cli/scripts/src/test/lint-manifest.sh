@@ -59,7 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## Lints one manifest using yamllint
+## Docs End ##
 
 # gitOpsConfigPath=${config_path}
 gitOpsConfigPath=${1}
