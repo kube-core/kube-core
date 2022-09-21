@@ -1,5 +1,8 @@
 #!/bin/bash
 set -eou pipefail
+## Docs Start ##
+## Generates PDBs for all deployments in cluster
+## Docs End ##
 
 currentScriptPath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 clusterConfigPath=$(eval find ./$(printf "{$(echo %{1..7}q,)}" | sed 's/ /\.\.\//g') -maxdepth 1 -name cluster-config.yaml | head -n 1 | xargs realpath)
@@ -16,7 +19,7 @@ deployments=$(kubectl get deploy,sts -A -o json | jq -r '.items[] | "\(.metadata
 # echo $deployments
 
 while read i
-do 
+do
     ns=$(echo $i | awk '{print $1}')
     name=$(echo $i | awk '{print $2}')
     replicas=$(echo $i | awk '{print $3}')
@@ -44,8 +47,6 @@ outputPath=${currentScriptPath}/generated/${ns}/pdb
 mkdir -p ${outputPath}
 echo "$pdb" > ${outputPath}/pdb-${name}.yaml
 
-# cat ${outputPath} | kubectl apply -f - 
+# cat ${outputPath} | kubectl apply -f -
 
 done <<< "$deployments"
-
-

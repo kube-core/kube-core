@@ -59,6 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
+## Docs Start ##
+## Used in CI. Creates a PR/push for the current branch and changeset. Applies if enabled.
+## Docs End ##
 
 
 sourceBranch=${1:-"develop"}

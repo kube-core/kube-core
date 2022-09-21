@@ -59,7 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## Wrapped by CLI: kube-core diff cluster
+## Docs End ##
 
 export HELM_DIFF_IGNORE_UNKNOWN_FLAGS=true
 export HELM_DIFF_COLOR=true

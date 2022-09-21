@@ -59,7 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## Filters/transforms files generated during gitops build
+## Docs End ##
 
 log_info "Post-Processing GitOps config..."
 

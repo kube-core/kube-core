@@ -59,6 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 check_args "$@"
 ## Header End
+## Docs Start ##
+## Runs helmfile template
+## Docs End ##
 
 # helmfileArgs=${@:-""}
 

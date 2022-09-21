@@ -58,7 +58,9 @@ check_requirements
 # check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## Sets up local access to the current GKE cluster
+## Docs End ##
 
 gcloud container clusters get-credentials ${cluster_config_name} --zone ${cloud_default_location} --project ${cloud_project}
 kubectl config delete-context ${cluster_config_name} || true

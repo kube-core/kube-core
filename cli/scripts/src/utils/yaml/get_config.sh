@@ -1,5 +1,8 @@
 #!/bin/bash
 set -eou pipefail
+## Docs Start ##
+## Utils for getting config
+## Docs End ##
 
 get_config() {
 
@@ -13,7 +16,7 @@ get_config() {
 
 
 get_config_json() {
-   
+
    get_config_json_config_path=${1:-""}
    get_config_json_type=${2:-"f"}
    get_config_json_name=${3:-"*.yaml"}

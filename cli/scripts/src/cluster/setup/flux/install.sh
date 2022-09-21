@@ -59,9 +59,24 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## Generates secrets and prints instructions to install flux
+## Docs End ##
 
 log_info "Installing Flux!"
+
+secretName="flux-ssh"
+mkdir -p ${keys_path}
+if [[ ! -f "${keys_path}/.${secretName}-key" ]]; then
+    log_info "Generating new SSH key for flux..."
+    ssh-keygen -t rsa -N '' -q -f ${keys_path}/.${secretName}-key
+    log_info "Flux SSH key generated!"
+    log_warn "You need to add ${keys_path}/.${secretName}-key.pub as a deploy key to your repositories!"
+fi
+
+secret=$(kubectl create secret generic ${secretName} --dry-run=client -o yaml --from-file=identity=${keys_path}/.${secretName}-key --from-file=identity.pub=${keys_path}/.${secretName}-key.pub --from-file=known_hosts=${keys_path}/.git-ssh-hosts  | yq '.metadata |= {"name": "'"${secretName}"'", "namespace": "secrets", "annotations" : {"replicator.v1.mittwald.de/replication-allowed": "true", "replicator.v1.mittwald.de/replication-allowed-namespaces": "*"}}' -)
+
+echo "${secret}" > ${secrets_path}/manifests/${secretName}.yaml
 
 # if [[ "${install_flux}" == "true" ]]
 # then
@@ -79,21 +94,6 @@ log_info "Installing Flux!"
 # echo "Config - Flux - Source"
 # echo "To install your cluster's source, you can run:"
 # echo "flux create source git ${cluster_config_name} --url=${gitops_repository} --branch=${gitops_ref} --interval=${gitops_refresh} --private-key-file ${gitops_ssh_key}"
-
-secretName="flux-ssh"
-mkdir -p ${keys_path}
-if [[ ! -f "${keys_path}/.${secretName}-key" ]]; then
-    log_info "Generating new SSH key for flux..."
-    ssh-keygen -t rsa -N '' -q -f ${keys_path}/.${secretName}-key
-    log_info "Flux SSH key generated!"
-    log_warn "You need to add ${keys_path}/.${secretName}-key.pub as a deploy key to your repositories!"
-fi
-
-
-secret=$(kubectl create secret generic ${secretName} --dry-run=client -o yaml --from-file=identity=${keys_path}/.${secretName}-key --from-file=identity.pub=${keys_path}/.${secretName}-key.pub --from-file=known_hosts=${keys_path}/.git-ssh-hosts  | yq '.metadata |= {"name": "'"${secretName}"'", "namespace": "secrets", "annotations" : {"replicator.v1.mittwald.de/replication-allowed": "true", "replicator.v1.mittwald.de/replication-allowed-namespaces": "*"}}' -)
-
-echo "${secret}" > ${secrets_path}/manifests/${secretName}.yaml
-
 
 # echo "Config - Flux - Kustomization"
 # echo "To install some apps, you can run:"

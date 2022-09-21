@@ -59,7 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## Checks and enforces minio bucket config.
+## Docs End ##
 
 log_debug "${project_name} - Minio Config Check"
 

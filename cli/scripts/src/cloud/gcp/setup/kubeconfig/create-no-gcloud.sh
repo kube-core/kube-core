@@ -1,4 +1,7 @@
 #!/bin/bash
+## Docs Start ##
+## Generates a kubeconfig for a GKE cluster (without gcloud cli auth proxy)
+## Docs End ##
 # set -eou pipefail
 
 # load conf from yaml

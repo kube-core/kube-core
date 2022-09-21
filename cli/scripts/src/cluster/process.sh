@@ -59,7 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 check_args "$@"
 ## Header End
-
+## Docs Start ##
+## Slices and post-processes all manifests.
+## Docs End ##
 
 
 log_info "Final Post-Processing..."

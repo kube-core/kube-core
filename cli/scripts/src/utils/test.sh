@@ -59,8 +59,12 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
+## Docs Start ##
+## Test command to check that scripts framework works well
+## Docs End ##
 
-
-log_debug "${project_name} - Test !"
+log_info "${project_name} - Test Start!"
+log_info "Execute a script here"
+log_info "${project_name} - Test End!"
 
 # Start coding here :)

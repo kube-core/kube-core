@@ -59,7 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## Generates some minio buckets: Args: minioUser minioPassword bucketsList envs
+## Docs End ##
 
 log_debug "${project_name} - Configure Minio"
 

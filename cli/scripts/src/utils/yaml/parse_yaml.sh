@@ -1,6 +1,9 @@
 #!/bin/bash
 set -eou pipefail
 # set -x
+## Docs Start ##
+## Parses yaml into bash variables
+## Docs End ##
 
 # Supports objects but not arrays (yet)
 parse_yaml() {

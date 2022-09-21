@@ -60,7 +60,7 @@ check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
 ## Docs Start ##
-## Runs audit test
+## Runs audit test on all gitops config
 ## Docs End ##
 
 log_debug "${project_name} - Auditing files..."

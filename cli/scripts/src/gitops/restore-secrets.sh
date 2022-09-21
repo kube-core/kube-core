@@ -59,7 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## Restores deleted secrets in current workspace
+## Docs End ##
 
 log_info "Restoring secrets..."
 

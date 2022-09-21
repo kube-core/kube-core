@@ -59,6 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
+## Docs Start ##
+## Upgrades local cluster with input kube-core version. Args: coreTag
+## Docs End ##
 
 
 

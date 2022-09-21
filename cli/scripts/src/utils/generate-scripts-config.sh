@@ -50,13 +50,16 @@ eval "$(${scriptsConfigDirPath}/src/includes.sh)"
 # eval "${clusterConfigVars}"
 
 # Loading scripts-config.yaml
-paths=$(parse_yaml ${scriptsConfigPath})
-absolutePaths=$(echo "${paths}" | sed "s|\./|${scriptsConfigDirPath}/|")
-eval "${absolutePaths}"
+# paths=$(parse_yaml ${scriptsConfigPath})
+# absolutePaths=$(echo "${paths}" | sed "s|\./|${scriptsConfigDirPath}/|")
+# eval "${absolutePaths}"
 
 check_requirements
 # check_context "${cluster_config_context}"
 # check_args "$@"
+## Docs Start ##
+## Generates scripts-config.yaml
+## Docs End ##
 
 log_info "Generating scripts-config..."
 
@@ -76,9 +79,22 @@ while read scriptPath; do
         log_debug ${strippedDocs}
         scriptPath=$(echo ${scriptPath} | sed "s|${scriptsConfigDirPath}||")
         scriptName=$(echo ${scriptPath} | sed 's|/src/||' | sed 's|/commands/||' |  sed 's|-|_|g' | sed 's|/|_|g' | sed 's|\.sh||')
-        jsonScriptConfig=$(jq -R -n '{path: "'".${scriptPath}"'", name: "'"${scriptName}"'", description:"'"${strippedDocs}"'", args: ""}')
-        echo ${jsonScriptConfig}
+    else
+        scriptPath=$(echo ${currentScript} | sed "s|${scriptsConfigDirPath}||")
+        scriptName="utils_generate_scripts_config"
+        strippedDocs="Generates scripts-config.yaml"
     fi
+        args=""
+        if echo $strippedDocs | grep -q Args ; then
+            args=$(echo "${strippedDocs}" | sed 's/.*\(Args: .*\)/\1/' )
+            ESCAPED_REPLACE=$(printf '%s\n' "$args" | sed -e 's/[\/&]/\\&/g')
+            strippedDocs=$(echo "${strippedDocs}" | sed "s/${ESCAPED_REPLACE}//")
+        fi
+        strippedDocs=$(echo "${strippedDocs}" | sed "s/## //")
+        args=$(echo "${args}" | sed "s/Args: //")
+        jsonScriptConfig=$(jq -R -n '{path: "'".${scriptPath}"'", name: "'"${scriptName}"'", description:"'"${strippedDocs}"'", args: "'"${args}"'"}')
+        echo "${jsonScriptConfig}" | jq -c
+        # exit
 done <<< "${scriptsList}" | jq -s | jq '.[] | {(.name): .}' | jq -s '{scripts: (add)}' | yq e - -P > ${scriptsConfigPath}
 
 log_info "Done generating scripts-config!"

@@ -59,7 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## Builds local secrets to output and gitops config
+## Docs End ##
 
 log_info "Building: local/secrets -> config/namespace/secrets..."
 

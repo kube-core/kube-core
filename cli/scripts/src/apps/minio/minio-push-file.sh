@@ -1,4 +1,7 @@
 #!/bin/bash
+## Docs Start ##
+## Pushes a file to a minio bucket. Args: bucekt file s3_key s3_secret
+## Docs End ##
 set -eoux
 
 bucket=$1

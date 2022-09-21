@@ -59,7 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## Generates secrets for Tekton/Git features
+## Docs End ##
 
 # kubectl create secret generic
 

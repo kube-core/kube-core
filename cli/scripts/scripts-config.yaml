@@ -2,671 +2,555 @@ scripts:
   apps_istio_configure_istio_injection:
     path: ./src/apps/istio/configure-istio-injection.sh
     name: apps_istio_configure_istio_injection
-    description: ""
-    args: ""
+    description: 'Injects istio in all namespaces. '
+    args: enabled|disabled
   apps_istio_verify_istio_access:
     path: ./src/apps/istio/verify-istio-access.sh
     name: apps_istio_verify_istio_access
-    description: ""
-    args: ""
+    description: 'Checks if istio is working as expected. '
+    args: namespace container valuesFile targetHost
   apps_minio_configure_minio:
     path: ./src/apps/minio/configure-minio.sh
     name: apps_minio_configure_minio
-    description: ""
-    args: ""
+    description: 'Generates some minio buckets: '
+    args: minioUser minioPassword bucketsList envs
   apps_minio_minio_config_check:
     path: ./src/apps/minio/minio-config-check.sh
     name: apps_minio_minio_config_check
-    description: ""
+    description: Checks and enforces minio bucket config.
     args: ""
   apps_minio_minio_push_file:
     path: ./src/apps/minio/minio-push-file.sh
     name: apps_minio_minio_push_file
-    description: ""
-    args: ""
+    description: 'Pushes a file to a minio bucket. '
+    args: bucekt file s3_key s3_secret
   apps_sentry_sentry_create_projects:
     path: ./src/apps/sentry/sentry-create-projects.sh
     name: apps_sentry_sentry_create_projects
-    description: ""
-    args: ""
+    description: 'Creates sentry project. '
+    args: projectName appName apiKey
   apps_sentry_sentry_get_dsns:
     path: ./src/apps/sentry/sentry-get-dsns.sh
     name: apps_sentry_sentry_get_dsns
-    description: ""
-    args: ""
-  cloud_gcp_setup_cluster_manager_create:
-    path: ./src/cloud/gcp/setup/cluster-manager/create.sh
-    name: cloud_gcp_setup_cluster_manager_create
-    description: ""
-    args: ""
-  cloud_gcp_setup_cluster_manager_destroy:
-    path: ./src/cloud/gcp/setup/cluster-manager/destroy.sh
-    name: cloud_gcp_setup_cluster_manager_destroy
-    description: ""
-    args: ""
-  cloud_gcp_setup_crossplane_create:
-    path: ./src/cloud/gcp/setup/crossplane/create.sh
-    name: cloud_gcp_setup_crossplane_create
-    description: ""
-    args: ""
-  cloud_gcp_setup_crossplane_destroy:
-    path: ./src/cloud/gcp/setup/crossplane/destroy.sh
-    name: cloud_gcp_setup_crossplane_destroy
-    description: ""
-    args: ""
+    description: 'Generates Sentry DSNs for proejct. '
+    args: projectName appName apiKey
   cloud_gcp_setup_destroy:
     path: ./src/cloud/gcp/setup/destroy.sh
     name: cloud_gcp_setup_destroy
-    description: ""
-    args: ""
-  cloud_gcp_setup_dns_create:
-    path: ./src/cloud/gcp/setup/dns/create.sh
-    name: cloud_gcp_setup_dns_create
-    description: ""
-    args: ""
-  cloud_gcp_setup_dns_destroy:
-    path: ./src/cloud/gcp/setup/dns/destroy.sh
-    name: cloud_gcp_setup_dns_destroy
-    description: ""
-    args: ""
-  cloud_gcp_setup_gcr_create:
-    path: ./src/cloud/gcp/setup/gcr/create.sh
-    name: cloud_gcp_setup_gcr_create
-    description: ""
-    args: ""
-  cloud_gcp_setup_gcr_destroy:
-    path: ./src/cloud/gcp/setup/gcr/destroy.sh
-    name: cloud_gcp_setup_gcr_destroy
-    description: ""
-    args: ""
-  cloud_gcp_setup_gcs_create:
-    path: ./src/cloud/gcp/setup/gcs/create.sh
-    name: cloud_gcp_setup_gcs_create
-    description: ""
-    args: ""
-  cloud_gcp_setup_gcs_destroy:
-    path: ./src/cloud/gcp/setup/gcs/destroy.sh
-    name: cloud_gcp_setup_gcs_destroy
-    description: ""
+    description: Destroys Cloud Provider IAM/Secrets. GCP only for now.
     args: ""
   cloud_gcp_setup_kubeconfig_create_no_gcloud:
     path: ./src/cloud/gcp/setup/kubeconfig/create-no-gcloud.sh
     name: cloud_gcp_setup_kubeconfig_create_no_gcloud
-    description: ""
+    description: Generates a kubeconfig for a GKE cluster (without gcloud cli auth proxy)
     args: ""
   cloud_gcp_setup_kubeconfig_create:
     path: ./src/cloud/gcp/setup/kubeconfig/create.sh
     name: cloud_gcp_setup_kubeconfig_create
-    description: ""
+    description: Generates a kubeconfig for a GKE cluster, and sets up local access to this cluster
     args: ""
   cloud_gcp_setup_kubeconfig_destroy:
     path: ./src/cloud/gcp/setup/kubeconfig/destroy.sh
     name: cloud_gcp_setup_kubeconfig_destroy
-    description: ""
-    args: ""
-  cloud_gcp_setup_kubeconfig_generate:
-    path: ./src/cloud/gcp/setup/kubeconfig/generate.sh
-    name: cloud_gcp_setup_kubeconfig_generate
-    description: ""
+    description: Removes current cluster context from kubeconfig
     args: ""
   cloud_gcp_setup_kubeconfig_get_context:
     path: ./src/cloud/gcp/setup/kubeconfig/get-context.sh
     name: cloud_gcp_setup_kubeconfig_get_context
-    description: ""
+    description: Sets up local access to the current GKE cluster
     args: ""
   cloud_gcp_setup_setup:
     path: ./src/cloud/gcp/setup/setup.sh
     name: cloud_gcp_setup_setup
-    description: ""
-    args: ""
-  cloud_gcp_setup_tekton_create:
-    path: ./src/cloud/gcp/setup/tekton/create.sh
-    name: cloud_gcp_setup_tekton_create
-    description: ""
-    args: ""
-  cloud_gcp_setup_tekton_destroy:
-    path: ./src/cloud/gcp/setup/tekton/destroy.sh
-    name: cloud_gcp_setup_tekton_destroy
-    description: ""
+    description: Sets up Cloud Provider IAM/Secrets. GCP only for now.
     args: ""
   cloud_gcp_setup_tekton_git:
     path: ./src/cloud/gcp/setup/tekton/git.sh
     name: cloud_gcp_setup_tekton_git
-    description: ""
+    description: Generates secrets for Tekton/Git features
     args: ""
   cloud_gcp_setup_tekton_sf:
     path: ./src/cloud/gcp/setup/tekton/sf.sh
     name: cloud_gcp_setup_tekton_sf
-    description: ""
-    args: ""
-  cloud_gcp_setup_tekton_storage:
-    path: ./src/cloud/gcp/setup/tekton/storage.sh
-    name: cloud_gcp_setup_tekton_storage
-    description: ""
-    args: ""
-  cloud_gcp_setup_velero_create:
-    path: ./src/cloud/gcp/setup/velero/create.sh
-    name: cloud_gcp_setup_velero_create
-    description: ""
-    args: ""
-  cloud_gcp_setup_velero_destroy:
-    path: ./src/cloud/gcp/setup/velero/destroy.sh
-    name: cloud_gcp_setup_velero_destroy
-    description: ""
+    description: Generates secrets for Tekton/SF features
     args: ""
   cluster_apply_config:
     path: ./src/cluster/apply/config.sh
     name: cluster_apply_config
-    description: ""
+    description: 'Applies cluster local config: localConfig_path'
     args: ""
   cluster_apply_configmaps:
     path: ./src/cluster/apply/configmaps.sh
     name: cluster_apply_configmaps
-    description: ""
+    description: 'Applies cluster local configmaps: configmaps_path'
     args: ""
   cluster_apply_crds:
     path: ./src/cluster/apply/crds.sh
     name: cluster_apply_crds
-    description: ""
+    description: 'Applies cluster local crds: crds_path'
     args: ""
   cluster_apply_helmfiles:
     path: ./src/cluster/apply/helmfiles.sh
     name: cluster_apply_helmfiles
-    description: ""
+    description: Applies cluster helmfiles
     args: ""
   cluster_apply_namespaces:
     path: ./src/cluster/apply/namespaces.sh
     name: cluster_apply_namespaces
-    description: ""
+    description: Applies cluster namespaces
     args: ""
   cluster_apply_secrets:
     path: ./src/cluster/apply/secrets.sh
     name: cluster_apply_secrets
-    description: ""
+    description: 'Applies cluster secrets: secrets_path'
     args: ""
   cluster_apply:
     path: ./src/cluster/apply.sh
     name: cluster_apply
-    description: ""
+    description: Applies cluster config (everything)
     args: ""
   cluster_build:
     path: ./src/cluster/build.sh
     name: cluster_build
-    description: ""
-    args: ""
-  cluster_generate_generate:
-    path: ./src/cluster/generate/generate.sh
-    name: cluster_generate_generate
-    description: ""
+    description: Generates cluster config (everything)
     args: ""
   cluster_process:
     path: ./src/cluster/process.sh
     name: cluster_process
-    description: ""
-    args: ""
-  cluster_setup_externaldns_install:
-    path: ./src/cluster/setup/externaldns/install.sh
-    name: cluster_setup_externaldns_install
-    description: ""
+    description: Slices and post-processes all manifests.
     args: ""
   cluster_setup_flux_install:
     path: ./src/cluster/setup/flux/install.sh
     name: cluster_setup_flux_install
-    description: ""
-    args: ""
-  cluster_setup_install:
-    path: ./src/cluster/setup/install.sh
-    name: cluster_setup_install
-    description: ""
-    args: ""
-  cluster_setup_post_install:
-    path: ./src/cluster/setup/post-install.sh
-    name: cluster_setup_post_install
-    description: ""
-    args: ""
-  cluster_setup_pre_install:
-    path: ./src/cluster/setup/pre-install.sh
-    name: cluster_setup_pre_install
-    description: ""
+    description: Generates secrets and prints instructions to install flux
     args: ""
   cluster_setup_sealedsecrets_get_certificate:
     path: ./src/cluster/setup/sealedsecrets/get-certificate.sh
     name: cluster_setup_sealedsecrets_get_certificate
-    description: ""
+    description: Gets a local copy of SealedSecrets controller certificate. Allows to seal/unseal secrets offline.
     args: ""
-  cluster_setup_sealedsecrets_install:
-    path: ./src/cluster/setup/sealedsecrets/install.sh
-    name: cluster_setup_sealedsecrets_install
-    description: ""
+  cluster_terraform_generate:
+    path: ./src/cluster/terraform/generate.sh
+    name: cluster_terraform_generate
+    description: Generates Terraform files to start a cluster quickly. GKE only for now.
     args: ""
   gitops_build:
     path: ./src/gitops/build.sh
     name: gitops_build
-    description: ""
+    description: Builds all local config to gitops config
     args: ""
   gitops_ci_auto_build:
     path: ./src/gitops/ci/auto-build.sh
     name: gitops_ci_auto_build
-    description: ""
+    description: DEPRECATED. Builds all config in CI.
     args: ""
   gitops_ci_auto_core_updates:
     path: ./src/gitops/ci/auto-core-updates.sh
     name: gitops_ci_auto_core_updates
-    description: ""
-    args: ""
+    description: 'Upgrades local cluster with input kube-core version. '
+    args: coreTag
   gitops_ci_auto_pr:
     path: ./src/gitops/ci/auto-pr.sh
     name: gitops_ci_auto_pr
-    description: ""
+    description: Used in CI. Creates a PR/push for the current branch and changeset. Applies if enabled.
     args: ""
   gitops_ci_auto_setup:
     path: ./src/gitops/ci/auto-setup.sh
     name: gitops_ci_auto_setup
-    description: ""
+    description: DEPRECATED. Sets up everything needed to run scripts in CI.
     args: ""
   gitops_ci_kube_core_build:
     path: ./src/gitops/ci/kube-core-build.sh
     name: gitops_ci_kube_core_build
-    description: ""
+    description: Used in CI. Builds gitops config.
     args: ""
   gitops_ci_kube_core_setup:
     path: ./src/gitops/ci/kube-core-setup.sh
     name: gitops_ci_kube_core_setup
-    description: ""
+    description: Sets up everything needed to run kube-core in CI.
     args: ""
   gitops_cleanup_custom:
     path: ./src/gitops/cleanup-custom.sh
     name: gitops_cleanup_custom
-    description: ""
+    description: Allows to restore some paths from git after all build operations, in order to ignore some changes (e.g secret generated at each build)
     args: ""
   gitops_cleanup:
     path: ./src/gitops/cleanup.sh
     name: gitops_cleanup
-    description: ""
+    description: Cleans up after build operations
     args: ""
   gitops_configmaps:
     path: ./src/gitops/configmaps.sh
     name: gitops_configmaps
-    description: ""
+    description: Builds local configmaps to gitops config
     args: ""
   gitops_gitops:
     path: ./src/gitops/gitops.sh
     name: gitops_gitops
-    description: ""
+    description: Builds all local config to gitops config
     args: ""
   gitops_helmfile_template:
     path: ./src/gitops/helmfile-template.sh
     name: gitops_helmfile_template
-    description: ""
+    description: The main loop that templates and slices all helmfile releases
     args: ""
   gitops_helmfile:
     path: ./src/gitops/helmfile.sh
     name: gitops_helmfile
-    description: ""
+    description: Runs helmfile template
     args: ""
   gitops_overlay:
     path: ./src/gitops/overlay.sh
     name: gitops_overlay
-    description: ""
+    description: Applies overlays over gitops config
     args: ""
   gitops_overlays_apply:
     path: ./src/gitops/overlays/apply.sh
     name: gitops_overlays_apply
-    description: ""
+    description: DEPRECATED. Applies common overlays on the config
     args: ""
   gitops_patch:
     path: ./src/gitops/patch.sh
     name: gitops_patch
-    description: ""
+    description: Builds local patches into gitops config
     args: ""
   gitops_process:
     path: ./src/gitops/process.sh
     name: gitops_process
-    description: ""
-    args: ""
-  gitops_replicated_secrets:
-    path: ./src/gitops/replicated-secrets.sh
-    name: gitops_replicated_secrets
-    description: ""
+    description: Filters/transforms files generated during gitops build
     args: ""
   gitops_restore_secrets:
     path: ./src/gitops/restore-secrets.sh
     name: gitops_restore_secrets
-    description: ""
+    description: Restores deleted secrets in current workspace
     args: ""
   gitops_secrets:
     path: ./src/gitops/secrets.sh
     name: gitops_secrets
-    description: ""
+    description: Builds local secrets to output and gitops config
     args: ""
   gitops_utils_check_requirements:
     path: ./src/gitops/utils/check-requirements.sh
     name: gitops_utils_check_requirements
-    description: ""
+    description: Checks if all kube-core requirements are met and enforces required folder structure
     args: ""
   gitops_utils_generate_namespaces:
     path: ./src/gitops/utils/generate-namespaces.sh
     name: gitops_utils_generate_namespaces
-    description: ""
+    description: Generates all namespaces from helmfile/local config
     args: ""
   gitops_utils_get_helm_managed:
     path: ./src/gitops/utils/get-helm-managed.sh
     name: gitops_utils_get_helm_managed
-    description: ""
+    description: Gets a list of gitops manifests that have helm labels/annotations
     args: ""
   gitops_utils_get_not_helm_managed:
     path: ./src/gitops/utils/get-not-helm-managed.sh
     name: gitops_utils_get_not_helm_managed
-    description: ""
+    description: Gets a list of gitops manifests that have no helm labels/annotations
     args: ""
   gitops_utils_install_requirements:
     path: ./src/gitops/utils/install-requirements.sh
     name: gitops_utils_install_requirements
-    description: ""
+    description: DEPRECATED. Checks and installs requirements for kube-core.
     args: ""
   includes:
     path: ./src/includes.sh
     name: includes
-    description: ""
+    description: Common includes for sh scripts
     args: ""
   k8s_check_context:
     path: ./src/k8s/check-context.sh
     name: k8s_check_context
-    description: ""
-    args: ""
+    description: 'Checks if input context matches current cluster config. '
+    args: context
   k8s_configmaps_generate:
     path: ./src/k8s/configmaps/generate.sh
     name: k8s_configmaps_generate
-    description: ""
+    description: Generates configmaps from input to output
     args: ""
   k8s_secrets_generate:
     path: ./src/k8s/secrets/generate.sh
     name: k8s_secrets_generate
-    description: ""
+    description: Generates secrets from input/manifests to output
     args: ""
   k8s_secrets_import_secrets:
     path: ./src/k8s/secrets/import-secrets.sh
     name: k8s_secrets_import_secrets
-    description: ""
-    args: ""
+    description: 'Imports secrets. '
+    args: namespace filter
   k8s_secrets_seal:
     path: ./src/k8s/secrets/seal.sh
     name: k8s_secrets_seal
-    description: '## Seals a Secret locally using sealed-secrets certificate'
+    description: Seals a Secret locally using sealed-secrets certificate. Reads from stdin.
     args: ""
   lib_apply_config:
     path: ./src/lib/apply/config.sh
     name: lib_apply_config
-    description: ""
+    description: A lib of utils apply config
     args: ""
   lib_apply_crds:
     path: ./src/lib/apply/crds.sh
     name: lib_apply_crds
-    description: ""
+    description: A lib of utils apply crds
     args: ""
   lib_apply_helmfile:
     path: ./src/lib/apply/helmfile.sh
     name: lib_apply_helmfile
-    description: ""
+    description: A lib of utils to wrap helmfile
     args: ""
   lib_apply_kubectl:
     path: ./src/lib/apply/kubectl.sh
     name: lib_apply_kubectl
-    description: ""
+    description: A lib of utils to wrap kubectl
     args: ""
   lib_apply_namespaces:
     path: ./src/lib/apply/namespaces.sh
     name: lib_apply_namespaces
-    description: ""
+    description: A lib of utils to manage namespaces
     args: ""
   lib_utils:
     path: ./src/lib/utils.sh
     name: lib_utils
-    description: ""
+    description: A lib of utils to setup cloud resources
     args: ""
   test_audit_manifest:
     path: ./src/test/audit-manifest.sh
     name: test_audit_manifest
-    description: '## Audits one manifest using kubeaudit'
+    description: Audits one manifest using kubeaudit
     args: ""
   test_audit:
     path: ./src/test/audit.sh
     name: test_audit
-    description: '## Runs audit test'
+    description: Runs audit test on all gitops config
     args: ""
   test_conftest_manifest:
     path: ./src/test/conftest-manifest.sh
     name: test_conftest_manifest
-    description: ""
+    description: Validate one manifest using conftest
     args: ""
   test_conftest:
     path: ./src/test/conftest.sh
     name: test_conftest
-    description: ""
+    description: Validate all manifest in gitops config using conftest
     args: ""
   test_lint_manifest:
     path: ./src/test/lint-manifest.sh
     name: test_lint_manifest
-    description: ""
+    description: Lints one manifest using yamllint
     args: ""
   test_lint:
     path: ./src/test/lint.sh
     name: test_lint
-    description: ""
+    description: Lints all manifests using yamllint
     args: ""
   test_score_manifest:
     path: ./src/test/score-manifest.sh
     name: test_score_manifest
-    description: ""
+    description: Tests one manifest using kubescore
     args: ""
   test_score:
     path: ./src/test/score.sh
     name: test_score
-    description: ""
+    description: Tests all gitops manifest using kubescore
     args: ""
   test_validate_manifest:
     path: ./src/test/validate-manifest.sh
     name: test_validate_manifest
-    description: ""
+    description: Validates one manifest using kubeval
     args: ""
   test_validate:
     path: ./src/test/validate.sh
     name: test_validate
-    description: ""
+    description: Validates all gitops manifests using kubeval
     args: ""
   utils_argparse_bash:
     path: ./src/utils/argparse-bash.sh
     name: utils_argparse_bash
-    description: ""
+    description: Legacy python parser for bash scripts. To replace with CLI.
+    args: ""
+  utils_generate_scripts_config:
+    path: ../cli/scripts/src/utils/generate-scripts-config.sh
+    name: utils_generate_scripts_config
+    description: Generates scripts-config.yaml
     args: ""
   utils_others_get_crash_logs:
     path: ./src/utils/others/get-crash-logs.sh
     name: utils_others_get_crash_logs
-    description: ""
+    description: Gets logs of all pods in crash state
     args: ""
   utils_others_hpa_generate_hpas:
     path: ./src/utils/others/hpa/generate-hpas.sh
     name: utils_others_hpa_generate_hpas
-    description: ""
+    description: Generates HPAs for all deployments in cluster
     args: ""
   utils_others_pdb_generate_pdb:
     path: ./src/utils/others/pdb/generate-pdb.sh
     name: utils_others_pdb_generate_pdb
-    description: ""
+    description: Generates PDBs for all deployments in cluster
     args: ""
   utils_others_priorityclass_generate_priorityclass:
     path: ./src/utils/others/priorityclass/generate-priorityclass.sh
     name: utils_others_priorityclass_generate_priorityclass
-    description: ""
+    description: Generates priorityclass for all deployments in cluster
     args: ""
   utils_read_cluster_path:
     path: ./src/utils/read-cluster-path.sh
     name: utils_read_cluster_path
-    description: ""
+    description: 'Prints: clusterConfigDirPath'
     args: ""
   utils_read_core_path:
     path: ./src/utils/read-core-path.sh
     name: utils_read_core_path
-    description: ""
+    description: 'Prints: corePath'
     args: ""
   utils_test:
     path: ./src/utils/test.sh
     name: utils_test
-    description: ""
+    description: Test command to check that scripts framework works well
     args: ""
   utils_yaml_get_config:
     path: ./src/utils/yaml/get_config.sh
     name: utils_yaml_get_config
-    description: ""
+    description: Utils for getting config
     args: ""
   utils_yaml_log:
     path: ./src/utils/yaml/log.sh
     name: utils_yaml_log
-    description: ""
+    description: Utils for logging
     args: ""
   utils_yaml_parse_yaml:
     path: ./src/utils/yaml/parse_yaml.sh
     name: utils_yaml_parse_yaml
-    description: ""
+    description: Parses yaml into bash variables
     args: ""
   apply_crds:
     path: ./commands/apply/crds.sh
     name: apply_crds
-    description: ""
-    args: ""
-  ci_build:
-    path: ./commands/ci/build.sh
-    name: ci_build
-    description: ""
+    description: Wrapped by CLI. Applies CRDs.
     args: ""
   dev_mode_cluster:
     path: ./commands/dev/mode/cluster.sh
     name: dev_mode_cluster
-    description: ""
+    description: For kube-core releases development. Switches current kube-core references to local kube-core
     args: ""
   dev_mode_dev:
     path: ./commands/dev/mode/dev.sh
     name: dev_mode_dev
-    description: ""
+    description: For kube-core releases development. Switches dist releases references to local releases in kube-core.
     args: ""
   dev_mode_legacy:
     path: ./commands/dev/mode/legacy.sh
     name: dev_mode_legacy
-    description: ""
+    description: For kube-core releases development. DEPRECATED. Switches releases references to legacy mode (not using vendir)
     args: ""
   dev_mode_prod:
     path: ./commands/dev/mode/prod.sh
     name: dev_mode_prod
-    description: ""
+    description: For kube-core releases development. Switches local releases references to dist releases in kube-core.
     args: ""
   dev_releases_add_chart:
     path: ./commands/dev/releases/add-chart.sh
     name: dev_releases_add_chart
-    description: ""
-    args: ""
+    description: 'For kube-core releases development. Adds a chart to kube-core. '
+    args: chartRepository chartName chartVersion
   dev_releases_add_release:
     path: ./commands/dev/releases/add-release.sh
     name: dev_releases_add_release
-    description: ""
-    args: ""
+    description: 'For kube-core releases development. Adds a release to kube-core. '
+    args: chartName releaseName releaseNamespace
   dev_releases_build:
     path: ./commands/dev/releases/build.sh
     name: dev_releases_build
-    description: ""
+    description: For kube-core releases development. Builds dist charts from local and vendir base.
     args: ""
   dev_releases_cleanup:
     path: ./commands/dev/releases/cleanup.sh
     name: dev_releases_cleanup
-    description: ""
+    description: For kube-core releases development. Cleans up tmp after releases build.
     args: ""
   dev_releases_get:
     path: ./commands/dev/releases/get.sh
     name: dev_releases_get
-    description: ""
+    description: For kube-core releases development. Gets base releases from vendir.
     args: ""
   dev_releases_lint:
     path: ./commands/dev/releases/lint.sh
     name: dev_releases_lint
-    description: ""
+    description: For kube-core releases development. Lints all charts generated by build process.
     args: ""
   dev_releases_run:
     path: ./commands/dev/releases/run.sh
     name: dev_releases_run
-    description: ""
+    description: For kube-core releases development. Builds all dist releases.
     args: ""
   dev_utils_build:
     path: ./commands/dev/utils/build.sh
     name: dev_utils_build
-    description: ""
+    description: For kube-core development. Lints/formats manifets. To use before a release.
     args: ""
   dev_utils_bump:
     path: ./commands/dev/utils/bump.sh
     name: dev_utils_bump
-    description: ""
+    description: For kube-core development. Bumps kube-core references. To use before a release.
     args: ""
   diff_all:
     path: ./commands/diff/all.sh
     name: diff_all
-    description: ""
+    description: 'Wrapped by CLI: kube-core diff all'
     args: ""
   diff_cluster:
     path: ./commands/diff/cluster.sh
     name: diff_cluster
-    description: ""
+    description: 'Wrapped by CLI: kube-core diff cluster'
     args: ""
   diff_core:
     path: ./commands/diff/core.sh
     name: diff_core
-    description: ""
+    description: 'Wrapped by CLI: kube-core diff core'
     args: ""
   generate_cluster_config:
     path: ./commands/generate/cluster-config.sh
     name: generate_cluster_config
-    description: ""
+    description: 'Generates cluster-config.yaml from helmfile env. Wrapped by CLI: kube-core generate cluster-config'
     args: ""
   generate_values:
     path: ./commands/generate/values.sh
     name: generate_values
-    description: ""
+    description: Gets all helmfile env values
     args: ""
   scripts_cat:
     path: ./commands/scripts/cat.sh
     name: scripts_cat
-    description: ""
+    description: Prints script-config
     args: ""
   scripts_list:
     path: ./commands/scripts/list.sh
     name: scripts_list
-    description: ""
+    description: 'Lists scripts. Wrapped by: kube-core scripts list'
     args: ""
   test_all:
     path: ./commands/test/all.sh
     name: test_all
-    description: ""
+    description: 'Runs all tests. Wrapped by: kube-core test all'
     args: ""
   values_all:
     path: ./commands/values/all.sh
     name: values_all
-    description: ""
+    description: 'Gets all helmfile env values. Wrapped by: kube-core values all'
     args: ""
   values_cluster:
     path: ./commands/values/cluster.sh
     name: values_cluster
-    description: ""
+    description: 'Gets cluster helmfile env values. Wrapped by: kube-core values cluster'
     args: ""
   values_core:
     path: ./commands/values/core.sh
     name: values_core
-    description: ""
+    description: 'Gets core helmfile env values. Wrapped by: kube-core values core'
     args: ""
   values_keys:
     path: ./commands/values/keys.sh
     name: values_keys
-    description: ""
-    args: ""
-
-  cluster_terraform_generate:
-    path: ./src/cluster/terraform/generate.sh
-    name: "cluster_terraform_generate"
-    description: "Generates terraform files for your cluster"
+    description: 'Gets helmfile env top level keys. Wrapped by: kube-core values keys'
     args: ""

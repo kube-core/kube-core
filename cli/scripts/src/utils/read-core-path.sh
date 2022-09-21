@@ -58,6 +58,8 @@ check_requirements
 # check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## Prints: corePath
+## Docs End ##
 
 echo ${corePath}

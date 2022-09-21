@@ -59,6 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
+## Docs Start ##
+## Destroys Cloud Provider IAM/Secrets. GCP only for now.
+## Docs End ##
 
 serviceAccountsConfig="$(cat <<EOF
 serviceAccounts:

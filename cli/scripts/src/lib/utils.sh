@@ -1,4 +1,7 @@
 #!/bin/bash
+## Docs Start ##
+## A lib of utils to setup cloud resources
+## Docs End ##
 set -eou pipefail
 
 gcloud_iam_sa_create() {

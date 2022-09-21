@@ -59,7 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## Allows to restore some paths from git after all build operations, in order to ignore some changes (e.g secret generated at each build)
+## Docs End ##
 
 log_debug "${project_name} - Cleanup custom"
 

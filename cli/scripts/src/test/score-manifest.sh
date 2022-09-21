@@ -59,7 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## Tests one manifest using kubescore
+## Docs End ##
 
 # gitOpsConfigPath=${config_path}
 gitOpsConfigPath=${1}

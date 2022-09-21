@@ -59,7 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## Generates Terraform files to start a cluster quickly. GKE only for now.
+## Docs End ##
 
 log_info "cluster_terraform_generate - Start"
 

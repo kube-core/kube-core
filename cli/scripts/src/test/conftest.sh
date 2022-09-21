@@ -59,7 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## Validate all manifest in gitops config using conftest
+## Docs End ##
 
 log_debug "${project_name} - Validating Policies..."
 

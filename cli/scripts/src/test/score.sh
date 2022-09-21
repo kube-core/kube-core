@@ -59,7 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## Tests all gitops manifest using kubescore
+## Docs End ##
 
 log_debug "${project_name} - Scoring files..."
 

@@ -59,7 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## Validate one manifest using conftest
+## Docs End ##
 
 gitOpsConfigPath=${1}
 testPath=${test_path}

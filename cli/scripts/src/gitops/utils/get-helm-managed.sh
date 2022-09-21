@@ -59,7 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## Gets a list of gitops manifests that have helm labels/annotations
+## Docs End ##
 
 
 log_debug "${project_name} - Getting helm managed files"

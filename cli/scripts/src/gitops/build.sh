@@ -59,6 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
+## Docs Start ##
+## Builds all local config to gitops config
+## Docs End ##
 
 
 log_info "Building: local/config -> config..."

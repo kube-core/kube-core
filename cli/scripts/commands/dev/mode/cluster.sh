@@ -59,8 +59,11 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## For kube-core releases development. Switches current kube-core references to local kube-core
+## Docs End ##
 
 log_info "Switching cluster to dev mode..."
+log_info "Not implemented yet!"
 
 find ${helmfiles_path} -name '*.helmfile.yaml.*'

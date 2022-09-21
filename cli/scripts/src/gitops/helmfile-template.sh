@@ -59,7 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 check_args "$@"
 ## Header End
-
+## Docs Start ##
+## The main loop that templates and slices all helmfile releases
+## Docs End ##
 
 # helmfileArgs=${@:-""}
 helmfileArgs=""

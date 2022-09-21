@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 set -eou pipefail
+## Docs Start ##
+## Legacy python parser for bash scripts. To replace with CLI.
+## Docs End ##
 
 # Use python's argparse module in shell scripts
 #

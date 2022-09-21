@@ -58,7 +58,9 @@ check_requirements
 # check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## Generates cluster-config.yaml from helmfile env. Wrapped by CLI: kube-core generate cluster-config
+## Docs End ##
 
 valuesFolder="${tmpFolder}/values"
 generatedValuesFolder="${valuesFolder}/generated"

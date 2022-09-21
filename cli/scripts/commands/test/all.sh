@@ -58,7 +58,9 @@ check_requirements
 # check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## Runs all tests. Wrapped by: kube-core test all
+## Docs End ##
 
 log_info "test_all - Start"
 

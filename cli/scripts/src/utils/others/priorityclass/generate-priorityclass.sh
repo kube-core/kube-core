@@ -1,5 +1,8 @@
 #!/bin/bash
 set -eou pipefail
+## Docs Start ##
+## Generates priorityclass for all deployments in cluster
+## Docs End ##
 
 currentScriptPath="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 clusterConfigPath=$(eval find ./$(printf "{$(echo %{1..7}q,)}" | sed 's/ /\.\.\//g') -maxdepth 1 -name cluster-config.yaml | head -n 1 | xargs realpath)
@@ -12,7 +15,7 @@ data=$(cat ${currentScriptPath}/config.json | jq -r '.[] | "\(.name) \(.value)"'
 
 
 while read i
-do  
+do
   # echo $i
   name=$(echo $i | awk '{print $1}')
   value=$(echo $i | awk '{print $2}')

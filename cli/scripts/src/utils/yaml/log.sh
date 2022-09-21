@@ -1,5 +1,8 @@
 #!/bin/bash
 set -eou pipefail
+## Docs Start ##
+## Utils for logging
+## Docs End ##
 
 LOG_LEVEL=${LOG_LEVEL:-"INFO"}
 LOG_SHOW_CURRENT_SCRIPT=${LOG_SHOW_CURRENT_SCRIPT:-"false"}

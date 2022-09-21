@@ -1,4 +1,7 @@
 #!/bin/bash
+## Docs Start ##
+## A lib of utils to wrap kubectl
+## Docs End ##
 set -eou pipefail
 
 kubectl_slice_helmfile_templated_release() {

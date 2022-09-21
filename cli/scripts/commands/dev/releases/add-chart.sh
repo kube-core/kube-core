@@ -58,7 +58,9 @@ check_requirements
 # check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## For kube-core releases development. Adds a chart to kube-core. Args: chartRepository chartName chartVersion
+## Docs End ##
 
 tmpReleasesFolder=${coreTmpFolder}/releases
 baseReleasesFolder=${tmpReleasesFolder}/releases/base

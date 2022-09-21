@@ -59,7 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## Generates secrets from input/manifests to output
+## Docs End ##
 
 log_info "${project_name} - Building: local/secrets/input -> local/secrets/output..."
 

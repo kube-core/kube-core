@@ -59,7 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 check_args "$@"
 ## Header End
-
+## Docs Start ##
+## Applies cluster local config: localConfig_path
+## Docs End ##
 
 log_info "Applying local config..."
 

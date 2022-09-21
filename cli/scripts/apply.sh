@@ -59,7 +59,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## Applies all config. Used by: kube-core apply all
+## Docs End ##
 
 log_info "Applying everything..."
 

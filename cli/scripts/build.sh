@@ -61,6 +61,9 @@ prepare_workspace
 check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
+## Docs Start ##
+## Builds all cluster manifests. Used by: kube-core build all
+## Docs End ##
 
 
 log_info "Building everything..."

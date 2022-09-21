@@ -1,5 +1,9 @@
 #!/bin/bash
 set -eou pipefail
+## Docs Start ##
+## Checks if all kube-core requirements are met and enforces required folder structure
+## Docs End ##
+
 # pip install argparse
 # TODO: Reimplement with proper versions
 prepare_workspace() {

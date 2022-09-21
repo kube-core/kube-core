@@ -58,7 +58,9 @@ check_requirements
 # check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
-
+## Docs Start ##
+## For kube-core releases development. Builds dist charts from local and vendir base.
+## Docs End ##
 
 releasesPath="${corePath}/core/envs/core/releases"
 
