@@ -474,6 +474,9 @@ releases:
       component: controller
       group: ingress
     namespace: nginx-ingress
+    options:
+      injectReloaderAnnotations: true
+      injectClusterLoggingLabel: true
     release:
       chart: ../releases/dist/releases/charts/nginx-ingress-controller
       name: nginx-ingress-controller
@@ -486,6 +489,7 @@ releases:
     namespace: nginx-istio-ingress
     options:
       injectReloaderAnnotations: true
+      injectClusterLoggingLabel: true
     release:
       chart: ../releases/dist/releases/charts/nginx-ingress-controller
       name: nginx-istio-ingress-controller
