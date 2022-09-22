@@ -41,10 +41,6 @@ releases:
   logging-stack:
     values:
       installCRDs: false
-  nginx-ingress-controller:
-    values:
-      podLabels:
-        logging.kube-core.io/flow-name: cluster
   patch-operator:
     values:
       enableCertManager: true
