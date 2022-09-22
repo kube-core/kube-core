@@ -99,6 +99,24 @@
       kind: DaemonSet
       create: true
   {{- end }}
+  {{- if .item.options.injectClusterLoggingLabel }}
+  - apiVersion: builtin
+    LabelTransformer
+    metadata:
+      name: inject-cluster-logging-label
+    labels:
+      logging.kube-core.io/flow-name: "cluster"
+    fieldSpecs:
+    - path: metadata/labels
+      kind: Deployment
+      create: true
+    - path: metadata/labels
+      kind: StatefulSet
+      create: true
+    - path: metadata/labels
+      kind: DaemonSet
+      create: true
+  {{- end }}
   {{- if .coreValues.core.globalLabelsEnabled }}
   - apiVersion: builtin
     kind: LabelTransformer

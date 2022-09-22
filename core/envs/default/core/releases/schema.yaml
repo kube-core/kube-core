@@ -16,6 +16,7 @@ templates:
       removeIngressClassAnnotation: false
       removeIngressClassName: false
       injectReloaderAnnotations: false
+      injectClusterLoggingLabel: false
     patches: {}
     release: {}
     scaling: {}
