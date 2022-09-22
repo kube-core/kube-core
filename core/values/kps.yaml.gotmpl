@@ -379,14 +379,7 @@ kps:
       {{- if index $.Values.releases "mongodb-operator" "enabled" }}
       mongodb:
         mongodb-dashboard:
-          url: https://github.com/neo9/grafana-dashboards/blob/master/databases/mongodb_percona.json
-          # datasource: Thanos
-          # gnetId: 14997
-          # revision: 3
-          # # Similar and better if mongodb exporter aren't on preemptible node
-          # gnetId: 12079
-          # revision: 1
-
+          url: https://raw.githubusercontent.com/neo9/grafana-dashboards/master/databases/mongodb_percona.json
       {{- end }}
       {{- if index $.Values.releases "sloth" "enabled" }}
       sloth:
