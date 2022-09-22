@@ -101,7 +101,7 @@
   {{- end }}
   {{- if .item.options.injectClusterLoggingLabel }}
   - apiVersion: builtin
-    LabelTransformer
+    kind: LabelTransformer
     metadata:
       name: inject-cluster-logging-label
     labels:
