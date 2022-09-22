@@ -92,5 +92,3 @@ echo "${secret}"  > ${secrets_path}/manifests/${secretName}.yaml
 fi
 
 log_info "Done Generating sf secrets!"
-
-fi
