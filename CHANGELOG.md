@@ -2,7 +2,25 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.3.26](https://github.com/neo9/kube-core/compare/v0.3.26...v0.3.26)
+
+- core/releases: Fixed typo on logging LabelTransformer [`0a37c9e`](https://github.com/neo9/kube-core/commit/0a37c9e2a494c66d1c76a29ded7622a8c2b3aa31)
+
+#### [v0.3.26](https://github.com/neo9/kube-core/compare/v0.3.25...v0.3.26)
+
+> 22 September 2022
+
+- cli/scripts: Cleaned up some scripts and regenerated scripts-config with more docs [`96fc8dd`](https://github.com/neo9/kube-core/commit/96fc8ddf18f446bc1f45a4f03e7a4637acb46cc6)
+- core/releases: Adds the possibility to inject labels for logging in core releases [`ca1cc5b`](https://github.com/neo9/kube-core/commit/ca1cc5b122b87a4a1251ed2985bebbfeee5e8b69)
+- release: v0.3.26 [`bece8aa`](https://github.com/neo9/kube-core/commit/bece8aab5e06c8fccedee28a2d4555f5f71d7bde)
+- releases/kps: Fixed wrong URL for mongodb_percona dashboard [`94d54f7`](https://github.com/neo9/kube-core/commit/94d54f764979f6f4e05585b27e44d6e278d410ca)
+- core/releases: Added logging on nginx-ingress releases by default [`c8d78ae`](https://github.com/neo9/kube-core/commit/c8d78ae1457a94faf8d086aa5b8e8fb183a68ef0)
+- releases/tekton: Sets default SA for triggers to tekton [`3816685`](https://github.com/neo9/kube-core/commit/381668585efa3ef2773771067c0d02ff45364189)
+- cli/scripts: Fixed typo in cloud_gcp_setup_tekton_sf [`d630f44`](https://github.com/neo9/kube-core/commit/d630f44dd344c4f88a7165c344598b72a4a62b9b)
+
 #### [v0.3.25](https://github.com/neo9/kube-core/compare/v0.3.24...v0.3.25)
+
+> 20 September 2022
 
 - releases/chaos: Removed litmus-chaos and introduced chaos-mesh [`99cf697`](https://github.com/neo9/kube-core/commit/99cf69787c46758abf730c882977641bbf963097)
 - releases: Updated releases/dist [`3924687`](https://github.com/neo9/kube-core/commit/392468769f8ca3a16021ff27232202263e971975)
@@ -12,6 +30,7 @@ All notable changes to this project will be documented in this file. Dates are d
 - core/config: Reformatted some files [`9939020`](https://github.com/neo9/kube-core/commit/9939020732a12312a5b9cedc2cf526e723de0cb0)
 - releases/kps: Added some Grafana dashbords and reorganized some folders [`3f642c3`](https://github.com/neo9/kube-core/commit/3f642c3caa169352d6cd58fc036be932e3441290)
 - cli/generators: Fixes path in cli plopfile [`410cc42`](https://github.com/neo9/kube-core/commit/410cc42057bc9faae9443bd8251a3fe7be30fe10)
+- release: v0.3.25 [`b0e6d23`](https://github.com/neo9/kube-core/commit/b0e6d234167ade3403429a3a45c94a6ceb46991c)
 - releases/kps: Updated mongodb and external-dns dashboards [`8ba275f`](https://github.com/neo9/kube-core/commit/8ba275fc0d3d501500a18682d750b09f61267b0c)
 
 #### [v0.3.24](https://github.com/neo9/kube-core/compare/v0.3.23...v0.3.24)
