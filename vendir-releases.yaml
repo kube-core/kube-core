@@ -4,6 +4,12 @@ directories:
   - path: releases/base
     contents:
       # Base Releases
+      - path: kyverno
+        helmChart:
+          name: kyverno
+          version: v2.5.3
+          repository:
+            url: https://kyverno.github.io/kyverno/
       - path: chaos-mesh
         helmChart:
           name: chaos-mesh
@@ -415,9 +421,16 @@ directories:
         directory:
           path: ../../../releases/local/app-scaling
 
-  # - path: releases/crds
-  #   contents:
-  #     # CRD Releases
+  - path: releases/crds
+    contents:
+      # CRD Releases
+      # - path: kyverno-crds
+      #   helmChart:
+      #     name: kyverno-crds
+      #     version: v2.0.3
+      #     repository:
+      #       url: https://kyverno.github.io/kyverno/
+      #   includePaths: ["crds/*", "crds", "Chart.yaml", "values.yaml"]
   #     - path: chaos
   #       helmChart:
   #         name: litmus-core

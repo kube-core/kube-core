@@ -104,3 +104,5 @@ releases:
   visitor-groups: *release
   zeebe: *release
   zeebe-operate: *release
+
+  kyverno: *release

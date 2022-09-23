@@ -774,3 +774,10 @@ releases:
     release:
       chart: ../releases/dist/releases/charts/zeebe-operate-helm
       name: zeebe-operate
+
+  kyverno:
+    labels: {}
+    namespace: kyverno
+    release:
+      chart: ../releases/dist/releases/charts/kyverno
+      name: kyverno
