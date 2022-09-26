@@ -31,6 +31,22 @@ export default function (plop) {
         }
 	});
 
+    // Creates Generator for Charts
+	plop.setGenerator('local-chart', {
+		description: 'Adds a local chart to kube-core',
+
+        prompts: getLocalChartQuestions(),
+
+		actions: function (data) {
+            let actions = []
+
+            actions = getLocalChartActions()
+
+            console.log(JSON.stringify(data))
+            return actions
+        }
+	});
+
 
 
     // Creates Generator for Releases
@@ -190,6 +206,18 @@ function getExternalChartQuestions() {
     ]
 }
 
+function getLocalChartQuestions() {
+    return [
+        chartNameQuestion
+    ]
+}
+
+function getLocalChartActions(data) {
+    return [
+        appendVendirLocalChartAction,
+    ]
+}
+
 function getExternalChartActions(data) {
     return [
         appendVendirBaseChartAction,
@@ -232,6 +260,12 @@ const appendVendirBaseChartAction = {
     path: path.join(`${__dirname}`, `../vendir-releases.yaml`),
     pattern: /\# Base Releases/,
     templateFile: 'plop-templates/vendir-base-release.hbs'
+}
+const appendVendirLocalChartAction = {
+    type: 'append',
+    path: path.join(`${__dirname}`, `../vendir-releases.yaml`),
+    pattern: /\# Local Releases/,
+    templateFile: 'plop-templates/vendir-local-release.hbs'
 }
 
 const appendReleaseAction = {

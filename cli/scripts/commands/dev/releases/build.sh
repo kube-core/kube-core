@@ -79,7 +79,7 @@ mkdir -p ${coreReleasesPath}/dist/releases/base
 
 mkdir -p ${coreReleasesPath}/dist/manifests/crds
 
-list="$(find ${baseReleasesFolder}/* -maxdepth 0 -type d)"
+list="$(find ${baseReleasesFolder}/* -maxdepth 0 -type d || true)"
 
 filter=${1:-""}
 
@@ -157,14 +157,16 @@ do
     fi
     rm -rf ${releaseProcessedPath}/templates/crds.yaml
     rm -rf ${releaseProcessedPath}/templates/crd.yaml
+    rm -rf ${releaseProcessedPath}/kustomization.yaml
+    rm -rf ${releaseProcessedPath}/files
     rm -rf ${processedTmpFolder}
 
 done || true
 
 cp -rf ${releasesCrdsFolder}/*  ${releasesGeneratedCrdsFolder} &> /dev/null || true
 cp -rf ${releasesGeneratedCrdsFolder}/* ${coreReleasesPath}/dist/releases/crds &> /dev/null || true
-cp -rf ${releasesProcessedFolder}/* ${coreReleasesPath}/dist/releases/charts
-cp -rf ${baseReleasesFolder}/* ${coreReleasesPath}/dist/releases/base
+cp -rf ${releasesProcessedFolder}/* ${coreReleasesPath}/dist/releases/charts &> /dev/null || true
+cp -rf ${baseReleasesFolder}/* ${coreReleasesPath}/dist/releases/base &> /dev/null || true
 
 # find ${coreReleasesPath}/dist/releases/ -type f -name '.helmignore' | xargs rm -rf
 
