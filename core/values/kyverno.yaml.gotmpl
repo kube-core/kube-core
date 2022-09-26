@@ -1,1 +1,23 @@
 cluster: {{ toYaml .Values.cluster | nindent 2 }}
+replicaCount: 3
+serviceMonitor:
+  enabled: true
+
+resources:
+  # -- Pod resource limits
+  limits:
+    memory: 512Mi
+  # -- Pod resource requests
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+initResources:
+  # -- Pod resource limits
+  limits:
+    cpu: 100m
+    memory: 256Mi
+  # -- Pod resource requests
+  requests:
+    cpu: 10m
+    memory: 64Mi
