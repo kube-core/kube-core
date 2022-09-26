@@ -1,0 +1,37 @@
+cluster: {{ toYaml .Values.cluster | nindent 2 }}
+
+# podSecurityStandard: restricted
+podSecurityStandard: baseline
+
+podSecuritySeverity: medium
+
+podSecurityPolicies: []
+
+includeOtherPolicies: []
+includeRestrictedPolicies: []
+failurePolicy: Fail
+
+validationFailureAction: audit
+
+validationFailureActionByPolicy: {}
+validationFailureActionOverrides:
+  all:
+  - action: audit
+    namespaces:
+      - chaos-mesh
+      - logging
+      - monitoring
+      - weave
+
+
+policyExclude: {}
+
+policyPreconditions: {}
+
+nameOverride:
+
+customLabels: {}
+
+background: true
+
+kyvernoVersion: autodetect
