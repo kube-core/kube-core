@@ -1,0 +1,156 @@
+replicas: 1
+
+## Additional labels and annotations for the deployment resource
+##
+labels: {}
+annotations: {}
+
+## Additional labels and annotations for the pods
+podLabels: {}
+podAnnotations: {}
+
+service:
+  type: ClusterIP
+  port: 80
+
+  ## Additional labels and annotations for the service
+  # annotations:
+  #   prometheus.io/scrape: "true"
+  #   prometheus.io/port: "7000"
+  labels: {}
+
+## Resources to allocate to the pods
+##
+resources:
+ limits:
+   cpu: 50m
+   memory: 64Mi
+ requests:
+   cpu: 50m
+   memory: 64Mi
+
+## Deployment strategy
+##
+strategy:
+  type: RollingUpdate
+
+## Liveness and Readiness probes
+##
+livenessProbe:
+  httpGet:
+    path: /metrics
+    port: 7000
+
+readinessProbe:
+  httpGet:
+    path: /metrics
+    port: 7000
+  initialDelaySeconds: 5
+  timeoutSeconds: 5
+  failureThreshold: 3
+  periodSeconds: 30
+
+## Node labels for pod assignment
+## ref: https://kubernetes.io/docs/user-guide/node-selection/
+#
+nodeSelector: {}
+
+## Tolerations for pod assignment
+## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+##
+tolerations: []
+
+## Affinity for pod assignment
+## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+##
+affinity: {}
+
+## Set the security context of the pods
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context
+##
+securityContext:
+  # runAsUser: 65534  # run as nobody user
+
+# Security context settings at the container level
+containerSecurityContext:
+  # runAsUser: 65534
+  # runAsNonRoot: true
+  # allowPrivilegeEscalation: false
+  # readOnlyRootFilesystem: true
+
+# Existing Priority class name to be used for the pod
+priorityClassName:
+  # addons-priority
+
+serviceAccount:
+  # Specifies whether a ServiceAccount should be created
+  create: true
+  # The name of the ServiceAccount to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name:
+
+rbac:
+  # Specifies whether RBAC resources should be created
+  create: true
+  # Specifies whether RBAC should be cluster-wide or limited to namespace
+  global: true
+
+## Arguments for kube-cleanup-operator
+##
+args:
+  - --delete-evicted-pods-after=1m
+  - --delete-failed-after=1m
+  - --delete-orphaned-pods-after=1m
+  - --delete-pending-pods-after=1m
+  - --delete-successful-after=1m
+  - --ignore-owned-by-cronjobs
+  - --legacy-mode=false
+  - --dry-run=false
+  # - --namespace=tekton-pipelines
+
+#  -delete-evicted-pods-after duration
+#         Delete pods in evicted state (golang duration format, e.g 5m), 0 - never delete (default 15m0s)
+#   -delete-failed-after duration
+#         Delete jobs and pods in failed state after X duration (golang duration format, e.g 5m), 0 - never delete
+#   -delete-orphaned-pods-after duration
+#         Delete orphaned pods. Pods without an owner in non-running state (golang duration format, e.g 5m), 0 - never delete (default 1h0m0s)
+#   -delete-pending-pods-after duration
+#         Delete pods in pending state after X duration (golang duration format, e.g 5m), 0 - never delete
+#   -delete-successful-after duration
+#         Delete jobs and pods in successful state after X duration (golang duration format, e.g 5m), 0 - never delete (default 15m0s)
+#   -dry-run
+#         Print only, do not delete anything.
+#   -ignore-owned-by-cronjobs
+#         [EXPERIMENTAL] Do not cleanup pods and jobs created by cronjobs
+#   -keep-failures int
+#         Number of hours to keep failed jobs, -1 - forever (default) 0 - never, >0 number of hours (default -1)
+#   -keep-pending int
+#         Number of hours to keep pending jobs, -1 - forever (default) >0 number of hours (default -1)
+#   -keep-successful int
+#         Number of hours to keep successful jobs, -1 - forever, 0 - never (default), >0 number of hours
+#   -legacy-mode true
+#         Legacy mode: true - use old `keep-*` flags, `false` - enable new `delete-*-after` flags (default true)
+#   -listen-addr string
+#         Address to expose metrics. (default "0.0.0.0:7000")
+#   -namespace string
+#         Limit scope to a single namespace
+#   -run-outside-cluster
+#         Set this flag when running outside of the cluster.
+#   -label-selector
+#         Delete only jobs and pods that meet label selector requirements. #See https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+
+
+## Environment variables for the container
+##
+envVariables: []
+
+
+## Manage a ServiceMonitor resource to automatically configure the endpoint
+## through the Prometheus operator: https://github.com/coreos/prometheus-operator
+serviceMonitor:
+  enabled: true
+  scrapeInterval: 10s
+
+  ## Additional labels and annotations for the service monitor
+  annotations: {}
+  labels: {}
