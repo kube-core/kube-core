@@ -1,0 +1,62 @@
+policies:
+  all:
+    validationFailureAction: audit
+  who-created-this: {}
+  add-default-resources: {}
+  always-pull-images: {}
+  mutate-termination-grace-period-seconds: {}
+  prevent-naked-pods: {}
+  require-pod-probes: {}
+  validate-probes: {}
+  deny-empty-ingress-host: {}
+  ingress-host-match-tls: {}
+  restrict-ingress-classes: {}
+  restrict-ingress-defaultbackend: {}
+  restrict-ingress-wildcard: {}
+  add-namespace-node-affinity: {}
+  add-namespace-node-selector: {}
+  add-namespace-pdb: {}
+  add-namespace-priority-class: {}
+  label-namespaces: {}
+  add-node-taint: {}
+  protect-node-taints: {}
+  restrict-node-selector: {}
+  add-node-affinity: {}
+  add-node-selector: {}
+  add-pdb-max-unavailable: {}
+  add-pdb-min-available: {}
+  add-safe-to-evict: {}
+  insert-self-hard-pod-antiaffinity: {}
+  insert-self-soft-pod-antiaffinity: {}
+  remove-node-selector: {}
+  deny-exec: {}
+  deny-external-ips: {}
+  deny-latest-tag: {}
+  deny-loadbalancer: {}
+  deny-nodeport: {}
+  enforce-resources-ratio: {}
+
+
+namespace:
+  nodeSelector:
+  - tekton-pipelines
+  - predator
+  nodeAffinity:
+  # - tekton-pipelines
+  - validation
+  # - production
+  priorityClass:
+  - production
+  pdb:
+  - production
+  denyExec:
+  - production
+  labels: {}
+    # abc: def
+    # ghi: klm
+    # test: test
+
+node:
+  excludeTaints:
+  - main
+  - safety

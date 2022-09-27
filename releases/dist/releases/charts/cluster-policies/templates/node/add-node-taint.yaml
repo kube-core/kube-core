@@ -1,0 +1,48 @@
+{{ $policyName := "add-node-taint" }}
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: add-node-taint
+  annotations:
+    policies.kyverno.io/title: Add Node taint
+    policies.kyverno.io/category: Sample
+    policies.kyverno.io/subject: Pod
+    policies.kyverno.io/description: >-
+      This policy allows to add automatically a taint based on .metadata.labels.type for each Node.
+      Use of this policy requires removal of the Node resource filter
+      in the Kyverno ConfigMap ([Node,*,*]). Due to Kubernetes CVE-2021-25735, this policy
+      requires, at minimum, one of the following versions of Kubernetes:
+      v1.18.18, v1.19.10, v1.20.6, or v1.21.0.
+spec:
+  generateExistingOnPolicyUpdate: true
+  mutateExistingOnPolicyUpdate: true
+  validationFailureAction: {{ coalesce (index .Values.policies $policyName "validationFailureAction") .Values.policies.all.validationFailureAction }}
+  background: true
+  rules:
+    - name: add-node-taint
+      match:
+        resources:
+          kinds:
+          - Node
+      preconditions:
+        # This precondition selects Pods with the label
+        all:
+        - key: "{{`{{request.object.metadata.labels.type}}`}}"
+          operator: NotIn
+          {{ if .Values.node.excludeTaints }}
+          value: {{ toYaml .Values.node.excludeTaints | nindent 12 }}
+          {{ else }}
+          value:
+          - main
+          - safety
+          {{ end }}
+      mutate:
+        patchStrategicMerge:
+          spec:
+            taints:
+            - key: "type"
+              value: "{{`{{ request.object.metadata.labels.type}}`}}"
+              effect: "NoSchedule"
+            - key: "type"
+              value: "{{`{{ request.object.metadata.labels.type}}`}}"
+              effect: "NoExecute"
