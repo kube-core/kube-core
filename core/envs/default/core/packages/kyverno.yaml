@@ -1,0 +1,13 @@
+releases:
+  kyverno:
+    labels:
+      package: kyverno
+    enabled: true
+  kyverno-policies:
+    labels:
+      package: kyverno
+    enabled: true
+  policies:
+    labels:
+      package: kyverno
+    enabled: true

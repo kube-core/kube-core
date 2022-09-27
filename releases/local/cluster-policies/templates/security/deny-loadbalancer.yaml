@@ -1,0 +1,40 @@
+{{ $policyName := "deny-loadbalancer" }}
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: deny-loadbalancer
+  annotations:
+    policies.kyverno.io/title: Disallow LoadBalancer
+    policies.kyverno.io/category: Best Practices
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/subject: Service
+    policies.kyverno.io/description: >-
+      A Kubernetes Service of type LoadBalancer uses a host port to receive traffic from
+      any source. A NetworkPolicy cannot be used to control traffic to host ports.
+      Although LoadBalancer Services can be useful, their use must be limited to Services
+      with additional upstream security checks. This policy validates that any new Services
+      do not use the `LoadBalancer` type.
+spec:
+  generateExistingOnPolicyUpdate: true
+  mutateExistingOnPolicyUpdate: true
+  validationFailureAction: {{ coalesce (index .Values.policies $policyName "validationFailureAction") .Values.policies.all.validationFailureAction }}
+  background: true
+  rules:
+  - name: validate-loadbalancer
+    match:
+      resources:
+        kinds:
+        - Service
+    preconditions:
+      all:
+      - key: "{{`{{request.object.metadata.namespace}}`}}"
+        operator: NotIn
+        value: ["nginx-ingress", "nginx-istio-ingress"]
+      - key: "{{`{{request.object.metadata.name}}`}}"
+        operator: NotIn
+        value: ["nginx-ingress-controller", "nginx-istio-ingress-controller-nginx-ingress-controller"]
+    validate:
+      message: "Services of type LoadBalancer are not allowed."
+      pattern:
+        spec:
+          type: "!LoadBalancer"
