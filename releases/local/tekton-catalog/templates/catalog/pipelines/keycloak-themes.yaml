@@ -1,0 +1,114 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: keycloak-themes
+spec:
+  params:
+    - name: git-project-name
+      description: The git project name which is at the origin of the push
+      type: string
+    - name: git-url
+      description: The repository url
+      type: string
+    - name: git-branch
+      description: The repository branch at the origin of the push
+      type: string
+      default: "main"
+    - name: namespace
+      description: The name of the namespace
+      type: string
+    - name: instance-name
+      description: The name of the keycloak instance
+      default: keycloak
+      type: string
+    - name: configmap-name
+      description: The name of the configmap for keycloak theme
+      type: string
+
+  workspaces:
+    - name: ws
+
+  tasks:
+    - name: clone-project
+      taskRef:
+        name: git-clone-branch
+      params:
+        - name: repository
+          value: $(params.git-url)
+        - name: branch
+          value: $(params.git-branch)
+      workspaces:
+        - name: input
+          workspace: ws
+        - name: output
+          workspace: ws
+        - name: source
+          workspace: ws
+        - name: data
+          workspace: ws
+
+    - name: package-theme
+      taskRef:
+        name: devops-tools
+      runAfter:
+        - clone-project
+      params:
+        - name: image
+          value: bitnami/java:17
+        - name: script
+          value: |
+            #!/usr/bin/env bash
+            cd $(workspaces.source.path)/$(params.git-project-name) && \
+            jar cvf $(params.configmap-name).jar META-INF theme
+      workspaces:
+        - name: input
+          workspace: ws
+        - name: output
+          workspace: ws
+        - name: source
+          workspace: ws
+        - name: data
+          workspace: ws
+
+    - name: apply-theme
+      taskRef:
+        name: devops-tools
+      runAfter:
+        - package-theme
+      params:
+        - name: script
+          value: |
+            #!/usr/bin/env bash
+            cd $(workspaces.source.path)/$(params.git-project-name) && \
+            kubectl create cm $(params.configmap-name) --from-file=$(params.configmap-name).jar -n $(params.namespace) -o yaml --dry-run=client > $(params.configmap-name).yaml && \
+            kubectl replace -f $(params.configmap-name).yaml -n $(params.namespace)
+      workspaces:
+        - name: input
+          workspace: ws
+        - name: output
+          workspace: ws
+        - name: source
+          workspace: ws
+        - name: data
+          workspace: ws
+    
+    - name: restart-keycloak
+      taskRef:
+        name: devops-tools
+      runAfter:
+        - apply-theme
+      params:
+        - name: script
+          value: |
+            #!/usr/bin/env bash
+            kubectl rollout restart statefulset $(params.instance-name) -n $(params.namespace) && \
+            kubectl rollout status statefulset $(params.instance-name) -n $(params.namespace) --timeout=120s
+      workspaces:
+        - name: input
+          workspace: ws
+        - name: output
+          workspace: ws
+        - name: source
+          workspace: ws
+        - name: data
+          workspace: ws
