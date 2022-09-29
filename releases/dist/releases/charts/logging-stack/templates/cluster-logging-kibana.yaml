@@ -119,13 +119,28 @@ spec:
     tls:
       selfSignedCertificate:
         disabled: true
-    service:
-      metadata:
-        annotations:
-        {{ toYaml .Values.cluster.common.defaultServiceAnnotations | nindent 10 }}
-        labels:
-        {{ toYaml .Values.cluster.common.defaultServiceLabels | nindent 10 }}
   elasticsearchRef:
     name: logging
   count: 1
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: logging-kb-http
+spec:
+  rules:
+  - host: logging-kb-http.logging.{{ .Values.cluster.config.domain }}
+    http:
+      paths:
+      - backend:
+          service:
+            name: logging-kb-http
+            port:
+              number: 5601
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - logging-kb-http.logging.{{ .Values.cluster.config.domain }}
+    secretName: logging-kb-http-tls
 {{ end }}

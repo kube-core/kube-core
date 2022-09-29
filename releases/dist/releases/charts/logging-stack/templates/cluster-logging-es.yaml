@@ -17,12 +17,6 @@ spec:
     tls:
       selfSignedCertificate:
         disabled: true
-    service:
-      metadata:
-        annotations:
-        {{ toYaml .Values.cluster.common.defaultServiceAnnotations | nindent 10 }}
-        labels:
-        {{ toYaml .Values.cluster.common.defaultServiceLabels | nindent 10 }}
   version: {{ .Values.cluster.logging.stack.esStackVersion }}
   nodeSets:
   - name: default
@@ -67,4 +61,25 @@ spec:
           username: anonymous
           roles: superuser
           authz_exception: false
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: logging-es-http
+spec:
+  rules:
+  - host: logging-es-http.logging.{{ .Values.cluster.config.domain }}
+    http:
+      paths:
+      - backend:
+          service:
+            name: logging-es-http
+            port:
+              number: 9200
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - logging-es-http.logging.{{ .Values.cluster.config.domain }}
+    secretName: logging-es-http-tls
 {{ end }}
