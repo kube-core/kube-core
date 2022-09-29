@@ -4,6 +4,24 @@ directories:
   - path: releases/base
     contents:
       # Base Releases
+      - path: descheduler
+        helmChart:
+          name: descheduler
+          version: 0.25.1
+          repository:
+            url: https://kubernetes-sigs.github.io/descheduler/
+      - path: prometheus-pushgateway
+        helmChart:
+          name: prometheus-pushgateway
+          version: 1.18.3
+          repository:
+            url: https://prometheus-community.github.io/helm-charts
+      - path: kyverno-policies
+        helmChart:
+          name: kyverno-policies
+          version: v2.5.5
+          repository:
+            url: https://kyverno.github.io/kyverno/
       - path: kyverno
         helmChart:
           name: kyverno
@@ -301,9 +319,13 @@ directories:
             url: https://mongodb.github.io/helm-charts
 
       # Local Releases
-      # - path: chaos
-      #   directory:
-      #     path: ../../../releases/local/litmus
+      - path: cluster-rbac
+        directory:
+          path: ../../../releases/local/cluster-rbac
+
+      - path: cluster-policies
+        directory:
+          path: ../../../releases/local/cluster-policies
 
       - path: raw
         directory:
@@ -421,20 +443,13 @@ directories:
         directory:
           path: ../../../releases/local/app-scaling
 
-  - path: releases/crds
-    contents:
-      # CRD Releases
-      # - path: kyverno-crds
-      #   helmChart:
-      #     name: kyverno-crds
-      #     version: v2.0.3
-      #     repository:
-      #       url: https://kyverno.github.io/kyverno/
-      #   includePaths: ["crds/*", "crds", "Chart.yaml", "values.yaml"]
-  #     - path: chaos
+  # - path: releases/crds
+  #   contents:
+  #   # CRD Releases
+  #   - path: kyverno-crds
   #       helmChart:
-  #         name: litmus-core
-  #         version: 2.9.0
+  #         name: kyverno-crds
+  #         version: v2.0.3
   #         repository:
-  #           url: https://litmuschaos.github.io/litmus-helm/
+  #           url: https://kyverno.github.io/kyverno/
   #       includePaths: ["crds/*", "crds", "Chart.yaml", "values.yaml"]
