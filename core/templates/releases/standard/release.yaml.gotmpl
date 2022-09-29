@@ -31,12 +31,12 @@
   {{- if .item.jsonPatches }}
   {{ toYaml .item.jsonPatches | nindent 2 }}
   {{- end }}
-  {{- if .item.options.removeIngressClassAnnotation }}
+  {{- if .item.options.patchIngresses }}
   - target:
-      version: v1
       kind: Ingress
       name: .*
     patch:
+  {{- if .item.options.removeIngressClassAnnotation }}
       - op: remove
         path: "/metadata/annotations/kubernetes.io~1ingress.class"
         {{/*# For Reference - brace yourself ;)
@@ -45,13 +45,38 @@
         # http://jsonpatch.com/#json-pointer */}}
   {{- end }}
   {{- if .item.options.removeIngressClassName }}
-  - target:
-      version: v1
-      kind: Ingress
-      name: .*
-    patch:
       - op: remove
         path: "/spec/ingressClassName"
+  {{- end }}
+  {{- if .item.options.injectIngressClassName }}
+      - op: replace
+        path: "/spec/ingressClassName"
+        value: "{{ .coreValues.cluster.common.defaultIngressClass }}"
+  {{- end }}
+  {{- if .item.options.upgradeIngress }}
+      - op: replace
+        path: "/apiVersion"
+        value: "networking.k8s.io/v1"
+      - op: add
+        path: "/spec/rules/0/http/paths/0/path"
+        value: "/"
+      - op: add
+        path: "/spec/rules/0/http/paths/0/pathType"
+        value: "Prefix"
+      - op: add
+        path: "/spec/rules/0/http/paths/0/backend/service"
+        value: {"name":"", "port": {"number":""}}
+      - op: copy
+        from: "/spec/rules/0/http/paths/0/backend/serviceName"
+        path: "/spec/rules/0/http/paths/0/backend/service/name"
+      - op: copy
+        from: "/spec/rules/0/http/paths/0/backend/servicePort"
+        path: "/spec/rules/0/http/paths/0/backend/service/port/number"
+      - op: remove
+        path: "/spec/rules/0/http/paths/0/backend/serviceName"
+      - op: remove
+        path: "/spec/rules/0/http/paths/0/backend/servicePort"
+  {{- end }}
   {{- end }}
   transformers:
   {{- if .item.transformers }}
@@ -110,11 +135,26 @@
     - path: metadata/labels
       kind: Deployment
       create: true
+    - path: spec/template/metadata/labels
+      kind: Deployment
+      create: true
     - path: metadata/labels
+      kind: StatefulSet
+      create: true
+    - path: spec/template/metadata/labels
       kind: StatefulSet
       create: true
     - path: metadata/labels
       kind: DaemonSet
+      create: true
+    - path: spec/template/metadata/labels
+      kind: DaemonSet
+      create: true
+    - path: metadata/labels
+      kind: CronJob
+      create: true
+    - path: spec/jobTemplate/metadata/labels
+      kind: CronJob
       create: true
   {{- end }}
   {{- if .coreValues.core.globalLabelsEnabled }}

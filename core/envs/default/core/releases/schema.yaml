@@ -11,12 +11,15 @@ templates:
     namespace: "default"
     needs: []
     options:
+      patchIngresses: false
+      upgradeIngress: false
       applyDefaultLabelsOnIngress: false
       applyDefaultAnnotationsOnIngress: false
       removeIngressClassAnnotation: false
       removeIngressClassName: false
       injectReloaderAnnotations: false
       injectClusterLoggingLabel: false
+      injectIngressClassName: false
     patches: {}
     release: {}
     scaling: {}
@@ -106,3 +109,10 @@ releases:
   zeebe-operate: *release
 
   kyverno: *release
+  cluster-policies: *release
+
+  kyverno-policies: *release
+  prometheus-pushgateway: *release
+
+  descheduler: *release
+  cluster-rbac: *release

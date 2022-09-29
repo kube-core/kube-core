@@ -14,6 +14,10 @@
 # Releases
 # Defines all standard releases
 - ./envs/default/core/releases/releases.yaml
+# Defines all releases labels
+- ./envs/default/core/releases/releases-labels.yaml
+# Defines all releases options
+- ./envs/default/core/releases/releases-options.yaml
 # Defines all raw releases
 - ./envs/default/core/releases/releases-raw.yaml
 # Defines all custom releases
@@ -26,6 +30,8 @@
 - ./envs/default/core/releases/releases-secrets.yaml
 # Defines default scheduling rules for all releases
 - ./envs/default/core/releases/releases-scheduling.yaml
+# Defines default hooks for all releases
+- ./envs/default/core/releases/releases-hooks.yaml
 # Defines default patches for all releases
 - ./envs/default/core/releases/releases-patches.yaml
 # Defines default scaling for all releases
@@ -145,6 +151,10 @@
 
 {{ if (.Values | get "core.packages.crossplane.enabled" false) }}
 - ./envs/default/core/packages/crossplane.yaml
+{{ end }}
+
+{{ if (.Values | get "core.packages.kyverno.enabled" false) }}
+- ./envs/default/core/packages/kyverno.yaml
 {{ end }}
 
 {{ end }}

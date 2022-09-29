@@ -1,3 +1,27 @@
 args:
   - --enable-external-secret-stores
-  - --debug
+  # - --debug
+
+replicas: 1
+nodeSelector: {}
+tolerations: {}
+affinity: {}
+
+resourcesCrossplane:
+  limits:
+    cpu: 100m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+
+resourcesRBACManager:
+  limits:
+    cpu: 100m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+
+metrics:
+  enabled: true

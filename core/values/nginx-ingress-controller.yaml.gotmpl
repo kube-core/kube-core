@@ -47,8 +47,8 @@ reportNodeInternalIp: false
 ingressClassResource:
   name: {{ index .Values.releases .Release.Name "config" "ingressClass" }}
   enabled: true
-  default: false
-  controllerClass: "k8s.io/ingress-nginx"
+  default: {{ index .Values.releases .Release.Name "config" "defaultIngressClass" }}
+  controllerClass: {{ index .Values.releases .Release.Name "config" "controllerClass" }}
   parameters: {}
 
 ## Allows customization of the external service

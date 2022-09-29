@@ -212,6 +212,14 @@ kps:
             type: file
           - disableDeletion: true
             editable: false
+            folder: kube-core
+            name: kube-core
+            options:
+              path: /var/lib/grafana/dashboards/kube-core
+            orgId: 1
+            type: file
+          - disableDeletion: true
+            editable: false
             folder: Others
             name: others
             options:
@@ -294,12 +302,16 @@ kps:
     dashboards:
       thanos:
         thanos-compact:
+          datasource: Thanos
           url: https://raw.githubusercontent.com/neo9/grafana-dashboards/master/kubernetes/thanos-compact.json
         thanos-query:
+          datasource: Thanos
           url: https://raw.githubusercontent.com/neo9/grafana-dashboards/master/kubernetes/thanos-query.json
         thanos-sidecar:
+          datasource: Thanos
           url: https://raw.githubusercontent.com/neo9/grafana-dashboards/master/kubernetes/thanos-sidecar.json
         thanos-store:
+          datasource: Thanos
           url: https://raw.githubusercontent.com/neo9/grafana-dashboards/master/kubernetes/thanos-store.json
       {{- if or (index $.Values.releases "nginx-ingress-controller" "config" "metrics" "serviceMonitor" "enabled") (index $.Values.releases "nginx-istio-ingress-controller" "config" "metrics" "serviceMonitor" "enabled") }}
       nginx:
@@ -330,13 +342,12 @@ kps:
       {{- if index $.Values.releases "flux" "enabled" }}
       flux:
         cluster:
+          datasource: Thanos
           url: https://raw.githubusercontent.com/fluxcd/flux2/main/manifests/monitoring/monitoring-config/dashboards/cluster.json
         control-plane:
+          datasource: Thanos
           url: https://raw.githubusercontent.com/fluxcd/flux2/main/manifests/monitoring/monitoring-config/dashboards/control-plane.json
       {{- end }}
-
-
-
       {{- if index $.Values.releases "rabbitmq-operators" "enabled" }}
       rabbitmq:
       # https://github.com/rabbitmq/cluster-operator/tree/main/observability/grafana/dashboards
@@ -379,6 +390,7 @@ kps:
       {{- if index $.Values.releases "mongodb-operator" "enabled" }}
       mongodb:
         mongodb-dashboard:
+          datasource: Thanos
           url: https://raw.githubusercontent.com/neo9/grafana-dashboards/master/databases/mongodb_percona.json
       {{- end }}
       {{- if index $.Values.releases "sloth" "enabled" }}
@@ -388,15 +400,48 @@ kps:
           gnetId: 14643
           revision: 2
         slo-detailed:
+          datasource: Thanos
           url: https://raw.githubusercontent.com/neo9/grafana-dashboards/master/sloth/slo-detailed.json
       {{- end }}
+      kube-core:
+      {{- if index $.Values.releases "kyverno" "enabled" }}
+        kyverno:
+          datasource: Thanos
+          url: https://raw.githubusercontent.com/kyverno/grafana-dashboard/master/grafana/dashboard.json
+      {{- end }}
+        # TODO: Define if it is useful to fix it
+        # go-processes:
+        #   datasource: Thanos
+        #   gnetId: 6671
+        #   revision: 2
+        go-metrics:
+          datasource: Thanos
+          gnetId: 10826
+          revision: 1
+        # TODO: Fix it
+        predator:
+          datasource: Thanos
+          gnetId: 11651
+          revision: 2
+        # TODO: Implement those
+        # https://github.com/tektoncd/triggers/blob/release-v0.21.x/config/config-observability.yaml
+        # https://github.com/tektoncd/pipeline/blob/release-v0.40.x/config/config-observability.yaml
+        # tekton-overview:
+        #   datasource: Thanos
+        #   gnetId: 16559
+        #   revision: 1
+        # tekton:
+        #   datasource: Thanos
+        #   url: https://raw.githubusercontent.com/jenkins-x-charts/grafana-dashboard/master/charts/grafana-dashboard/dashboards/tekton.json
       others:
       {{- if index $.Values.releases "cert-manager" "enabled" }}
         cert-manager:
+          datasource: Thanos
           url: https://raw.githubusercontent.com/monitoring-mixins/website/master/assets/cert-manager/dashboards/cert-manager.json
       {{- end }}
       {{- if index $.Values.releases "sealed-secrets" "enabled" }}
         sealed-secrets:
+          datasource: Thanos
           url: https://raw.githubusercontent.com/monitoring-mixins/website/master/assets/sealed-secrets/dashboards/sealed-secrets-controller.json
       {{- end }}
       {{- if index $.Values.releases "external-dns" "enabled" }}
@@ -407,6 +452,7 @@ kps:
       {{- end }}
       {{- if index $.Values.releases "external-secrets" "enabled" }}
         external-secrets:
+          datasource: Thanos
           url: https://raw.githubusercontent.com/neo9/grafana-dashboards/master/external-secrets/dashboard.json
       {{- end }}
 

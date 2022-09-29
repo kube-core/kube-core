@@ -7,7 +7,7 @@ releases:
     labels:
       package: kyverno
     enabled: true
-  policies:
+  cluster-policies:
     labels:
       package: kyverno
     enabled: true

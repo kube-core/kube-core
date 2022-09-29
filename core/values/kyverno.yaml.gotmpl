@@ -21,3 +21,43 @@ initResources:
   requests:
     cpu: 10m
     memory: 64Mi
+# -- Extra arguments to give to the binary.
+extraArgs:
+  - --autogenInternals=false
+  - --backgroundScan=1m
+config:
+  # -- Resource types to be skipped by the Kyverno policy engine.
+  # Make sure to surround each entry in quotes so that it doesn't get parsed as a nested YAML list.
+  # These are joined together without spaces, run through `tpl`, and the result is set in the config map.
+  # @default -- See [values.yaml](values.yaml)
+  resourceFilters:
+  - '[Event,*,*]'
+  - '[*,kube-system,*]'
+  - '[*,kube-public,*]'
+  - '[*,kube-node-lease,*]'
+  # - '[Node,*,*]'
+  - '[APIService,*,*]'
+  - '[TokenReview,*,*]'
+  - '[SubjectAccessReview,*,*]'
+  - '[SelfSubjectAccessReview,*,*]'
+  - '[Binding,*,*]'
+  - '[ReplicaSet,*,*]'
+  - '[ReportChangeRequest,*,*]'
+  - '[ClusterReportChangeRequest,*,*]'
+  # exclude resources from the chart
+  - '[ClusterRole,*,{{`{{ template "kyverno.fullname" . }}`}}:*]'
+  - '[ClusterRoleBinding,*,{{`{{ template "kyverno.fullname" . }}`}}:*]'
+  - '[ServiceAccount,{{`{{ include "kyverno.namespace" . }}`}},{{`{{ template "kyverno.serviceAccountName" . }}`}}]'
+  - '[ConfigMap,{{`{{ include "kyverno.namespace" . }}`}},{{`{{ template "kyverno.configMapName" . }}`}}]'
+  - '[ConfigMap,{{`{{ include "kyverno.namespace" . }}`}},{{`{{ template "kyverno.metricsConfigMapName" . }}`}}]'
+  - '[Deployment,{{`{{ include "kyverno.namespace" . }}`}},{{`{{ template "kyverno.fullname" . }}`}}]'
+  - '[Job,{{`{{ include "kyverno.namespace" . }}`}},{{`{{ template "kyverno.fullname" . }}`}}-hook-pre-delete]'
+  - '[NetworkPolicy,{{`{{ include "kyverno.namespace" . }}`}},{{`{{ template "kyverno.fullname" . }}`}}]'
+  - '[PodDisruptionBudget,{{`{{ include "kyverno.namespace" . }}`}},{{`{{ template "kyverno.fullname" . }}`}}]'
+  - '[Role,{{`{{ include "kyverno.namespace" . }}`}},{{`{{ template "kyverno.fullname" . }}`}}:*]'
+  - '[RoleBinding,{{`{{ include "kyverno.namespace" . }}`}},{{`{{ template "kyverno.fullname" . }}`}}:*]'
+  - '[Secret,{{`{{ include "kyverno.namespace" . }}`}},{{`{{ template "kyverno.serviceName" . }}`}}.{{`{{ template "kyverno.namespace" . }}`}}.svc.*]'
+  - '[Service,{{`{{ include "kyverno.namespace" . }}`}},{{`{{ template "kyverno.serviceName" . }}`}}]'
+  - '[Service,{{`{{ include "kyverno.namespace" . }}`}},{{`{{ template "kyverno.serviceName" . }}`}}-metrics]'
+  - '[ServiceMonitor,{{`{{ if .Values.serviceMonitor.namespace }}`}}{{`{{ .Values.serviceMonitor.namespace }}`}}{{`{{ else }}`}}{{`{{ template "kyverno.namespace" . }}`}}{{`{{ end }}`}},{{`{{ template "kyverno.serviceName" . }}`}}-service-monitor]'
+  - '[Pod,{{`{{ include "kyverno.namespace" . }}`}},{{`{{ template "kyverno.fullname" . }}`}}-test]'

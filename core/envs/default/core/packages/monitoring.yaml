@@ -1,4 +1,8 @@
 releases:
+  prometheus-pushgateway:
+    labels:
+      package: monitoring
+    enabled: true
   kps:
     labels:
       package: monitoring

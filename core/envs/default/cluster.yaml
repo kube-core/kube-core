@@ -59,6 +59,17 @@ cluster:
   specs:
     autoscaling:
       profile: OPTIMIZE_UTILIZATION # or BALANCED
+      resourceLimits:
+        - resourceType: 'cpu'
+          minimum: 8
+          maximum: 32
+        - resourceType: 'memory'
+          minimum: 32
+          maximum: 128
+      management:
+        autoRepair: true
+        autoUpgrade: true
+      diskSizeGb: 100
     kubernetes:
       version: 1.21
     nodes:
@@ -255,7 +266,6 @@ cluster:
     # Service
     defaultServiceAnnotations:
       ingress.neo9.io/expose-annotations: |-
-        kubernetes.io/ingress.class: nginx
         cert-manager.io/cluster-issuer: letsencrypt-staging
         external-dns.alpha.kubernetes.io/ttl: 5
         ingress.neo9.io/allowed-visitors: self
@@ -274,7 +284,6 @@ cluster:
     defaultIngressLabels:
       ingress.neo9.io/access-filtered: "true"
     defaultIngressAnnotations:
-      kubernetes.io/ingress.class: "nginx"
       cert-manager.io/cluster-issuer: "letsencrypt-staging"
       external-dns.alpha.kubernetes.io/ttl: "5"
       ingress.neo9.io/allowed-visitors: "self"
