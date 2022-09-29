@@ -2,20 +2,37 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
-#### [v0.3.26](https://github.com/neo9/kube-core/compare/v0.3.26...v0.3.26)
+#### [v0.4.0](https://github.com/neo9/kube-core/compare/v0.3.27...v0.4.0)
 
-- core/releases: Fixed typo on logging LabelTransformer [`0a37c9e`](https://github.com/neo9/kube-core/commit/0a37c9e2a494c66d1c76a29ded7622a8c2b3aa31)
+- releases: Rebuilt dist folder [`cee24b9`](https://github.com/neo9/kube-core/commit/cee24b9be316989bd3fc4cfb98e141d349dfe8b4)
+- releases/policies: Added kube-core base policies [`8708970`](https://github.com/neo9/kube-core/commit/8708970de8f518c3caacc65c373a6cbfa1001dca)
+- core/releases: Reworked layers and some defaults [`094d608`](https://github.com/neo9/kube-core/commit/094d60869081e449537a016fa1f824a1e5aa208b)
+- releases/kyverno-policies: Added kyverno-policies with default values [`7f16950`](https://github.com/neo9/kube-core/commit/7f16950ee8d08fb16fb3d13fdf410831285e173c)
+- releases/kube-cleanup-operator: Updated values and switched source from local chart to remote [`0bac3ad`](https://github.com/neo9/kube-core/commit/0bac3ad7193566b109b95d5181c993a6d529e4dd)
+- releases: Added cluster-rbac [`1455f13`](https://github.com/neo9/kube-core/commit/1455f137f4f9bf82c58ec98e738e9269011dff88)
+- cli/releases: Added script to generate a local release [`00852e5`](https://github.com/neo9/kube-core/commit/00852e58bc02e9d804c86275299baf28f8180be3)
+- releases/logging-stack: Reworked logging-stack Ingress [`23a065b`](https://github.com/neo9/kube-core/commit/23a065b6b97148f19ffeb44086f7a1e166fb0728)
+- releases/kyverno: Switched to HA and increased resource limits for kyverno [`127fe7d`](https://github.com/neo9/kube-core/commit/127fe7d51cd4e82b88b0d46e7a8728f75a709a82)
+- releases/logging-stack: Updated app and events dashboard [`50c0f8c`](https://github.com/neo9/kube-core/commit/50c0f8c64eebc0f0b1f50d1f585a9bae8df09f35)
+
+#### [v0.3.27](https://github.com/neo9/kube-core/compare/v0.3.26...v0.3.27)
+
+> 23 September 2022
+
+- releases: Added kyverno [`f24be2d`](https://github.com/neo9/kube-core/commit/f24be2db9024a24ec77e71edcad9c85441445273)
+- release: v0.3.27 [`1d4f519`](https://github.com/neo9/kube-core/commit/1d4f519f2360021df1fc0350e85734fe8ff11eb3)
 
 #### [v0.3.26](https://github.com/neo9/kube-core/compare/v0.3.25...v0.3.26)
 
 > 22 September 2022
 
 - cli/scripts: Cleaned up some scripts and regenerated scripts-config with more docs [`96fc8dd`](https://github.com/neo9/kube-core/commit/96fc8ddf18f446bc1f45a4f03e7a4637acb46cc6)
+- release: v0.3.26 [`577bd97`](https://github.com/neo9/kube-core/commit/577bd975b065cd250a2677013e6cc8f2cdb0f4ad)
 - core/releases: Adds the possibility to inject labels for logging in core releases [`ca1cc5b`](https://github.com/neo9/kube-core/commit/ca1cc5b122b87a4a1251ed2985bebbfeee5e8b69)
-- release: v0.3.26 [`bece8aa`](https://github.com/neo9/kube-core/commit/bece8aab5e06c8fccedee28a2d4555f5f71d7bde)
 - releases/kps: Fixed wrong URL for mongodb_percona dashboard [`94d54f7`](https://github.com/neo9/kube-core/commit/94d54f764979f6f4e05585b27e44d6e278d410ca)
 - core/releases: Added logging on nginx-ingress releases by default [`c8d78ae`](https://github.com/neo9/kube-core/commit/c8d78ae1457a94faf8d086aa5b8e8fb183a68ef0)
 - releases/tekton: Sets default SA for triggers to tekton [`3816685`](https://github.com/neo9/kube-core/commit/381668585efa3ef2773771067c0d02ff45364189)
+- core/releases: Fixed typo on logging LabelTransformer [`0a37c9e`](https://github.com/neo9/kube-core/commit/0a37c9e2a494c66d1c76a29ded7622a8c2b3aa31)
 - cli/scripts: Fixed typo in cloud_gcp_setup_tekton_sf [`d630f44`](https://github.com/neo9/kube-core/commit/d630f44dd344c4f88a7165c344598b72a4a62b9b)
 
 #### [v0.3.25](https://github.com/neo9/kube-core/compare/v0.3.24...v0.3.25)
