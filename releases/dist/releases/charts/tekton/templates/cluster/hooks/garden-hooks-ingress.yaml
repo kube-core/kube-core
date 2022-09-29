@@ -1,32 +1,19 @@
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  annotations:
-  {{ if .Values.cluster.common.defaultIngressAnnotations }}
-    {{ toYaml .Values.cluster.common.defaultIngressAnnotations | nindent 4 }}
-  {{- end }}
-  {{- if (index .Values.tekton "garden-hooks" "ingress" "annotations") }}
-    {{ toYaml (index .Values.tekton "garden-hooks" "ingress" "annotations") | nindent 4 }}
-  {{- end }}
-  labels:
-    {{- include "tekton.labels" . | nindent 4 }}
-    {{ if .Values.cluster.common.defaultIngressLabels }}
-      {{ toYaml .Values.cluster.common.defaultIngressLabels | nindent 4 }}
-    {{- end }}
-    {{- if (index .Values.tekton "garden-hooks" "ingress" "labels") }}
-      {{ toYaml (index .Values.tekton "garden-hooks" "ingress" "labels") | nindent 4 }}
-    {{- end }}
   name: garden-hooks
-  namespace: tekton-pipelines
 spec:
   rules:
   - host: {{ (index .Values.tekton "garden-hooks" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
     http:
       paths:
       - backend:
-          serviceName: el-garden-hooks
-          servicePort: 8080
-        pathType: ImplementationSpecific
+          service:
+            name: el-garden-hooks
+            port:
+              number: 8080
+        path: /
+        pathType: Prefix
   tls:
   - hosts:
     - {{ (index .Values.tekton "garden-hooks" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
