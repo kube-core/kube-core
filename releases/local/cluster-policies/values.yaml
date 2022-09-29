@@ -37,24 +37,21 @@ policies:
   enforce-resources-ratio: {}
 
 
-namespace:
-  nodeSelector:
-  - tekton-pipelines
-  - predator
-  nodeAffinity:
+namespace: {}
+  # nodeSelector:
   # - tekton-pipelines
-  - validation
+  # - predator
+  # nodeAffinity:
+  # - tekton-pipelines
+  # - validation
   # - production
-  priorityClass:
-  - production
-  pdb:
-  - production
-  denyExec:
-  - production
-  labels: {}
-    # abc: def
-    # ghi: klm
-    # test: test
+  # priorityClass:
+  # - production
+  # pdb:
+  # - production
+  # denyExec:
+  # - production
+  # labels: {}
 
 node:
   excludeTaints:
