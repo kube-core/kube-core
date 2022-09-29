@@ -9,20 +9,20 @@ releases:
         hostNetwork: false
         replicaCount: 1
         securePort: 10250
-  chaos:
-    config:
-      ingress:
-        annotations:
-          nginx.ingress.kubernetes.io/rewrite-target: /$1
-        labels: {}
-        subdomain: chaos
   chaos-mesh:
     config:
       ingress:
-        annotations:
+        annotations: {}
         # nginx.ingress.kubernetes.io/rewrite-target: /$1
         labels: {}
         subdomain: chaos-mesh
+  prometheus-pushgateway:
+    config:
+      ingress:
+        annotations: {}
+        # nginx.ingress.kubernetes.io/rewrite-target: /$1
+        labels: {}
+        subdomain: prometheus-pushgateway
   chartmuseum:
     config:
       env:
@@ -253,6 +253,8 @@ releases:
       ha: false
       hostNetwork: false
       ingressClass: nginx
+      defaultIngressClass: true
+      controllerClass: "k8s.io/ingress-nginx"
       istioAnnotations: false
       kind: Deployment
       metrics:
@@ -274,6 +276,8 @@ releases:
       externalTrafficPolicy: Local
       hostNetwork: false
       ingressClass: nginx-istio
+      defaultIngressClass: false
+      controllerClass: "k8s.io/ingress-nginx-istio"
       istioAnnotations: true
       kind: Deployment
       metrics:

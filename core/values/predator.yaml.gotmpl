@@ -4,10 +4,6 @@ port: 80
 
 podAnnotations: {}
 imagePullSecrets: {}
-image:
-  repository: zooz/predator
-  tag: 1.6
-  pullPolicy: Always
 
 nameOverride: ""
 fullnameOverride: ""
@@ -94,3 +90,26 @@ streaming:
     autoTopicCreation: false
     adminRetries: 2
 
+# customRunnerDefinition: |-
+#         {
+#           "spec": {
+#             "template": {
+#                 "spec": {
+#                   "nodeSelector": {
+#                     "type": "predator"
+#                   },
+#                   "tolerations": [{
+#                     "key": "type",
+#                     "operator": "Equal",
+#                     "value": "predator",
+#                     "effect": "NoSchedule"
+#                   },{
+#                     "key": "type",
+#                     "operator": "Equal",
+#                     "value": "predator",
+#                     "effect": "NoExecute"
+#                   }]
+#                 }
+#             }
+#           }
+#         }

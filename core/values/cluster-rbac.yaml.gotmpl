@@ -1,0 +1,3 @@
+cluster: {{ toYaml .Values.cluster | nindent 2 }}
+cloud: {{ toYaml .Values.cloud | nindent 2 }}
+users: {{ toYaml .Values.cluster.users | nindent 2 }}

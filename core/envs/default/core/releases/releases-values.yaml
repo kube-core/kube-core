@@ -14,21 +14,6 @@ releases:
   eck-operator:
     values:
       installCRDs: false
-  kube-cleanup-operator:
-    values:
-      args:
-        - --namespace=tekton-pipelines
-        - --delete-successful-after=5m
-        - --delete-failed-after=120m
-        - --delete-pending-pods-after=60m
-        - --delete-evicted-pods-after=60m
-        - --delete-orphaned-pods-after=60m
-        - --legacy-mode=false
-      rbac:
-        create: true
-        global: true
-      serviceAccount:
-        create: true
   kubernetes-dashboard:
     values:
       resources:

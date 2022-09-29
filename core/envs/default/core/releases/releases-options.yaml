@@ -1,0 +1,185 @@
+releases:
+  cert-manager:
+    options:
+      injectReloaderAnnotations: true
+      injectClusterLoggingLabel: true
+  chaos-mesh:
+    options:
+      patchIngresses: true
+      injectIngressClassName: true
+      applyDefaultLabelsOnIngress: true
+      applyDefaultAnnotationsOnIngress: true
+      injectReloaderAnnotations: true
+  eck-operator:
+    options:
+      injectReloaderAnnotations: true
+      injectClusterLoggingLabel: true
+  estafette-gke-node-pool-shifter:
+    options:
+      injectClusterLoggingLabel: true
+      injectReloaderAnnotations: true
+  estafette-gke-preemptible-killer:
+    options:
+      injectClusterLoggingLabel: true
+      injectReloaderAnnotations: true
+  estafette-k8s-node-compactor:
+    options:
+      injectClusterLoggingLabel: true
+      injectReloaderAnnotations: true
+  external-dns:
+    options:
+      injectReloaderAnnotations: true
+      injectClusterLoggingLabel: true
+  external-secrets:
+    options:
+      injectReloaderAnnotations: true
+      injectClusterLoggingLabel: true
+  logging-stack:
+    options:
+      patchIngresses: true
+      injectIngressClassName: true
+      applyDefaultLabelsOnIngress: true
+      applyDefaultAnnotationsOnIngress: true
+  predator:
+    options:
+      patchIngresses: true
+      injectIngressClassName: true
+      applyDefaultLabelsOnIngress: true
+      applyDefaultAnnotationsOnIngress: true
+      injectReloaderAnnotations: true
+      injectClusterLoggingLabel: true
+  flux:
+    options:
+      patchIngresses: true
+      injectIngressClassName: true
+      applyDefaultLabelsOnIngress: true
+      applyDefaultAnnotationsOnIngress: true
+      injectReloaderAnnotations: true
+      injectClusterLoggingLabel: true
+  forecastle:
+    options:
+      patchIngresses: true
+      injectIngressClassName: true
+      applyDefaultLabelsOnIngress: true
+      applyDefaultAnnotationsOnIngress: true
+      injectReloaderAnnotations: true
+      injectClusterLoggingLabel: true
+  ingress-access-operator:
+    options:
+      injectReloaderAnnotations: true
+      injectClusterLoggingLabel: true
+  keda:
+    options:
+      injectReloaderAnnotations: true
+      injectClusterLoggingLabel: true
+  kps:
+    options:
+      patchIngresses: true
+      injectIngressClassName: true
+      applyDefaultLabelsOnIngress: true
+      applyDefaultAnnotationsOnIngress: true
+      # removeIngressClassAnnotation: true
+      injectReloaderAnnotations: true
+  kube-downscaler:
+    options:
+      injectReloaderAnnotations: true
+      injectClusterLoggingLabel: true
+  logging-operator:
+    options:
+      injectReloaderAnnotations: true
+      injectClusterLoggingLabel: true
+  nginx-ingress-controller:
+    options:
+      injectReloaderAnnotations: true
+      injectClusterLoggingLabel: true
+  nginx-istio-ingress-controller:
+    options:
+      injectReloaderAnnotations: true
+      injectClusterLoggingLabel: true
+  patch-operator:
+    options:
+      injectReloaderAnnotations: true
+      injectClusterLoggingLabel: true
+  nginx:
+    options:
+      patchIngresses: true
+      injectIngressClassName: true
+      applyDefaultLabelsOnIngress: true
+      applyDefaultAnnotationsOnIngress: true
+      injectReloaderAnnotations: true
+  polaris:
+    options:
+      patchIngresses: true
+      upgradeIngress: true
+      injectIngressClassName: true
+      applyDefaultLabelsOnIngress: true
+      applyDefaultAnnotationsOnIngress: true
+      injectReloaderAnnotations: true
+  reloader:
+    options:
+      injectReloaderAnnotations: true
+      injectClusterLoggingLabel: true
+  replicator:
+    options:
+      injectReloaderAnnotations: true
+      injectClusterLoggingLabel: true
+  sealed-secrets:
+    options:
+      injectReloaderAnnotations: true
+      injectClusterLoggingLabel: true
+  secret-generator:
+    options:
+      injectReloaderAnnotations: true
+      injectClusterLoggingLabel: true
+  sloth:
+    options:
+      injectReloaderAnnotations: true
+      injectClusterLoggingLabel: true
+  istio-kiali:
+    options:
+      patchIngresses: true
+      upgradeIngress: true
+      injectIngressClassName: true
+      applyDefaultLabelsOnIngress: true
+      applyDefaultAnnotationsOnIngress: true
+      injectReloaderAnnotations: true
+  istio-prometheus:
+    options:
+      patchIngresses: true
+      upgradeIngress: true
+      injectIngressClassName: true
+      applyDefaultLabelsOnIngress: true
+      applyDefaultAnnotationsOnIngress: true
+      injectReloaderAnnotations: true
+  istio-grafana:
+    options:
+      patchIngresses: true
+      upgradeIngress: true
+      injectIngressClassName: true
+      applyDefaultLabelsOnIngress: true
+      applyDefaultAnnotationsOnIngress: true
+      injectReloaderAnnotations: true
+  tekton:
+    options:
+      patchIngresses: true
+      upgradeIngress: true
+      injectIngressClassName: true
+      applyDefaultLabelsOnIngress: true
+      applyDefaultAnnotationsOnIngress: true
+      injectReloaderAnnotations: true
+      injectClusterLoggingLabel: true
+  velero:
+    options:
+      injectReloaderAnnotations: true
+      injectClusterLoggingLabel: true
+  kyverno:
+    options:
+      injectReloaderAnnotations: true
+      injectClusterLoggingLabel: true
+  prometheus-pushgateway:
+    options:
+      patchIngresses: true
+      injectIngressClassName: true
+      applyDefaultLabelsOnIngress: true
+      applyDefaultAnnotationsOnIngress: true
+      injectReloaderAnnotations: true
