@@ -2,7 +2,14 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.4.1](https://github.com/neo9/kube-core/compare/v0.4.0...v0.4.1)
+
+- releases/tekton: Updated Ingress resources to v1 [`77484a4`](https://github.com/neo9/kube-core/commit/77484a4ab5731f378addd436de5ac7eb9ce2d7e0)
+- releases/cluster-policies: Fixed default values [`fe7045d`](https://github.com/neo9/kube-core/commit/fe7045d53c58ecb9a821ef64fef00a08446cd3a0)
+
 #### [v0.4.0](https://github.com/neo9/kube-core/compare/v0.3.27...v0.4.0)
+
+> 29 September 2022
 
 - releases: Rebuilt dist folder [`cee24b9`](https://github.com/neo9/kube-core/commit/cee24b9be316989bd3fc4cfb98e141d349dfe8b4)
 - releases/policies: Added kube-core base policies [`8708970`](https://github.com/neo9/kube-core/commit/8708970de8f518c3caacc65c373a6cbfa1001dca)
@@ -12,6 +19,7 @@ All notable changes to this project will be documented in this file. Dates are d
 - releases: Added cluster-rbac [`1455f13`](https://github.com/neo9/kube-core/commit/1455f137f4f9bf82c58ec98e738e9269011dff88)
 - cli/releases: Added script to generate a local release [`00852e5`](https://github.com/neo9/kube-core/commit/00852e58bc02e9d804c86275299baf28f8180be3)
 - releases/logging-stack: Reworked logging-stack Ingress [`23a065b`](https://github.com/neo9/kube-core/commit/23a065b6b97148f19ffeb44086f7a1e166fb0728)
+- release: v0.4.0 [`9e3ccbb`](https://github.com/neo9/kube-core/commit/9e3ccbb30169b0990cecfc14b6ebc680588ff225)
 - releases/kyverno: Switched to HA and increased resource limits for kyverno [`127fe7d`](https://github.com/neo9/kube-core/commit/127fe7d51cd4e82b88b0d46e7a8728f75a709a82)
 - releases/logging-stack: Updated app and events dashboard [`50c0f8c`](https://github.com/neo9/kube-core/commit/50c0f8c64eebc0f0b1f50d1f585a9bae8df09f35)
 
