@@ -2,9 +2,16 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.4.3](https://github.com/neo9/kube-core/compare/v0.4.2...v0.4.3)
+
+- releases/cluster-policies: Disabled all mutations by default [`45700df`](https://github.com/neo9/kube-core/commit/45700dfe2015354ba3e605eec2d3fb0bc5bdf3fe)
+
 #### [v0.4.2](https://github.com/neo9/kube-core/compare/v0.4.1...v0.4.2)
 
+> 30 September 2022
+
 - releases/cluster-policies: Reworked default configuration [`81c75aa`](https://github.com/neo9/kube-core/commit/81c75aac6a69fb220b4db7cbb8c6c4d8df0481d7)
+- release: v0.4.2 [`5d13be1`](https://github.com/neo9/kube-core/commit/5d13be10442d6e10f5d0cf2c43011a1f71d2e378)
 - core/releases: Removed ingress upgrade options for tekton [`7f04f1e`](https://github.com/neo9/kube-core/commit/7f04f1e18426785c882930962f5782ea727bc8d5)
 
 #### [v0.4.1](https://github.com/neo9/kube-core/compare/v0.4.0...v0.4.1)
