@@ -1,0 +1,30 @@
+{{ $policyName := "who-created-this" }}
+{{ if (index .Values.policies $policyName "enabled") }}
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: who-created-this
+spec:
+  validationFailureAction: {{ coalesce (index .Values.policies $policyName "validationFailureAction") .Values.policies.all.validationFailureAction }}
+  background: false
+  rules:
+  - name: who-created-this
+    match:
+      any:
+      - resources:
+          kinds:
+          - Pod
+    preconditions:
+      all:
+      - key: "{{`{{ request.operation }}`}}"
+        operator: In
+        value: ["CREATE"]
+    mutate:
+      patchStrategicMerge:
+        metadata:
+          annotations:
+            admission.kube-core.io/created-by: "{{`{{request.userInfo.username}}`}}"
+          # TODO: Implement proper replace regex and activate labels
+          # labels:
+          #   admission.kube-core.io/created-by: "{{`{{ replace_all('{{request.userInfo.username}}', '@', '-') }}`}}"
+{{ end }}

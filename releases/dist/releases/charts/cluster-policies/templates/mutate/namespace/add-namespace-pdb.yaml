@@ -1,0 +1,61 @@
+{{ $policyName := "add-namespace-pdb" }}
+{{ if (index .Values.policies $policyName "enabled") }}
+{{ if .Values.namespace.pdb }}
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: add-namespace-pdb
+  annotations:
+    policies.kyverno.io/title: Add Namespace PDB
+    policies.kyverno.io/category: Sample
+    kyverno.io/kyverno-version: 1.6.2
+    policies.kyverno.io/minversion: 1.6.0
+    policies.kyverno.io/subject: Deployment
+    policies.kyverno.io/description: >-
+      A PodDisruptionBudget limits the number of Pods of a replicated application that
+      are down simultaneously from voluntary disruptions. For example, a quorum-based
+      application would like to ensure that the number of replicas running is never brought
+      below the number needed for a quorum. As an application owner, you can create a PodDisruptionBudget (PDB)
+      for each application.
+      This policy will generate a PDB for all Deployments and StatefulSets in a list of Namespaces
+    pod-policies.kyverno.io/autogen-controllers: none
+spec:
+  generateExistingOnPolicyUpdate: true
+  mutateExistingOnPolicyUpdate: true
+  validationFailureAction: {{ coalesce (index .Values.policies $policyName "validationFailureAction") .Values.policies.all.validationFailureAction }}
+  background: true
+  rules:
+    - name: add-namespace-pdb
+      match:
+        resources:
+          kinds:
+            - Deployment
+            - StatefulSet
+      preconditions:
+        # This precondition selects Pods with the label
+        any:
+        {{ range .Values.namespace.pdb }}
+        - key: "{{`{{request.object.metadata.namespace}}`}}"
+          operator: Equals
+          value: "{{ . }}"
+        {{ end }}
+      generate:
+        synchronize: true
+        apiVersion: policy/v1
+        kind: PodDisruptionBudget
+        name: "{{`{{request.object.metadata.name}}`}}-namespace-pdb"
+        namespace: "{{`{{request.object.metadata.namespace}}`}}"
+        data:
+          metadata:
+            ownerReferences:
+            - apiVersion: "{{`{{request.object.apiVersion}}`}}"
+              kind: "{{`{{request.object.kind}}`}}"
+              name: "{{`{{request.object.metadata.name}}`}}"
+              uid: "{{`{{request.object.metadata.uid}}`}}"
+          spec:
+            minAvailable: 1
+            selector:
+              matchLabels:
+                "{{`{{request.object.metadata.labels}}`}}"
+{{ end }}
+{{ end }}
