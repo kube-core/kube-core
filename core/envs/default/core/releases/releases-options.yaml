@@ -162,7 +162,6 @@ releases:
   tekton:
     options:
       patchIngresses: true
-      upgradeIngress: true
       injectIngressClassName: true
       applyDefaultLabelsOnIngress: true
       applyDefaultAnnotationsOnIngress: true
