@@ -1,0 +1,54 @@
+{{ $policyName := "add-pdb-min-available" }}
+{{ if (index .Values.policies $policyName "enabled") }}
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: add-pdb-min-available
+  annotations:
+    policies.kyverno.io/title: Add Pod Disruption Budget
+    policies.kyverno.io/category: Sample
+    kyverno.io/kyverno-version: 1.6.2
+    policies.kyverno.io/minversion: 1.6.0
+    policies.kyverno.io/subject: Deployment
+    policies.kyverno.io/description: >-
+      This policy will create a PDB resource based on the value of .metadata.labels.\"scheduling.kube-core.io/minAvailable\"
+    pod-policies.kyverno.io/autogen-controllers: none
+spec:
+  generateExistingOnPolicyUpdate: true
+  mutateExistingOnPolicyUpdate: true
+  validationFailureAction: {{ coalesce (index .Values.policies $policyName "validationFailureAction") .Values.policies.all.validationFailureAction }}
+  background: true
+  rules:
+    - name: add-pdb-min-available
+      match:
+        resources:
+          kinds:
+            - Deployment
+            - StatefulSet
+      preconditions:
+        # This precondition selects Pods with the label
+        all:
+        - key: "{{`{{request.object.metadata.labels.\"scheduling.kube-core.io/minAvailable\"}}`}}"
+          operator: NotEquals
+          value: ""
+      generate:
+        synchronize: true
+        apiVersion: policy/v1
+        kind: PodDisruptionBudget
+        name: "{{`{{request.object.metadata.name}}`}}-min-pdb"
+        namespace: "{{`{{request.object.metadata.namespace}}`}}"
+        data:
+          metadata:
+            labels:
+              scheduling.kube-core.io/minAvailable: "{{`{{request.object.metadata.labels.\"scheduling.kube-core.io/minAvailable\"}}`}}"
+            ownerReferences:
+            - apiVersion: "{{`{{request.object.apiVersion}}`}}"
+              kind: "{{`{{request.object.kind}}`}}"
+              name: "{{`{{request.object.metadata.name}}`}}"
+              uid: "{{`{{request.object.metadata.uid}}`}}"
+          spec:
+            minAvailable: "{{`{{request.object.metadata.labels.\"scheduling.kube-core.io/minAvailable\".to_number(@)}}`}}"
+            selector:
+              matchLabels:
+                "{{`{{request.object.metadata.labels}}`}}"
+{{ end }}

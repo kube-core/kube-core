@@ -1,4 +1,12 @@
 releases:
+  kyverno:
+    config:
+      extraResourceFilters: []
+      # - '[*,tekton-pipelines,*]'
+      # - '[*,logging,*]'
+      # - '[*,monitoring,*]'
+      # - '[*,chaos-mesh,*]'
+      # - '[*,weave,*]'
   cert-manager:
     config:
       cainjector:

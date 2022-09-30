@@ -24,13 +24,16 @@ initResources:
 # -- Extra arguments to give to the binary.
 extraArgs:
   - --autogenInternals=false
-  - --backgroundScan=1m
+  - --backgroundScan=1h
 config:
   # -- Resource types to be skipped by the Kyverno policy engine.
   # Make sure to surround each entry in quotes so that it doesn't get parsed as a nested YAML list.
   # These are joined together without spaces, run through `tpl`, and the result is set in the config map.
   # @default -- See [values.yaml](values.yaml)
   resourceFilters:
+  {{ range (index .Values.releases .Release.Name "config" "extraResourceFilters") }}
+  - '{{ . }}'
+  {{ end }}
   - '[Event,*,*]'
   - '[*,kube-system,*]'
   - '[*,kube-public,*]'

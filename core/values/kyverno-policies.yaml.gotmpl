@@ -1,5 +1,3 @@
-cluster: {{ toYaml .Values.cluster | nindent 2 }}
-
 # podSecurityStandard: restricted
 podSecurityStandard: baseline
 
@@ -14,14 +12,14 @@ failurePolicy: Fail
 validationFailureAction: audit
 
 validationFailureActionByPolicy: {}
-validationFailureActionOverrides:
-  all:
-  - action: audit
-    namespaces:
-      - chaos-mesh
-      - logging
-      - monitoring
-      - weave
+validationFailureActionOverrides: {}
+  # all:
+  # - action: audit
+  #   namespaces:
+  #     - chaos-mesh
+  #     - logging
+  #     - monitoring
+  #     - weave
 
 
 policyExclude: {}

@@ -1,0 +1,118 @@
+{{ $policyName := "insert-self-hard-pod-antiaffinity" }}
+{{ if (index .Values.policies $policyName "enabled") }}
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: insert-self-hard-pod-antiaffinity
+  annotations:
+    policies.kyverno.io/title: Add Self Hard Pod Anti-Affinity
+    policies.kyverno.io/category: Sample
+    policies.kyverno.io/subject: Deployment, Pod
+    policies.kyverno.io/description: >-
+      Applications may involve multiple replicas of the same Pod for availability as well as scale
+      purposes, yet Kubernetes does not by default provide a solution for availability. This policy
+      sets a Pod anti-affinity configuration on Deployments if they have set the label node.kube-core.io/anti-affinity=hard
+    pod-policies.kyverno.io/autogen-controllers: none
+spec:
+  generateExistingOnPolicyUpdate: true
+  mutateExistingOnPolicyUpdate: true
+  validationFailureAction: {{ coalesce (index .Values.policies $policyName "validationFailureAction") .Values.policies.all.validationFailureAction }}
+  background: true
+  rules:
+    - name: remove-self-soft-pod-antiaffinity
+      match:
+        resources:
+          kinds:
+            - Deployment
+            - StatefulSet
+            - DaemonSet
+            - Job
+      preconditions:
+        # This precondition selects Pods with the label
+        all:
+        - key: "{{`{{request.object.metadata.labels.\"node.kube-core.io/anti-affinity\"}}`}}"
+          operator: Equals
+          value: "hard"
+      # Mutates the Deployment resource to add fields.
+      mutate:
+        patchesJson6902: |-
+          - path: "/spec/template/spec/affinity/podAntiAffinity/preferredDuringSchedulingIgnoredDuringExecution"
+            op: remove
+    - name: insert-self-hard-pod-antiaffinity
+      match:
+        resources:
+          kinds:
+            - Deployment
+            - StatefulSet
+            - DaemonSet
+            - Job
+      preconditions:
+        # This precondition selects Pods with the label
+        all:
+        - key: "{{`{{request.object.metadata.labels.\"node.kube-core.io/anti-affinity\"}}`}}"
+          operator: Equals
+          value: "hard"
+      # Mutates the Deployment resource to add fields.
+      mutate:
+        patchStrategicMerge:
+          spec:
+            template:
+              spec:
+                # Add the `affinity`if not already specified.
+                affinity:
+                  podAntiAffinity:
+                    requiredDuringSchedulingIgnoredDuringExecution:
+                    - topologyKey: "kubernetes.io/hostname"
+                      labelSelector:
+                        matchLabels:
+                          app.kubernetes.io/instance: "{{`{{ request.object.spec.template.metadata.labels.\"app.kubernetes.io/instance\"}}`}}"
+                          app.kubernetes.io/name: "{{`{{ request.object.spec.template.metadata.labels.\"app.kubernetes.io/name\"}}`}}"
+                      namespaces:
+                      - "{{`{{ request.object.metadata.namespace }}`}}"
+    - name: remove-self-soft-pod-antiaffinity-cronjob
+      match:
+        resources:
+          kinds:
+            - CronJob
+      preconditions:
+        # This precondition selects Pods with the label
+        all:
+        - key: "{{`{{request.object.metadata.labels.\"node.kube-core.io/anti-affinity\"}}`}}"
+          operator: Equals
+          value: "hard"
+      # Mutates the Deployment resource to add fields.
+      mutate:
+        patchesJson6902: |-
+          - path: "/spec/jobTemplate/spec/template/spec/affinity/podAntiAffinity/preferredDuringSchedulingIgnoredDuringExecution"
+            op: remove
+    - name: insert-self-hard-pod-antiaffinity-cronjob
+      match:
+        resources:
+          kinds:
+            - CronJob
+      preconditions:
+        # This precondition selects Pods with the label
+        all:
+        - key: "{{`{{request.object.metadata.labels.\"node.kube-core.io/anti-affinity\"}}`}}"
+          operator: Equals
+          value: "hard"
+      # Mutates the Deployment resource to add fields.
+      mutate:
+        patchStrategicMerge:
+          spec:
+            jobTemplate:
+              spec:
+                template:
+                  spec:
+                    # Add the `affinity`if not already specified.
+                    affinity:
+                      podAntiAffinity:
+                        requiredDuringSchedulingIgnoredDuringExecution:
+                        - topologyKey: "kubernetes.io/hostname"
+                          labelSelector:
+                            matchLabels:
+                              app.kubernetes.io/instance: "{{`{{ request.object.spec.template.metadata.labels.\"app.kubernetes.io/instance\"}}`}}"
+                              app.kubernetes.io/name: "{{`{{ request.object.spec.template.metadata.labels.\"app.kubernetes.io/name\"}}`}}"
+                          namespaces:
+                          - "{{`{{ request.object.metadata.namespace }}`}}"
+{{ end }}

@@ -1,40 +1,78 @@
 policies:
   all:
     validationFailureAction: audit
-  who-created-this: {}
-  add-default-resources: {}
-  always-pull-images: {}
-  mutate-termination-grace-period-seconds: {}
-  prevent-naked-pods: {}
-  require-pod-probes: {}
-  validate-probes: {}
-  deny-empty-ingress-host: {}
-  ingress-host-match-tls: {}
-  restrict-ingress-classes: {}
-  restrict-ingress-defaultbackend: {}
-  restrict-ingress-wildcard: {}
-  add-namespace-node-affinity: {}
-  add-namespace-node-selector: {}
-  add-namespace-pdb: {}
-  add-namespace-priority-class: {}
-  label-namespaces: {}
-  add-node-taint: {}
-  protect-node-taints: {}
-  restrict-node-selector: {}
-  add-node-affinity: {}
-  add-node-selector: {}
-  add-pdb-max-unavailable: {}
-  add-pdb-min-available: {}
-  add-safe-to-evict: {}
-  insert-self-hard-pod-antiaffinity: {}
-  insert-self-soft-pod-antiaffinity: {}
-  remove-node-selector: {}
-  deny-exec: {}
-  deny-external-ips: {}
-  deny-latest-tag: {}
-  deny-loadbalancer: {}
-  deny-nodeport: {}
-  enforce-resources-ratio: {}
+  # Mutate
+  who-created-this:
+    enabled: true
+  add-default-resources:
+    enabled: true
+  always-pull-images:
+    enabled: false
+  mutate-termination-grace-period-seconds:
+    enabled: true
+  add-namespace-node-affinity:
+    enabled: true
+  add-namespace-node-selector:
+    enabled: true
+  add-namespace-pdb:
+    enabled: true
+  add-namespace-priority-class:
+    enabled: true
+  label-namespaces:
+    enabled: true
+  add-node-taint:
+    enabled: true
+  add-node-affinity:
+    enabled: true
+  add-node-selector:
+    enabled: true
+  add-pdb-max-unavailable:
+    enabled: true
+  add-pdb-min-available:
+    enabled: true
+  add-safe-to-evict:
+    enabled: true
+  insert-self-hard-pod-antiaffinity:
+    enabled: true
+  insert-self-soft-pod-antiaffinity:
+    enabled: true
+  remove-node-selector:
+    enabled: true
+  # Validate
+  deny-empty-ingress-host:
+    enabled: true
+  ingress-host-match-tls:
+    enabled: true
+  restrict-ingress-classes:
+    enabled: true
+  restrict-ingress-defaultbackend:
+    enabled: true
+  restrict-ingress-wildcard:
+    enabled: true
+  require-pod-probes:
+    enabled: true
+  validate-probes:
+    enabled: true
+  prevent-naked-pods:
+    enabled: true
+  deny-default-namespace:
+    enabled: true
+  protect-node-taints:
+    enabled: true
+  restrict-node-selector:
+    enabled: true
+  deny-exec:
+    enabled: true
+  deny-external-ips:
+    enabled: true
+  deny-latest-tag:
+    enabled: true
+  deny-loadbalancer:
+    enabled: true
+  deny-nodeport:
+    enabled: true
+  enforce-resources-ratio:
+    enabled: true
 
 
 namespace: {}
