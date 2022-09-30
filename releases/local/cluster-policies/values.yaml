@@ -5,39 +5,39 @@ policies:
   who-created-this:
     enabled: true
   add-default-resources:
-    enabled: true
+    enabled: false
   always-pull-images:
     enabled: false
   mutate-termination-grace-period-seconds:
-    enabled: true
+    enabled: false
   add-namespace-node-affinity:
-    enabled: true
+    enabled: false
   add-namespace-node-selector:
-    enabled: true
+    enabled: false
   add-namespace-pdb:
-    enabled: true
+    enabled: false
   add-namespace-priority-class:
-    enabled: true
+    enabled: false
   label-namespaces:
-    enabled: true
+    enabled: false
   add-node-taint:
-    enabled: true
+    enabled: false
   add-node-affinity:
-    enabled: true
+    enabled: false
   add-node-selector:
-    enabled: true
+    enabled: false
   add-pdb-max-unavailable:
-    enabled: true
+    enabled: false
   add-pdb-min-available:
-    enabled: true
+    enabled: false
   add-safe-to-evict:
-    enabled: true
+    enabled: false
   insert-self-hard-pod-antiaffinity:
-    enabled: true
+    enabled: false
   insert-self-soft-pod-antiaffinity:
-    enabled: true
+    enabled: false
   remove-node-selector:
-    enabled: true
+    enabled: false
   # Validate
   deny-empty-ingress-host:
     enabled: true
