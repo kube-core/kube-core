@@ -4,6 +4,12 @@ directories:
   - path: releases/base
     contents:
       # Base Releases
+      - path: mongodb-community-operator
+        helmChart:
+          name: community-operator
+          version: 0.7.6
+          repository:
+            url: https://mongodb.github.io/helm-charts
       - path: descheduler
         helmChart:
           name: descheduler
@@ -300,7 +306,7 @@ directories:
       - path: rabbitmq-cluster-operator
         helmChart:
           name: rabbitmq-cluster-operator
-          version: 2.6.0
+          version: 3.1.0
           repository:
             url: https://charts.bitnami.com/bitnami
 
