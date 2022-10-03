@@ -14,7 +14,7 @@ releases:
       logging-fluentd:
         autoscaling:
           maxReplicaCount: 6
-          minReplicaCount: 1
+          minReplicaCount: 3
           scaleTargetRef:
             apiVersion: apps/v1
             kind: StatefulSet
