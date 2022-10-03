@@ -19,6 +19,7 @@ metadata:
       This policy prevents such "naked" Pods from being created unless they originate
       from a higher-level workload controller of some sort.
 spec:
+  failurePolicy: {{ coalesce (index .Values.policies $policyName "failurePolicy") .Values.policies.all.failurePolicy }}
   validationFailureAction: {{ coalesce (index .Values.policies $policyName "validationFailureAction") .Values.policies.all.validationFailureAction }}
   background: false
   rules:

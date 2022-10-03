@@ -15,6 +15,7 @@ metadata:
       prevents users from targeting specific Nodes for scheduling of Pods by
       prohibiting the use of the `nodeName` fields.
 spec:
+  failurePolicy: {{ coalesce (index .Values.policies $policyName "failurePolicy") .Values.policies.all.failurePolicy }}
   validationFailureAction: {{ coalesce (index .Values.policies $policyName "validationFailureAction") .Values.policies.all.validationFailureAction }}
   # background: true
   rules:
@@ -44,4 +45,30 @@ spec:
       pattern:
         spec:
           X(nodeName): "null"
+  - name: restrict-tolerations
+    match:
+      resources:
+        kinds:
+        - Pod
+    exclude:
+      clusterRoles:
+      - cluster-admin
+    validate:
+      message: Setting the nodeName field is prohibited.
+      pattern:
+        spec:
+          X(tolerations): "null"
+  - name: restrict-affinity
+    match:
+      resources:
+        kinds:
+        - Pod
+    exclude:
+      clusterRoles:
+      - cluster-admin
+    validate:
+      message: Setting the nodeName field is prohibited.
+      pattern:
+        spec:
+          X(affinity): "null"
 {{ end }}

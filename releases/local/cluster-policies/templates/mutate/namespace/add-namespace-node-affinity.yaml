@@ -5,7 +5,7 @@ kind: ClusterPolicy
 metadata:
   name: add-namespace-node-affinity
   annotations:
-    policies.kyverno.io/title: Add Namespace Node Selector
+    policies.kyverno.io/title: Add Namespace Node affinity
     policies.kyverno.io/category: Namespace
     policies.kyverno.io/subject: Pod
     policies.kyverno.io/description: >-
@@ -14,10 +14,32 @@ metadata:
 spec:
   generateExistingOnPolicyUpdate: true
   mutateExistingOnPolicyUpdate: true
+  failurePolicy: {{ coalesce (index .Values.policies $policyName "failurePolicy") .Values.policies.all.failurePolicy }}
   validationFailureAction: {{ coalesce (index .Values.policies $policyName "validationFailureAction") .Values.policies.all.validationFailureAction }}
   background: true
   rules:
-    - name: add-namespace-node-affinity
+    - name: add-namespace-node-affinity-pod
+      context:
+      - name: namespaceAffinity
+        apiCall:
+          urlPath: "/api/v1/namespaces/{{`{{ request.namespace }}`}}"
+          jmesPath: 'metadata.labels."node.kube-core.io/affinity"'
+      match:
+        resources:
+          kinds:
+            - Pod
+      preconditions:
+        # This precondition selects Pods with the label
+        all:
+        - key: "{{`{{ namespaceAffinity }}`}}"
+          operator: NotEquals
+          value: ""
+      mutate:
+        patchStrategicMerge:
+          metadata:
+            labels:
+              node.kube-core.io/affinity: "{{`{{ namespaceAffinity }}`}}"
+    - name: add-namespace-node-affinity-deployment
       context:
       - name: namespaceAffinity
         apiCall:
@@ -34,13 +56,13 @@ spec:
         # This precondition selects Pods with the label
         all:
         - key: "{{`{{ namespaceAffinity }}`}}"
-          operator: Equals
-          value: "self"
+          operator: NotEquals
+          value: ""
       mutate:
         patchStrategicMerge:
           metadata:
             labels:
-              node.kube-core.io/affinity: "{{`{{request.object.metadata.namespace}}`}}"
+              node.kube-core.io/affinity: "{{`{{ namespaceAffinity }}`}}"
     - name: add-namespace-node-affinity-cronjob
       match:
         resources:
@@ -55,19 +77,33 @@ spec:
         # This precondition selects Pods with the label
         all:
         - key: "{{`{{ namespaceAffinity }}`}}"
-          operator: Equals
-          value: "self"
+          operator: NotEquals
+          value: ""
       mutate:
         patchStrategicMerge:
-          spec:
-            jobTemplate:
-              spec:
-                template:
-                  metadata:
-                    labels:
-                      node.kube-core.io/affinity: "{{`{{request.object.metadata.namespace}}`}}"
-  {{ if .Values.namespace.nodeAffinity }}
-    - name: add-namespace-node-affinity-list
+          metadata:
+            labels:
+              node.kube-core.io/affinity: "{{`{{ namespaceAffinity }}`}}"
+{{ if .Values.namespace.nodeAffinity }}
+    - name: add-namespace-node-affinity-pod-list
+      match:
+        resources:
+          kinds:
+            - Pod
+      preconditions:
+        # This precondition selects Pods with the label
+        any:
+        {{ range .Values.namespace.nodeAffinity }}
+        - key: "{{`{{request.object.metadata.namespace}}`}}"
+          operator: Equals
+          value: "{{ . }}"
+        {{ end }}
+      mutate:
+        patchStrategicMerge:
+          metadata:
+            labels:
+              node.kube-core.io/affinity: "{{`{{request.object.metadata.namespace}}`}}"
+    - name: add-namespace-node-affinity-deployment-list
       match:
         resources:
           kinds:
@@ -103,12 +139,8 @@ spec:
         {{ end }}
       mutate:
         patchStrategicMerge:
-          spec:
-            jobTemplate:
-              spec:
-                template:
-                  metadata:
-                    labels:
-                      node.kube-core.io/affinity: "{{`{{request.object.metadata.namespace}}`}}"
-    {{ end }}
+          metadata:
+            labels:
+              node.kube-core.io/affinity: "{{`{{request.object.metadata.namespace}}`}}"
+{{ end }}
 {{ end }}

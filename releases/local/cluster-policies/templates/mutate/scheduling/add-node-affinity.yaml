@@ -14,9 +14,43 @@ metadata:
 spec:
   generateExistingOnPolicyUpdate: true
   mutateExistingOnPolicyUpdate: true
+  failurePolicy: {{ coalesce (index .Values.policies $policyName "failurePolicy") .Values.policies.all.failurePolicy }}
   validationFailureAction: {{ coalesce (index .Values.policies $policyName "validationFailureAction") .Values.policies.all.validationFailureAction }}
   background: true
   rules:
+    - name: add-pod-node-affinity
+      match:
+        resources:
+          kinds:
+            - Pod
+      preconditions:
+        # This precondition selects Pods with the label
+        all:
+        - key: "{{`{{request.object.metadata.labels.\"node.kube-core.io/affinity\"}}`}}"
+          operator: NotEquals
+          value: ""
+      mutate:
+        patchStrategicMerge:
+          spec:
+            affinity:
+              nodeAffinity:
+                preferredDuringSchedulingIgnoredDuringExecution:
+                  - preference:
+                      matchExpressions:
+                        - key: type
+                          operator: In
+                          values:
+                            - "{{`{{request.object.metadata.labels.\"node.kube-core.io/affinity\"}}`}}"
+                    weight: 100
+            tolerations:
+            - key: "type"
+              operator: "Equal"
+              value: "{{`{{request.object.metadata.labels.\"node.kube-core.io/affinity\"}}`}}"
+              effect: "NoSchedule"
+            - key: "type"
+              operator: "Equal"
+              value: "{{`{{request.object.metadata.labels.\"node.kube-core.io/affinity\"}}`}}"
+              effect: "NoExecute"
     - name: add-deployment-node-affinity
       match:
         resources:
