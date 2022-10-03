@@ -2,9 +2,20 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.4.4](https://github.com/neo9/kube-core/compare/v0.4.3...v0.4.4)
+
+- releases: Rebuilt all releases [`521714f`](https://github.com/neo9/kube-core/commit/521714fc9fafa546fa1fd7b93bc21bc75a14b27f)
+- releases/mongodb-operator: Removed local chart and migrated to official one [`2870bdd`](https://github.com/neo9/kube-core/commit/2870bddfbc1ba598bd390e3ddc26dcd878f5f3c8)
+- releases/cluster-policies: Disabeled fail safe mode by default & Updated some policies [`60e4457`](https://github.com/neo9/kube-core/commit/60e4457be5cf572cdea15e0bd2ec257692012dc8)
+- releases/rabbitmq-operator: Removed hooks and improved resource naming [`1815197`](https://github.com/neo9/kube-core/commit/1815197d0c9f8fb325a957d68d9b4f5d398d1178)
+- releases/logging-stack: Changed fluentd minReplicaCount to 3 [`78fe75c`](https://github.com/neo9/kube-core/commit/78fe75ceaf9da688c92586f8f68bd95a7b974d44)
+
 #### [v0.4.3](https://github.com/neo9/kube-core/compare/v0.4.2...v0.4.3)
 
+> 30 September 2022
+
 - releases/cluster-policies: Disabled all mutations by default [`45700df`](https://github.com/neo9/kube-core/commit/45700dfe2015354ba3e605eec2d3fb0bc5bdf3fe)
+- release: v0.4.3 [`4a853c1`](https://github.com/neo9/kube-core/commit/4a853c1a221497f2a1ff60f84ea03d2bdf5bb3cb)
 
 #### [v0.4.2](https://github.com/neo9/kube-core/compare/v0.4.1...v0.4.2)
 
