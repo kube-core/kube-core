@@ -1,13 +1,15 @@
 useCertManager: true
 
 clusterOperator:
+  fullnameOverride: rabbitmq-cluster-operator
   metrics:
     enabled: {{ index .Values.releases "kps" "enabled" }}
     serviceMonitor:
       enabled: true
       namespace: {{ index .Values.releases "kps" "release" "namespace" }}
 
-msgTopologyOperator:  
+msgTopologyOperator:
+  fullnameOverride: rabbitmq-topology-operator
   metrics:
     enabled: {{ index .Values.releases "kps" "enabled" }}
     serviceMonitor:
