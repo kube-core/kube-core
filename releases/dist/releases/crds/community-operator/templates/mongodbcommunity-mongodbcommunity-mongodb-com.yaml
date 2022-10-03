@@ -1,5 +1,4 @@
-
----
+# Source: community-operator/charts/community-operator-crds/templates/mongodbcommunity.mongodb.com_mongodbcommunity.yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -440,3 +439,4 @@ status:
     plural: ""
   conditions: []
   storedVersions: []
+
