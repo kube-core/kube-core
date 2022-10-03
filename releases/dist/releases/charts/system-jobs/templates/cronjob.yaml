@@ -65,12 +65,10 @@ spec:
                 - -c
                 - |
                   # Cleans up workloads
-                  TO_DELETE="$(kubectl get pods -A --no-headers {{ if .Values.cleaner.excludeTekton }}| grep -vE "tekton"{{ end }}{{ if .Values.cleaner.excludeCatalogue }}| grep -vE "catalogue"{{ end }}| grep -E "{{ .Values.cleaner.includes }}" | awk '{ns=$1;pod=$2;cmd=""pod" -n "ns; print cmd}')"
-                  while read i; do test -n "$TO_DELETE" && kubectl delete pod $i || true; done <<< "$TO_DELETE"
+                  kubectl get pods -A | grep -E "{{ .Values.cleaner.includes }}" | awk '{print "kubectl -n "$1" delete pod "$2}' | bash
 
                   # Cleans up stale Terminating pods
-                  TO_DELETE="$(kubectl get pods -A --no-headers {{ if .Values.cleaner.excludeTekton }}| grep -vE "tekton"{{ end }}{{ if .Values.cleaner.excludeCatalogue }}| grep -vE "catalogue"{{ end }}|| grep -E "Terminating" | awk '{ns=$1;pod=$2;cmd=""pod" -n "ns; print cmd}')"
-                  while read i; do test -n "$TO_DELETE" && kubectl delete pod $i --force --grace-period=0 || true; done <<< "$TO_DELETE"
+                  kubectl get pods -A | grep -E "{{ .Values.cleaner.includes }}" | awk '{print "kubectl -n "$1" delete pod "$2" --force --grace-period=0"}' | bash
             {{ end }}
             {{ if .Values.tainter.enabled }}
             - name: tainter

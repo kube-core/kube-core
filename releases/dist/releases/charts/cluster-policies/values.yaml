@@ -1,6 +1,7 @@
 policies:
   all:
     validationFailureAction: audit
+    failurePolicy: Ignore
   # Mutate
   who-created-this:
     enabled: true

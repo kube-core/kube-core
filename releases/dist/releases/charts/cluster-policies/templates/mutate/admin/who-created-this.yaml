@@ -5,6 +5,7 @@ kind: ClusterPolicy
 metadata:
   name: who-created-this
 spec:
+  failurePolicy: {{ coalesce (index .Values.policies $policyName "failurePolicy") .Values.policies.all.failurePolicy }}
   validationFailureAction: {{ coalesce (index .Values.policies $policyName "validationFailureAction") .Values.policies.all.validationFailureAction }}
   background: false
   rules:

@@ -245,7 +245,7 @@ releases:
   mongodb-operator:
     namespace: mongodb-operator
     release:
-      chart: ../releases/dist/releases/charts/mongodb-kubernetes-operator
+      chart: ../releases/dist/releases/charts/mongodb-community-operator
       name: mongodb-operator
   nexus:
     namespace: nexus
