@@ -409,9 +409,6 @@ directories:
       - path: mysql-backup
         directory:
           path: ../../../releases/local/mysql-backup
-      - path: mongodb-kubernetes-operator
-        directory:
-          path: ../../../releases/local/mongodb-kubernetes-operator
       - path: keycloak-operator
         directory:
           path: ../../../releases/local/keycloak-operator

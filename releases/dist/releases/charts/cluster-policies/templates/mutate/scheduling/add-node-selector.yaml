@@ -14,9 +14,36 @@ metadata:
 spec:
   generateExistingOnPolicyUpdate: true
   mutateExistingOnPolicyUpdate: true
+  failurePolicy: {{ coalesce (index .Values.policies $policyName "failurePolicy") .Values.policies.all.failurePolicy }}
   validationFailureAction: {{ coalesce (index .Values.policies $policyName "validationFailureAction") .Values.policies.all.validationFailureAction }}
   background: true
   rules:
+    - name: add-pod-node-selector
+      match:
+        resources:
+          kinds:
+            - Pod
+      preconditions:
+        # This precondition selects Pods with the label
+        all:
+        - key: "{{`{{request.object.metadata.labels.\"node.kube-core.io/selector\"}}`}}"
+          operator: NotEquals
+          value: ""
+      mutate:
+        patchStrategicMerge:
+          spec:
+            tolerations:
+            - key: "type"
+              operator: "Equal"
+              value: "{{`{{ request.object.metadata.labels.\"node.kube-core.io/selector\"}}`}}"
+              effect: "NoSchedule"
+            - key: "type"
+              operator: "Equal"
+              value: "{{`{{ request.object.metadata.labels.\"node.kube-core.io/selector\"}}`}}"
+              effect: "NoExecute"
+            # Add the `affinity`if not already specified.
+            nodeSelector:
+              type: "{{`{{ request.object.metadata.labels.\"node.kube-core.io/selector\"}}`}}"
     - name: add-deployment-node-selector
       match:
         resources:
@@ -35,6 +62,9 @@ spec:
         patchStrategicMerge:
           spec:
             template:
+              metadata:
+                labels:
+                  node.kube-core.io/selector: "{{`{{ request.object.metadata.labels.\"node.kube-core.io/selector\"}}`}}"
               spec:
                 tolerations:
                 - key: "type"
@@ -65,6 +95,9 @@ spec:
             jobTemplate:
               spec:
                 template:
+                  metadata:
+                    labels:
+                      node.kube-core.io/selector: "{{`{{ request.object.metadata.labels.\"node.kube-core.io/selector\"}}`}}"
                   spec:
                     tolerations:
                     - key: "type"
