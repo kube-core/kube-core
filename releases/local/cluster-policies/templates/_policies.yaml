@@ -274,7 +274,8 @@
 #       Service resource that contains the label `protected=true` unless by
 #       a cluster-admin.
 # spec:
-#   validationFailureAction: enforce
+#
+  # validationFailureAction: enforce
 #
 #   rules:
 #   - name: block-updates-deletes

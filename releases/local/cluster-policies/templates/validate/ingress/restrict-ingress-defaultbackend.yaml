@@ -22,6 +22,7 @@ metadata:
 spec:
   generateExistingOnPolicyUpdate: true
   mutateExistingOnPolicyUpdate: true
+  failurePolicy: {{ coalesce (index .Values.policies $policyName "failurePolicy") .Values.policies.all.failurePolicy }}
   validationFailureAction: {{ coalesce (index .Values.policies $policyName "validationFailureAction") .Values.policies.all.validationFailureAction }}
   background: true
   rules:

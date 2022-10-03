@@ -1,6 +1,5 @@
 {{ $policyName := "add-namespace-node-selector" }}
 {{ if (index .Values.policies $policyName "enabled") }}
-{{ if .Values.namespace.nodeSelector }}
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
@@ -14,10 +13,96 @@ metadata:
     pod-policies.kyverno.io/autogen-controllers: none
 spec:
   mutateExistingOnPolicyUpdate: true
+  failurePolicy: {{ coalesce (index .Values.policies $policyName "failurePolicy") .Values.policies.all.failurePolicy }}
   validationFailureAction: {{ coalesce (index .Values.policies $policyName "validationFailureAction") .Values.policies.all.validationFailureAction }}
   background: true
   rules:
-    - name: add-namespace-node-selector
+    - name: add-namespace-node-selector-pod
+      context:
+      - name: namespaceSelector
+        apiCall:
+          urlPath: "/api/v1/namespaces/{{`{{ request.namespace }}`}}"
+          jmesPath: 'metadata.labels."node.kube-core.io/selector"'
+      match:
+        resources:
+          kinds:
+            - Pod
+      preconditions:
+        # This precondition selects Pods with the label
+        all:
+        - key: "{{`{{ namespaceSelector }}`}}"
+          operator: NotEquals
+          value: ""
+      mutate:
+        patchStrategicMerge:
+          metadata:
+            labels:
+              node.kube-core.io/selector: "{{`{{ namespaceSelector }}`}}"
+    - name: add-namespace-node-selector-deployment
+      context:
+      - name: namespaceSelector
+        apiCall:
+          urlPath: "/api/v1/namespaces/{{`{{ request.namespace }}`}}"
+          jmesPath: 'metadata.labels."node.kube-core.io/selector"'
+      match:
+        resources:
+          kinds:
+            - Deployment
+            - StatefulSet
+            - DaemonSet
+            - Job
+      preconditions:
+        # This precondition selects Pods with the label
+        all:
+        - key: "{{`{{ namespaceSelector }}`}}"
+          operator: NotEquals
+          value: ""
+      mutate:
+        patchStrategicMerge:
+          metadata:
+            labels:
+              node.kube-core.io/selector: "{{`{{ namespaceSelector }}`}}"
+    - name: add-namespace-node-selector-cronjob
+      match:
+        resources:
+          kinds:
+            - CronJob
+      context:
+      - name: namespaceSelector
+        apiCall:
+          urlPath: "/api/v1/namespaces/{{`{{ request.namespace }}`}}"
+          jmesPath: 'metadata.labels."node.kube-core.io/selector"'
+      preconditions:
+        # This precondition selects Pods with the label
+        all:
+        - key: "{{`{{ namespaceSelector }}`}}"
+          operator: NotEquals
+          value: ""
+      mutate:
+        patchStrategicMerge:
+          metadata:
+            labels:
+              node.kube-core.io/selector: "{{`{{ namespaceSelector }}`}}"
+{{ if .Values.namespace.nodeSelector }}
+    - name: add-namespace-node-selector-pod-list
+      match:
+        resources:
+          kinds:
+            - Pod
+      preconditions:
+        # This precondition selects Pods with the label
+        any:
+        {{ range .Values.namespace.nodeSelector }}
+        - key: "{{`{{request.object.metadata.namespace}}`}}"
+          operator: Equals
+          value: "{{ . }}"
+        {{ end }}
+      mutate:
+        patchStrategicMerge:
+          metadata:
+            labels:
+              node.kube-core.io/selector: "{{`{{request.object.metadata.namespace}}`}}"
+    - name: add-namespace-node-selector-deployment-list
       match:
         resources:
           kinds:
@@ -38,7 +123,7 @@ spec:
           metadata:
             labels:
               node.kube-core.io/selector: "{{`{{request.object.metadata.namespace}}`}}"
-    - name: add-namespace-node-selector-cronjob
+    - name: add-namespace-node-selector-cronjob-list
       match:
         resources:
           kinds:
@@ -53,12 +138,8 @@ spec:
         {{ end }}
       mutate:
         patchStrategicMerge:
-          spec:
-            jobTemplate:
-              spec:
-                template:
-                  metadata:
-                    labels:
-                      node.kube-core.io/selector: "{{`{{request.object.metadata.namespace}}`}}"
+          metadata:
+            labels:
+              node.kube-core.io/selector: "{{`{{request.object.metadata.namespace}}`}}"
 {{ end }}
 {{ end }}
