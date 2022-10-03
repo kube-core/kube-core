@@ -48,13 +48,3 @@ releases:
         command: "bash"
         events: ["presync"]
         showlogs: true
-  rabbitmq-operators:
-    hooks:
-      - args: ["WARNING: Deleting validating webhook configuration for RabbitMQ Topology Operator. This should not be done, but it doesn't work without it for now."]
-        command: "echo"
-        events: ["postsync"]
-        showlogs: true
-      - args: ["delete", "validatingwebhookconfiguration", "rabbitmq-operators-rabbitmq-messaging-topology-operator-webhook"]
-        command: "kubectl"
-        events: ["postsync"]
-        showlogs: true
