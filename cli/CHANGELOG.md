@@ -2,9 +2,66 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.4.5](https://github.com/neo9/kube-core/compare/v0.4.4...v0.4.5)
+
+- cli: Added workspace:open command [`0a9ad75`](https://github.com/neo9/kube-core/commit/0a9ad7581d57b48b8007962c8b3196cf666d380c)
+
+#### [v0.4.4](https://github.com/neo9/kube-core/compare/v0.4.3...v0.4.4)
+
+> 3 October 2022
+
+- releases: Rebuilt all releases [`521714f`](https://github.com/neo9/kube-core/commit/521714fc9fafa546fa1fd7b93bc21bc75a14b27f)
+- releases/mongodb-operator: Removed local chart and migrated to official one [`2870bdd`](https://github.com/neo9/kube-core/commit/2870bddfbc1ba598bd390e3ddc26dcd878f5f3c8)
+- releases/cluster-policies: Disabeled fail safe mode by default & Updated some policies [`60e4457`](https://github.com/neo9/kube-core/commit/60e4457be5cf572cdea15e0bd2ec257692012dc8)
+- releases/rabbitmq-operator: Removed hooks and improved resource naming [`1815197`](https://github.com/neo9/kube-core/commit/1815197d0c9f8fb325a957d68d9b4f5d398d1178)
+- release: v0.4.4 [`bfee444`](https://github.com/neo9/kube-core/commit/bfee44417e3ef07fee3e57f7761c2f516b82a3c8)
+- releases/logging-stack: Changed fluentd minReplicaCount to 3 [`78fe75c`](https://github.com/neo9/kube-core/commit/78fe75ceaf9da688c92586f8f68bd95a7b974d44)
+
+#### [v0.4.3](https://github.com/neo9/kube-core/compare/v0.4.2...v0.4.3)
+
+> 30 September 2022
+
+- releases/cluster-policies: Disabled all mutations by default [`45700df`](https://github.com/neo9/kube-core/commit/45700dfe2015354ba3e605eec2d3fb0bc5bdf3fe)
+- release: v0.4.3 [`4a853c1`](https://github.com/neo9/kube-core/commit/4a853c1a221497f2a1ff60f84ea03d2bdf5bb3cb)
+
+#### [v0.4.2](https://github.com/neo9/kube-core/compare/v0.4.1...v0.4.2)
+
+> 30 September 2022
+
+- releases/cluster-policies: Reworked default configuration [`81c75aa`](https://github.com/neo9/kube-core/commit/81c75aac6a69fb220b4db7cbb8c6c4d8df0481d7)
+- release: v0.4.2 [`5d13be1`](https://github.com/neo9/kube-core/commit/5d13be10442d6e10f5d0cf2c43011a1f71d2e378)
+- core/releases: Removed ingress upgrade options for tekton [`7f04f1e`](https://github.com/neo9/kube-core/commit/7f04f1e18426785c882930962f5782ea727bc8d5)
+
+#### [v0.4.1](https://github.com/neo9/kube-core/compare/v0.4.0...v0.4.1)
+
+> 29 September 2022
+
+- releases/tekton: Updated Ingress resources to v1 [`77484a4`](https://github.com/neo9/kube-core/commit/77484a4ab5731f378addd436de5ac7eb9ce2d7e0)
+- releases/cluster-policies: Fixed default values [`fe7045d`](https://github.com/neo9/kube-core/commit/fe7045d53c58ecb9a821ef64fef00a08446cd3a0)
+- release: v0.4.1 [`6098683`](https://github.com/neo9/kube-core/commit/60986835f4afac19b40e575b4b9c11e6ec447e37)
+
+#### [v0.4.0](https://github.com/neo9/kube-core/compare/v0.3.27...v0.4.0)
+
+> 29 September 2022
+
+- releases: Rebuilt dist folder [`cee24b9`](https://github.com/neo9/kube-core/commit/cee24b9be316989bd3fc4cfb98e141d349dfe8b4)
+- releases/policies: Added kube-core base policies [`8708970`](https://github.com/neo9/kube-core/commit/8708970de8f518c3caacc65c373a6cbfa1001dca)
+- core/releases: Reworked layers and some defaults [`094d608`](https://github.com/neo9/kube-core/commit/094d60869081e449537a016fa1f824a1e5aa208b)
+- releases/kyverno-policies: Added kyverno-policies with default values [`7f16950`](https://github.com/neo9/kube-core/commit/7f16950ee8d08fb16fb3d13fdf410831285e173c)
+- releases/kube-cleanup-operator: Updated values and switched source from local chart to remote [`0bac3ad`](https://github.com/neo9/kube-core/commit/0bac3ad7193566b109b95d5181c993a6d529e4dd)
+- releases: Added cluster-rbac [`1455f13`](https://github.com/neo9/kube-core/commit/1455f137f4f9bf82c58ec98e738e9269011dff88)
+- cli/releases: Added script to generate a local release [`00852e5`](https://github.com/neo9/kube-core/commit/00852e58bc02e9d804c86275299baf28f8180be3)
+- releases/logging-stack: Reworked logging-stack Ingress [`23a065b`](https://github.com/neo9/kube-core/commit/23a065b6b97148f19ffeb44086f7a1e166fb0728)
+- release: v0.4.0 [`9e3ccbb`](https://github.com/neo9/kube-core/commit/9e3ccbb30169b0990cecfc14b6ebc680588ff225)
+- releases/kyverno: Switched to HA and increased resource limits for kyverno [`127fe7d`](https://github.com/neo9/kube-core/commit/127fe7d51cd4e82b88b0d46e7a8728f75a709a82)
+- releases/logging-stack: Updated app and events dashboard [`50c0f8c`](https://github.com/neo9/kube-core/commit/50c0f8c64eebc0f0b1f50d1f585a9bae8df09f35)
+
 #### [v0.3.27](https://github.com/neo9/kube-core/compare/v0.3.26...v0.3.27)
 
+> 23 September 2022
+
 - releases: Added kyverno [`f24be2d`](https://github.com/neo9/kube-core/commit/f24be2db9024a24ec77e71edcad9c85441445273)
+- release: v0.3.27 [`1d4f519`](https://github.com/neo9/kube-core/commit/1d4f519f2360021df1fc0350e85734fe8ff11eb3)
 
 #### [v0.3.26](https://github.com/neo9/kube-core/compare/v0.3.25...v0.3.26)
 
