@@ -1,6 +1,8 @@
 import * as child from "child_process";
 import { spawn, spawnSync } from "child_process";
 import * as path from "path";
+import * as fs from 'fs-extra'
+
 // import execa from "execa";
 const execa = require('execa')
 
@@ -11,6 +13,15 @@ export async function cli(cmd, ...args) {
   } catch(error) {
     console.log(error)
   }
+}
+
+export async function cliQuiet(cmd, args, env = {}) {
+  try {
+    let output = execa(cmd, args, {maxBuffer: 300_000_000, env: env })
+    return output
+    } catch(error) {
+      console.log(error)
+    }
 }
 
 export async function cliPipe(cmd, args, env = {}) {
@@ -189,3 +200,10 @@ export async function testKubernetesManifest(name) {
   // console.log(newArgsString)
   // console.log(argv)
 //
+
+
+//
+export function fileExists(path: any) {
+  const exists = fs.existsSync(path)
+  return exists
+}
