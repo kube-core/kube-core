@@ -8,6 +8,27 @@
   installed: {{ $value.enabled }} # Controls installation & removal
   chart: ../releases/dist/releases/charts/raw
   namespace: {{ $value.namespace }}
+  {{- if $values.core.globalLabelsEnabled }}
+  transformers:
+  - apiVersion: builtin
+    kind: LabelTransformer
+    metadata:
+      name: apply-global-labels-on-everything
+    labels:
+      cluster.kube-core.io/name: {{ $values.cluster.config.name }}
+      cluster.kube-core.io/context: {{ $values.cluster.config.context }}
+      cluster.kube-core.io/domain: {{ $values.cluster.config.domain }}
+      cloud.kube-core.io/provider: {{ $values.cloud.provider }}
+      cloud.kube-core.io/project: {{ $values.cloud.project }}
+      cloud.kube-core.io/location: {{ $values.cloud.default.location }}
+      app.kube-core.io/version: {{ $values.core.version }}
+      {{- if $values.cluster.common.globalLabels }}
+      {{ toYaml $values.cluster.common.globalLabels | nindent 6 }}
+      {{- end }}
+    fieldSpecs:
+    - path: metadata/labels
+      create: true
+  {{- end }}
   version: 1.0.1
   {{ if $value.needs }}
   needs: {{ toYaml $value.needs | nindent 2 }}

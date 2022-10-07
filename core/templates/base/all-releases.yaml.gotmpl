@@ -4,18 +4,28 @@
 {{- end -}}
 
 {{- if .Values.core.releasesEnabled -}}
+
 {{ tpl (readFile "templates/releases/standard/releases.yaml.gotmpl") . }}
-{{- end -}}
 
 {{- if .Values.core.releasesRawEnabled -}}
 {{ tpl (readFile "templates/releases/standard/releases-raw.yaml.gotmpl") . }}
 {{- end -}}
 
-
-
 {{- if .Values.core.releasesCustomEnabled -}}
 {{ tpl (readFile "templates/releases/custom/releases-custom.yaml.gotmpl") . }}
 {{- end -}}
+
+{{- end -}}
+
+{{- if .Values.core.applicationsEnabled -}}
+{{ tpl (readFile "templates/releases/standard/applications.yaml.gotmpl") . }}
+{{- end -}}
+
+{{- if .Values.core.servicesEnabled -}}
+{{ tpl (readFile "templates/releases/standard/services.yaml.gotmpl") . }}
+{{- end -}}
+
+
 
 {{- if .Values.releasesCustom.rabbitmq.enabled -}}
 {{ tpl (readFile "templates/releases/custom/rabbitmq.yaml.gotmpl") . }}

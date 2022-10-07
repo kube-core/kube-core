@@ -1,0 +1,180 @@
+{{- if .item.strategicMergePatches }}
+  strategicMergePatches:
+  {{ toYaml .item.strategicMergePatches | nindent 2 }}
+  {{- end }}
+  jsonPatches:
+  {{- if .item.jsonPatches }}
+  {{ toYaml .item.jsonPatches | nindent 2 }}
+  {{- end }}
+  {{- if .item.options.patchIngresses }}
+  - target:
+      kind: Ingress
+      name: .*
+    patch:
+  {{- if .item.options.removeIngressClassAnnotation }}
+      - op: remove
+        path: "/metadata/annotations/kubernetes.io~1ingress.class"
+        {{/*# For Reference - brace yourself ;)
+        # https://github.com/kubernetes-sigs/kustomize/issues/1256#issuecomment-562531658
+        # https://datatracker.ietf.org/doc/html/rfc6902
+        # http://jsonpatch.com/#json-pointer */}}
+  {{- end }}
+  {{- if .item.options.removeIngressClassName }}
+      - op: remove
+        path: "/spec/ingressClassName"
+  {{- end }}
+  {{- if .item.options.injectIngressClassName }}
+      - op: replace
+        path: "/spec/ingressClassName"
+        value: "{{ .coreValues.cluster.common.defaultIngressClass }}"
+  {{- end }}
+  {{- if .item.options.upgradeIngress }}
+      - op: replace
+        path: "/apiVersion"
+        value: "networking.k8s.io/v1"
+      - op: add
+        path: "/spec/rules/0/http/paths/0/path"
+        value: "/"
+      - op: add
+        path: "/spec/rules/0/http/paths/0/pathType"
+        value: "Prefix"
+      - op: add
+        path: "/spec/rules/0/http/paths/0/backend/service"
+        value: {"name":"", "port": {"number":""}}
+      - op: copy
+        from: "/spec/rules/0/http/paths/0/backend/serviceName"
+        path: "/spec/rules/0/http/paths/0/backend/service/name"
+      - op: copy
+        from: "/spec/rules/0/http/paths/0/backend/servicePort"
+        path: "/spec/rules/0/http/paths/0/backend/service/port/number"
+      - op: remove
+        path: "/spec/rules/0/http/paths/0/backend/serviceName"
+      - op: remove
+        path: "/spec/rules/0/http/paths/0/backend/servicePort"
+  {{- else if (and .item.options.patchIngresses (or (eq .item.type "application") (eq .item.type "service")) (getOrNil "enabled" (getOrNil "ingress" .item.values))) }}
+  - target:
+      kind: Ingress
+      name: .*
+    patch:
+  {{- if .item.options.removeIngressClassAnnotation }}
+      - op: remove
+        path: "/metadata/annotations/kubernetes.io~1ingress.class"
+        {{/*# For Reference - brace yourself ;)
+        # https://github.com/kubernetes-sigs/kustomize/issues/1256#issuecomment-562531658
+        # https://datatracker.ietf.org/doc/html/rfc6902
+        # http://jsonpatch.com/#json-pointer */}}
+  {{- end }}
+  {{- if .item.options.removeIngressClassName }}
+      - op: remove
+        path: /spec/ingressClassName
+  {{- end }}
+  {{- if .item.options.injectIngressClassName }}
+      - op: replace
+        path: "/spec/ingressClassName"
+        value: {{ index .coreValues.releases "nginx-ingress-controller" "config" "ingressClass" }}-{{ .releaseNamespace }}
+  {{- end }}
+  {{- end }}
+  {{- end }}
+  transformers:
+  {{- if .item.transformers }}
+  {{ toYaml .item.transformers | nindent 2 }}
+  {{- end }}
+  {{- if .item.options.applyDefaultLabelsOnIngress }}
+  - apiVersion: builtin
+    kind: LabelTransformer
+    metadata:
+      name: apply-default-labels-on-ingress
+    labels:
+      {{ toYaml .coreValues.cluster.common.defaultIngressLabels | nindent 6 }}
+    fieldSpecs:
+    - path: metadata/labels
+      kind: Ingress
+      create: true
+  {{- end }}
+  {{- if .item.options.applyDefaultAnnotationsOnIngress }}
+  - apiVersion: builtin
+    kind: AnnotationsTransformer
+    metadata:
+      name: apply-default-annotations-on-ingress
+    annotations:
+      {{ toYaml .coreValues.cluster.common.defaultIngressAnnotations | nindent 6 }}
+    fieldSpecs:
+    - path: metadata/annotations
+      kind: Ingress
+      create: true
+  {{- end }}
+  {{- if .item.options.injectReloaderAnnotations }}
+  - apiVersion: builtin
+    kind: AnnotationsTransformer
+    metadata:
+      name: inject-reloader-annotations
+    annotations:
+      reloader.stakater.com/auto: "true"
+    fieldSpecs:
+    - path: metadata/annotations
+      kind: Deployment
+      create: true
+    - path: metadata/annotations
+      kind: StatefulSet
+      create: true
+    - path: metadata/annotations
+      kind: DaemonSet
+      create: true
+  {{- end }}
+  {{- if .item.options.injectClusterLoggingLabel }}
+  - apiVersion: builtin
+    kind: LabelTransformer
+    metadata:
+      name: inject-cluster-logging-label
+    labels:
+      logging.kube-core.io/flow-name: "cluster"
+    fieldSpecs:
+    - path: metadata/labels
+      kind: Deployment
+      create: true
+    - path: spec/template/metadata/labels
+      kind: Deployment
+      create: true
+    - path: metadata/labels
+      kind: StatefulSet
+      create: true
+    - path: spec/template/metadata/labels
+      kind: StatefulSet
+      create: true
+    - path: metadata/labels
+      kind: DaemonSet
+      create: true
+    - path: spec/template/metadata/labels
+      kind: DaemonSet
+      create: true
+    - path: metadata/labels
+      kind: CronJob
+      create: true
+    - path: spec/jobTemplate/metadata/labels
+      kind: CronJob
+      create: true
+  {{- end }}
+  {{- if .coreValues.core.globalLabelsEnabled }}
+  - apiVersion: builtin
+    kind: LabelTransformer
+    metadata:
+      name: apply-global-labels-on-everything
+    labels:
+      cluster.kube-core.io/name: {{ .coreValues.cluster.config.name }}
+      cluster.kube-core.io/context: {{ .coreValues.cluster.config.context }}
+      cluster.kube-core.io/domain: {{ .coreValues.cluster.config.domain }}
+      cloud.kube-core.io/provider: {{ .coreValues.cloud.provider }}
+      cloud.kube-core.io/project: {{ .coreValues.cloud.project }}
+      cloud.kube-core.io/location: {{ .coreValues.cloud.default.location }}
+      app.kube-core.io/version: {{ .coreValues.core.version }}
+      {{- if .coreValues.cluster.common.globalLabels }}
+      {{ toYaml .coreValues.cluster.common.globalLabels | nindent 6 }}
+      {{- end }}
+    fieldSpecs:
+    - path: metadata/labels
+      create: true
+  {{- end }}
+  {{- if .item.hooks }}
+  hooks:
+  {{ toYaml .item.hooks | nindent 2 }}
+  {{- end }}

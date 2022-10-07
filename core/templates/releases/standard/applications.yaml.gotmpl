@@ -1,0 +1,31 @@
+### TODO: Allowing to check for extra conditions from global values
+### (e.g install only if .Values.cloud.provider == gcp)
+### Required for cloud-agnostic version
+{{- $values := .Values }}
+{{- $releases := .Values.applications }}
+
+{{- range $releaseName, $release := $releases }}
+{{- if $release.enabled -}}
+
+{{ $requirementsMet := true -}}
+{{ $lastRequirementMet := false -}}
+
+{{- if $release.needs -}}
+{{- range $currentRequirement := $release.needs -}}
+
+{{- $lastRequirementMet = $releases | get (printf "%s.enabled" $currentRequirement) -}}
+{{ if not $lastRequirementMet }}
+{{ $requirementsMet = false }}
+{{- end -}}
+
+{{- end -}}
+{{- end -}}
+
+{{ $newValues := $release }}
+{{ $_ := set $newValues "enabled" $requirementsMet }}
+{{ $_ := set $newValues "type" "application" }}
+{{- tpl (readFile "templates/releases/standard/release.yaml.gotmpl") (dict "item" $newValues "coreValues" $values "releaseName" $releaseName "releaseNamespace" $values.applicationsConfig.namespace) }}
+{{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") (dict "item" $newValues "coreValues" $values "releaseName" $releaseName "releaseNamespace" $values.applicationsConfig.namespace) }}
+{{- tpl (readFile "templates/releases/standard/release-extensions.yaml.gotmpl") (dict "item" $newValues "coreValues" $values "releaseName" $releaseName "releaseNamespace" $values.applicationsConfig.namespace) }}
+{{- end -}}
+{{- end -}}
