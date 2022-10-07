@@ -1,29 +1,12 @@
+{{ $values := .values }}
 {{ if .item.manifests }}
 - name: {{ .releaseName }}-manifests
   chart: ../releases/dist/releases/charts/raw
-  kubeContext: {{  .coreValues.cluster.config.context }}
+  kubeContext: {{  $values.cluster.config.context }}
   namespace: {{ .item.namespace }}
-  {{- if .coreValues.core.globalLabelsEnabled }}
   transformers:
-  - apiVersion: builtin
-    kind: LabelTransformer
-    metadata:
-      name: apply-global-labels-on-everything
-    labels:
-      cluster.kube-core.io/name: {{ .coreValues.cluster.config.name }}
-      cluster.kube-core.io/context: {{ .coreValues.cluster.config.context }}
-      cluster.kube-core.io/domain: {{ .coreValues.cluster.config.domain }}
-      cloud.kube-core.io/provider: {{ .coreValues.cloud.provider }}
-      cloud.kube-core.io/project: {{ .coreValues.cloud.project }}
-      cloud.kube-core.io/location: {{ .coreValues.cloud.default.location }}
-      app.kube-core.io/version: {{ .coreValues.core.version }}
-      {{- if .coreValues.cluster.common.globalLabels }}
-      {{ toYaml .coreValues.cluster.common.globalLabels | nindent 6 }}
-      {{- end }}
-    fieldSpecs:
-    - path: metadata/labels
-      create: true
-  {{- end }}
+  {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
+
   labels:
     app: {{ .releaseName }}
     type: manifests
@@ -34,29 +17,11 @@
 {{ if .item.secrets }}
 - name: {{ .releaseName }}-secrets
   chart: ../releases/dist/releases/charts/raw
-  kubeContext: {{  .coreValues.cluster.config.context }}
+  kubeContext: {{  $values.cluster.config.context }}
   namespace: {{ .item.namespace }}
-  {{- if .coreValues.core.globalLabelsEnabled }}
   transformers:
-  - apiVersion: builtin
-    kind: LabelTransformer
-    metadata:
-      name: apply-global-labels-on-everything
-    labels:
-      cluster.kube-core.io/name: {{ .coreValues.cluster.config.name }}
-      cluster.kube-core.io/context: {{ .coreValues.cluster.config.context }}
-      cluster.kube-core.io/domain: {{ .coreValues.cluster.config.domain }}
-      cloud.kube-core.io/provider: {{ .coreValues.cloud.provider }}
-      cloud.kube-core.io/project: {{ .coreValues.cloud.project }}
-      cloud.kube-core.io/location: {{ .coreValues.cloud.default.location }}
-      app.kube-core.io/version: {{ .coreValues.core.version }}
-      {{- if .coreValues.cluster.common.globalLabels }}
-      {{ toYaml .coreValues.cluster.common.globalLabels | nindent 6 }}
-      {{- end }}
-    fieldSpecs:
-    - path: metadata/labels
-      create: true
-  {{- end }}
+  {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
+
   labels:
     app: {{ .releaseName }}
     type: secrets
@@ -67,29 +32,11 @@
 {{ if .item.patches }}
 - name: {{ .releaseName }}-patches
   chart: ../releases/dist/releases/charts/raw
-  kubeContext: {{  .coreValues.cluster.config.context }}
+  kubeContext: {{  $values.cluster.config.context }}
   namespace: {{ .item.namespace }}
-  {{- if .coreValues.core.globalLabelsEnabled }}
   transformers:
-  - apiVersion: builtin
-    kind: LabelTransformer
-    metadata:
-      name: apply-global-labels-on-everything
-    labels:
-      cluster.kube-core.io/name: {{ .coreValues.cluster.config.name }}
-      cluster.kube-core.io/context: {{ .coreValues.cluster.config.context }}
-      cluster.kube-core.io/domain: {{ .coreValues.cluster.config.domain }}
-      cloud.kube-core.io/provider: {{ .coreValues.cloud.provider }}
-      cloud.kube-core.io/project: {{ .coreValues.cloud.project }}
-      cloud.kube-core.io/location: {{ .coreValues.cloud.default.location }}
-      app.kube-core.io/version: {{ .coreValues.core.version }}
-      {{- if .coreValues.cluster.common.globalLabels }}
-      {{ toYaml .coreValues.cluster.common.globalLabels | nindent 6 }}
-      {{- end }}
-    fieldSpecs:
-    - path: metadata/labels
-      create: true
-  {{- end }}
+  {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
+
   labels:
     app: {{ .releaseName }}
     type: patches
@@ -100,29 +47,11 @@
 {{ if .item.scaling }}
 - name: {{ .releaseName }}-scaling
   chart: ../releases/dist/releases/charts/app-scaling
-  kubeContext: {{  .coreValues.cluster.config.context }}
+  kubeContext: {{  $values.cluster.config.context }}
   namespace: {{ .item.namespace }}
-  {{- if .coreValues.core.globalLabelsEnabled }}
   transformers:
-  - apiVersion: builtin
-    kind: LabelTransformer
-    metadata:
-      name: apply-global-labels-on-everything
-    labels:
-      cluster.kube-core.io/name: {{ .coreValues.cluster.config.name }}
-      cluster.kube-core.io/context: {{ .coreValues.cluster.config.context }}
-      cluster.kube-core.io/domain: {{ .coreValues.cluster.config.domain }}
-      cloud.kube-core.io/provider: {{ .coreValues.cloud.provider }}
-      cloud.kube-core.io/project: {{ .coreValues.cloud.project }}
-      cloud.kube-core.io/location: {{ .coreValues.cloud.default.location }}
-      app.kube-core.io/version: {{ .coreValues.core.version }}
-      {{- if .coreValues.cluster.common.globalLabels }}
-      {{ toYaml .coreValues.cluster.common.globalLabels | nindent 6 }}
-      {{- end }}
-    fieldSpecs:
-    - path: metadata/labels
-      create: true
-  {{- end }}
+  {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
+
   labels:
     app: {{ .releaseName }}
     type: scaling
