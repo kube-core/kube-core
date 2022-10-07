@@ -2,12 +2,32 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.5.0](https://github.com/neo9/kube-core/compare/v0.4.5...v0.5.0)
+
+- core/templates: Reworked templates to allow for environments, applications and services generation [`885f236`](https://github.com/neo9/kube-core/commit/885f236595b589aec1d1a65276f22c130cef2440)
+- releases: Added node-problem-detector [`123cbda`](https://github.com/neo9/kube-core/commit/123cbda06add2057dbee0c4705ffa39f595015a0)
+- core/envs: Reworked core values to allow for environments, applications and services generation [`64d7b0f`](https://github.com/neo9/kube-core/commit/64d7b0fcc473b3ced26fe7acefd5d134180e018c)
+- core/values: Reworked values templates to allow for environments, applications and services generation [`d354b8b`](https://github.com/neo9/kube-core/commit/d354b8bcc5354f8d0529a51fefdcd0e0dbf0b4a0)
+- releases/n9-api: Updated to v1.3.2 [`67d179b`](https://github.com/neo9/kube-core/commit/67d179bced31c6dfe6dc647a015642df4386154f)
+- core: Reworked core helmfiles to allow for environments, applications and services generation [`03d2812`](https://github.com/neo9/kube-core/commit/03d281246b0d7ad451e39b9daac1842825f5b66b)
+- cli/workspace: Updated open command documentation [`55e2399`](https://github.com/neo9/kube-core/commit/55e239954fa9a098c1127626c8831597d0051aae)
+
+#### [v0.4.5](https://github.com/neo9/kube-core/compare/v0.4.4...v0.4.5)
+
+> 4 October 2022
+
+- cli: Added workspace:open command [`0a9ad75`](https://github.com/neo9/kube-core/commit/0a9ad7581d57b48b8007962c8b3196cf666d380c)
+- release: v0.4.5 [`3010a72`](https://github.com/neo9/kube-core/commit/3010a728e6d1211ebe62d0a134478c1962bf3e59)
+
 #### [v0.4.4](https://github.com/neo9/kube-core/compare/v0.4.3...v0.4.4)
+
+> 3 October 2022
 
 - releases: Rebuilt all releases [`521714f`](https://github.com/neo9/kube-core/commit/521714fc9fafa546fa1fd7b93bc21bc75a14b27f)
 - releases/mongodb-operator: Removed local chart and migrated to official one [`2870bdd`](https://github.com/neo9/kube-core/commit/2870bddfbc1ba598bd390e3ddc26dcd878f5f3c8)
 - releases/cluster-policies: Disabeled fail safe mode by default & Updated some policies [`60e4457`](https://github.com/neo9/kube-core/commit/60e4457be5cf572cdea15e0bd2ec257692012dc8)
 - releases/rabbitmq-operator: Removed hooks and improved resource naming [`1815197`](https://github.com/neo9/kube-core/commit/1815197d0c9f8fb325a957d68d9b4f5d398d1178)
+- release: v0.4.4 [`bfee444`](https://github.com/neo9/kube-core/commit/bfee44417e3ef07fee3e57f7761c2f516b82a3c8)
 - releases/logging-stack: Changed fluentd minReplicaCount to 3 [`78fe75c`](https://github.com/neo9/kube-core/commit/78fe75ceaf9da688c92586f8f68bd95a7b974d44)
 
 #### [v0.4.3](https://github.com/neo9/kube-core/compare/v0.4.2...v0.4.3)
