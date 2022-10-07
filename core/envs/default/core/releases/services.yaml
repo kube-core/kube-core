@@ -1,0 +1,4 @@
+services: {}
+servicesConfig:
+  namespace: apps
+  defaultIngressClass: ""

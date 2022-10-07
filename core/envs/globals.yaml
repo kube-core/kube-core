@@ -1,4 +1,6 @@
 core:
+  applicationsEnabled: false
+  servicesEnabled: false
   releasesEnabled: true
   releasesRawEnabled: true
   releasesCustomEnabled: true
