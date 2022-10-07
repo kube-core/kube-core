@@ -24,8 +24,9 @@
 {{ $newValues := $release }}
 {{ $_ := set $newValues "enabled" $requirementsMet }}
 {{ $_ := set $newValues "type" "application" }}
-{{- tpl (readFile "templates/releases/standard/release.yaml.gotmpl") (dict "item" $newValues "coreValues" $values "releaseName" $releaseName "releaseNamespace" $values.applicationsConfig.namespace) }}
-{{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") (dict "item" $newValues "coreValues" $values "releaseName" $releaseName "releaseNamespace" $values.applicationsConfig.namespace) }}
-{{- tpl (readFile "templates/releases/standard/release-extensions.yaml.gotmpl") (dict "item" $newValues "coreValues" $values "releaseName" $releaseName "releaseNamespace" $values.applicationsConfig.namespace) }}
+{{- tpl (readFile "templates/releases/standard/release.yaml.gotmpl") (dict "item" $newValues "values" $values "releaseName" $releaseName "releaseNamespace" $values.applicationsConfig.namespace) }}
+{{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") (dict "item" $newValues "values" $values "releaseName" $releaseName "releaseNamespace" $values.applicationsConfig.namespace) }}
+{{- tpl (readFile "templates/releases/standard/release-extensions.yaml.gotmpl") (dict "item" $newValues "values" $values "releaseName" $releaseName "releaseNamespace" $values.applicationsConfig.namespace) }}
+
 {{- end -}}
 {{- end -}}

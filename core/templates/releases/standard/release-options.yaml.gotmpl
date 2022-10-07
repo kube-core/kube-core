@@ -1,3 +1,4 @@
+{{- $values := .values }}
 {{- if .item.strategicMergePatches }}
   strategicMergePatches:
   {{ toYaml .item.strategicMergePatches | nindent 2 }}
@@ -26,7 +27,7 @@
   {{- if .item.options.injectIngressClassName }}
       - op: replace
         path: "/spec/ingressClassName"
-        value: "{{ .coreValues.cluster.common.defaultIngressClass }}"
+        value: "{{ $values.cluster.common.defaultIngressClass }}"
   {{- end }}
   {{- if .item.options.upgradeIngress }}
       - op: replace
@@ -71,7 +72,7 @@
   {{- if .item.options.injectIngressClassName }}
       - op: replace
         path: "/spec/ingressClassName"
-        value: {{ index .coreValues.releases "nginx-ingress-controller" "config" "ingressClass" }}-{{ .releaseNamespace }}
+        value: {{ index $values.releases "nginx-ingress-controller" "config" "ingressClass" }}-{{ .releaseNamespace }}
   {{- end }}
   {{- end }}
   {{- end }}
@@ -85,7 +86,7 @@
     metadata:
       name: apply-default-labels-on-ingress
     labels:
-      {{ toYaml .coreValues.cluster.common.defaultIngressLabels | nindent 6 }}
+      {{ toYaml $values.cluster.common.defaultIngressLabels | nindent 6 }}
     fieldSpecs:
     - path: metadata/labels
       kind: Ingress
@@ -97,7 +98,7 @@
     metadata:
       name: apply-default-annotations-on-ingress
     annotations:
-      {{ toYaml .coreValues.cluster.common.defaultIngressAnnotations | nindent 6 }}
+      {{ toYaml $values.cluster.common.defaultIngressAnnotations | nindent 6 }}
     fieldSpecs:
     - path: metadata/annotations
       kind: Ingress
@@ -154,26 +155,7 @@
       kind: CronJob
       create: true
   {{- end }}
-  {{- if .coreValues.core.globalLabelsEnabled }}
-  - apiVersion: builtin
-    kind: LabelTransformer
-    metadata:
-      name: apply-global-labels-on-everything
-    labels:
-      cluster.kube-core.io/name: {{ .coreValues.cluster.config.name }}
-      cluster.kube-core.io/context: {{ .coreValues.cluster.config.context }}
-      cluster.kube-core.io/domain: {{ .coreValues.cluster.config.domain }}
-      cloud.kube-core.io/provider: {{ .coreValues.cloud.provider }}
-      cloud.kube-core.io/project: {{ .coreValues.cloud.project }}
-      cloud.kube-core.io/location: {{ .coreValues.cloud.default.location }}
-      app.kube-core.io/version: {{ .coreValues.core.version }}
-      {{- if .coreValues.cluster.common.globalLabels }}
-      {{ toYaml .coreValues.cluster.common.globalLabels | nindent 6 }}
-      {{- end }}
-    fieldSpecs:
-    - path: metadata/labels
-      create: true
-  {{- end }}
+  {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
   {{- if .item.hooks }}
   hooks:
   {{ toYaml .item.hooks | nindent 2 }}

@@ -1,3 +1,4 @@
+{{ $values := .values }}
 - name: {{ .releaseName }}
   {{- if (eq .item.type "release") }}
   namespace: {{ .item.namespace }}
@@ -10,18 +11,18 @@
   chart: {{ .item.chart }}
   {{- end }}
   installed: {{ .item.enabled }}
-  kubeContext: {{ coalesce .item.context (getOrNil "releaseContext" .) .coreValues.cluster.config.context }}
+  kubeContext: {{ coalesce .item.context (getOrNil "releaseContext" .) $values.cluster.config.context }}
   {{ if .item.labels }}
   labels: {{ toYaml .item.labels | nindent 4 }}
     app: {{ .releaseName }}
-    context: {{ coalesce .item.context (getOrNil "releaseContext" .) .coreValues.cluster.config.context }}
+    context: {{ coalesce .item.context (getOrNil "releaseContext" .) $values.cluster.config.context }}
     type: chart
   {{ end }}
   values:
   {{/*Inject core values if enabed. Placed here so that core values can be overriden by a release if needed. */}}
   {{/*Be careful about values naming conflicts when activated. */}}
   {{- if .item.injectCoreValues -}}
-  - {{ toYaml .coreValues | nindent 4 | trim }}
+  - {{ toYaml $values | nindent 4 | trim }}
   {{- end }}
   {{- if (eq .item.type "release") }}
   - "./values/{{ .releaseName }}.yaml.gotmpl" {{/*# Release has to have a value file, even empty*/}}
