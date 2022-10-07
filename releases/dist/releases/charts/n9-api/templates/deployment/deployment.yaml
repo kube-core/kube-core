@@ -3,6 +3,9 @@ kind: Deployment
 metadata:
   name: {{ include "n9-api.fullname" . }}
   labels:
+    {{- if (eq .Values.logging.enabled true) }}
+    logging.kube-core.io/flow-name: app
+    {{- end }}
     {{- include "n9-api.labels" . | nindent 4 }}
     {{- with .Values.deployment.labels }}
       {{- toYaml . | nindent 4 }}
@@ -33,6 +36,9 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
+        {{- if (eq .Values.logging.enabled true) }}
+        logging.kube-core.io/flow-name: app
+        {{- end }}
         {{- include "n9-api.labels" . | nindent 8 }}
     spec:
       {{- with ( default .Values.global.imagePullSecrets .Values.image.pullSecrets ) }}
@@ -60,7 +66,7 @@ spec:
             {{- toYaml .Values.pod.securityContext | nindent 12 }}
           {{ $imagePolicy := printf "%s:%s-%s" .Release.Namespace (include "n9-api.fullname" .) .Values.flux.defaultImagePolicy }}
           {{- if .Values.image.digest }}
-          image: {{ .Values.image.repository }}@{{ .Values.image.digest }} 
+          image: {{ .Values.image.repository }}@{{ .Values.image.digest }}
           {{- else }}
           image: {{ .Values.image.repository }}:{{ include "n9-api.version" . }} # {"$imagepolicy": "{{ coalesce .Values.flux.imagePolicy $imagePolicy }}"}
           {{- end }}
@@ -124,7 +130,7 @@ spec:
             initialDelaySeconds: {{ default .Values.healthCheck.initialDelaySeconds .Values.healthCheck.readiness.initialDelaySeconds }}
             periodSeconds: {{ default .Values.healthCheck.periodSeconds .Values.healthCheck.readiness.periodSeconds }}
             timeoutSeconds: {{ default .Values.healthCheck.timeoutSeconds .Values.healthCheck.readiness.timeoutSeconds }}
-            failureThreshold: {{ default .Values.healthCheck.failureThreshold .Values.healthCheck.readiness.failureThreshold }}   
+            failureThreshold: {{ default .Values.healthCheck.failureThreshold .Values.healthCheck.readiness.failureThreshold }}
           {{- end }}
           env:
           {{- include "n9-api.apiType-env-values" . | nindent 10 -}}
@@ -200,7 +206,7 @@ spec:
       - name: {{ include "n9-api.fullname" . }}-init
         {{ $imagePolicy := printf "%s:%s" .Release.Namespace (include "n9-api.fullname" .) }}
         {{- if .Values.image.digest }}
-        image: {{ .Values.image.repository }}@{{ .Values.image.digest }} 
+        image: {{ .Values.image.repository }}@{{ .Values.image.digest }}
         {{- else }}
         image: {{ .Values.image.repository }}:{{ include "n9-api.version" . }} # {"$imagepolicy": "{{ coalesce .Values.flux.imagePolicy $imagePolicy }}"}
         {{- end }}

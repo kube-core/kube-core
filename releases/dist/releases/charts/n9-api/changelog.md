@@ -1,3 +1,5 @@
+# 1.3.2
+- Adds logging-operator annotation switch
 # 1.3.1
 - Fixed default command for initContainer
 # 1.3.0
@@ -176,4 +178,3 @@
 # 0.1.0
 
 - Init n9 api from node-api and java-api
-
