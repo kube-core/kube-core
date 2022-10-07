@@ -1,9 +1,13 @@
 templates:
   release: &release
     config: {}
+    context: ""
+    chart: "../releases/dist/releases/charts/n9-api"
+    chartVersion: "latest"
     enabled: false
     extraReleaseValues: []
     hooks: {}
+    type: "release"
     injectCoreValues: false
     jsonPatches: {}
     labels: {}
@@ -107,12 +111,10 @@ releases:
   visitor-groups: *release
   zeebe: *release
   zeebe-operate: *release
-
   kyverno: *release
   cluster-policies: *release
-
   kyverno-policies: *release
   prometheus-pushgateway: *release
-
   descheduler: *release
   cluster-rbac: *release
+  node-problem-detector: *release
