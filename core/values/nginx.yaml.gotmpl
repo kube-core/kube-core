@@ -6,9 +6,9 @@ cloneStaticSiteFromGit:
 ingress:
   enabled: true
   pathType: ImplementationSpecific
-  hostname: nginx.kube-core.{{ .Values.cluster.config.domain }}
+  hostname: {{ .Release.Name }}.{{ .Release.Namespace }}.{{ .Values.cluster.config.domain }}
   path: /
-  className: {{ .Values.cluster.common.defaultIngressClass }}
+  className: "{{ coalesce .Values.applicationsConfig.defaultIngressClass .Values.servicesConfig.defaultIngressClass .Values.cluster.common.defaultIngressClass }}"
   annotations: {{ toYaml .Values.cluster.common.defaultIngressAnnotations | nindent 4 }}
   tls: true
 resources:
