@@ -4,6 +4,12 @@ directories:
   - path: releases/base
     contents:
       # Base Releases
+      - path: node-problem-detector
+        helmChart:
+          name: node-problem-detector
+          version: 2.2.6
+          repository:
+            url: https://charts.deliveryhero.io/
       - path: mongodb-community-operator
         helmChart:
           name: community-operator
