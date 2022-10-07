@@ -2,7 +2,13 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.5.1](https://github.com/neo9/kube-core/compare/v0.5.0...v0.5.1)
+
+- core/templates: Added release-labels template to easily inject global labels in any relase [`15fbd77`](https://github.com/neo9/kube-core/commit/15fbd770b5d5166fa116fecfdc4708e6e0b69e75)
+
 #### [v0.5.0](https://github.com/neo9/kube-core/compare/v0.4.5...v0.5.0)
+
+> 7 October 2022
 
 - core/templates: Reworked templates to allow for environments, applications and services generation [`885f236`](https://github.com/neo9/kube-core/commit/885f236595b589aec1d1a65276f22c130cef2440)
 - releases: Added node-problem-detector [`123cbda`](https://github.com/neo9/kube-core/commit/123cbda06add2057dbee0c4705ffa39f595015a0)
@@ -10,6 +16,7 @@ All notable changes to this project will be documented in this file. Dates are d
 - core/values: Reworked values templates to allow for environments, applications and services generation [`d354b8b`](https://github.com/neo9/kube-core/commit/d354b8bcc5354f8d0529a51fefdcd0e0dbf0b4a0)
 - releases/n9-api: Updated to v1.3.2 [`67d179b`](https://github.com/neo9/kube-core/commit/67d179bced31c6dfe6dc647a015642df4386154f)
 - core: Reworked core helmfiles to allow for environments, applications and services generation [`03d2812`](https://github.com/neo9/kube-core/commit/03d281246b0d7ad451e39b9daac1842825f5b66b)
+- release: v0.5.0 [`e693153`](https://github.com/neo9/kube-core/commit/e6931531f61a0802aa6a8b69952b643300f344bb)
 - cli/workspace: Updated open command documentation [`55e2399`](https://github.com/neo9/kube-core/commit/55e239954fa9a098c1127626c8831597d0051aae)
 
 #### [v0.4.5](https://github.com/neo9/kube-core/compare/v0.4.4...v0.4.5)
