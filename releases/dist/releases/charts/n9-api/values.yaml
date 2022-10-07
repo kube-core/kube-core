@@ -109,23 +109,23 @@ ingress:
     #   paths:
     #     - path: /
     #       pathType: ImplementationSpecific
-    #       # svcName: left to default 
+    #       # svcName: left to default
     #       # svcPort: left to default
     # - host: imanhost.domain.tld
     #   paths:
     #     - path: /api/(service_1/?.*)
-    #       # pathType: left to default 
+    #       # pathType: left to default
     #       svcName: neo9-api-1
     #       svcPort: 80
     #     - path: /api/(service_2/?.*)
     #       svcName: neo9-api-2
     #       # svcPort: left to default
-  
+
   additionalHosts: []
     # - host: imalsoanhost.domain.tld
     #   paths:
     #     - path: /api/(service_1/?.*)
-    #       # pathType: left to default 
+    #       # pathType: left to default
     #       svcName: neo9-api-1
     #       svcPort: 80
   tls: []
@@ -151,7 +151,7 @@ autoscaling:
   targetMemoryUtilizationPercentage: 80
 
 ## Define value relative to kube scheduling
-scheduling: 
+scheduling:
   nodeSelector: {}
   tolerations: []
   affinity: {}
@@ -220,7 +220,7 @@ pod:
     # -- Define configmap to attach and mount, example commented out in values.yaml files
     configMap: []
     # - name: certs-configmap # name of the configmap to mount
-    #   mountPath: /etc/configmaps/ 
+    #   mountPath: /etc/configmaps/
     #   subPath: "" # (optional) default to null
     #   readOnly: true # (optional) default to true
     # -- Define secrets to attach and mount, example commented out in values.yaml files
@@ -383,7 +383,7 @@ flux:
         branch: main
       pushRef:
         branch: main
-      author: 
+      author:
         email: flux-bot@my-domain.com
         name: flux-bot
       message: "chore: Updating images"
@@ -414,3 +414,6 @@ flux:
   #     policy:
   #       semver:
   #         range: "0.1.0"
+
+logging:
+  enabled: false # Adds logging.kube-core.io/flow-name: app annotation to catch logs with logging-operator
