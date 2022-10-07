@@ -1,3 +1,24 @@
+{{ if not (or (and (eq .Release.Name "nginx-ingress-controller") (eq .Release.Namespace "nginx-ingress")) (and (eq .Release.Name "nginx-istio-ingress-controller") (eq .Release.Namespace "nginx-istio-ingress"))) }}
+# If not core ingress-controller, scope it (e.g for services)
+scope:
+  enabled: true
+ingressClassResource:
+  name: {{ index .Values.releases .Release.Name "config" "ingressClass" }}-{{ .Release.Namespace }}
+  enabled: true
+  default: false
+  controllerClass: {{ index .Values.releases .Release.Name "config" "controllerClass" }}-{{ .Release.Namespace }}
+  parameters: {}
+{{ else }}
+## Name of the ingress class to route through this controller
+##
+ingressClassResource:
+  name: {{ index .Values.releases .Release.Name "config" "ingressClass" }}
+  enabled: true
+  default: {{ index .Values.releases .Release.Name "config" "defaultIngressClass" }}
+  controllerClass: {{ index .Values.releases .Release.Name "config" "controllerClass" }}
+  parameters: {}
+{{ end }}
+
 ## DaemonSet or Deployment
 ##
 {{ if and (index .Values.releases .Release.Name "config" "ha") (eq .Values.cloud.provider "aws") }}
@@ -42,14 +63,7 @@ electionID: ingress-controller-leader
 ##
 reportNodeInternalIp: false
 
-## Name of the ingress class to route through this controller
-##
-ingressClassResource:
-  name: {{ index .Values.releases .Release.Name "config" "ingressClass" }}
-  enabled: true
-  default: {{ index .Values.releases .Release.Name "config" "defaultIngressClass" }}
-  controllerClass: {{ index .Values.releases .Release.Name "config" "controllerClass" }}
-  parameters: {}
+
 
 ## Allows customization of the external service
 ## the ingress will be bound to via DNS
@@ -132,7 +146,7 @@ metrics:
   serviceMonitor:
     enabled: {{ coalesce (index .Values.releases .Release.Name "config" "metrics" "serviceMonitor" "enabled") .Values.core.packages.monitoring.enabled }}
     interval: 15s
-    namespace: {{ index .Values.releases "kps" "release" "namespace" }}
+    namespace: {{ .Release.Namespace }}
 
 {{ if index .Values.releases .Release.Name "config" "istioAnnotations" }}
 podAnnotations:

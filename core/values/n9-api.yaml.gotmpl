@@ -1,0 +1,49 @@
+name:
+  appNameOverride: {{ .Release.Name }}
+
+image:
+  repository: neo9sas/devops-tools
+  tag: latest
+
+api:
+  type: "node"
+  deployedEnv: "application"
+  logLevel: "info"
+
+healthCheck:
+  enabled: true
+  path: "/"
+
+service:
+  type: ClusterIP
+  port: 8080
+
+deployment:
+  annotations:
+    reloader.stakater.com/auto: 'true'
+
+logging:
+  enabled: true
+
+ingress:
+  enabled: true
+  className: "{{ coalesce .Values.applicationsConfig.defaultIngressClass .Values.servicesConfig.defaultIngressClass .Values.cluster.common.defaultIngressClass }}"
+  globalEasyTls: true
+  labels:
+    ingress.neo9.io/access-filtered: "true"
+  annotations:
+    nginx.ingress.kubernetes.io/service-upstream: "true"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "X-XSS-Protection: 1; mode=block";
+      more_set_headers "Strict-Transport-Security: max-age=31536000";
+      more_set_headers "X-Content-Type-Options: nosniff";
+      more_set_headers "X-Frame-Options: DENY";
+    nginx.ingress.kubernetes.io/server-snippet: |
+      underscores_in_headers on;
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+
+  hosts:
+    - host: {{ .Release.Name }}.{{ .Release.Namespace }}.{{ .Values.cluster.config.domain }}
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
