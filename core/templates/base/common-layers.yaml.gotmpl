@@ -39,6 +39,14 @@
 ####################
 
 ####################
+# Applications
+# Defines applications config
+- ./envs/default/core/releases/applications.yaml
+# Defines services config
+- ./envs/default/core/releases/services.yaml
+####################
+
+####################
 # Dynamic injection of all extra releases in "./env/default/core/releases/extra"
 {{ exec "bash" (list "-c" (printf "./scripts/read-extra-releases.sh %s" "default")) | indent 0 | trim }}
 ####################

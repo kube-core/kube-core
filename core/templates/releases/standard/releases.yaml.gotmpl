@@ -4,14 +4,14 @@
 {{- $values := .Values }}
 {{- $releases := .Values.releases }}
 
-{{- range $key, $value := $releases }}
-{{- if $value.enabled -}}
+{{- range $releaseName, $release := $releases }}
+{{- if $release.enabled -}}
 
 {{ $requirementsMet := true -}}
 {{ $lastRequirementMet := false -}}
 
-{{- if $value.needs -}}
-{{- range $currentRequirement := $value.needs -}}
+{{- if $release.needs -}}
+{{- range $currentRequirement := $release.needs -}}
 
 {{- $lastRequirementMet = $releases | get (printf "%s.enabled" $currentRequirement) -}}
 {{ if not $lastRequirementMet }}
@@ -21,74 +21,12 @@
 {{- end -}}
 {{- end -}}
 
-{{ $newValues := $value }}
+{{ $newValues := $release }}
 {{ $_ := set $newValues "enabled" $requirementsMet }}
-{{- tpl (readFile "templates/releases/standard/release.yaml.gotmpl") (dict "item" $newValues "coreValues" $values) }}
-
-
-{{ if $value.manifests }}
-- name: {{ $value.release.name }}-manifests
-  chart: ../releases/dist/releases/charts/raw
-  namespace: {{ $value.namespace }}
-  {{ if .labels }}
-  labels: {{ toYaml .labels | nindent 4 }}
-  {{ else }}
-  labels:
-  {{ end }}
-    app: {{ $value.release.name }}
-    type: manifests
-  values:
-  - "./values/release-manifests.yaml.gotmpl"
-  # - "./values/{{ $value.release.name }}-manifests.yaml.gotmpl"
-{{ end }}
-
-{{ if $value.secrets }}
-- name: {{ $value.release.name }}-secrets
-  chart: ../releases/dist/releases/charts/raw
-  namespace: {{ $value.namespace }}
-  {{ if .labels }}
-  labels: {{ toYaml .labels | nindent 4 }}
-  {{ else }}
-  labels:
-  {{ end }}
-    app: {{ $value.release.name }}
-    type: secrets
-  values:
-  - "./values/release-secrets.yaml.gotmpl"
-  # - "./values/{{ $value.release.name }}-secrets.yaml.gotmpl"
-{{ end }}
-
-{{ if $value.patches }}
-- name: {{ $value.release.name }}-patches
-  chart: ../releases/dist/releases/charts/raw
-  namespace: {{ $value.namespace }}
-  {{ if .labels }}
-  labels: {{ toYaml .labels | nindent 4 }}
-  {{ else }}
-  labels:
-  {{ end }}
-    app: {{ $value.release.name }}
-    type: patches
-  values:
-  - "./values/release-patches.yaml.gotmpl"
-  # - "./values/{{ $value.release.name }}-secrets.yaml.gotmpl"
-{{ end }}
-
-{{ if (and $value.scaling $releases.keda.enabled $releases.kps.enabled $releases.sloth.enabled) }}
-- name: {{ $value.release.name }}-scaling
-  chart: ../releases/dist/releases/charts/app-scaling
-  namespace: {{ $value.namespace }}
-  {{ if .labels }}
-  labels: {{ toYaml .labels | nindent 4 }}
-  {{ else }}
-  labels:
-  {{ end }}
-    app: {{ $value.release.name }}
-    type: scaling
-  values:
-  - "./values/release-scaling.yaml.gotmpl"
-  # - "./values/{{ $value.release.name }}-secrets.yaml.gotmpl"
-{{ end }}
+{{ $_ := set $newValues "type" "release" }}
+{{- tpl (readFile "templates/releases/standard/release.yaml.gotmpl") (dict "item" $newValues "coreValues" $values "releaseName" $releaseName "releaseNamespace" $values.applicationsConfig.namespace "releaseContext" $values.cluster.config.context) }}
+{{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") (dict "item" $newValues "coreValues" $values "releaseName" $releaseName "releaseNamespace" $values.applicationsConfig.namespace "releaseContext" $values.cluster.config.context) }}
+{{- tpl (readFile "templates/releases/standard/release-extensions.yaml.gotmpl") (dict "item" $newValues "coreValues" $values "releaseName" $releaseName "releaseNamespace" $values.applicationsConfig.namespace "releaseContext" $values.cluster.config.context) }}
 
 {{- end -}}
 {{- end -}}
