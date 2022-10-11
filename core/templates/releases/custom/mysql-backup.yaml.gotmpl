@@ -7,7 +7,6 @@
   installed: {{ $value.enabled }}
   namespace: {{ $value.namespace }}
   transformers:
-  {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
   {{ if $value.needs }}
   needs: {{ toYaml $value.needs | nindent 2 }}
   {{ end }}
@@ -28,7 +27,6 @@
   chart: ../releases/dist/releases/charts/raw
   namespace: {{ $value.namespace }}
   transformers:
-  {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
   {{ if $value.needs }}
   wait: true
   needs: {{ toYaml $value.needs | nindent 2 }}

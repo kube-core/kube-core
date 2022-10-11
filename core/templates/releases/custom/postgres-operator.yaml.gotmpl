@@ -4,7 +4,6 @@
   chart: ../releases/dist/releases/charts/postgres-operator
   namespace: postgres-operator
   transformers:
-  {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
   labels:
     app: postgres-operator
     type: postgres-operator
@@ -19,7 +18,6 @@
   chart: ../releases/dist/releases/charts/raw
   namespace: postgres-operator
   transformers:
-  {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
 {{ if $values.releasesCustom.postgresOperator.config.pod_env_overrides.enabled }}
   installed: true
 {{ else }}
