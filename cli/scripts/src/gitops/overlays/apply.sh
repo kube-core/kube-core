@@ -60,23 +60,57 @@ check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
 ## Docs Start ##
-## DEPRECATED. Applies common overlays on the config
+## Applies Core and Cluster Overlays on the config
 ## Docs End ##
 
-log_debug "${project_name} - Applies Common Overlays (Disabled for now, see script)"
+log_info "Applying Overlays..."
 
 configPath=${config_path}
 localConfigPath=${localConfig_path}
 buildPath=${build_path}
 
-# overlaysPath=${overlays_path}
+overlaysPath=${overlays_path}
 
+coreOverlaysList=$(find ${currentScriptPath} -type f -name '*.yaml')
 
-# Disabled for now, to activate when needed
-# overlaysPath=${currentScriptPath}
+if [[ "${coreOverlaysList}" != "" ]]; then
+    log_info "Applying Core Overlays..."
+    while read overlay; do
+        if [[ "$LOG_LEVEL" == "DEBUG" || "$LOG_LEVEL" == "INSANE" ]]; then
+            ytt --ignore-unknown-comments \
+                --output-files ${configPath} \
+                -f ${configPath} \
+                -f ${overlay}
+        else
+            ytt --ignore-unknown-comments \
+                --output-files ${configPath} \
+                -f ${configPath} \
+                -f ${overlay} > /dev/null
+        fi
+    done <<< "${coreOverlaysList}"
+else
+    log_warn "No Core Overlay found!"
+fi
 
+clusterOverlaysList=$(find ${overlaysPath} -type f -name '*.yaml')
 
-# ytt --ignore-unknown-comments \
-#     --output-files ${configPath} \
-#     -f ${configPath} \
-#     -f ${overlaysPath}/common-labels.yaml > /dev/null
+if [[ "${clusterOverlaysList}" != "" ]]; then
+    log_info "Applying Cluster Overlays..."
+    while read overlay; do
+        if [[ "$LOG_LEVEL" == "DEBUG" || "$LOG_LEVEL" == "INSANE" ]]; then
+            ytt --ignore-unknown-comments \
+                --output-files ${configPath} \
+                -f ${configPath} \
+                -f ${overlay}
+        else
+            ytt --ignore-unknown-comments \
+                --output-files ${configPath} \
+                -f ${configPath} \
+                -f ${overlay} > /dev/null
+        fi
+    done <<< "${clusterOverlaysList}"
+else
+    log_info "No Cluster Overlay found!"
+fi
+
+log_info "Done Applying Overlays!"
