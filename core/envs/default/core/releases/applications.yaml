@@ -2,3 +2,5 @@ applications: {}
 applicationsConfig:
   namespace: apps
   defaultIngressClass: ""
+  domain: ""
+  bucketPrefix: ""

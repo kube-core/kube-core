@@ -1,0 +1,15 @@
+{{- if (and (index .Values "mongodb-exporter" "enabled" ) (not (index .Values "mongodb-exporter" "existingSecret" "name"))) }}
+To properly configure mongodb-exporter for monitoring, make sure to set a values for :
+
+mongodb-exporter: 
+  existingSecret:
+    name:
+
+If you are using external secrets template ($.Values.mongodbMonitoring.externalSecrets = true )
+You can simply copy/paste this into your values :
+
+mongodb-exporter: 
+  existingSecret:
+    name: {{ printf "%s-monitoring" (include "mongodb-managed.fullname" . ) }}
+
+{{- end }}

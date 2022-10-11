@@ -1,0 +1,39 @@
+{{ $releaseName := .Release.Name }}
+enabled: true
+nameOverride: {{ $releaseName }}
+fullnameOverride: {{ $releaseName }}
+users:
+  - name: {{ $releaseName }}-admin
+    db: admin
+    roles:
+      - name: clusterAdmin
+      - name: userAdminAnyDatabase
+      - name: readWriteAnyDatabase
+      - name: dbAdminAnyDatabase
+
+{{ range $applicationName, $application := .Values.applicationsList }}
+{{ if $application | getOrNil "mongodb" | getOrNil "enabled" }}
+{{ if $application | getOrNil "mongodb" | getOrNil "ref" }}
+{{ if (or (eq ($application | getOrNil "mongodb" | getOrNil "ref") $releaseName) (eq ($application | getOrNil "mongodb" | getOrNil "ref") "all")) }}
+  - name: {{ $releaseName }}-{{ $applicationName }}
+    roles:
+      - name: readWrite
+{{ end }}
+{{ end }}
+{{ end }}
+{{ end }}
+
+
+mongodbMonitoring:
+  user:
+    create: true
+    additionnalRoles: []
+  # Require external secrets set in cluster with a store in namespace
+  externalSecrets:
+    enabled: true
+
+mongodb-exporter:
+  enabled: true
+  existingSecret:
+    name: {{ $releaseName }}-monitoring
+    # name: {{ $releaseName }}-{{ $releaseName }}-mongodb-exporter-monitoring-password

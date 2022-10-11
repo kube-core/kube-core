@@ -24,10 +24,13 @@ templates:
       injectReloaderAnnotations: false
       injectClusterLoggingLabel: false
       injectIngressClassName: false
+      injectIngressHost: false
+      injectIngressTls: false
     patches: {}
     release: {}
     scaling: {}
     secrets: {}
+    external-secrets: false
     strategicMergePatches: {}
     transformers: {}
     values: {}
@@ -118,3 +121,6 @@ releases:
   descheduler: *release
   cluster-rbac: *release
   node-problem-detector: *release
+
+  rabbitmq-managed: *release
+  mongodb-managed: *release

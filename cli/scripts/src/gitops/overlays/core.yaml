@@ -1,0 +1,13 @@
+#@ load("@ytt:overlay", "overlay")
+
+#@ def commonLabels():
+#@overlay/match missing_ok=True
+build.kube-core.io/overlays-enabled: "true"
+#@ end#
+
+#@overlay/match by=overlay.all, expects="0+"
+---
+#@overlay/match missing_ok=True
+metadata:
+  #@overlay/match missing_ok=True
+  labels: #@ commonLabels()

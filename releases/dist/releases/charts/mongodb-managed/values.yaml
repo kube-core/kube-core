@@ -1,0 +1,65 @@
+# Default values for mongodb-managed.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+labels: {}
+annotations: {}
+replicaCount: 3
+
+nameOverride: ""
+fullnameOverride: ""
+
+# -- Create a service account for the operator god sake.
+serviceAccount:
+  create: true
+
+# We usually recommend not to specify default resources and to leave this as a conscious
+# choice for the user. This also increases chances charts run on environments with little
+# resources, such as Minikube. If you do want to specify resources, uncomment the following
+# lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+resources:
+  # -- Define pod limits.
+  limits: {}
+    # cpu: 1.5
+    # memory: 3G
+  # -- Define pod requests.
+  requests: {}
+    # cpu: 0.75
+    # memory: 1.5G
+
+# -- Define the list of users.
+users: []
+  # - name: username
+  #   roles:
+  #   - name: readWrite
+
+tolerations: []
+affinity: {}
+nodeSelector: {}
+
+mongodbMonitoring:
+  user:
+    create: true
+    additionnalRoles: []
+  externalSecrets:
+    # -- Require external secrets set in cluster with a store in namespace
+    enabled: false
+    # secretStoreRef:
+    #   name: k8s-integration
+    #   kind: ClusterSecretStore
+
+mongodb-exporter:
+  # -- If enabled, proper value should be set to connect exporter to mongodb
+  enabled: true
+
+  # [mongodb[+srv]://][user:pass@]host1[:port1][,host2[:port2],...][/database][?options]
+  mongodb:
+    # -- Default value set to permits exporter deployment without valid uri
+    uri: "dummy-default"
+
+  # Name of an externally managed secret (in the same namespace) containing the connection uri as key `mongodb-uri`.
+  # If this is provided, the value mongodb.uri is ignored.
+  existingSecret:
+    # name: {{ printf "%s-monitoring" (include "mongodb-managed.fullname" . ) }}
+    # -- (REQUIRED) If using external secret, bootstrap with ".Release.Name-monitoring", or check notes.
+    name: ""
+    key: "mongodb-uri"

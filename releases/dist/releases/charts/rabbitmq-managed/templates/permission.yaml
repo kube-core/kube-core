@@ -1,0 +1,20 @@
+{{- range $user := .Values.users }}
+{{- range $permission := $user.permissions }}
+---
+apiVersion: rabbitmq.com/v1beta1
+kind: Permission
+metadata:
+  name: {{ include "rabbitmq-managed.fullname" $ }}-permission-{{ $user.name }}{{ printf "-%s" $permission.vhost | trimSuffix "/" | trimSuffix "-" }}
+spec:
+  vhost: {{ $permission.vhost }}
+  userReference:
+    name: {{ include "rabbitmq-managed.fullname" $ }}-user-{{ $user.name }}
+  permissions:
+    write: {{ $permission.write | default ".*" }}
+    configure: {{ $permission.configure | default ".*" }}
+    read: {{ $permission.read | default ".*" }}
+  rabbitmqClusterReference:
+    name: {{ include "rabbitmq-managed.fullname" $ }}
+    namespace: {{ $.Release.Namespace }}
+{{- end }}
+{{- end }}

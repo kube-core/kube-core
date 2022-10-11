@@ -1,0 +1,39 @@
+{{ $releaseName := .Release.Name }}
+nameOverride: {{ $releaseName }}
+fullnameOverride: {{ $releaseName }}
+ingress:
+  enabled: true
+  className: "{{ coalesce .Values.applicationsConfig.defaultIngressClass .Values.servicesConfig.defaultIngressClass .Values.cluster.common.defaultIngressClass }}"
+  tls:
+    enabled: true
+  host: {{ $releaseName }}.{{ .Release.Namespace }}.{{ .Values.cluster.config.domain }}
+
+cluster:
+  replicaCount: 1
+  extraSpec:
+    override:
+      statefulSet:
+        spec:
+          template:
+            metadata:
+              labels:
+                logging.kube-core.io/flow-name: app
+vhosts:
+- {{ $releaseName }}
+
+users:
+- name: {{ $releaseName }}-admin
+  permissions:
+  - vhost: /
+  - vhost: {{ $releaseName }}
+{{ range $applicationName, $application := .Values.applicationsList }}
+{{ if $application | getOrNil "rabbitmq" | getOrNil "enabled" }}
+{{ if $application | getOrNil "rabbitmq" | getOrNil "ref" }}
+{{ if (or (eq ($application | getOrNil "rabbitmq" | getOrNil "ref") $releaseName) (eq ($application | getOrNil "rabbitmq" | getOrNil "ref") "all")) }}
+- name: {{ $applicationName }}
+  permissions:
+  - vhost: {{ $releaseName }}
+{{ end }}
+{{ end }}
+{{ end }}
+{{ end }}

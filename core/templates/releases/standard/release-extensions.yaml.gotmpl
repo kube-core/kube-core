@@ -1,59 +1,91 @@
 {{ $values := .values }}
+{{ $releaseName := .releaseName }}
 {{ if .item.manifests }}
-- name: {{ .releaseName }}-manifests
+- name: {{ $releaseName }}-manifests
   chart: ../releases/dist/releases/charts/raw
-  kubeContext: {{  $values.cluster.config.context }}
+  kubeContext: {{ coalesce .item.context (getOrNil "releaseContext" .) $values.cluster.config.context }}
+  {{- if (eq .item.type "release") }}
   namespace: {{ .item.namespace }}
+  {{- else if (or (eq .item.type "application") (eq .item.type "service")) }}
+  namespace: {{ .releaseNamespace }}
+  {{- end }}
   transformers:
   {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
-
   labels:
-    app: {{ .releaseName }}
+    app: {{ $releaseName }}
     type: manifests
   values:
+  # - "{{ ($releaseName | replace "-manifests" "") }}"
   - "./values/release-manifests.yaml.gotmpl"
 {{ end }}
 
 {{ if .item.secrets }}
-- name: {{ .releaseName }}-secrets
+- name: {{ $releaseName }}-secrets
   chart: ../releases/dist/releases/charts/raw
-  kubeContext: {{  $values.cluster.config.context }}
+  kubeContext: {{ coalesce .item.context (getOrNil "releaseContext" .) $values.cluster.config.context }}
+  {{- if (eq .item.type "release") }}
   namespace: {{ .item.namespace }}
+  {{- else if (or (eq .item.type "application") (eq .item.type "service")) }}
+  namespace: {{ .releaseNamespace }}
+  {{- end }}
   transformers:
   {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
-
   labels:
-    app: {{ .releaseName }}
+    app: {{ $releaseName }}
     type: secrets
   values:
   - "./values/release-secrets.yaml.gotmpl"
 {{ end }}
 
-{{ if .item.patches }}
-- name: {{ .releaseName }}-patches
+{{ if (index .item "external-secrets") }}
+- name: {{ $releaseName }}-external-secrets
   chart: ../releases/dist/releases/charts/raw
-  kubeContext: {{  $values.cluster.config.context }}
+  kubeContext: {{ coalesce .item.context (getOrNil "releaseContext" .) $values.cluster.config.context }}
+  {{- if (eq .item.type "release") }}
   namespace: {{ .item.namespace }}
+  {{- else if (or (eq .item.type "application") (eq .item.type "service")) }}
+  namespace: {{ .releaseNamespace }}
+  {{- end }}
   transformers:
   {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
-
   labels:
-    app: {{ .releaseName }}
+    app: {{ $releaseName }}
+    type: secrets
+  values:
+  - "./values/release-external-secrets.yaml.gotmpl"
+{{ end }}
+
+{{ if .item.patches }}
+- name: {{ $releaseName }}-patches
+  chart: ../releases/dist/releases/charts/raw
+  kubeContext: {{ coalesce .item.context (getOrNil "releaseContext" .) $values.cluster.config.context }}
+  {{- if (eq .item.type "release") }}
+  namespace: {{ .item.namespace }}
+  {{- else if (or (eq .item.type "application") (eq .item.type "service")) }}
+  namespace: {{ .releaseNamespace }}
+  {{- end }}
+  transformers:
+  {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
+  labels:
+    app: {{ $releaseName }}
     type: patches
   values:
   - "./values/release-patches.yaml.gotmpl"
 {{ end }}
 
 {{ if .item.scaling }}
-- name: {{ .releaseName }}-scaling
+- name: {{ $releaseName }}-scaling
   chart: ../releases/dist/releases/charts/app-scaling
-  kubeContext: {{  $values.cluster.config.context }}
+  kubeContext: {{ coalesce .item.context (getOrNil "releaseContext" .) $values.cluster.config.context }}
+  {{- if (eq .item.type "release") }}
   namespace: {{ .item.namespace }}
+  {{- else if (or (eq .item.type "application") (eq .item.type "service")) }}
+  namespace: {{ .releaseNamespace }}
+  {{- end }}
   transformers:
   {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
-
   labels:
-    app: {{ .releaseName }}
+    app: {{ $releaseName }}
     type: scaling
   values:
   - "./values/release-scaling.yaml.gotmpl"

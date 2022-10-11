@@ -1,0 +1,67 @@
+apiVersion: mongodbcommunity.mongodb.com/v1
+kind: MongoDBCommunity
+metadata:
+  name: {{ include "mongodb-managed.fullname" . }}
+spec:
+  members: {{ .Values.replicaCount }}
+  type: ReplicaSet
+  version: "4.2.6"
+  security:
+    authentication:
+      modes: ["SCRAM"]
+  statefulSet:
+    spec:
+      template:
+        metadata:
+          {{ if .Values.labels }}
+          labels: {{ toYaml .Values.labels | nindent 12 }}
+          {{ end }}
+          {{ if .Values.annotations }}
+          annotations: {{ toYaml .Values.annotations | nindent 12 }}
+          {{ end }}
+        spec:
+          {{ if .Values.nodeSelector }}
+          nodeSelector: {{ toYaml .Values.nodeSelector | nindent 12 }}
+          {{ end }}
+          {{ if .Values.tolerations }}
+          tolerations: {{ toYaml .Values.tolerations | nindent 12 }}
+          {{ end }}
+          {{ if .Values.affinity }}
+          affinity: {{ toYaml .Values.affinity | nindent 12 }}
+          {{ end }}
+          serviceAccount: {{ include "mongodb-managed.serviceAccountName" . }}
+          serviceAccountName: {{ include "mongodb-managed.serviceAccountName" . }}
+          {{- if .Values.resources }}
+          containers:
+            - name: "mongod"
+              resources:
+              {{- toYaml .Values.resources | nindent 16 }}
+          {{- end }}
+  users:
+    {{- range $user := .Values.users }}
+    - name: {{ $user.name }}
+      db: {{ default $user.name $user.db }}
+      passwordSecretRef:
+        name: {{ include "mongodb-managed.secretName" (dict "global" $ "loop" .) }}-password
+      roles:
+      {{- range $role := $user.roles }}
+        - name: {{ $role.name }}
+          db: {{ default ( default $user.name $user.db ) $role.db }}
+      {{- end }}
+      scramCredentialsSecretName: {{ include "mongodb-managed.secretName" (dict "global" $ "loop" .) }}
+    {{- end }}
+    {{- if .Values.mongodbMonitoring.user.create }}
+    - name: monitoring
+      db: admin
+      passwordSecretRef:
+        name: {{ printf "%s-mongodb-exporter-monitoring-password" (include "mongodb-managed.fullname" . ) }}
+      roles:
+        - name: clusterMonitor
+          db: admin
+        - name: readAnyDatabase
+          db: admin
+        {{- if .Values.mongodbMonitoring.user.additionnalRoles }}
+        {{- toYaml .Values.mongodbMonitoring.user.additionnalRoles | nindent 8 }}
+        {{- end }}
+      scramCredentialsSecretName: {{ printf "%s-mongodb-exporter-monitoring" (include "mongodb-managed.fullname" . ) }}
+    {{- end }}
