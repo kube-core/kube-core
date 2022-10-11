@@ -7,7 +7,6 @@
   installed: {{ $value.enabled }}
   namespace: {{ $value.namespace }}
   transformers:
-  {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
   # {{ if and ($value.needs) ($value.values.externalDatabase.pgsqlClusterName) }}
   # needs: {{ toYaml $value.needs | nindent 2 }}
   # - {{ toYaml $value.values.externalDatabase.pgsqlClusterName }}
@@ -30,7 +29,6 @@
   installed: {{ $value.enabled }}
   namespace: {{ $value.namespace }}
   transformers:
-  {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
   # {{ if and ($value.needs) ($value.values.externalDatabase.pgsqlClusterName) }}
   # needs: {{ toYaml $value.needs | nindent 2 }}
   # - {{ toYaml $value.values.externalDatabase.pgsqlClusterName }}
