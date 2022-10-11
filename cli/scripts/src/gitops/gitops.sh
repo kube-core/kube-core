@@ -86,7 +86,7 @@ ${scripts_gitops_utils_generate_namespaces_path}
 
 # Applying overlays. Disabled for now
 # TODO: reimplement
-# ${scripts_gitops_overlay_path}
+${scripts_gitops_overlay_path}
 
 # Applying patches (can't work without access to a cluster!) . Disabled for now
 # TODO: reimplement
