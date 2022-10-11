@@ -1,8 +1,16 @@
+{{ $values := .Values }}
+{{ $releaseNamespace := .Release.Namespace }}
+{{ $releaseName := .Release.Name }}
+
 name:
-  appNameOverride: {{ .Release.Name }}
+  appNameOverride: {{ $releaseName }}
 
 image:
+{{ if (.Values.applicationsList | getOrNil $releaseName) }}
+  repository: "{{ (printf "%s/%s/%s" $values.cloud.registry.hostname $values.cloud.project $releaseName) }}"
+{{ else }}
   repository: neo9sas/devops-tools
+{{ end }}
   tag: latest
 
 api:
@@ -25,9 +33,39 @@ deployment:
 logging:
   enabled: true
 
+pod:
+  env:
+    secrets:
+      {{ if (.Values.applicationsList | getOrNil $releaseName | getOrNil "envFromSecret") }}
+      {{ range (index .Values.applicationsList $releaseName "envFromSecret") }}
+      - secretName: {{ $releaseName }}
+        secretKey: {{ . }}
+      {{ end }}
+      {{ end }}
+{{ if (.Values.applicationsList | getOrNil $releaseName) }}
+{{ if (and (.Values.applicationsList | getOrNil $releaseName | getOrNil "external-secrets") (.Values.applicationsList | getOrNil $releaseName | getOrNil "mongodb" | getOrNil "enabled")) }}
+      - secretName: {{ $releaseName }}-mongodb
+        secretKey: MONGODB_URI
+      - secretName: {{ $releaseName }}-mongodb
+        secretKey: DATABASE_HOST
+      - secretName: {{ $releaseName }}-mongodb
+        secretKey: DATABASE_PORT
+      - secretName: {{ $releaseName }}-mongodb
+        secretKey: DATABASE_NAME
+      - secretName: {{ $releaseName }}-mongodb
+        secretKey: DATABASE_USERNAME
+      - secretName: {{ $releaseName }}-mongodb
+        secretKey: DATABASE_PASSWORD
+{{ end }}
+{{ if (and (.Values.applicationsList | getOrNil $releaseName | getOrNil "external-secrets") (.Values.applicationsList | getOrNil $releaseName | getOrNil "rabbitmq" | getOrNil "enabled")) }}
+      - secretName: {{ $releaseName }}-rabbitmq
+        secretKey: RABBITMQ_URI
+{{ end }}
+{{ end }}
+
 ingress:
   enabled: true
-  className: "{{ coalesce .Values.applicationsConfig.defaultIngressClass .Values.servicesConfig.defaultIngressClass .Values.cluster.common.defaultIngressClass }}"
+  className: "{{ coalesce $values.applicationsConfig.defaultIngressClass $values.servicesConfig.defaultIngressClass $values.cluster.common.defaultIngressClass }}"
   globalEasyTls: true
   labels:
     ingress.neo9.io/access-filtered: "true"
@@ -43,7 +81,38 @@ ingress:
     nginx.ingress.kubernetes.io/enable-cors: "true"
 
   hosts:
-    - host: {{ .Release.Name }}.{{ .Release.Namespace }}.{{ .Values.cluster.config.domain }}
+    - host: {{ .Release.Name }}.{{ .Release.Namespace }}.{{ coalesce $values.applicationsConfig.domain $values.servicesConfig.domain $values.cluster.config.domain }}
       paths:
         - path: /
           pathType: ImplementationSpecific
+
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+
+flux:
+  enabled: true
+  imageRepository:
+    interval: 1m0s
+    secretName: docker-registry-gcr-admin
+  imageUpdateAutomation:
+    enabled: false
+    interval: 1m0s
+    git:
+      sourceRef: {{ $values.cluster.config.name }}
+      # sourceNamespace: flux-system
+      ref:
+        branch: {{ $values.gitops.ref }}
+      pushRef:
+        branch: {{ $values.gitops.ref }}
+      author:
+        email: {{ $values.git.bot.user }}
+        name: {{ $values.git.bot.name }}
+      message: "chore: Updating images"
+    update:
+      path: {{ $values.gitops.path }}/{{ .Release.Namespace }}/{{ .Release.Name }}
+      strategy: Setters
+  defaultImagePolicy: default
+  # imagePolicy: "flux-system:apps"
+  defaultImagePoliciesEnabled: true

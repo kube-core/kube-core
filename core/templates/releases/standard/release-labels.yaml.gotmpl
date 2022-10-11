@@ -22,4 +22,79 @@
     fieldSpecs:
     - path: metadata/labels
       create: true
+  - apiVersion: builtin
+    kind: LabelTransformer
+    metadata:
+      name: apply-global-labels-on-deployments
+    labels:
+      cluster.kube-core.io/name: {{ $values.cluster.config.name }}
+      cluster.kube-core.io/context: {{ $values.cluster.config.context }}
+      cluster.kube-core.io/domain: {{ $values.cluster.config.domain }}
+      cloud.kube-core.io/provider: {{ $values.cloud.provider }}
+      cloud.kube-core.io/project: {{ $values.cloud.project }}
+      cloud.kube-core.io/location: {{ $values.cloud.default.location }}
+      app.kube-core.io/version: {{ $values.core.version }}
+      release.kube-core.io/type: {{ .item.type }}
+      release.kube-core.io/name: {{ $releaseName }}
+      release.kube-core.io/chart: {{ (splitList "/" .item.chart) | last | quote }}
+      {{- if $values.cluster.common.globalLabels }}
+      {{ toYaml $values.cluster.common.globalLabels | nindent 6 }}
+      {{- end }}
+    fieldSpecs:
+    - path: spec/template/metadata/labels
+      create: true
+      kind: Deployment
+    - path: spec/template/metadata/labels
+      create: true
+      kind: StatefulSet
+    - path: spec/template/metadata/labels
+      create: true
+      kind: DaemonSet
+  - apiVersion: builtin
+    kind: LabelTransformer
+    metadata:
+      name: apply-global-labels-on-rabbitmq
+    labels:
+      cluster.kube-core.io/name: {{ $values.cluster.config.name }}
+      cluster.kube-core.io/context: {{ $values.cluster.config.context }}
+      cluster.kube-core.io/domain: {{ $values.cluster.config.domain }}
+      cloud.kube-core.io/provider: {{ $values.cloud.provider }}
+      cloud.kube-core.io/project: {{ $values.cloud.project }}
+      cloud.kube-core.io/location: {{ $values.cloud.default.location }}
+      app.kube-core.io/version: {{ $values.core.version }}
+      release.kube-core.io/type: {{ .item.type }}
+      release.kube-core.io/name: {{ $releaseName }}
+      release.kube-core.io/chart: {{ (splitList "/" .item.chart) | last | quote }}
+      {{- if $values.cluster.common.globalLabels }}
+      {{ toYaml $values.cluster.common.globalLabels | nindent 6 }}
+      {{- end }}
+    fieldSpecs:
+    - path: spec/override/statefulSet/metadata/labels
+      create: true
+      kind: RabbitmqCluster
+    - path: spec/override/statefulSet/spec/template/metadata/labels
+      create: true
+      kind: RabbitmqCluster
+  - apiVersion: builtin
+    kind: LabelTransformer
+    metadata:
+      name: apply-global-labels-on-cronjobs
+    labels:
+      cluster.kube-core.io/name: {{ $values.cluster.config.name }}
+      cluster.kube-core.io/context: {{ $values.cluster.config.context }}
+      cluster.kube-core.io/domain: {{ $values.cluster.config.domain }}
+      cloud.kube-core.io/provider: {{ $values.cloud.provider }}
+      cloud.kube-core.io/project: {{ $values.cloud.project }}
+      cloud.kube-core.io/location: {{ $values.cloud.default.location }}
+      app.kube-core.io/version: {{ $values.core.version }}
+      release.kube-core.io/type: {{ .item.type }}
+      release.kube-core.io/name: {{ $releaseName }}
+      release.kube-core.io/chart: {{ (splitList "/" .item.chart) | last | quote }}
+      {{- if $values.cluster.common.globalLabels }}
+      {{ toYaml $values.cluster.common.globalLabels | nindent 6 }}
+      {{- end }}
+    fieldSpecs:
+    - path: spec/jobTemplate/spec/template/metadata/labels
+      create: true
+      kind: CronJob
 {{- end }}

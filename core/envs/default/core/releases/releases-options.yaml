@@ -107,6 +107,13 @@ releases:
       applyDefaultLabelsOnIngress: true
       applyDefaultAnnotationsOnIngress: true
       injectReloaderAnnotations: true
+  rabbitmq-managed:
+    options:
+      patchIngresses: true
+      injectIngressClassName: true
+      applyDefaultLabelsOnIngress: true
+      applyDefaultAnnotationsOnIngress: true
+      injectReloaderAnnotations: true
   polaris:
     options:
       patchIngresses: true
@@ -129,7 +136,6 @@ releases:
       injectClusterLoggingLabel: true
   secret-generator:
     options:
-      injectReloaderAnnotations: true
       injectClusterLoggingLabel: true
   sloth:
     options:

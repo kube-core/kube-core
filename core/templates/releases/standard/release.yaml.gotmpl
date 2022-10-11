@@ -1,23 +1,25 @@
 {{ $values := .values }}
+{{ $chartName := ((splitList "/" .item.chart) | last) }}
+{{ $releaseName := .releaseName }}
 - name: {{ .releaseName }}
   {{- if (eq .item.type "release") }}
   namespace: {{ .item.namespace }}
   {{- else if (or (eq .item.type "application") (eq .item.type "service")) }}
   namespace: {{ .releaseNamespace }}
   {{- end }}
-  {{- if (and (or (eq .item.type "application") (eq .item.type "service")) (isFile (printf "./values/%s.yaml.gotmpl" .releaseName))) }}
-  chart: ../releases/dist/releases/charts/{{ .releaseName }}
+  {{- if (and (or (eq .item.type "application") (eq .item.type "service")) (isFile (printf "./values/%s.yaml.gotmpl" $chartName))) }}
+  chart: ../releases/dist/releases/charts/{{ ((splitList "/" .item.chart) | last) }}
   {{- else }}
   chart: {{ .item.chart }}
   {{- end }}
   installed: {{ .item.enabled }}
   kubeContext: {{ coalesce .item.context (getOrNil "releaseContext" .) $values.cluster.config.context }}
+  labels:
   {{ if .item.labels }}
-  labels: {{ toYaml .item.labels | nindent 4 }}
+    {{ toYaml .item.labels | nindent 4 }}
+  {{ end }}
     app: {{ .releaseName }}
     context: {{ coalesce .item.context (getOrNil "releaseContext" .) $values.cluster.config.context }}
-    type: chart
-  {{ end }}
   values:
   {{/*Inject core values if enabed. Placed here so that core values can be overriden by a release if needed. */}}
   {{/*Be careful about values naming conflicts when activated. */}}
@@ -28,8 +30,8 @@
   - "./values/{{ .releaseName }}.yaml.gotmpl" {{/*# Release has to have a value file, even empty*/}}
   {{- else if (and (eq .item.type "application") (or (eq .item.chart "neo9charts/n9-api") (eq .item.chart "n9/n9-api") (eq .item.chart "../releases/dist/releases/charts/n9-api" ) (eq .item.chart "../releases/local/n9-api") )) }}
   - "./values/n9-api.yaml.gotmpl"
-  {{- else if (and (eq .item.type "service") (isFile (printf "./values/%s.yaml.gotmpl" .releaseName))) }}
-  - "./values/{{ .releaseName }}.yaml.gotmpl"
+  {{- else if (and (eq .item.type "service") (isFile (printf "./values/%s.yaml.gotmpl" $chartName))) }}
+  - {{ (printf "./values/%s.yaml.gotmpl" $chartName) }}
   {{- end }}
   {{- if .item.extraReleaseValues }} {{/*# Adding extra values (not in .item.release because of toYaml above)*/}}
   {{- range .item.extraReleaseValues }}

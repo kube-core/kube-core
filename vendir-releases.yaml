@@ -4,6 +4,18 @@ directories:
   - path: releases/base
     contents:
       # Base Releases
+      - path: mongodb-managed
+        helmChart:
+          name: mongodb-managed
+          version: 0.4.0
+          repository:
+            url: https://charts.neo9.pro
+      - path: rabbitmq-managed
+        helmChart:
+          name: rabbitmq-managed
+          version: 0.2.0
+          repository:
+            url: https://charts.neo9.pro
       - path: node-problem-detector
         helmChart:
           name: node-problem-detector

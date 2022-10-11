@@ -1,4 +1,6 @@
 {{- $values := .values }}
+{{ $releaseName := .releaseName }}
+{{ $releaseNamespace := .releaseNamespace }}
 {{- if .item.strategicMergePatches }}
   strategicMergePatches:
   {{ toYaml .item.strategicMergePatches | nindent 2 }}
@@ -27,7 +29,7 @@
   {{- if .item.options.injectIngressClassName }}
       - op: replace
         path: "/spec/ingressClassName"
-        value: "{{ $values.cluster.common.defaultIngressClass }}"
+        value: "{{ coalesce $values.applicationsConfig.defaultIngressClass $values.servicesConfig.defaultIngressClass $values.cluster.common.defaultIngressClass }}"
   {{- end }}
   {{- if .item.options.upgradeIngress }}
       - op: replace
@@ -73,6 +75,21 @@
       - op: replace
         path: "/spec/ingressClassName"
         value: {{ index $values.releases "nginx-ingress-controller" "config" "ingressClass" }}-{{ .releaseNamespace }}
+  {{- end }}
+  {{- if .item.options.injectIngressHost }}
+      - op: replace
+        path: "/spec/rules/0/host"
+        value: {{ $releaseName }}.{{ $releaseNamespace }}.{{ $values.cluster.config.domain }}
+  {{- end }}
+    # tls: []
+  #  - secretName: mongo-express-tls
+  #    hosts:
+  #      - mongo-express.local
+  {{- if .item.options.injectIngressTls }}
+      - op: add
+        path: "/spec/tls"
+        value: [{"hosts": ["{{ $releaseName }}.{{ $releaseNamespace }}.{{ $values.cluster.config.domain }}"], "secretName": "{{ $releaseName }}.{{ $releaseNamespace }}.{{ $values.cluster.config.domain | replace "." "-"}}-tls"}]
+
   {{- end }}
   {{- end }}
   {{- end }}

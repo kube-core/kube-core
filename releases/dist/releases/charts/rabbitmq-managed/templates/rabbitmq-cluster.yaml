@@ -1,0 +1,9 @@
+apiVersion: rabbitmq.com/v1beta1
+kind: RabbitmqCluster
+metadata:
+  name: {{ include "rabbitmq-managed.fullname" . }}
+spec:
+  replicas: {{ .Values.cluster.replicaCount }}
+  {{- with .Values.cluster.extraSpec }}
+    {{- toYaml . | nindent 2 }}
+  {{- end }}

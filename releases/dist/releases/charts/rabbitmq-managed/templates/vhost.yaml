@@ -1,0 +1,22 @@
+apiVersion: rabbitmq.com/v1beta1
+kind: Vhost
+metadata:
+  name: {{ include "rabbitmq-managed.fullname" $ }}-vhost-root
+spec:
+  name: /
+  rabbitmqClusterReference:
+    name: {{ include "rabbitmq-managed.fullname" $ }}
+    namespace: {{ $.Release.Namespace }}
+
+{{- range .Values.vhosts }}
+---
+apiVersion: rabbitmq.com/v1beta1
+kind: Vhost
+metadata:
+  name: {{ include "rabbitmq-managed.fullname" $ }}-vhost-{{ . | kebabcase }}
+spec:
+  name: {{ . }}
+  rabbitmqClusterReference:
+    name: {{ include "rabbitmq-managed.fullname" $ }}
+    namespace: {{ $.Release.Namespace }}
+{{- end }}

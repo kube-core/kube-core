@@ -359,3 +359,15 @@ releases:
     namespace: node-problem-detector
     chart: ../releases/dist/releases/charts/node-problem-detector
     release:
+
+  rabbitmq-managed:
+    namespace: rabbitmq
+    release:
+      chart: ../releases/dist/releases/charts/rabbitmq-managed
+      name: rabbitmq-managed
+
+  mongodb-managed:
+    namespace: mongodb
+    release:
+      chart: ../releases/dist/releases/charts/mongodb-managed
+      name: mongodb-managed

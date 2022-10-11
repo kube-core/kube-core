@@ -2,3 +2,5 @@ services: {}
 servicesConfig:
   namespace: apps
   defaultIngressClass: ""
+  domain: ""
+  bucketPrefix: ""
