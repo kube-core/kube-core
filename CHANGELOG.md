@@ -2,10 +2,17 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.5.3](https://github.com/neo9/kube-core/compare/v0.5.2...v0.5.3)
+
+- core/templates: Removed label injection on custom releases [`3a56333`](https://github.com/neo9/kube-core/commit/3a5633340f6c5ed97c91f0693bcbcd3b569b0d47)
+
 #### [v0.5.2](https://github.com/neo9/kube-core/compare/v0.5.1...v0.5.2)
+
+> 11 October 2022
 
 - core/envs: Added integrations between Core, Applications and Services for mongodb-managed and rabbitmq-managed [`125e3a5`](https://github.com/neo9/kube-core/commit/125e3a5bdb22b0694c4f504c26c9b4705f715fbc)
 - cli/scripts: Reimplemented ytt Overlays [`25b9251`](https://github.com/neo9/kube-core/commit/25b9251f4dba2c0df21e789e23437a2b224ca73f)
+- release: v0.5.2 [`d9e497a`](https://github.com/neo9/kube-core/commit/d9e497aaba759bf53161dfef761ed3636c3f8ac0)
 
 #### [v0.5.1](https://github.com/neo9/kube-core/compare/v0.5.0...v0.5.1)
 
