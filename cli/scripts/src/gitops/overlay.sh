@@ -63,15 +63,11 @@ check_context "${cluster_config_context}"
 ## Applies overlays over gitops config
 ## Docs End ##
 
-log_debug "${project_name} - Copy build generated manifests to config"
-
 configPath=${config_path}
 localConfigPath=${localConfig_path}
 buildPath=${build_path}
 
 overlaysPath=${overlays_path}
-
-
 
 ${scripts_gitops_overlays_apply_path}
 

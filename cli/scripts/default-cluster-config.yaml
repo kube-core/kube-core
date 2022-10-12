@@ -141,6 +141,8 @@ test:
 
 run:
   kbld: false
+  core_overlays: true
+  cluster_overlays: true
 
 install:
   type: helmfile
