@@ -66,9 +66,6 @@ check_context "${cluster_config_context}"
 log_info "Applying Overlays..."
 
 configPath=${config_path}
-localConfigPath=${localConfig_path}
-buildPath=${build_path}
-
 overlaysPath=${overlays_path}
 
 if [[ "${run_core_overlays}" == "true" ]]; then
@@ -77,6 +74,7 @@ coreOverlaysList=$(find ${currentScriptPath} -type f -name '*.yaml')
 if [[ "${coreOverlaysList}" != "" ]]; then
     log_info "Applying Core Overlays..."
     while read overlay; do
+        log_debug "Applying overlay: ${overlay}"
         if [[ "$LOG_LEVEL" == "DEBUG" || "$LOG_LEVEL" == "INSANE" ]]; then
             ytt --ignore-unknown-comments \
                 --output-files ${configPath} \
@@ -100,6 +98,7 @@ clusterOverlaysList=$(find ${overlaysPath} -type f -name '*.yaml')
 if [[ "${clusterOverlaysList}" != "" ]]; then
     log_info "Applying Cluster Overlays..."
     while read overlay; do
+        log_debug "Applying overlay: ${overlay}"
         if [[ "$LOG_LEVEL" == "DEBUG" || "$LOG_LEVEL" == "INSANE" ]]; then
             ytt --ignore-unknown-comments \
                 --output-files ${configPath} \
