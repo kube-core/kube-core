@@ -343,6 +343,10 @@ directories:
             url: https://mongodb.github.io/helm-charts
 
       # Local Releases
+      - path: flux-repository
+        directory:
+          path: ../../../releases/local/flux-repository
+
       - path: cluster-rbac
         directory:
           path: ../../../releases/local/cluster-rbac

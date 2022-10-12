@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "flux-repository.fullname" . }}-test-connection"
+  labels:
+    {{- include "flux-repository.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['{{ include "flux-repository.fullname" . }}:{{ .Values.service.port }}']
+  restartPolicy: Never

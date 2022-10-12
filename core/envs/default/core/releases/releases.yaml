@@ -371,3 +371,9 @@ releases:
     release:
       chart: ../releases/dist/releases/charts/mongodb-managed
       name: mongodb-managed
+
+  flux-repository:
+    namespace: flux-system
+    release:
+      chart: ../releases/dist/releases/charts/flux-repository
+      name: flux-repository
