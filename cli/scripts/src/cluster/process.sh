@@ -226,7 +226,7 @@ fi
 log_info "Cleaning cache..."
 rm -rf ${clusterConfigDirPath}/.kube-core
 
-
+${scripts_gitops_overlay_path}
 
 log_info "Done Final Post-Processing..."
 
