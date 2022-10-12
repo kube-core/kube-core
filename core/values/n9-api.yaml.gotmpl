@@ -15,12 +15,8 @@ image:
 
 api:
   type: "node"
-  deployedEnv: "application"
+  deployedEnv: "{{ $releaseNamespace }}"
   logLevel: "info"
-
-healthCheck:
-  enabled: true
-  path: "/"
 
 service:
   type: ClusterIP
@@ -115,4 +111,4 @@ flux:
       strategy: Setters
   defaultImagePolicy: default
   # imagePolicy: "flux-system:apps"
-  defaultImagePoliciesEnabled: true
+  defaultImagePoliciesEnabled: false
