@@ -71,6 +71,7 @@ buildPath=${build_path}
 
 overlaysPath=${overlays_path}
 
+if [[ "${run_core_overlays}" == "true" ]]; then
 coreOverlaysList=$(find ${currentScriptPath} -type f -name '*.yaml')
 
 if [[ "${coreOverlaysList}" != "" ]]; then
@@ -91,7 +92,9 @@ if [[ "${coreOverlaysList}" != "" ]]; then
 else
     log_warn "No Core Overlay found!"
 fi
+fi
 
+if [[ "${run_cluster_overlays}" == "true" ]]; then
 clusterOverlaysList=$(find ${overlaysPath} -type f -name '*.yaml')
 
 if [[ "${clusterOverlaysList}" != "" ]]; then
@@ -111,6 +114,7 @@ if [[ "${clusterOverlaysList}" != "" ]]; then
     done <<< "${clusterOverlaysList}"
 else
     log_info "No Cluster Overlay found!"
+fi
 fi
 
 log_info "Done Applying Overlays!"
