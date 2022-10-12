@@ -65,7 +65,8 @@ check_context "${cluster_config_context}"
 
 log_info "Applying Overlays..."
 
-configPath=${config_path}
+tmpConfigPath=${tmpFolder}/config
+configPath=${tmpConfigPath}
 overlaysPath=${overlays_path}
 
 if [[ "${run_core_overlays}" == "true" ]]; then
