@@ -1,0 +1,24 @@
+{{ $values := .values }}
+{{ $releaseName := .releaseName }}
+{{ $releaseNamespace := .releaseNamespace }}
+{{- if $values.core.globalHelmMetadataEnabled }}
+  - apiVersion: builtin
+    kind: AnnotationsTransformer
+    metadata:
+      name: apply-helm-annotations-on-everything
+    annotations:
+      meta.helm.sh/release-name: {{ $releaseName }}
+      meta.helm.sh/release-namespace: {{ $releaseNamespace }}
+    fieldSpecs:
+    - path: metadata/annotations
+      create: true
+  - apiVersion: builtin
+    kind: LabelTransformer
+    metadata:
+      name: apply-helm-labels-on-everything
+    annotations:
+      app.kubernetes.io/managed-by: Helm
+    fieldSpecs:
+    - path: metadata/labels
+      create: true
+{{- end }}
