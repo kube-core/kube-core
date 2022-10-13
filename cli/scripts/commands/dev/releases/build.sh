@@ -158,6 +158,10 @@ do
     rm -rf ${releaseProcessedPath}/templates/crds.yaml
     rm -rf ${releaseProcessedPath}/templates/crd.yaml
     rm -rf ${releaseProcessedPath}/kustomization.yaml
+    rm -rf ${releaseProcessedPath}/ci
+    rm -rf ${releaseProcessedPath}/OWNERS
+    rm -rf ${releaseProcessedPath}/README.md
+    rm -rf ${releaseProcessedPath}/README.md.gotmpl
     rm -rf ${releaseProcessedPath}/files
     rm -rf ${processedTmpFolder}
 
