@@ -148,7 +148,7 @@
     metadata:
       name: inject-cluster-logging-label
     labels:
-      logging.kube-core.io/flow-name: "cluster"
+      logging.kube-core.io/flow-name: {{if (or (eq .item.type "application") (eq .item.type "service"))}}app{{else}}cluster{{end}}
     fieldSpecs:
     - path: metadata/labels
       kind: Deployment
