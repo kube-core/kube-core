@@ -1,1 +1,11 @@
+{{ $releaseType := (coalesce (index (.Values.servicesList) .Release.Name "type") "release") }}
+{{ if (eq $releaseType "service") }}
+manifests:
+- apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: {{ .Release.Name }}
+  data: {}
+{{ else }}
 manifests: {{ toYaml (index .Values.releasesRaw .Release.Name "manifests") | nindent 2 }}
+{{ end }}
