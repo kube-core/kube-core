@@ -51,12 +51,8 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
-Create the name of the service account to use
+Create the name of the shared service account to use
 */}}
-{{- define "crossplane-buckets.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "crossplane-buckets.fullname" .) .Values.serviceAccount.name }}
-{{- else }}
-{{- default "default" .Values.serviceAccount.name }}
-{{- end }}
-{{- end }}
+{{- define "crossplane-buckets.sharedServiceAccountName" -}}
+{{- default ( printf "%s-%s" $.Values.prefix (include "crossplane-buckets.fullname" .)) $.Values.shareServiceAccount.name }}
+{{- end -}}

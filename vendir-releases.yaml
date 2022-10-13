@@ -79,7 +79,7 @@ directories:
       - path: crossplane-buckets
         helmChart:
           name: crossplane-buckets
-          version: 0.2.0
+          version: 0.3.1
           repository:
             url: https://charts.neo9.pro
       - path: logging-operator
