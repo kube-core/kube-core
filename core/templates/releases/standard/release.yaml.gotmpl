@@ -1,5 +1,6 @@
 {{ $values := .values }}
 {{ $chartName := ((splitList "/" .item.chart) | last) }}
+{{ $chartRepo := ((splitList "/" .item.chart) | first) }}
 {{ $releaseName := .releaseName }}
 - name: {{ .releaseName }}
   {{- if (eq .item.type "release") }}
@@ -7,8 +8,8 @@
   {{- else if (or (eq .item.type "application") (eq .item.type "service")) }}
   namespace: {{ .releaseNamespace }}
   {{- end }}
-  {{- if (and (or (eq .item.type "application") (eq .item.type "service")) (isFile (printf "./values/%s.yaml.gotmpl" $chartName))) }}
-  chart: ../releases/dist/releases/charts/{{ ((splitList "/" .item.chart) | last) }}
+  {{- if (and (or (eq .item.type "application") (eq .item.type "service")) (isFile (printf "../releases/dist/releases/charts/%s/Chart.yaml" $chartName)) (eq $chartRepo "kube-core") (not (.item | getOrNil "disableCoreValuesChart"))) }}
+  chart: ../releases/dist/releases/charts/{{ $chartName }}
   {{- else }}
   chart: {{ .item.chart }}
   {{- end }}
@@ -28,9 +29,9 @@
   {{- end }}
   {{- if (eq .item.type "release") }}
   - "./values/{{ .releaseName }}.yaml.gotmpl" {{/*# Release has to have a value file, even empty*/}}
-  {{- else if (and (eq .item.type "application") (or (eq .item.chart "neo9charts/n9-api") (eq .item.chart "n9/n9-api") (eq .item.chart "../releases/dist/releases/charts/n9-api" ) (eq .item.chart "../releases/local/n9-api") )) }}
+  {{- else if (and (or (eq .item.type "application")) (isFile (printf "../releases/dist/releases/charts/%s/Chart.yaml" $chartName)) (eq $chartRepo "kube-core") (eq $chartName "n9-api")) }}
   - "./values/n9-api.yaml.gotmpl"
-  {{- else if (and (eq .item.type "service") (isFile (printf "./values/%s.yaml.gotmpl" $chartName))) }}
+  {{- else if (and (or (eq .item.type "service")) (isFile (printf "./values/%s.yaml.gotmpl" $chartName)) (eq $chartRepo "kube-core") (not (.item | getOrNil "disableCoreValuesLayer"))) }}
   - {{ (printf "./values/%s.yaml.gotmpl" $chartName) }}
   {{- end }}
   {{- if .item.extraReleaseValues }} {{/*# Adding extra values (not in .item.release because of toYaml above)*/}}
