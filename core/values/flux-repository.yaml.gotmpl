@@ -1,1 +1,5 @@
-cluster: {{ toYaml .Values.cluster | nindent 2 }}
+{{ if (.Values.servicesList | getOrNil .Release.Name) }}
+name: {{ .Release.Namespace }}
+secretName: {{ coalesce (.Values.servicesList | getOrNil .Release.Name | getOrNil "flux" | getOrNil "secretName") "flux-ssh" }}
+repository: {{ coalesce (.Values.servicesList | getOrNil .Release.Name | getOrNil "flux" | getOrNil "repository") .Values.cluster.config.repository.url }}
+{{ end }}
