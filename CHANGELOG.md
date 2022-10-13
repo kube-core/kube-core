@@ -2,9 +2,31 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.5.4](https://github.com/neo9/kube-core/compare/v0.5.3...v0.5.4)
+
+- releases/flux-repository: Updated values templates and release [`a06daea`](https://github.com/neo9/kube-core/commit/a06daea2b9c47dad8051c49105c30bc7e3423973)
+- releases: Added flux-repository [`6d174f1`](https://github.com/neo9/kube-core/commit/6d174f1af95c5254355d6155bfaec940c45492c2)
+- releases/crossplane-buckets: Updated version to v0.3.1 [`a4ca494`](https://github.com/neo9/kube-core/commit/a4ca4944ad90c77abf9098825d1f5fe5588cda2f)
+- releases/kyverno-policies: Set failurePolicy to Ignore by default & Rebuilt chart [`02bb7e0`](https://github.com/neo9/kube-core/commit/02bb7e0985b54c448bc51dc736b6d2efb773960c)
+- core/releases: Cleaned up releases definitions [`5d292d5`](https://github.com/neo9/kube-core/commit/5d292d519ae32f497ea0f82868e46658544bc677)
+- core/envs: Added core.globalHelmMetadataEnabled to force rendering Helm labels/annotations on manifests [`1869165`](https://github.com/neo9/kube-core/commit/1869165d8f54b118120ce5ef89893ccef7705fdc)
+- core/envs: Added secret for flux-repository in release-secrets [`44743a4`](https://github.com/neo9/kube-core/commit/44743a4da2b6e60ecff640ee1e103e3e027fecd3)
+- core/values: Added condition to handle using raw as a service [`71852f4`](https://github.com/neo9/kube-core/commit/71852f4e3d96eab8f01d1be315ed5f309237576f)
+- cli/scripts: Activated ytt overlays by default, with toggle via cluster-config [`8229f50`](https://github.com/neo9/kube-core/commit/8229f5000ffd340f2b8689c504b0342307cb60cb)
+- core/templates: Improved kube-core chart and values layering over applications/services and added toggles [`2cd1fc0`](https://github.com/neo9/kube-core/commit/2cd1fc0342f092695373b0b71b00299690a922c8)
+- core/values: Improved n9-api default values template [`9400dcf`](https://github.com/neo9/kube-core/commit/9400dcf20c187bf5b3a64c977b92912969d9a697)
+- cli/scripts: Moved overlays at the end of kube-core build [`e360e05`](https://github.com/neo9/kube-core/commit/e360e054ed133be9a81f87e51fbd4f759848d295)
+- cli/scripts: Improved logging on gitops_overlay [`1407c0f`](https://github.com/neo9/kube-core/commit/1407c0ffdc344b877a94d750ea51787e74b114a2)
+- cli/scripts: Added some extra cleanup after building kube-core charts [`df5abd6`](https://github.com/neo9/kube-core/commit/df5abd6a17753c80b92ae4c2ce985d1348e7a694)
+- cli/scripts: Fixed overlays applied on actual config instead of staging area [`bb08a66`](https://github.com/neo9/kube-core/commit/bb08a66bd1222646458a7d2d97fa0104b0e000dd)
+- core/templates: Improved support of applications and services with injectClusterLoggingLabel [`7954ad8`](https://github.com/neo9/kube-core/commit/7954ad8fcf78c77cc25b49c3ce1825b204373e97)
+
 #### [v0.5.3](https://github.com/neo9/kube-core/compare/v0.5.2...v0.5.3)
 
+> 11 October 2022
+
 - core/templates: Removed label injection on custom releases [`3a56333`](https://github.com/neo9/kube-core/commit/3a5633340f6c5ed97c91f0693bcbcd3b569b0d47)
+- release: v0.5.3 [`8ccc3c6`](https://github.com/neo9/kube-core/commit/8ccc3c6b1b53d5ee32f87ff08318235093626e1a)
 
 #### [v0.5.2](https://github.com/neo9/kube-core/compare/v0.5.1...v0.5.2)
 
