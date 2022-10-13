@@ -2,43 +2,33 @@ releases:
   cert-manager:
     namespace: cert-manager
     chart: ../releases/dist/releases/charts/cert-manager
-    release:
   chaos-mesh:
     namespace: chaos-mesh
     chart: ../releases/dist/releases/charts/chaos-mesh
-    release:
   chartmuseum:
     namespace: chartmuseum
     chart: ../releases/dist/releases/charts/chartmuseum
-    release:
   cluster-issuers:
     namespace: cert-manager
     chart: ../releases/dist/releases/charts/raw
-    release:
   cluster-logging:
     namespace: logging
     chart: ../releases/dist/releases/charts/cluster-logging
-    release:
   container-registry-cleaner:
     namespace: system-tools
     chart: ../releases/dist/releases/charts/container-registry-cleaner
-    release:
   container-registry-config:
     namespace: container-registry-operator
     chart: ../releases/dist/releases/charts/container-registry-config
-    release:
   container-registry-operator:
     namespace: container-registry-operator
     chart: ../releases/dist/releases/charts/container-registry-operator
-    release:
   crossplane:
     namespace: crossplane-system
     chart: ../releases/dist/releases/charts/crossplane
-    release:
   crossplane-buckets:
     namespace: crossplane-system
     chart: ../releases/dist/releases/charts/crossplane-buckets
-    release:
   crossplane-provider:
     namespace: crossplane-system
     chart: ../releases/dist/releases/charts/raw
@@ -57,63 +47,48 @@ releases:
   eck-operator:
     namespace: elastic-system
     chart: ../releases/dist/releases/charts/eck-operator
-    release:
   efk:
     namespace: efk
     chart: ../releases/dist/releases/charts/efk
-    release:
   estafette-gke-node-pool-shifter:
     namespace: estafette
     chart: ../releases/dist/releases/charts/estafette-gke-node-pool-shifter
-    release:
   estafette-gke-preemptible-killer:
     namespace: estafette
     chart: ../releases/dist/releases/charts/estafette-gke-preemptible-killer
-    release:
   estafette-k8s-node-compactor:
     namespace: estafette
     chart: ../releases/dist/releases/charts/estafette-k8s-node-compactor
-    release:
   estafette-vulnerability-scanner:
     namespace: estafette
     chart: ../releases/dist/releases/charts/estafette-vulnerability-scanner
-    release:
   external-dns:
     namespace: external-dns
     chart: ../releases/dist/releases/charts/external-dns
-    release:
   external-secrets:
     namespace: external-secrets
     chart: ../releases/dist/releases/charts/external-secrets
-    release:
   flux:
     namespace: flux-system
     chart: ../releases/dist/releases/charts/flux
-    release:
   flux-config:
     namespace: flux-system
     chart: ../releases/dist/releases/charts/flux-config
-    release:
   forecastle:
     namespace: forecastle
     chart: ../releases/dist/releases/charts/forecastle
-    release:
   imagecache:
     namespace: kube-fledged
     chart: ../releases/dist/releases/charts/imagecache
-    release:
   ingress-access-operator:
     namespace: ingress-access-operator
     chart: ../releases/dist/releases/charts/n9-api
-    release:
   istio-base:
     namespace: istio-system
     chart: ../releases/dist/releases/charts/istio-base
-    release:
   istio-grafana:
     namespace: istio-system
     chart: ../releases/dist/releases/charts/istio-grafana
-    release:
   istio-ingress-sidecar:
     namespace: nginx-istio-ingress
     chart: ../releases/dist/releases/charts/raw
@@ -122,181 +97,137 @@ releases:
   istio-kiali:
     namespace: istio-system
     chart: ../releases/dist/releases/charts/istio-kiali
-    release:
   istio-prometheus:
     namespace: istio-system
     chart: ../releases/dist/releases/charts/istio-prometheus
-    release:
   istio-rules-external-services:
     namespace: istio-system
     chart: ../releases/dist/releases/charts/istio-rules-external-services
-    release:
   istiod:
     namespace: istio-system
     chart: ../releases/dist/releases/charts/istio-discovery
-    release:
   keda:
     namespace: keda
     chart: ../releases/dist/releases/charts/keda
-    release:
   keycloak:
     namespace: keycloak
     chart: ../releases/dist/releases/charts/keycloak
-    release:
   keycloak-dev:
     namespace: keycloak
     chart: ../releases/dist/releases/charts/keycloak
-    release:
   kps:
     namespace: monitoring
     chart: ../releases/dist/releases/charts/kps
-    release:
   kube-cleanup-operator:
     namespace: kube-cleanup-operator
     chart: ../releases/dist/releases/charts/kube-cleanup-operator
-    release:
   kube-downscaler:
     namespace: kube-downscaler
     chart: ../releases/dist/releases/charts/kube-downscaler
-    release:
   kube-fledged:
     namespace: kube-fledged
     chart: ../releases/dist/releases/charts/kube-fledged
-    release:
   kubernetes-dashboard:
     namespace: kubernetes-dashboard
     chart: ../releases/dist/releases/charts/kubernetes-dashboard
-    release:
   logging-gcs:
     namespace: crossplane-system
     chart: ../releases/dist/releases/charts/crossplane-buckets
-    release:
   logging-operator:
     namespace: logging-operator
     chart: ../releases/dist/releases/charts/logging-operator
-    release:
   logging-stack:
     namespace: logging
     chart: ../releases/dist/releases/charts/logging-stack
-    release:
   metrics-server:
     namespace: system-tools
     chart: ../releases/dist/releases/charts/metrics-server
-    release:
   minio-operator:
     namespace: minio-operator
     chart: ../releases/dist/releases/charts/minio-operator
-    release:
   minio-tenants:
     namespace: minio
     chart: ../releases/dist/releases/charts/minio-tenants
-    release:
   mongodb-atlas-operator:
     namespace: mongodb-atlas-operator
     chart: ../releases/dist/releases/charts/mongodb-atlas-operator
-    release:
   mongodb-operator:
     namespace: mongodb-operator
     chart: ../releases/dist/releases/charts/mongodb-community-operator
-    release:
   nexus:
     namespace: nexus
     chart: ../releases/dist/releases/charts/sonatype-nexus
-    release:
   nginx:
     namespace: nginx
     chart: ../releases/dist/releases/charts/nginx
-    release:
   nginx-ingress-controller:
     namespace: nginx-ingress
     chart: ../releases/dist/releases/charts/nginx-ingress-controller
-    release:
   nginx-istio-ingress-controller:
     extraReleaseValues:
       - ./values/nginx-ingress-controller.yaml.gotmpl
     namespace: nginx-istio-ingress
     chart: ../releases/dist/releases/charts/nginx-ingress-controller
-    release:
   node-initializer:
     namespace: node-initializer
     chart: ../releases/dist/releases/charts/node-initializer
-    release:
   patch-operator:
     namespace: patch-operator
     chart: ../releases/dist/releases/charts/patch-operator
-    release:
   polaris:
     namespace: polaris
     chart: ../releases/dist/releases/charts/polaris
-    release:
   predator:
     namespace: predator
     chart: ../releases/dist/releases/charts/predator
-    release:
   priority-class:
     namespace: system-tools
     chart: ../releases/dist/releases/charts/priority-class
-    release:
   prometheus-adapter:
     namespace: monitoring
     chart: ../releases/dist/releases/charts/prometheus-adapter
-    release:
   rabbitmq-cluster:
     namespace: rabbitmq
     chart: ../releases/dist/releases/charts/rabbitmq-cluster
-    release:
   rabbitmq-config:
     namespace: rabbitmq
     chart: ../releases/dist/releases/charts/rabbitmq-config
-    release:
   rabbitmq-operators:
     namespace: rabbitmq-system
     chart: ../releases/dist/releases/charts/rabbitmq-cluster-operator
-    release:
   reloader:
     namespace: reloader
     chart: ../releases/dist/releases/charts/reloader
-    release:
   replicator:
     namespace: replicator
     chart: ../releases/dist/releases/charts/kubernetes-replicator
-    release:
   sealed-secrets:
     namespace: sealed-secrets
     chart: ../releases/dist/releases/charts/sealed-secrets
-    release:
   secret-generator:
     namespace: secret-generator
     chart: ../releases/dist/releases/charts/kubernetes-secret-generator
-    release:
   sloop:
     namespace: sloop
     chart: ../releases/dist/releases/charts/sloop
-    release:
   sloth:
     namespace: sloth
     chart: ../releases/dist/releases/charts/sloth
-    release:
   sonarqube:
     namespace: sonarqube
     chart: ../releases/dist/releases/charts/sonarqube
-    release:
   starboard-operator:
     namespace: starboard-operator
     chart: ../releases/dist/releases/charts/starboard-operator
-    release:
   system-config:
     namespace: system-tools
     chart: ../releases/dist/releases/charts/raw
-    release:
   system-jobs:
     namespace: system-tools
     chart: ../releases/dist/releases/charts/system-jobs
-    release:
   tekton:
     namespace: tekton-pipelines
     chart: ../releases/dist/releases/charts/tekton
-    release:
   tekton-catalog:
     namespace: tekton-pipelines
     chart: ../releases/dist/releases/charts/tekton-catalog
@@ -306,74 +237,48 @@ releases:
   tekton-logging:
     namespace: logging
     chart: ../releases/dist/releases/charts/tekton-logging
-    release:
   test-logging:
     namespace: test-logging
     chart: ../releases/dist/releases/charts/test-logging
-    release:
   velero:
     namespace: velero
     chart: ../releases/dist/releases/charts/velero
-    release:
   visitor-groups:
     namespace: ingress-access-operator
     chart: ../releases/dist/releases/charts/raw
-    release:
   zeebe:
     namespace: zeebe
     chart: ../releases/dist/releases/charts/zeebe-cluster-helm
-    release:
   zeebe-operate:
     namespace: zeebe
     chart: ../releases/dist/releases/charts/zeebe-operate-helm
-    release:
   kyverno:
     namespace: kyverno
     chart: ../releases/dist/releases/charts/kyverno
-    release:
   cluster-policies:
     namespace: cluster-policies
     chart: ../releases/dist/releases/charts/cluster-policies
-    release:
   kyverno-policies:
     namespace: kyverno-policies
     chart: ../releases/dist/releases/charts/kyverno-policies
-    release:
-
   prometheus-pushgateway:
     namespace: monitoring
     chart: ../releases/dist/releases/charts/prometheus-pushgateway
-    release:
-
   descheduler:
     namespace: kube-system
     chart: ../releases/dist/releases/charts/descheduler
-    release:
-
   cluster-rbac:
     namespace: cluster-rbac
     chart: ../releases/dist/releases/charts/cluster-rbac
-    release:
-
   node-problem-detector:
     namespace: node-problem-detector
     chart: ../releases/dist/releases/charts/node-problem-detector
-    release:
-
   rabbitmq-managed:
     namespace: rabbitmq
-    release:
-      chart: ../releases/dist/releases/charts/rabbitmq-managed
-      name: rabbitmq-managed
-
+    chart: ../releases/dist/releases/charts/rabbitmq-managed
   mongodb-managed:
     namespace: mongodb
-    release:
-      chart: ../releases/dist/releases/charts/mongodb-managed
-      name: mongodb-managed
-
+    chart: ../releases/dist/releases/charts/mongodb-managed
   flux-repository:
     namespace: flux-system
-    release:
-      chart: ../releases/dist/releases/charts/flux-repository
-      name: flux-repository
+    chart: ../releases/dist/releases/charts/flux-repository
