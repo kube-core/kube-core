@@ -26,7 +26,11 @@ spec:
 apiVersion: storage.gcp.crossplane.io/v1alpha1
 kind: BucketPolicy
 metadata:
+  {{- if (index . "hasPrefix" | default true) }}
   name: "{{ $.Values.prefix }}-{{ index . "name" }}"
+  {{- else }}
+  name: {{ index . "name" }}
+  {{- end }}
 spec:
   forProvider:
     bucketRef:
@@ -37,33 +41,48 @@ spec:
       {{- end }}
     policy:
       bindings:
-      {{- if (index . "roles" | default list) }}
-      {{- range index . "roles" }}
+      {{- if $.Values.shareServiceAccount.enabled }}
+      {{- range $.Values.shareServiceAccount.defaultRoles }}
+      - role: {{ . }}
+        serviceAccountMemberRefs:
+        - name: {{ include "crossplane-buckets.sharedServiceAccountName" $ }}
+      {{- end }}
+      {{- end }}
+      {{- if .roles }}
+      {{- range .roles }}
       - role: {{ .role }}
+        {{- if .serviceAccounts }}
         serviceAccountMemberRefs:
-        {{ if (eq $.Values.shareServiceAccount false)}}
-        - name: "{{ $.Values.prefix }}-{{ index . "name" }}"
-        {{ else }}
-        - name: "{{ $.Values.prefix }}-{{ include "crossplane-buckets.fullname" $ }}"
-        {{ end }}
+        {{- range .serviceAccounts }}
+        - name: {{ . }}
+        {{- end }}
+        {{- end }}
+        {{- if .members }}
+        members:
+        {{- range .members }}
+        - {{ toYaml . }}
+        {{- end }}
+        {{- end }}
       {{- end }}
-      {{- else }}
-      - role: "roles/storage.admin"
-        serviceAccountMemberRefs:
-        {{ if (eq $.Values.shareServiceAccount false)}}
-        - name: "{{ $.Values.prefix }}-{{ index . "name" }}"
-        {{ else }}
-        - name: "{{ $.Values.prefix }}-{{ include "crossplane-buckets.fullname" $ }}"
-        {{ end }}
       {{- end }}
-{{ if (eq $.Values.shareServiceAccount false) }}
+      {{- if .isPublic | default false }}
+      - role: roles/storage.objectViewer
+        members:
+          - allUsers
+      {{- end }}
+
+{{- if (eq $.Values.shareServiceAccount.enabled false) }}
 ---
 apiVersion: iam.gcp.crossplane.io/v1alpha1
 kind: ServiceAccount
 metadata:
-  name: "{{ $.Values.prefix }}-{{ .name }}"
+  {{- if (index . "hasPrefix" | default true) }}
+  name: "{{ $.Values.prefix }}-{{ index . "name" }}"
+  {{- else }}
+  name: {{ index . "name" }}
+  {{- end }}
 spec:
-  deletionPolicy: Orphan
+  deletionPolicy: {{ index . "deletionPolicy" | default "Orphan" }}
   forProvider:
     displayName: "{{ $.Values.prefix }}-{{ .name }}"
     description: "Service account for {{ $.Values.prefix }}-{{ .name }}."
@@ -71,9 +90,13 @@ spec:
 apiVersion: iam.gcp.crossplane.io/v1alpha1
 kind: ServiceAccountKey
 metadata:
-  name: "{{ $.Values.prefix }}-{{ .name }}"
+  {{- if (index . "hasPrefix" | default true) }}
+  name: "{{ $.Values.prefix }}-{{ index . "name" }}"
+  {{- else }}
+  name: {{ index . "name" }}
+  {{- end }}
 spec:
-  deletionPolicy: Orphan
+  deletionPolicy: {{ index . "deletionPolicy" | default "Orphan" }}
   forProvider:
     serviceAccountRef:
       name: "{{ $.Values.prefix }}-{{ .name }}"
@@ -84,29 +107,29 @@ spec:
 
 {{- end }}
 
-{{ if (eq .Values.shareServiceAccount true) }}
+{{ if (eq $.Values.shareServiceAccount.enabled true) }}
 ---
 apiVersion: iam.gcp.crossplane.io/v1alpha1
 kind: ServiceAccount
 metadata:
-  name: "{{ .Values.prefix }}-{{ include "crossplane-buckets.fullname" . }}"
+  name: "{{ include "crossplane-buckets.sharedServiceAccountName" . }}"
 spec:
-  deletionPolicy: Orphan
+  deletionPolicy: {{ $.Values.shareServiceAccount.deletionPolicy | quote }}
   forProvider:
-    displayName: "{{ .Values.prefix }}-{{ include "crossplane-buckets.fullname" . }}"
-    description: "Service account for {{ .Values.prefix }}-{{ include "crossplane-buckets.fullname" . }}."
+    displayName: "{{ include "crossplane-buckets.sharedServiceAccountName" . }}"
+    description: "Service account for {{ include "crossplane-buckets.sharedServiceAccountName" . }}."
 ---
 apiVersion: iam.gcp.crossplane.io/v1alpha1
 kind: ServiceAccountKey
 metadata:
-  name: "{{ .Values.prefix }}-{{ include "crossplane-buckets.fullname" . }}"
+  name: "{{ include "crossplane-buckets.sharedServiceAccountName" . }}"
 spec:
-  deletionPolicy: Orphan
+  deletionPolicy: {{ $.Values.shareServiceAccount.deletionPolicy | quote }}
   forProvider:
     serviceAccountRef:
-      name: "{{ .Values.prefix }}-{{ include "crossplane-buckets.fullname" . }}"
+      name: "{{ include "crossplane-buckets.sharedServiceAccountName" . }}"
   publishConnectionDetailsTo:
-    name: "{{ .Values.prefix }}-{{ include "crossplane-buckets.fullname" . }}"
+    name: "{{ include "crossplane-buckets.sharedServiceAccountName" . }}"
     metadata: {{ toYaml .Values.outputSecretMetadata | nindent 6 }}
 {{ end }}
 {{ end }}
