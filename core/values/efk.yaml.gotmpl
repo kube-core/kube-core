@@ -263,7 +263,7 @@ elasticsearch:
 
   ingress:
     enabled: {{ (index .Values.releases .Release.Name "config" "elasticsearch" "ingress" "enabled") }}
-    className: "{{ .Values.cluster.common.defaultIngressClass }}"
+    className: {{ .Values.cluster.common.defaultIngressClass }}
     annotations:
     {{ if .Values.cluster.common.defaultIngressAnnotations }}
       {{ toYaml .Values.cluster.common.defaultIngressAnnotations | nindent 6 }}
@@ -403,7 +403,7 @@ kibana:
 
   ingress:
     enabled: {{ (index .Values.releases .Release.Name "config" "kibana" "ingress" "enabled") }}
-    className: "{{ .Values.cluster.common.defaultIngressClass }}"
+    className: {{ .Values.cluster.common.defaultIngressClass }}
     annotations:
     {{ if .Values.cluster.common.defaultIngressAnnotations }}
       {{ toYaml .Values.cluster.common.defaultIngressAnnotations | nindent 6 }}

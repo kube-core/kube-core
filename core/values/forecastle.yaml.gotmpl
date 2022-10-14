@@ -26,7 +26,7 @@ forecastle:
     {{- if (index .Values.releases .Release.Name "config" "ingress" "labels") }}
       {{ toYaml (index .Values.releases .Release.Name "config" "ingress" "labels") | nindent 6 }}
     {{- end }}
-    # className: ~
+    className: {{ .Values.cluster.common.defaultIngressClass }}
     hosts:
     - host: {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
       paths:

@@ -167,7 +167,7 @@ dashboard:
     apiVersionOverrides: ""
 
     # Defines which ingress controller will implement the resource
-    ingressClassName: ""
+    ingressClassName: {{ .Values.cluster.common.defaultIngressClass }}
 
 webhook:
   certManager:
