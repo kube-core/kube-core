@@ -1,5 +1,8 @@
 {{ $values := .values }}
 {{ $releaseName := .releaseName }}
+{{ $releaseNamespace := .releaseNamespace }}
+{{ $chartName := (splitList "/" .item.chart) | last | quote }}
+{{ $chartRepo := (splitList "/" .item.chart) | first | quote }}
 {{- if $values.core.globalLabelsEnabled }}
   - apiVersion: builtin
     kind: LabelTransformer
@@ -15,12 +18,25 @@
       app.kube-core.io/version: {{ $values.core.version }}
       release.kube-core.io/type: {{ .item.type }}
       release.kube-core.io/name: {{ $releaseName }}
-      release.kube-core.io/chart: {{ (splitList "/" .item.chart) | last | quote }}
+      release.kube-core.io/chart: {{ $chartName }}
+      {{- if $values.core.globalHelmMetadataEnabled }}
+      app.kubernetes.io/managed-by: Helm
+      {{- end }}
       {{- if $values.cluster.common.globalLabels }}
       {{ toYaml $values.cluster.common.globalLabels | nindent 6 }}
       {{- end }}
     fieldSpecs:
     - path: metadata/labels
+      create: true
+  - apiVersion: builtin
+    kind: AnnotationsTransformer
+    metadata:
+      name: apply-global-annotations-on-everything
+    annotations:
+      meta.helm.sh/release-name: {{ $releaseName }}
+      meta.helm.sh/release-namespace: {{ $releaseNamespace }}
+    fieldSpecs:
+    - path: metadata/annotations
       create: true
   - apiVersion: builtin
     kind: LabelTransformer
@@ -36,7 +52,7 @@
       app.kube-core.io/version: {{ $values.core.version }}
       release.kube-core.io/type: {{ .item.type }}
       release.kube-core.io/name: {{ $releaseName }}
-      release.kube-core.io/chart: {{ (splitList "/" .item.chart) | last | quote }}
+      release.kube-core.io/chart: {{ $chartName }}
       {{- if $values.cluster.common.globalLabels }}
       {{ toYaml $values.cluster.common.globalLabels | nindent 6 }}
       {{- end }}
@@ -64,7 +80,7 @@
       app.kube-core.io/version: {{ $values.core.version }}
       release.kube-core.io/type: {{ .item.type }}
       release.kube-core.io/name: {{ $releaseName }}
-      release.kube-core.io/chart: {{ (splitList "/" .item.chart) | last | quote }}
+      release.kube-core.io/chart: {{ $chartName }}
       {{- if $values.cluster.common.globalLabels }}
       {{ toYaml $values.cluster.common.globalLabels | nindent 6 }}
       {{- end }}
@@ -89,7 +105,7 @@
       app.kube-core.io/version: {{ $values.core.version }}
       release.kube-core.io/type: {{ .item.type }}
       release.kube-core.io/name: {{ $releaseName }}
-      release.kube-core.io/chart: {{ (splitList "/" .item.chart) | last | quote }}
+      release.kube-core.io/chart: {{ $chartName }}
       {{- if $values.cluster.common.globalLabels }}
       {{ toYaml $values.cluster.common.globalLabels | nindent 6 }}
       {{- end }}
