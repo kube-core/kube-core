@@ -81,22 +81,35 @@ mkdir -p ${tmpConfigPath}
 # TODO: Open Issue on Helmfile to explain why the latter is bad; and how the following, using kubectl slice, is better.
 # Consider proposing a PR to integrate it with Helmfile.
 
-# Listing all releases with Helmfile, extracting useful information
-# 1:name, 2:namespace, 3:enabled, 4:installed
-inputList=$(helmfile_list | awk '{print $1" "$2" "$3" "$4}' | tail -n +2)
 
-log_insane "${inputList}"
 
 if [[ "${helmfileRepos}" == "yes" ]]; then
     helmfile_repos
 fi
+# Looping through Helmfiles
+helmfiles=$(find ${helmfiles_path} -type f -name '*.helmfile.yaml.gotmpl')
 
-# Looping through Helmfile releases
-echo "${inputList}" | while read release; do
-    helmfile_template_release "${release}" "${tmpConfigPath}"
-    helmfile_add_namespaces_to_manifests "${release}" "${tmpConfigPath}"
-    kubectl_slice_helmfile_templated_release "${release}" "${tmpConfigPath}"
-done;
+log_debug "$helmfiles"
+
+if [[ "${helmfiles}" != "" ]]; then
+    while read hf; do
+        log_debug "$hf"
+        # Listing all releases with Helmfile, extracting useful information
+        # 1:name, 2:namespace, 3:enabled, 4:installed
+        log_debug "Listing releases..."
+        # inputList=$(helmfile_list | awk '{print $1" "$2" "$3" "$4}' | tail -n +2)
+        inputList=$(helmfilePath=${hf} helmfile_list | awk '{print $1" "$2" "$3" "$4}' | tail -n +2)
+        log_insane "${inputList}"
+
+        log_debug "Looping through Helmfile releases - ${hf}"
+        echo "${inputList}" | while read release; do
+
+            helmfilePath=${hf} helmfile_template_release "${release}" "${tmpConfigPath}"
+            helmfilePath=${hf} helmfile_add_namespaces_to_manifests "${release}" "${tmpConfigPath}"
+            helmfilePath=${hf} kubectl_slice_helmfile_templated_release "${release}" "${tmpConfigPath}"
+        done;
+    done <<< "${helmfiles}"
+fi
 
 # get_config ${configPath} | sort -u | sed "s|${clusterConfigDirPath}|.|" > ${clusterConfigDirPath}/helmfile-config.lock
 get_config ${tmpConfigPath} | sort -u | sed "s|${tmpConfigPath}|.|" > ${tmpFolder}/helmfile-config.lock
