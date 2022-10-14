@@ -17,7 +17,6 @@ releases:
     enabled: true
     labels:
       package: essentials
-    enabled: true
   external-dns:
     labels:
       package: essentials
