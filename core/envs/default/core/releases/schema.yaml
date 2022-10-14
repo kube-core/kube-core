@@ -26,6 +26,9 @@ templates:
       injectIngressClassName: false
       injectIngressHost: false
       injectIngressTls: false
+      injectOauth2ProxyOnIngress: false
+      injectSatisfyAnyAuthOnIngress: false
+      injectionToEnforcePublicAccessFromIngressAccessOperator: false
     patches: {}
     release: {}
     scaling: {}

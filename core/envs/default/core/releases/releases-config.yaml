@@ -24,6 +24,32 @@ releases:
         # nginx.ingress.kubernetes.io/rewrite-target: /$1
         labels: {}
         subdomain: chaos-mesh
+
+  dex:
+    config:
+      idp:
+        defaultStaticClientName: "Oauth2"
+        mainConnectorName: "Default"
+        extraConnectors: []
+        extraStaticClients: []
+        extraEnvVars: []
+      extra:
+        logoUrl: "https://cncf-branding.netlify.app/img/projects/dex/stacked/color/dex-stacked-color.png"
+      ingress:
+        annotations: {}
+        labels: {}
+        subdomain: dex
+
+  oauth2-proxy:
+    config:
+      ingress:
+        annotations: {}
+        labels: {}
+        subdomain: oauth2
+      rules:
+        emailDomain: "*"
+        cookieExpiration: "12h"
+
   prometheus-pushgateway:
     config:
       ingress:
