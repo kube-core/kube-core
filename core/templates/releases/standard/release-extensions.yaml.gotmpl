@@ -37,6 +37,24 @@
   - "./values/release-secrets.yaml.gotmpl"
 {{ end }}
 
+{{ if .item.dynamicSecrets }}
+- name: {{ $releaseName }}-dynamic-secrets
+  chart: ../releases/dist/releases/charts/raw
+  kubeContext: {{ coalesce .item.context (getOrNil "releaseContext" .) $values.cluster.config.context }}
+  {{- if (eq .item.type "release") }}
+  namespace: {{ .item.namespace }}
+  {{- else if (or (eq .item.type "application") (eq .item.type "service")) }}
+  namespace: {{ .releaseNamespace }}
+  {{- end }}
+  transformers:
+  {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
+  labels:
+    app: {{ $releaseName }}
+    type: dynamic-secrets
+  values:
+  - "./values/release-dynamic-secrets.yaml.gotmpl"
+{{ end }}
+
 {{ if (index .item "external-secrets") }}
 - name: {{ $releaseName }}-external-secrets
   chart: ../releases/dist/releases/charts/raw
