@@ -314,3 +314,11 @@ releases:
     labels: {}
   kyverno-policies:
     labels: {}
+  dex:
+    labels:
+      component: idp
+      group: authn
+  oauth2-proxy:
+    labels:
+      component: ingress
+      group: authn

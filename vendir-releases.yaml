@@ -342,6 +342,20 @@ directories:
           repository:
             url: https://mongodb.github.io/helm-charts
 
+      - path: dex
+        helmChart:
+          name: dex
+          version: 0.12.0
+          repository:
+            url: https://charts.dexidp.io
+
+      - path: oauth2-proxy
+        helmChart:
+          name: oauth2-proxy
+          version: 3.3.1
+          repository:
+            url: https://charts.bitnami.com/bitnami
+
       # Local Releases
       - path: flux-repository
         directory:
@@ -378,10 +392,6 @@ directories:
       - path: test-logging
         directory:
           path: ../../../releases/local/test-logging
-
-      - path: oauth2-proxy
-        directory:
-          path: ../../../releases/local/oauth2-proxy
 
       - path: container-registry-cleaner
         directory:

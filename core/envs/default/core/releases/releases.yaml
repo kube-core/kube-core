@@ -282,3 +282,9 @@ releases:
   flux-repository:
     namespace: flux-system
     chart: ../releases/dist/releases/charts/flux-repository
+  dex:
+    namespace: dex
+    chart: ../releases/dist/releases/charts/dex
+  oauth2-proxy:
+    namespace: oauth2-proxy
+    chart: ../releases/dist/releases/charts/oauth2-proxy

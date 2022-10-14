@@ -1,0 +1,186 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/dexidp/dex
+  tag: "v2.35.2"
+
+https:
+  enabled: true
+grpc:
+  enabled: false
+
+configSecret:
+  create: true
+  name: {{.Release.Name }}-config
+
+config:
+  issuer: {{ printf "https://%s.%s/" (index .Values.releases .Release.Name "config" "ingress" "subdomain") ( .Values.cluster.config.domain ) }}
+  web:
+    tlsKey: /etc/dex/certs/tls.key
+    tlsCert: /etc/dex/certs/tls.crt
+  logger:
+    level: debug
+    format: json
+  frontend:
+    issuer: {{ default (printf "%s-cluster" .Values.project.name | replace "-" " " | title ) (index .Values.releases .Release.Name "config" "title") }}
+    logoUrl: {{ index .Values.releases .Release.Name "config" "extra" "logoUrl" }}
+  storage:
+    type: memory
+
+  staticClients:
+    - id: "{{ `{{ .Env.DEFAULT_STATIC_CLIENT_ID }}` }}"
+      redirectURIs:
+        - {{ printf "https://%s.%s/oauth2/callback" (index .Values.releases "oauth2-proxy" "config" "ingress" "subdomain") ( .Values.cluster.config.domain ) }}
+      name: {{ (index .Values.releases .Release.Name "config" "idp" "defaultStaticClientName") }}
+      secret: "{{ `{{ .Env.DEFAULT_STATIC_CLIENT_SECRET }}` }}"
+    {{ range (index .Values.releases .Release.Name "config" "idp" "extraStaticClients") }}
+    {{ . }}
+    {{ end }}
+  connectors:
+    - type: google
+      id: default_oidc_provider
+      name: {{ index .Values.releases .Release.Name "config" "idp" "mainConnectorName" }}
+      config:
+      ## redirect for google
+        clientID: $DEFAULT_OIDC_CONNECTORS_ID
+        clientSecret: $DEFAULT_OIDC_CONNECTORS_SECRET
+        redirectURI: {{ printf "https://%s.%s/callback" (index .Values.releases .Release.Name "config" "ingress" "subdomain") ( .Values.cluster.config.domain ) }}
+        scopes:
+          - profile
+          - email
+    {{ range (index .Values.releases .Release.Name "config" "idp" "extraConnectors") }}
+    {{ . }}
+    {{ end }}
+volumes:
+  - name: tls
+    secret:
+      secretName: {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") | replace "." "-"}}-tls
+
+volumeMounts:
+  - name: tls
+    mountPath: /etc/dex/certs
+
+envFrom: []
+
+env: {}
+
+envVars:
+  - name: DEFAULT_STATIC_CLIENT_ID
+    valueFrom:
+      secretKeyRef:
+        name: {{ (index .Values.releases .Release.Name "dynamicSecrets" "default-oauth2-client" "secretRef" "name" ) }}
+        key: DEFAULT_STATIC_CLIENT_ID
+  - name: DEFAULT_STATIC_CLIENT_SECRET
+    valueFrom:
+      secretKeyRef:
+        name: {{ (index .Values.releases .Release.Name "dynamicSecrets" "default-oauth2-client" "secretRef" "name" ) }}
+        key: DEFAULT_STATIC_CLIENT_SECRET
+  - name: DEFAULT_OIDC_CONNECTORS_ID
+    valueFrom:
+      secretKeyRef:
+        name: {{ (index .Values.releases .Release.Name "secrets" "default-idp-provider" "secretRef" "name" ) }}
+        key: DEFAULT_OIDC_CONNECTORS_ID
+  - name: DEFAULT_OIDC_CONNECTORS_SECRET
+    valueFrom:
+      secretKeyRef:
+        name: {{ (index .Values.releases .Release.Name "secrets" "default-idp-provider" "secretRef" "name" ) }}
+        key: DEFAULT_OIDC_CONNECTORS_SECRET
+  {{ range (index .Values.releases .Release.Name "config" "extraEnvVars") }}
+  {{ . }}
+  {{ end }}
+ingress:
+  enabled: true
+  className: {{ .Values.cluster.common.defaultIngressClass }}
+  annotations:
+    forecastle.stakater.com/icon: https://cncf-branding.netlify.app/img/projects/dex/stacked/color/dex-stacked-color.png
+  {{ if .Values.cluster.common.defaultIngressAnnotations }}
+    {{ toYaml .Values.cluster.common.defaultIngressAnnotations | nindent 4 }}
+  {{- end }}
+  {{- if (index .Values.releases .Release.Name "config" "ingress" "annotations") }}
+    {{ toYaml (index .Values.releases .Release.Name "config" "ingress" "annotations") | nindent 4 }}
+  {{- end }}
+  hosts:
+    - host: {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls:
+   - secretName: {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") | replace "." "-"}}-tls
+     hosts:
+       - {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+rbac:
+  create: true
+  createClusterScoped: true
+
+podDisruptionBudget:
+  enabled: false
+  minAvailable:
+  maxUnavailable:
+
+service:
+  annotations: {}
+  type: ClusterIP
+  clusterIP: ""
+  ports:
+    http:
+      port: 5556
+    https:
+      port: 5554
+    grpc:
+      port: 5557
+
+serviceMonitor:
+  enabled: false
+  namespace: ""
+  interval:
+  scrapeTimeout:
+  labels: {}
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+# -- [Node selector](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) configuration.
+nodeSelector: {}
+
+# -- [Tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) for node taints.
+# See the [API reference](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#scheduling) for details.
+tolerations: []
+
+# -- [Affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity) configuration.
+# See the [API reference](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#scheduling) for details.
+affinity: {}
+
+# -- [TopologySpreadConstraints](https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/) configuration.
+# See the [API reference](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#scheduling) for details.
+topologySpreadConstraints: []
+
+# -- Deployment [strategy](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy) configuration.
+strategy: {}
+  # rollingUpdate:
+  #   maxUnavailable: 1
+  # type: RollingUpdate
+
+networkPolicy:
+  enabled: false
