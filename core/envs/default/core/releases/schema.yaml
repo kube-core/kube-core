@@ -31,6 +31,7 @@ templates:
     scaling: {}
     secrets: {}
     external-secrets: false
+    dynamicSecrets: {}
     strategicMergePatches: {}
     transformers: {}
     values: {}
@@ -126,3 +127,5 @@ releases:
   mongodb-managed: *release
 
   flux-repository: *release
+  dex: *release
+  oauth2-proxy: *release
