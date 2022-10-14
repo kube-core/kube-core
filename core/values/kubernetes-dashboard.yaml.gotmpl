@@ -53,7 +53,7 @@ ingress:
   #   nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
 
   ## Kubernetes Dashboard Ingress Class
-#   className: "{{ .Values.cluster.common.defaultIngressClass }}"
+  className: {{ .Values.cluster.common.defaultIngressClass }}
 
   ## Kubernetes Dashboard Ingress paths
   ## Both `/` and `/*` are required to work on gce ingress.

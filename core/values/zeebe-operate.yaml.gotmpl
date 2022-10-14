@@ -30,7 +30,7 @@ resources:
 
 ingress:
   enabled: true
-#   className: nginx
+  className: {{ .Values.cluster.common.defaultIngressClass }}
   annotations:
   {{ if .Values.cluster.common.defaultIngressAnnotations }}
     {{ toYaml .Values.cluster.common.defaultIngressAnnotations | nindent 4 }}
