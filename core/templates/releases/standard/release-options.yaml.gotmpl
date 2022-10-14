@@ -95,7 +95,6 @@
   {{- end }}
   transformers:
   {{ if $values.core.globalHelmMetadataEnabled }}
-  {{- tpl (readFile "templates/releases/standard/release-helm-metadata.yaml.gotmpl") . }}
   {{ end }}
   {{- if .item.transformers }}
   {{ toYaml .item.transformers | nindent 2 }}
