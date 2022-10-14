@@ -175,6 +175,55 @@
       kind: CronJob
       create: true
   {{- end }}
+  {{- if .item.options.injectOauth2ProxyOnIngress }}
+  - apiVersion: builtin
+    kind: AnnotationsTransformer
+    metadata:
+      name: inject-oauth2-proxy-on-ingress
+    annotations:
+      nginx.ingress.kubernetes.io/auth-url: {{ printf "https://%s.%s/oauth2/auth" (index $values.releases "oauth2-proxy" "config" "ingress" "subdomain") ( $values.cluster.config.domain ) | quote }}
+      nginx.ingress.kubernetes.io/auth-signin: {{ printf "https://%s.%s/oauth2/start" (index $values.releases "oauth2-proxy" "config" "ingress" "subdomain") ( $values.cluster.config.domain ) | quote }}
+    fieldSpecs:
+    - path: metadata/annotations
+      kind: Ingress
+      create: true
+  {{- end }}
+  {{- if .item.options.injectSatisfyAnyAuthOnIngress }}
+  - apiVersion: builtin
+    kind: AnnotationsTransformer
+    metadata:
+      name: inject-satisfy-any-auth-on-ingress
+    annotations:
+      nginx.ingress.kubernetes.io/satisfy: "any"
+    fieldSpecs:
+    - path: metadata/annotations
+      kind: Ingress
+      create: true
+  {{- end }}
+  {{- if .item.options.injectionToEnforcePublicAccessFromIngressAccessOperator }}
+  - apiVersion: builtin
+    kind: AnnotationsTransformer
+    metadata:
+      name: inject-allowed-visitors-to-public-on-ingress
+    annotations:
+      ingress.neo9.io/allowed-visitors: "public"
+      ingress.neo9.io/access-filtered: "false"
+      nginx.ingress.kubernetes.io/satisfy: "any"
+    fieldSpecs:
+    - path: metadata/annotations
+      kind: Ingress
+      create: true
+  - apiVersion: builtin
+    kind: LabelTransformer
+    metadata:
+      name: injecty-access-filtered-false-on-ingress
+    labels:
+      ingress.neo9.io/access-filtered: "false"
+    fieldSpecs:
+    - path: metadata/labels
+      kind: Ingress
+      create: true
+  {{- end }}
   {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
   {{- if .item.hooks }}
   hooks:

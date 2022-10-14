@@ -188,3 +188,9 @@ releases:
       applyDefaultLabelsOnIngress: true
       applyDefaultAnnotationsOnIngress: true
       injectReloaderAnnotations: true
+  dex:
+    options:
+      injectionToEnforcePublicAccessFromIngressAccessOperator: true
+  oauth2-proxy:
+    options:
+      injectionToEnforcePublicAccessFromIngressAccessOperator: true
