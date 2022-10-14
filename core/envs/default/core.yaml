@@ -8,8 +8,6 @@ core:
       enabled: false
     logging:
       enabled: false
-    logging:
-      enabled: false
     estafette:
       enabled: false
     tekton:
