@@ -2,8 +2,15 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.5.7](https://github.com/neo9/kube-core/compare/v0.5.6...v0.5.7)
+
+- docker: Upgraded helmfile to v0.147.0 [`5ff4989`](https://github.com/neo9/kube-core/commit/5ff49899369187315b3793a7e63bc70a3bb05678)
+
 #### [v0.5.6](https://github.com/neo9/kube-core/compare/v0.5.5...v0.5.6)
 
+> 14 October 2022
+
+- release: v0.5.6 [`4179943`](https://github.com/neo9/kube-core/commit/41799431d9487873def2bf910ae9867a94da852a)
 - cli/scripts: Updated helmfile-template.sh logic to improve performance when looping over all helmfiles and releases [`022b01e`](https://github.com/neo9/kube-core/commit/022b01e81eb609c82f385ccdb1739a63ff89e118)
 - core/templates: Removed release-helm-metadata template [`a2758e0`](https://github.com/neo9/kube-core/commit/a2758e0436a73c549b48a0cff272f04581f57a29)
 - core/templates: Merged helm labels/annotation patches with existing ones to improve performance [`edc6896`](https://github.com/neo9/kube-core/commit/edc6896aa6d8416cd381801a4c4a43f250528d69)
