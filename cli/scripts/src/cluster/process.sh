@@ -226,6 +226,9 @@ fi
 log_info "Cleaning cache..."
 rm -rf ${clusterConfigDirPath}/.kube-core
 
+# Generating namespaces (just before overlays so we can edit them)
+${scripts_gitops_utils_generate_namespaces_path}
+
 ${scripts_gitops_overlay_path}
 
 log_info "Done Final Post-Processing..."

@@ -63,7 +63,7 @@ check_context "${cluster_config_context}"
 ## Generates all namespaces from helmfile/local config
 ## Docs End ##
 
-tmpConfigPath=${tmpFolder}/config
+tmpConfigPath=${config_path}
 
 
 log_debug "Generating namespaces..."

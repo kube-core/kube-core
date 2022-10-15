@@ -81,10 +81,6 @@ fi
 # Generating ConfigMaps
 ${scripts_gitops_configmaps_path}
 
-# Generating namespaces (just before overlays so we can edit them)
-${scripts_gitops_utils_generate_namespaces_path}
-
-
 # Applying patches (can't work without access to a cluster!) . Disabled for now
 # TODO: reimplement
 # if [[ "${arg1}" == "patch" || "${arg2}" == "patch" || "${arg3}" == "patch" ]]
