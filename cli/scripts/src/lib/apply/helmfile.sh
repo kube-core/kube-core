@@ -68,6 +68,36 @@ helmfile_add_namespaces_to_manifests() {
     fi
 }
 
+helmfile_add_namespaces_to_all() {
+    templatesOutputDir=${1}
+    releasePath="${templatesOutputDir}"
+    file="${releasePath}/all.yaml"
+
+    # Adding namespace to manifests
+    # log_debug "Adding namespace ${namespace} to manifest: ${file}"
+    namespace="${namespace}" yq e '.metadata.namespace = env(namespace)' -i ${file}
+}
+
+helmfile_template_all() {
+    templatesOutputDir=${1}
+    releasePath="${templatesOutputDir}/${cluster_config_name}"
+    mkdir -p ${releasePath}
+
+    log_info "Templating: ${cluster_config_name}"
+
+    helmfileCommand=$(helmfile_template_command)
+
+    log_debug "${helmfileCommand} > ${releasePath}/all.yaml"
+
+    if [[ "$LOG_LEVEL" == "DEBUG" || "$LOG_LEVEL" == "INSANE" ]] ; then
+        ${helmfileCommand} > ${releasePath}/all.yaml
+    else
+        ${helmfileCommand} > ${releasePath}/all.yaml 2> /dev/null
+    fi
+
+    log_debug "Wrote ${releasePath}/all.yaml"
+}
+
 helmfile_template_release() {
     release=${1}
     templatesOutputDir=${2}

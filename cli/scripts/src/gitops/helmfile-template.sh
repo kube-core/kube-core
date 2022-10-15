@@ -82,6 +82,7 @@ mkdir -p ${tmpConfigPath}
 # Consider proposing a PR to integrate it with Helmfile.
 
 
+templatingMode="all"
 
 if [[ "${helmfileRepos}" == "yes" ]]; then
     helmfile_repos
@@ -94,22 +95,32 @@ log_debug "$helmfiles"
 if [[ "${helmfiles}" != "" ]]; then
     while read hf; do
         log_debug "$hf"
-        # Listing all releases with Helmfile, extracting useful information
-        # 1:name, 2:namespace, 3:enabled, 4:installed
-        log_debug "Listing releases..."
-        # inputList=$(helmfile_list | awk '{print $1" "$2" "$3" "$4}' | tail -n +2)
-        inputList=$(helmfilePath=${hf} helmfile_list | awk '{print $1" "$2" "$3" "$4}' | tail -n +2)
-        log_insane "${inputList}"
+        helmfileName=$(echo "${hf}" | xargs basename)
 
-        log_debug "Looping through Helmfile releases - ${hf}"
-        echo "${inputList}" | while read release; do
+        if [[ "${templatingMode}" == "all" ]]; then
+            log_info "Templating: ${cluster_config_name}/${helmfileName}"
+            helmfilePath=${hf} helmfile_template_all "${tmpConfigPath}"
+            helmfilePath=${hf} kubectl_slice_helmfile_templated_all "${tmpConfigPath}"
+            # helmfilePath=${hf} helmfile_add_namespaces_to_all "${tmpConfigPath}"
+        elif [[ "${templatingMode}" == "single" ]]; then
+            # Listing all releases with Helmfile, extracting useful information
+            # 1:name, 2:namespace, 3:enabled, 4:installed
+            log_debug "Listing releases..."
+            # inputList=$(helmfile_list | awk '{print $1" "$2" "$3" "$4}' | tail -n +2)
+            inputList=$(helmfilePath=${hf} helmfile_list | awk '{print $1" "$2" "$3" "$4}' | tail -n +2)
+            log_insane "${inputList}"
 
-            helmfilePath=${hf} helmfile_template_release "${release}" "${tmpConfigPath}"
-            helmfilePath=${hf} helmfile_add_namespaces_to_manifests "${release}" "${tmpConfigPath}"
-            helmfilePath=${hf} kubectl_slice_helmfile_templated_release "${release}" "${tmpConfigPath}"
-        done;
+            log_debug "Looping through Helmfile releases - ${hf}"
+            echo "${inputList}" | while read release; do
+
+                helmfilePath=${hf} helmfile_template_release "${release}" "${tmpConfigPath}"
+                helmfilePath=${hf} helmfile_add_namespaces_to_manifests "${release}" "${tmpConfigPath}"
+                helmfilePath=${hf} kubectl_slice_helmfile_templated_release "${release}" "${tmpConfigPath}"
+            done;
+        fi
     done <<< "${helmfiles}"
 fi
+# exit 1
 
 # get_config ${configPath} | sort -u | sed "s|${clusterConfigDirPath}|.|" > ${clusterConfigDirPath}/helmfile-config.lock
 get_config ${tmpConfigPath} | sort -u | sed "s|${tmpConfigPath}|.|" > ${tmpFolder}/helmfile-config.lock
