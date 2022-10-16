@@ -83,7 +83,7 @@ helmfile_template_all() {
     releasePath="${templatesOutputDir}/${cluster_config_name}"
     mkdir -p ${releasePath}
 
-    log_info "Templating: ${cluster_config_name}"
+    log_debug "Templating: ${cluster_config_name}"
 
     helmfileCommand=$(helmfile_template_command)
 
