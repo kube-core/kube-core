@@ -24,3 +24,7 @@
 {{- if .Values.core.servicesEnabled -}}
 {{ tpl (readFile "templates/releases/standard/services.yaml.gotmpl") . }}
 {{- end -}}
+
+{{- if .Values.core.clusterEnabled -}}
+{{ tpl (readFile "templates/releases/standard/cluster.yaml.gotmpl") . }}
+{{- end -}}

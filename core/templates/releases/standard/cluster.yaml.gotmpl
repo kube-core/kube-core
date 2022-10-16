@@ -1,0 +1,33 @@
+### TODO: Allowing to check for extra conditions from global values
+### (e.g install only if .Values.cloud.provider == gcp)
+### Required for cloud-agnostic version
+{{- $values := .Values }}
+{{- $releases := .Values.clusterReleases }}
+
+{{- range $releaseName, $release := $releases }}
+{{ $release := (merge $release $values.templates.release) }}
+{{- if $release.enabled -}}
+
+{{ $requirementsMet := true -}}
+{{ $lastRequirementMet := false -}}
+
+{{- if $release.needs -}}
+{{- range $currentRequirement := $release.needs -}}
+
+{{- $lastRequirementMet = $releases | get (printf "%s.enabled" $currentRequirement) -}}
+{{ if not $lastRequirementMet }}
+{{ $requirementsMet = false }}
+{{- end -}}
+
+{{- end -}}
+{{- end -}}
+
+{{ $newValues := $release }}
+{{ $_ := set $newValues "enabled" $requirementsMet }}
+{{ $_ := set $newValues "type" "cluster" }}
+{{- tpl (readFile "templates/releases/standard/release.yaml.gotmpl") (dict "item" $newValues "values" $values "releaseName" $releaseName "releaseNamespace" $release.namespace "releaseContext" $values.cluster.config.context) }}
+{{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") (dict "item" $newValues "values" $values "releaseName" $releaseName "releaseNamespace" $release.namespace "releaseContext" $values.cluster.config.context) }}
+{{- tpl (readFile "templates/releases/standard/release-extensions.yaml.gotmpl") (dict "item" $newValues "values" $values "releaseName" $releaseName "releaseNamespace" $release.namespace "releaseContext" $values.cluster.config.context) }}
+
+{{- end -}}
+{{- end -}}
