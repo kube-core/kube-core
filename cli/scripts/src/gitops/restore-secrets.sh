@@ -88,11 +88,12 @@ fi
     log_info "Checking for modified/deleted secrets to restore..."
     log_debug "This should only target modified secrets that didn't change (except hashing by SealedSecrets)"
 
-    modifiedFiles=$(git ls-files -m) || true
+    modifiedFiles=$(git ls-files -m | grep secret) || true
 
     log_insane "List of modified files :"
     log_insane "${modifiedFiles}"
 
+    # TODO: Improve this (performance/condition checks)
     if [[ ! -z "${modifiedFiles}" ]]
     then
         while read s
@@ -104,8 +105,12 @@ fi
             then
                 if [[ "$(cat "${s}" | grep -E 'kind: SealedSecret')" ]]
                 then
-                    log_info "Restoring SealedSecret: ${s}"
-                    git restore ${s}
+                    if cat "${s}" | grep -q 'build.kube-core.io/restore-secret: "false"' ; then
+                        log_debug "Not restoring (release-secrets): ${s}"
+                    else
+                        log_info "Restoring SealedSecret: ${s}"
+                        git restore ${s}
+                    fi
                 else
                     log_debug "Ignoring: ${s}"
                 fi

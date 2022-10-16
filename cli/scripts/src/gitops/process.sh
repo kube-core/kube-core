@@ -99,7 +99,7 @@ log_debug "Done Cleaning: files != .yaml"
 # Gets all secrets not managed by replicator (grep could be improved to be more specific)
 log_info "Checking for non-sealed secrets..."
 
-secretsList=$(grep -r -l -E 'kind: Secret' ${inputConfigPath}) || true
+secretsList=$(find ${inputConfigPath} -type f -name '*.yaml' | grep secret | xargs grep -r -l -E 'kind: Secret'}) || true
 
 if [[ ! -z "${secretsList}" ]]
 then
