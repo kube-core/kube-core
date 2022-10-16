@@ -2,8 +2,21 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.6.0](https://github.com/neo9/kube-core/compare/v0.5.7...v0.6.0)
+
+- core/templates: Added forceNamespace, templatedValues & Various fixes/improvements in core templates [`3957f14`](https://github.com/neo9/kube-core/commit/3957f14020e41f55895e85c2c949f59c0b6015b4)
+- cli/scripts: Reworked build to use a single helmfile template process instead of one for each release [`01c3f77`](https://github.com/neo9/kube-core/commit/01c3f773721343f912a8a9b8a38823ebeb04ec96)
+- core/helmfiles: Added cluster helmfile and clusterReleases [`2553995`](https://github.com/neo9/kube-core/commit/2553995e8a71de34e944daed626a08d0b962336c)
+- cli/scripts: Fixed namespace generation to work with the new templating workflow [`c2de423`](https://github.com/neo9/kube-core/commit/c2de42372ed20f1474aff3ca4cf8b43860ee9aa7)
+- cli/scripts: Improved detection of secrets to seal/restore [`a0e64dc`](https://github.com/neo9/kube-core/commit/a0e64dc5ec8e6755b360385c03b09dedf4537a4d)
+- cli/scripts: Moved namespace generation to the end, just before post-process [`054d6b2`](https://github.com/neo9/kube-core/commit/054d6b25e8445608c55cd6934ef41bfc0fac7d80)
+- cli/scripts: Reduced verbosity of build while looping over helmfiles [`ccfb3af`](https://github.com/neo9/kube-core/commit/ccfb3af071a0b5ff8ec20b288e7c59868680e900)
+
 #### [v0.5.7](https://github.com/neo9/kube-core/compare/v0.5.6...v0.5.7)
 
+> 14 October 2022
+
+- release: v0.5.7 [`ceaa0c2`](https://github.com/neo9/kube-core/commit/ceaa0c23ed3dea657bb538f83f9c556bb8c47ee4)
 - docker: Upgraded helmfile to v0.147.0 [`5ff4989`](https://github.com/neo9/kube-core/commit/5ff49899369187315b3793a7e63bc70a3bb05678)
 
 #### [v0.5.6](https://github.com/neo9/kube-core/compare/v0.5.5...v0.5.6)
