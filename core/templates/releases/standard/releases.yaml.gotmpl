@@ -24,9 +24,9 @@
 {{ $newValues := $release }}
 {{ $_ := set $newValues "enabled" $requirementsMet }}
 {{ $_ := set $newValues "type" "release" }}
-{{- tpl (readFile "templates/releases/standard/release.yaml.gotmpl") (dict "item" $newValues "values" $values "releaseName" $releaseName "releaseNamespace" $values.applicationsConfig.namespace "releaseContext" $values.cluster.config.context) }}
-{{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") (dict "item" $newValues "values" $values "releaseName" $releaseName "releaseNamespace" $values.applicationsConfig.namespace "releaseContext" $values.cluster.config.context) }}
-{{- tpl (readFile "templates/releases/standard/release-extensions.yaml.gotmpl") (dict "item" $newValues "values" $values "releaseName" $releaseName "releaseNamespace" $values.applicationsConfig.namespace "releaseContext" $values.cluster.config.context) }}
+{{- tpl (readFile "templates/releases/standard/release.yaml.gotmpl") (dict "item" $newValues "values" $values "releaseName" $releaseName "releaseNamespace" $release.namespace "releaseContext" $values.cluster.config.context) }}
+{{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") (dict "item" $newValues "values" $values "releaseName" $releaseName "releaseNamespace" $release.namespace "releaseContext" $values.cluster.config.context) }}
+{{- tpl (readFile "templates/releases/standard/release-extensions.yaml.gotmpl") (dict "item" $newValues "values" $values "releaseName" $releaseName "releaseNamespace" $release.namespace "releaseContext" $values.cluster.config.context) }}
 
 {{- end -}}
 {{- end -}}

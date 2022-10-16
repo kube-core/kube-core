@@ -9,6 +9,15 @@
   {{- if .item.jsonPatches }}
   {{ toYaml .item.jsonPatches | nindent 2 }}
   {{- end }}
+  {{- if .item.options | getOrNil "forceNamespace" }}
+  - target:
+      kind: .*
+      name: .*
+    patch:
+      - op: replace
+        path: "/metadata/namespace"
+        value: "{{ $releaseNamespace }}"
+  {{ end }}
   {{- if .item.options.patchIngresses }}
   - target:
       kind: Ingress
