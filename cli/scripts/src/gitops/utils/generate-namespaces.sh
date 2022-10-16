@@ -63,10 +63,9 @@ check_context "${cluster_config_context}"
 ## Generates all namespaces from helmfile/local config
 ## Docs End ##
 
-tmpConfigPath=${config_path}
-
 
 log_debug "Generating namespaces..."
+mkdir -p ${config_path}/namespace
 arg=${1:-""}
 # TODO: Include this logic directly in kube-core build namespaces
 # Requires to handle the cases: if running in kube-core build all or independently, and if the project is at initial setup stage or later update
@@ -98,11 +97,11 @@ YAML
     exit
 fi
 
-find ${tmpConfigPath} -mindepth 1 -maxdepth 1 -type d | while read namespacePath; do
+find ${config_path} -mindepth 1 -maxdepth 1 -type d | while read namespacePath; do
     namespace=$(basename $namespacePath)
     # add namespace creation
 if [[ ! -e ${namespacePath}/namespace.yaml && "${namespace}" != "namespace" ]]; then
-cat <<YAML > ${namespacePath}/namespace.yaml
+cat <<YAML > ${config_path}/namespace/${namespace}.yaml
 ---
 apiVersion: v1
 kind: Namespace
@@ -112,13 +111,16 @@ YAML
 fi
 done
 
-mkdir -p ${tmpConfigPath}/namespace
-cat <<YAML > ${tmpConfigPath}/namespace/secrets.yaml
+mkdir -p ${config_path}/namespace
+cat <<YAML > ${config_path}/namespace/secrets.yaml
 ---
 apiVersion: v1
 kind: Namespace
 metadata:
   name: secrets
 YAML
+
+# Cleanup this manifest as it is not suppused to be a namespace
+rm -rf ${config_path}/namespace/cluster-wide-resources.yaml
 
 log_debug "Done Generating namespaces!"
