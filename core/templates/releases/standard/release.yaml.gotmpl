@@ -3,18 +3,14 @@
 {{ $chartRepo := ((splitList "/" .item.chart) | first) }}
 {{ $releaseName := .releaseName }}
 - name: {{ .releaseName }}
-  {{- if (eq .item.type "release") }}
-  namespace: {{ .item.namespace }}
-  {{- else if (or (eq .item.type "application") (eq .item.type "service")) }}
   namespace: {{ .releaseNamespace }}
-  {{- end }}
-  {{- if (and (or (eq .item.type "application") (eq .item.type "service")) (isFile (printf "../releases/dist/releases/charts/%s/Chart.yaml" $chartName)) (eq $chartRepo "kube-core") (not (.item | getOrNil "disableCoreValuesChart"))) }}
+  {{- if (and (or (eq .item.type "application") (eq .item.type "service") (eq .item.type "cluster")) (isFile (printf "../releases/dist/releases/charts/%s/Chart.yaml" $chartName)) (eq $chartRepo "kube-core") (not (.item | getOrNil "disableCoreValuesChart"))) }}
   chart: ../releases/dist/releases/charts/{{ $chartName }}
   {{- else }}
   chart: {{ .item.chart }}
   {{- end }}
   installed: {{ .item.enabled }}
-  kubeContext: {{ coalesce .item.context (getOrNil "releaseContext" .) $values.cluster.config.context }}
+  kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
   labels:
   {{ if .item.labels }}
     {{ toYaml .item.labels | nindent 4 }}
@@ -31,13 +27,16 @@
   - "./values/{{ .releaseName }}.yaml.gotmpl" {{/*# Release has to have a value file, even empty*/}}
   {{- else if (and (or (eq .item.type "application")) (isFile (printf "../releases/dist/releases/charts/%s/Chart.yaml" $chartName)) (eq $chartRepo "kube-core") (eq $chartName "n9-api")) }}
   - "./values/n9-api.yaml.gotmpl"
-  {{- else if (and (or (eq .item.type "service")) (isFile (printf "./values/%s.yaml.gotmpl" $chartName)) (eq $chartRepo "kube-core") (not (.item | getOrNil "disableCoreValuesLayer"))) }}
+  {{- else if (and (or (eq .item.type "service") (eq .item.type "cluster")) (isFile (printf "./values/%s.yaml.gotmpl" $chartName)) (eq $chartRepo "kube-core") (not (.item | getOrNil "disableCoreValuesLayer"))) }}
   - {{ (printf "./values/%s.yaml.gotmpl" $chartName) }}
   {{- end }}
   {{- if .item.extraReleaseValues }} {{/*# Adding extra values (not in .item.release because of toYaml above)*/}}
   {{- range .item.extraReleaseValues }}
   - "{{ . }}"
   {{- end }}
+  {{- end }}
+  {{- if .item.templatedValues }} {{/*# Allows overriding / accessing values from the original chart !*/}}
+  - {{ (tpl (.item.templatedValues) $values) | nindent 4 | trim }}
   {{- end }}
   {{- if .item.values }} {{/*# Allows overriding / accessing values from the original chart !*/}}
   - {{ toYaml .item.values | nindent 4 | trim }}

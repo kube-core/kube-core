@@ -1,6 +1,8 @@
 applications: {}
+applicationsList: {}
 applicationsConfig:
   namespace: apps
   defaultIngressClass: ""
   domain: ""
   bucketPrefix: ""
+  context: ""

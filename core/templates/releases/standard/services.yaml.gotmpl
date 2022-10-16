@@ -5,6 +5,7 @@
 {{- $releases := .Values.services }}
 
 {{- range $releaseName, $release := $releases }}
+{{ $release := (merge $release $values.templates.service) }}
 {{- if $release.enabled -}}
 
 {{ $requirementsMet := true -}}
@@ -24,8 +25,8 @@
 {{ $newValues := $release }}
 {{ $_ := set $newValues "enabled" $requirementsMet }}
 {{ $_ := set $newValues "type" "service" }}
-{{- tpl (readFile "templates/releases/standard/release.yaml.gotmpl") (dict "item" $newValues "values" $values "releaseName" $releaseName "releaseNamespace" $values.servicesConfig.namespace) }}
-{{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") (dict "item" $newValues "values" $values "releaseName" $releaseName "releaseNamespace" $values.servicesConfig.namespace) }}
-{{- tpl (readFile "templates/releases/standard/release-extensions.yaml.gotmpl") (dict "item" $newValues "values" $values "releaseName" $releaseName "releaseNamespace" $values.servicesConfig.namespace) }}
+{{- tpl (readFile "templates/releases/standard/release.yaml.gotmpl") (dict "item" $newValues "values" $values "releaseName" $releaseName "releaseNamespace" $values.servicesConfig.namespace "releaseContext" $values.servicesConfig.context) }}
+{{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") (dict "item" $newValues "values" $values "releaseName" $releaseName "releaseNamespace" $values.servicesConfig.namespace "releaseContext" $values.servicesConfig.context) }}
+{{- tpl (readFile "templates/releases/standard/release-extensions.yaml.gotmpl") (dict "item" $newValues "values" $values "releaseName" $releaseName "releaseNamespace" $values.servicesConfig.namespace "releaseContext" $values.servicesConfig.context) }}
 {{- end -}}
 {{- end -}}

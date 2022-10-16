@@ -3,12 +3,8 @@
 {{ if .item.manifests }}
 - name: {{ $releaseName }}-manifests
   chart: ../releases/dist/releases/charts/raw
-  kubeContext: {{ coalesce .item.context (getOrNil "releaseContext" .) $values.cluster.config.context }}
-  {{- if (eq .item.type "release") }}
-  namespace: {{ .item.namespace }}
-  {{- else if (or (eq .item.type "application") (eq .item.type "service")) }}
+  kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
   namespace: {{ .releaseNamespace }}
-  {{- end }}
   transformers:
   {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
   labels:
@@ -22,12 +18,8 @@
 {{ if .item.secrets }}
 - name: {{ $releaseName }}-secrets
   chart: ../releases/dist/releases/charts/raw
-  kubeContext: {{ coalesce .item.context (getOrNil "releaseContext" .) $values.cluster.config.context }}
-  {{- if (eq .item.type "release") }}
-  namespace: {{ .item.namespace }}
-  {{- else if (or (eq .item.type "application") (eq .item.type "service")) }}
+  kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
   namespace: {{ .releaseNamespace }}
-  {{- end }}
   transformers:
   {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
   labels:
@@ -40,12 +32,8 @@
 {{ if .item.dynamicSecrets }}
 - name: {{ $releaseName }}-dynamic-secrets
   chart: ../releases/dist/releases/charts/raw
-  kubeContext: {{ coalesce .item.context (getOrNil "releaseContext" .) $values.cluster.config.context }}
-  {{- if (eq .item.type "release") }}
-  namespace: {{ .item.namespace }}
-  {{- else if (or (eq .item.type "application") (eq .item.type "service")) }}
+  kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
   namespace: {{ .releaseNamespace }}
-  {{- end }}
   transformers:
   {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
   labels:
@@ -58,12 +46,8 @@
 {{ if (index .item "external-secrets") }}
 - name: {{ $releaseName }}-external-secrets
   chart: ../releases/dist/releases/charts/raw
-  kubeContext: {{ coalesce .item.context (getOrNil "releaseContext" .) $values.cluster.config.context }}
-  {{- if (eq .item.type "release") }}
-  namespace: {{ .item.namespace }}
-  {{- else if (or (eq .item.type "application") (eq .item.type "service")) }}
+  kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
   namespace: {{ .releaseNamespace }}
-  {{- end }}
   transformers:
   {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
   labels:
@@ -76,12 +60,8 @@
 {{ if .item.patches }}
 - name: {{ $releaseName }}-patches
   chart: ../releases/dist/releases/charts/raw
-  kubeContext: {{ coalesce .item.context (getOrNil "releaseContext" .) $values.cluster.config.context }}
-  {{- if (eq .item.type "release") }}
-  namespace: {{ .item.namespace }}
-  {{- else if (or (eq .item.type "application") (eq .item.type "service")) }}
+  kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
   namespace: {{ .releaseNamespace }}
-  {{- end }}
   transformers:
   {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
   labels:
@@ -94,12 +74,8 @@
 {{ if .item.scaling }}
 - name: {{ $releaseName }}-scaling
   chart: ../releases/dist/releases/charts/app-scaling
-  kubeContext: {{ coalesce .item.context (getOrNil "releaseContext" .) $values.cluster.config.context }}
-  {{- if (eq .item.type "release") }}
-  namespace: {{ .item.namespace }}
-  {{- else if (or (eq .item.type "application") (eq .item.type "service")) }}
+  kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
   namespace: {{ .releaseNamespace }}
-  {{- end }}
   transformers:
   {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
   labels:
