@@ -1,7 +1,8 @@
 core:
+  releasesEnabled: true
   applicationsEnabled: false
   servicesEnabled: false
-  releasesEnabled: true
+  clusterEnabled: false
   releasesRawEnabled: true
   releasesCustomEnabled: true
   globalLabelsEnabled: true

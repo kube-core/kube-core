@@ -13,3 +13,7 @@ manifests: {{ toYaml (index .Values.applications $mainReleaseName "manifests") |
 {{ if ((index .Values.services $mainReleaseName | getOrNil "manifests")) }}
 manifests: {{ toYaml (index .Values.services $mainReleaseName "manifests") | nindent 2 }}
 {{ end }}
+
+{{ if ((index .Values.clusterReleases $mainReleaseName | getOrNil "manifests")) }}
+manifests: {{ toYaml (index .Values.clusterReleases $mainReleaseName "manifests") | nindent 2 }}
+{{ end }}
