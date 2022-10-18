@@ -43,6 +43,15 @@ gitops:
   refresh: 1m0s #KUBE_CORE_GITOPS_REFRESH
   ssh_key: ./keys/.flux-ssh-key
   autocommit: false #KUBE_CORE_GITOPS_AUTOCOMMIT
+  config:
+    default:
+      kustomization:
+        force: true
+        interval: 1m0s
+        prune: true
+        sourceRef:
+          kind: GitRepository
+          name: self
 # Cloud Provider information
 cloud:
   provider: KUBE_CORE_CLOUD_PROVIDER
