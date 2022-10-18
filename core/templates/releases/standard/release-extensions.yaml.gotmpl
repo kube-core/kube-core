@@ -84,3 +84,17 @@
   values:
   - "./values/release-scaling.yaml.gotmpl"
 {{ end }}
+
+{{ if .item.gitops.enabled }}
+- name: {{ $releaseName }}-gitops
+  chart: ../releases/dist/releases/charts/raw
+  kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
+  namespace: {{ .releaseNamespace }}
+  transformers:
+  {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
+  labels:
+    app: {{ $releaseName }}
+    type: gitops
+  values:
+  - "./values/release-gitops.yaml.gotmpl"
+{{ end }}
