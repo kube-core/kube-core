@@ -99,8 +99,8 @@ if [[ "${helmfiles}" != "" ]]; then
 
         if [[ "${templatingMode}" == "all" ]]; then
             log_info "Templating: ${cluster_config_name}/${helmfileName}"
-            helmfilePath=${hf} helmfile_template_all "${tmpConfigPath}"
-            helmfilePath=${hf} kubectl_slice_helmfile_templated_all "${tmpConfigPath}"
+            helmfilePath=${hf} helmfile_template_all "${tmpConfigPath}" "${helmfileName}"
+            # helmfilePath=${hf} kubectl_slice_helmfile_templated_all "${tmpConfigPath}"
             # helmfilePath=${hf} helmfile_add_namespaces_to_all "${tmpConfigPath}"
         elif [[ "${templatingMode}" == "single" ]]; then
             # Listing all releases with Helmfile, extracting useful information
@@ -114,8 +114,8 @@ if [[ "${helmfiles}" != "" ]]; then
             echo "${inputList}" | while read release; do
 
                 helmfilePath=${hf} helmfile_template_release "${release}" "${tmpConfigPath}"
-                helmfilePath=${hf} helmfile_add_namespaces_to_manifests "${release}" "${tmpConfigPath}"
-                helmfilePath=${hf} kubectl_slice_helmfile_templated_release "${release}" "${tmpConfigPath}"
+                # helmfilePath=${hf} helmfile_add_namespaces_to_manifests "${release}" "${tmpConfigPath}"
+                # helmfilePath=${hf} kubectl_slice_helmfile_templated_release "${release}" "${tmpConfigPath}"
             done;
         fi
     done <<< "${helmfiles}"
