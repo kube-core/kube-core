@@ -1,4 +1,4 @@
-{{- $values := .values }}
+{{ $values := .values }}
 {{ $releaseName := .releaseName }}
 {{ $releaseNamespace := .releaseNamespace }}
 {{- if .item.strategicMergePatches }}
@@ -26,10 +26,6 @@
   {{- if .item.options.removeIngressClassAnnotation }}
       - op: remove
         path: "/metadata/annotations/kubernetes.io~1ingress.class"
-        {{/*# For Reference - brace yourself ;)
-        # https://github.com/kubernetes-sigs/kustomize/issues/1256#issuecomment-562531658
-        # https://datatracker.ietf.org/doc/html/rfc6902
-        # http://jsonpatch.com/#json-pointer */}}
   {{- end }}
   {{- if .item.options.removeIngressClassName }}
       - op: remove
@@ -71,10 +67,6 @@
   {{- if .item.options.removeIngressClassAnnotation }}
       - op: remove
         path: "/metadata/annotations/kubernetes.io~1ingress.class"
-        {{/*# For Reference - brace yourself ;)
-        # https://github.com/kubernetes-sigs/kustomize/issues/1256#issuecomment-562531658
-        # https://datatracker.ietf.org/doc/html/rfc6902
-        # http://jsonpatch.com/#json-pointer */}}
   {{- end }}
   {{- if .item.options.removeIngressClassName }}
       - op: remove
@@ -90,10 +82,6 @@
         path: "/spec/rules/0/host"
         value: {{ $releaseName }}.{{ $releaseNamespace }}.{{ $values.cluster.config.domain }}
   {{- end }}
-    # tls: []
-  #  - secretName: mongo-express-tls
-  #    hosts:
-  #      - mongo-express.local
   {{- if .item.options.injectIngressTls }}
       - op: add
         path: "/spec/tls"

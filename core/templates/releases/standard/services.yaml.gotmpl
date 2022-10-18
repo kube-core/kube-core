@@ -1,7 +1,4 @@
-### TODO: Allowing to check for extra conditions from global values
-### (e.g install only if .Values.cloud.provider == gcp)
-### Required for cloud-agnostic version
-{{- $values := .Values }}
+{{ $values := .Values }}
 {{- $releases := .Values.services }}
 
 {{- range $releaseName, $release := $releases }}
