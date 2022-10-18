@@ -1,14 +1,17 @@
-{{- $raw := .Values.releasesRaw }}
-
+{{ $raw := .Values.releasesRaw }}
+{{ $values := .Values }}
 {{- range $key, $value := $raw }}
 {{ if $value.enabled }}
 
-- name: {{ $key }} # Allow to use all standard helmfile properties
-  installed: {{ $value.enabled }} # Controls installation & removal
+- name: {{ $key }}
+  installed: {{ $value.enabled }}
   chart: ../releases/dist/releases/charts/raw
   namespace: {{ $value.namespace }}
   transformers:
-  {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
+  {{ $_ := set $value "chart" "../releases/dist/releases/charts/raw" }}
+  {{ $_ := set $value "type" "raw" }}
+  {{ $_ := set $value "needs" "" }}
+  {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") (dict "values" $values "releaseName" $key "item" $value "releaseNamespace" $value.namespace ) }}
   version: 1.0.1
   {{ if $value.needs }}
   needs: {{ toYaml $value.needs | nindent 2 }}
@@ -23,7 +26,6 @@
     component: manifests
   {{ end }}
   values:
-  - "./values/raw.yaml.gotmpl" # Release has to have a value file, even empty
-  # - "./values/{{ $key }}.yaml.gotmpl" # Release has to have a value file, even empty
+  - "./values/raw.yaml.gotmpl"
 {{- end -}}
 {{- end -}}

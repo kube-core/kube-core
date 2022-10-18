@@ -2,12 +2,13 @@
 
 {{- range $key, $value :=  (index .Values.releasesCustom.postgresOperatorCluster "config" "clusters") }}
 
-### Postgres-operator heavily depend on ressources naming format {TEAM}-{NAME}
-
 - name: {{ $value.name }}
   chart: ../releases/dist/releases/charts/raw
   namespace: {{ $value.namespace }}
   transformers:
+  {{ $_ := set $value "chart" "../releases/dist/releases/charts/raw" }}
+  {{ $_ := set $value "type" "raw" }}
+  {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") (dict "values" $values "releaseName" $value.name "item" $value "releaseNamespace" $value.namespace ) }}
   {{ if $value.needs }}
   wait: true
   needs: {{ toYaml $value.needs | nindent 2 }}
