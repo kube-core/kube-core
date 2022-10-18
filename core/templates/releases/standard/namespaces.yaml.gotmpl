@@ -1,0 +1,26 @@
+{{ $values := .Values }}
+{{- $releases := .Values.namespaces }}
+
+{{- range $releaseName, $release := .Values.namespaces }}
+{{ $release := (merge $release $values.templates.release) }}
+{{- if $release.enabled -}}
+
+
+{{ $newValues := $release }}
+{{ $_ := set $newValues "type" "namespace" }}
+{{ $_ := set $newValues "chart" "../releases/dist/releases/charts/namespace" }}
+{{ $_ := set $newValues "needs" "" }}
+- name: ns-{{ $releaseName }}
+  installed: {{ $newValues.enabled }}
+  chart: ../releases/dist/releases/charts/namespace
+  namespace: {{ $releaseName }}
+  # namespace: kube-core
+  transformers:
+  {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") (dict "values" $values "releaseName" $releaseName "item" $newValues "releaseNamespace" $releaseName ) }}
+  labels:
+    type: namespace
+  values:
+  - "./values/namespace.yaml.gotmpl"
+
+{{- end -}}
+{{- end -}}

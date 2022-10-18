@@ -288,3 +288,6 @@ releases:
   oauth2-proxy:
     namespace: oauth2-proxy
     chart: ../releases/dist/releases/charts/oauth2-proxy
+  namespace:
+    namespace: cluster-wide-resources
+    chart: ../releases/dist/releases/charts/namespace

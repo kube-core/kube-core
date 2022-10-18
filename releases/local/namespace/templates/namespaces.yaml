@@ -1,0 +1,15 @@
+{{ range $name, $release := .Values.namespaces }}
+{{ if $release.enabled }}
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ $name }}
+  {{- if $release.annotations }}
+  annotations: {{ toYaml $release.annotations | nindent 4 }}
+  {{- end }}
+  {{- if $release.labels }}
+  labels: {{ toYaml $release.labels | nindent 4 }}
+  {{- end }}
+{{ end }}
+{{ end }}

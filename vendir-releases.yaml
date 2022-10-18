@@ -357,6 +357,10 @@ directories:
             url: https://charts.bitnami.com/bitnami
 
       # Local Releases
+      - path: namespace
+        directory:
+          path: ../../../releases/local/namespace
+
       - path: flux-repository
         directory:
           path: ../../../releases/local/flux-repository

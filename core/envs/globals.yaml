@@ -6,5 +6,6 @@ core:
   releasesRawEnabled: true
   releasesCustomEnabled: true
   globalLabelsEnabled: true
+  namespacesEnabled: false
   globalHelmMetadataEnabled: true
   version: v1.0.0
