@@ -125,24 +125,25 @@ test:
   path: ./test
   lint:
     config:
-      path: ./yamllint.yaml
+      path: ./test/config/yamllint.yaml
   audit:
     config:
-      path: ./kubeaudit.yaml
+      path: ./test/config/kubeaudit.yaml
   conftest:
     policies:
       path: ./policy/base
   score:
     config:
-      path: ./kubescore.yaml
+      path: ./test/config/kubescore.yaml
   validate:
     config:
-      path: ./kubeval.yaml
+      path: ./test/config/kubeval.yaml
 
 run:
   kbld: false
   core_overlays: true
   cluster_overlays: true
+  slice_by_release: true
 
 install:
   type: helmfile
