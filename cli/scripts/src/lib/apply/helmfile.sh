@@ -80,7 +80,8 @@ helmfile_add_namespaces_to_all() {
 
 helmfile_template_all() {
     templatesOutputDir=${1}
-    releasePath="${templatesOutputDir}/${cluster_config_name}"
+    helmfileName=${2}
+    releasePath="${templatesOutputDir}/${cluster_config_name}/${helmfileName}"
     mkdir -p ${releasePath}
 
     log_debug "Templating: ${cluster_config_name}"

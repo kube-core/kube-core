@@ -75,42 +75,69 @@ replicatedConfigMapsPath=${configmaps_path}/replicated
 
 log_debug "Generating configmaps..."
 ${scripts_k8s_configmaps_generate_path} $@
+mkdir -p ${configmaps_path}/configmaps-releases
+cp -rf ${configmaps_path}/output/* ${configmaps_path}/configmaps-releases/
+#### COPY DISABLED
+# log_debug "Copying configmaps..."
 
-log_debug "Copying configmaps..."
+# mkdir -p ${configMapsPath}
+# mkdir -p ${replicatedConfigMapsPath}
+# mkdir -p ${configPath}
+# rm -rf ${tmpFolder}/configmaps
+# mkdir -p ${tmpFolder}/configmaps
 
-mkdir -p ${configMapsPath}
-mkdir -p ${replicatedConfigMapsPath}
-mkdir -p ${configPath}
-rm -rf ${tmpFolder}/configmaps
-mkdir -p ${tmpFolder}/configmaps
-
-cd ${configMapsPath} &> /dev/null # Remove logs
-configmaps=$(find . -type f -name '*.yaml')
-echo "${configmaps}" | xargs yq '.' > ${tmpFolder}/configmaps/configmaps.yaml
-
-
-cd ${replicatedConfigMapsPath} &> /dev/null # Remove logs
-replicatedConfigMaps=$(find . -type f -name '*.yaml')
-echo "${replicatedConfigMaps}" | xargs yq '.' > ${tmpFolder}/configmaps/replicated-configmaps.yaml
+# cd ${configMapsPath} &> /dev/null # Remove logs
+# configmaps=$(find . -type f -name '*.yaml')
+# if [[ ! -z "${configmaps}" ]] ; then
+#     echo "${configmaps}" | xargs yq '.' > ${tmpFolder}/configmaps/configmaps.yaml
+# fi
 
 
-if [[ "$LOG_LEVEL" == "DEBUG" || "$LOG_LEVEL" == "INSANE" ]] ; then
-    if [[ ! -z "${configmaps}" ]] ; then
-        kubectl slice -f ${tmpFolder}/configmaps/configmaps.yaml --output-dir ${tmpFolder}/configmaps/configmaps --template='{{.metadata.namespace}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml'
-    fi
-    if [[ ! -z "${replicatedConfigMaps}" ]] ; then
-        kubectl slice -f ${tmpFolder}/configmaps/replicated-configmaps.yaml --output-dir ${tmpFolder}/configmaps/configmaps --template='{{.metadata.namespace}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml'
-    fi
-else
-    if [[ ! -z "${configmaps}" ]] ; then
-        kubectl slice -f ${tmpFolder}/configmaps/configmaps.yaml --output-dir ${tmpFolder}/configmaps/configmaps --template='{{.metadata.namespace}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml' 2> /dev/null
-    fi
-    if [[ ! -z "${replicatedConfigMaps}" ]] ; then
-        kubectl slice -f ${tmpFolder}/configmaps/replicated-configmaps.yaml --output-dir ${tmpFolder}/configmaps/configmaps --template='{{.metadata.namespace}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml' 2> /dev/null
-    fi
-fi
+# cd ${replicatedConfigMapsPath} &> /dev/null # Remove logs
+# replicatedConfigMaps=$(find . -type f -name '*.yaml')
 
-cp -fr ${tmpFolder}/configmaps/configmaps/* ${configPath} 2>/dev/null || true
+# if [[ "${replicatedConfigMapsPath}" != "" ]] ; then
+#     echo "${replicatedConfigMaps}" | xargs yq '.' > ${tmpFolder}/configmaps/replicated-configmaps.yaml
+# fi
+
+# if [[ "${run_slice_by_release}" == "true" ]]; then
+#     if [[ "$LOG_LEVEL" == "DEBUG" || "$LOG_LEVEL" == "INSANE" ]] ; then
+#         if [[ ! -z "${configmaps}" ]] ; then
+
+#             kubectl slice -f ${tmpFolder}/configmaps/configmaps.yaml --output-dir ${tmpFolder}/configmaps/configmaps --template='{{(.metadata.labels | index "cluster.kube-core.io/context") |dottodash|replace ":" "-"}}/{{.metadata.namespace}}/{{(.metadata.labels | index "release.kube-core.io/name") |dottodash|replace ":" "-"}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml'
+#             echo "tests"
+#         fi
+#         if [[ ! -z "${replicatedConfigMaps}" ]] ; then
+#             kubectl slice -f ${tmpFolder}/configmaps/replicated-configmaps.yaml --output-dir ${tmpFolder}/configmaps/configmaps --template='{{(.metadata.labels | index "cluster.kube-core.io/context") |dottodash|replace ":" "-"}}/{{.metadata.namespace}}/{{(.metadata.labels | index "release.kube-core.io/name") |dottodash|replace ":" "-"}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml'
+#         fi
+#     else
+#         if [[ ! -z "${configmaps}" ]] ; then
+#             kubectl slice -f ${tmpFolder}/configmaps/configmaps.yaml --output-dir ${tmpFolder}/configmaps/configmaps --template='{{(.metadata.labels | index "cluster.kube-core.io/context") |dottodash|replace ":" "-"}}/{{.metadata.namespace}}/{{(.metadata.labels | index "release.kube-core.io/name") |dottodash|replace ":" "-"}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml' 2> /dev/null
+#         fi
+#         if [[ ! -z "${replicatedConfigMaps}" ]] ; then
+#             kubectl slice -f ${tmpFolder}/configmaps/replicated-configmaps.yaml --output-dir ${tmpFolder}/configmaps/configmaps --template='{{(.metadata.labels | index "cluster.kube-core.io/context") |dottodash|replace ":" "-"}}/{{.metadata.namespace}}/{{(.metadata.labels | index "release.kube-core.io/name") |dottodash|replace ":" "-"}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml' 2> /dev/null
+#         fi
+#     fi
+# else
+#     if [[ "$LOG_LEVEL" == "DEBUG" || "$LOG_LEVEL" == "INSANE" ]] ; then
+#         if [[ ! -z "${configmaps}" ]] ; then
+#             kubectl slice -f ${tmpFolder}/configmaps/configmaps.yaml --output-dir ${tmpFolder}/configmaps/configmaps --template='{{.metadata.namespace}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml'
+#         fi
+#         if [[ ! -z "${replicatedConfigMaps}" ]] ; then
+#             kubectl slice -f ${tmpFolder}/configmaps/replicated-configmaps.yaml --output-dir ${tmpFolder}/configmaps/configmaps --template='{{.metadata.namespace}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml'
+#         fi
+#     else
+#         if [[ ! -z "${configmaps}" ]] ; then
+#             kubectl slice -f ${tmpFolder}/configmaps/configmaps.yaml --output-dir ${tmpFolder}/configmaps/configmaps --template='{{.metadata.namespace}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml' 2> /dev/null
+#         fi
+#         if [[ ! -z "${replicatedConfigMaps}" ]] ; then
+#             kubectl slice -f ${tmpFolder}/configmaps/replicated-configmaps.yaml --output-dir ${tmpFolder}/configmaps/configmaps --template='{{.metadata.namespace}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml' 2> /dev/null
+#         fi
+#     fi
+# fi
+# cp -fr ${tmpFolder}/configmaps/configmaps/* ${configPath} 2>/dev/null || true
+#### COPY DISABLED
+
 
 # mkdir -p ${configPath}/configmaps
 # cp -rf ${configMapsPath}/* ${configPath} 2>/dev/null || true

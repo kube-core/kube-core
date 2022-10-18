@@ -33,13 +33,24 @@ kubectl_slice_helmfile_templated_release() {
 
         # echo "${releaseFilesList}"
 
-        log_debug "Slicing: ${cluster_config_name}/${namespace}/${name}"
-        log_debug "kubectl slice -f ${tmpReleasePath} --output-dir ${outputReleasePath} --template='{{.metadata.namespace}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml'"
+        if [[ "${run_slice_by_release}" == "true" ]]; then
+            log_debug "Slicing: ${cluster_config_name}/${namespace}/${name}"
+            log_debug "kubectl slice -f ${tmpReleasePath} --output-dir ${outputReleasePath} --template='{{(.metadata.labels | index "cluster.kube-core.io/context") |dottodash|replace ":" "-"}}/{{.metadata.namespace}}/{{(.metadata.labels | index "release.kube-core.io/name") |dottodash|replace ":" "-"}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml'"
 
-        if [[ "$LOG_LEVEL" == "DEBUG" || "$LOG_LEVEL" == "INSANE" ]] ; then
-            kubectl slice -f ${tmpReleasePath} --output-dir ${outputReleasePath} --template='{{.metadata.namespace}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml'
+            if [[ "$LOG_LEVEL" == "DEBUG" || "$LOG_LEVEL" == "INSANE" ]] ; then
+                kubectl slice -f ${tmpReleasePath} --output-dir ${outputReleasePath} --template='{{(.metadata.labels | index "cluster.kube-core.io/context") |dottodash|replace ":" "-"}}/{{.metadata.namespace}}/{{(.metadata.labels | index "release.kube-core.io/name") |dottodash|replace ":" "-"}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml'
+            else
+                kubectl slice -f ${tmpReleasePath} --output-dir ${outputReleasePath} --template='{{(.metadata.labels | index "cluster.kube-core.io/context") |dottodash|replace ":" "-"}}/{{.metadata.namespace}}/{{(.metadata.labels | index "release.kube-core.io/name") |dottodash|replace ":" "-"}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml' 2> /dev/null
+            fi
         else
-            kubectl slice -f ${tmpReleasePath} --output-dir ${outputReleasePath} --template='{{.metadata.namespace}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml' 2> /dev/null
+            log_debug "Slicing: ${cluster_config_name}/${namespace}/${name}"
+            log_debug "kubectl slice -f ${tmpReleasePath} --output-dir ${outputReleasePath} --template='{{.metadata.namespace}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml'"
+
+            if [[ "$LOG_LEVEL" == "DEBUG" || "$LOG_LEVEL" == "INSANE" ]] ; then
+                kubectl slice -f ${tmpReleasePath} --output-dir ${outputReleasePath} --template='{{.metadata.namespace}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml'
+            else
+                kubectl slice -f ${tmpReleasePath} --output-dir ${outputReleasePath} --template='{{.metadata.namespace}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml' 2> /dev/null
+            fi
         fi
 
         cd ${configPath}
@@ -72,14 +83,24 @@ kubectl_slice_helmfile_templated_all() {
         echo "${releaseFilesList}" | xargs yq '.' > ${tmpReleasePath}
 
         # echo "${releaseFilesList}"
+        if [[ "${run_slice_by_release}" == "true" ]]; then
+            log_debug "Slicing: ${cluster_config_name}"
+            log_debug "kubectl slice -f ${tmpReleasePath} --output-dir ${outputReleasePath} --template='{{(.metadata.labels | index "cluster.kube-core.io/context") |dottodash|replace ":" "-"}}/{{.metadata.namespace}}/{{(.metadata.labels | index "release.kube-core.io/name") |dottodash|replace ":" "-"}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml'"
 
-        log_debug "Slicing: ${cluster_config_name}"
-        log_debug "kubectl slice -f ${tmpReleasePath} --output-dir ${outputReleasePath} --template='{{.metadata.namespace}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml'"
-
-        if [[ "$LOG_LEVEL" == "DEBUG" || "$LOG_LEVEL" == "INSANE" ]] ; then
-            kubectl slice -f ${tmpReleasePath} --output-dir ${outputReleasePath} --template='{{.metadata.namespace}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml'
+            if [[ "$LOG_LEVEL" == "DEBUG" || "$LOG_LEVEL" == "INSANE" ]] ; then
+                kubectl slice -f ${tmpReleasePath} --output-dir ${outputReleasePath} --template='{{(.metadata.labels | index "cluster.kube-core.io/context") |dottodash|replace ":" "-"}}/{{.metadata.namespace}}/{{(.metadata.labels | index "release.kube-core.io/name") |dottodash|replace ":" "-"}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml'
+            else
+                kubectl slice -f ${tmpReleasePath} --output-dir ${outputReleasePath} --template='{{(.metadata.labels | index "cluster.kube-core.io/context") |dottodash|replace ":" "-"}}/{{.metadata.namespace}}/{{(.metadata.labels | index "release.kube-core.io/name") |dottodash|replace ":" "-"}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml' 2> /dev/null
+            fi
         else
-            kubectl slice -f ${tmpReleasePath} --output-dir ${outputReleasePath} --template='{{.metadata.namespace}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml' 2> /dev/null
+            log_debug "Slicing: ${cluster_config_name}"
+            log_debug "kubectl slice -f ${tmpReleasePath} --output-dir ${outputReleasePath} --template='{{.metadata.namespace}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml'"
+
+            if [[ "$LOG_LEVEL" == "DEBUG" || "$LOG_LEVEL" == "INSANE" ]] ; then
+                kubectl slice -f ${tmpReleasePath} --output-dir ${outputReleasePath} --template='{{.metadata.namespace}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml'
+            else
+                kubectl slice -f ${tmpReleasePath} --output-dir ${outputReleasePath} --template='{{.metadata.namespace}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml' 2> /dev/null
+            fi
         fi
 
         cd ${configPath}
