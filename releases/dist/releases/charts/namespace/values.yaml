@@ -1,0 +1,4 @@
+namespaces:
+  kube-core:
+    labels: {}
+    annotations: {}

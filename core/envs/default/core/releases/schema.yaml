@@ -215,10 +215,9 @@ releases:
   descheduler: *release
   cluster-rbac: *release
   node-problem-detector: *release
-
   rabbitmq-managed: *release
   mongodb-managed: *release
-
   flux-repository: *release
   dex: *release
   oauth2-proxy: *release
+  namespace: *release

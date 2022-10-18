@@ -1,22 +1,681 @@
-releasesRaw:
-  namespace-dev:
-    enabled: false
-    labels:
-      type: namespace
-    manifests: []
-    namespace: dev
-    needs: []
-  namespace-mongodb:
-    enabled: false
-    labels:
-      type: namespace
-    manifests: []
-    namespace: mongodb
-    needs: []
-  namespace-rabbitmq:
-    enabled: false
-    labels:
-      type: namespace
-    manifests: []
-    namespace: rabbitmq
-    needs: []
+releasesRaw: {}
+#   namespace-dev:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: dev
+#     namespace: dev
+#   namespace-configmaps:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: configmaps
+#     namespace: configmaps
+#   namespace-secrets:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: secrets
+#     namespace: secrets
+#   namespace-integration:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: integration
+#     namespace: integration
+#   namespace-validation:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: validation
+#     namespace: validation
+#   namespace-staging:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: staging
+#     namespace: staging
+#   namespace-preproduction:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: preproduction
+#     namespace: preproduction
+#   namespace-production:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: production
+#     namespace: production
+#   namespace-cert-manager:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: cert-manager
+#     namespace: cert-manager
+#   namespace-chaos-mesh:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: chaos-mesh
+#     namespace: chaos-mesh
+#   namespace-chartmuseum:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: chartmuseum
+#     namespace: chartmuseum
+#   namespace-cluster-policies:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: cluster-policies
+#     namespace: cluster-policies
+#   namespace-cluster-rbac:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: cluster-rbac
+#     namespace: cluster-rbac
+#   namespace-container-registry-operator:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: container-registry-operator
+#     namespace: container-registry-operator
+#   namespace-crossplane-system:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: crossplane-system
+#     namespace: crossplane-system
+#   namespace-dex:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: dex
+#     namespace: dex
+#   namespace-efk:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: efk
+#     namespace: efk
+#   namespace-elastic-system:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: elastic-system
+#     namespace: elastic-system
+#   namespace-estafette:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: estafette
+#     namespace: estafette
+#   namespace-external-dns:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: external-dns
+#     namespace: external-dns
+#   namespace-external-secrets:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: external-secrets
+#     namespace: external-secrets
+#   namespace-flux-system:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: flux-system
+#     namespace: flux-system
+#   namespace-forecastle:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: forecastle
+#     namespace: forecastle
+#   namespace-ingress-access-operator:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: ingress-access-operator
+#     namespace: ingress-access-operator
+#   namespace-istio-system:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: istio-system
+#     namespace: istio-system
+#   namespace-keda:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: keda
+#     namespace: keda
+#   namespace-keycloak:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: keycloak
+#     namespace: keycloak
+#   namespace-kube-cleanup-operator:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: kube-cleanup-operator
+#     namespace: kube-cleanup-operator
+#   namespace-kube-downscaler:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: kube-downscaler
+#     namespace: kube-downscaler
+#   namespace-kube-fledged:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: kube-fledged
+#     namespace: kube-fledged
+#   namespace-kubernetes-dashboard:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: kubernetes-dashboard
+#     namespace: kubernetes-dashboard
+#   namespace-kube-system:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: kube-system
+#     namespace: kube-system
+#   namespace-kyverno:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: kyverno
+#     namespace: kyverno
+#   namespace-kyverno-policies:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: kyverno-policies
+#     namespace: kyverno-policies
+#   namespace-logging:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: logging
+#     namespace: logging
+#   namespace-logging-operator:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: logging-operator
+#     namespace: logging-operator
+#   namespace-minio:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: minio
+#     namespace: minio
+#   namespace-minio-operator:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: minio-operator
+#     namespace: minio-operator
+#   namespace-mongodb:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: mongodb
+#     namespace: mongodb
+#   namespace-mongodb-atlas-operator:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: mongodb-atlas-operator
+#     namespace: mongodb-atlas-operator
+#   namespace-mongodb-operator:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: mongodb-operator
+#     namespace: mongodb-operator
+#   namespace-monitoring:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: monitoring
+#     namespace: monitoring
+#   namespace-nexus:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: nexus
+#     namespace: nexus
+#   namespace-nginx:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: nginx
+#     namespace: nginx
+#   namespace-nginx-ingress:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: nginx-ingress
+#     namespace: nginx-ingress
+#   namespace-nginx-istio-ingress:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: nginx-istio-ingress
+#     namespace: nginx-istio-ingress
+#   namespace-node-initializer:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: node-initializer
+#     namespace: node-initializer
+#   namespace-node-problem-detector:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: node-problem-detector
+#     namespace: node-problem-detector
+#   namespace-oauth2-proxy:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: oauth2-proxy
+#     namespace: oauth2-proxy
+#   namespace-patch-operator:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: patch-operator
+#     namespace: patch-operator
+#   namespace-polaris:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: polaris
+#     namespace: polaris
+#   namespace-predator:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: predator
+#     namespace: predator
+#   namespace-rabbitmq:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: rabbitmq
+#     namespace: rabbitmq
+#   namespace-rabbitmq-system:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: rabbitmq-system
+#     namespace: rabbitmq-system
+#   namespace-reloader:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: reloader
+#     namespace: reloader
+#   namespace-replicator:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: replicator
+#     namespace: replicator
+#   namespace-sealed-secrets:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: sealed-secrets
+#     namespace: sealed-secrets
+#   namespace-secret-generator:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: secret-generator
+#     namespace: secret-generator
+#   namespace-sloop:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: sloop
+#     namespace: sloop
+#   namespace-sloth:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: sloth
+#     namespace: sloth
+#   namespace-sonarqube:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: sonarqube
+#     namespace: sonarqube
+#   namespace-starboard-operator:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: starboard-operator
+#     namespace: starboard-operator
+#   namespace-system-tools:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: system-tools
+#     namespace: system-tools
+#   namespace-tekton-pipelines:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: tekton-pipelines
+#     namespace: tekton-pipelines
+#   namespace-test-logging:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: test-logging
+#     namespace: test-logging
+#   namespace-velero:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: velero
+#     namespace: velero
+#   namespace-zeebe:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: zeebe
+#     namespace: zeebe
+#   namespace-postgres-operator:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: postgres-operator
+#     namespace: postgres-operator
