@@ -85,9 +85,9 @@ echo "${manifestsList}" | xargs yq '.' > ${tmpConfigPath}/config.all.yaml
 # TODO: Find a way to choose easily how to slice
 # {{(.metadata.labels | index "cluster.kube-core.io/context") |dottodash|replace ":" "-"}}/{{.metadata.namespace}}/{{(.metadata.labels | index "release.kube-core.io/name") |dottodash|replace ":" "-"}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml'
 if [[ "$LOG_LEVEL" == "DEBUG" || "$LOG_LEVEL" == "INSANE" ]] ; then
-    kubectl slice -f ${tmpConfigPath}/config.all.yaml --output-dir ${config_path} --template='{{.metadata.namespace}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml'
+    kubectl slice -f ${tmpConfigPath}/config.all.yaml --output-dir ${config_path} --template='{{(.metadata.labels | index "release.kube-core.io/namespace")}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml'
 else
-    kubectl slice -f ${tmpConfigPath}/config.all.yaml --output-dir ${config_path} --template='{{.metadata.namespace}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml' 2> /dev/null
+    kubectl slice -f ${tmpConfigPath}/config.all.yaml --output-dir ${config_path} --template='{{(.metadata.labels | index "release.kube-core.io/namespace")}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml' 2> /dev/null
 fi
 cd - &> /dev/null # Remove logs
 
