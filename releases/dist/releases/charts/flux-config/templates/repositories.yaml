@@ -83,7 +83,7 @@ kind: Kustomization
 metadata:
   name: {{ toYaml $releaseConfig.namespace }}-{{ $releaseName }}
 spec: {{ toYaml $.Values.gitops.config.default.kustomization | nindent 2 }}
-  path: /cluster/config/{{ $releaseConfig.namespace }}/{{ $releaseName }}
+  path: {{ $.Values.gitops.path }}/{{ $releaseConfig.namespace }}/{{ $releaseName }}
 {{ end }}
 {{ end }}
 
