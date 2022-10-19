@@ -2,11 +2,22 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.6.1](https://github.com/neo9/kube-core/compare/v0.6.0...v0.6.1)
+
+- core/releases: Added the possibility to manage namespaces as releases [`b1ba3b9`](https://github.com/neo9/kube-core/commit/b1ba3b9855414e7f0ae8d238c9b6e0d5614e775a)
+- cli/scripts: Complete rework of build logic [`c01c70f`](https://github.com/neo9/kube-core/commit/c01c70f4ceddbed6c5f37e154d1059ad2901bf57)
+- core/templates: Standardized and improved a few templates [`8f5ca98`](https://github.com/neo9/kube-core/commit/8f5ca98f0bd0309ae23771a74bcbefa9ce00cc69)
+- core/releases: Added gitops.enabled on releases to generate a flux Kustomization [`850cd59`](https://github.com/neo9/kube-core/commit/850cd59c02cd10357468ed293ea3ed98c4907e39)
+- cli/scripts: Changed test config files path in default-cluster-config.yaml [`ece1893`](https://github.com/neo9/kube-core/commit/ece1893ca71254a63c8b30c9f3b734a30a5b863a)
+
 #### [v0.6.0](https://github.com/neo9/kube-core/compare/v0.5.7...v0.6.0)
+
+> 16 October 2022
 
 - core/templates: Added forceNamespace, templatedValues & Various fixes/improvements in core templates [`3957f14`](https://github.com/neo9/kube-core/commit/3957f14020e41f55895e85c2c949f59c0b6015b4)
 - cli/scripts: Reworked build to use a single helmfile template process instead of one for each release [`01c3f77`](https://github.com/neo9/kube-core/commit/01c3f773721343f912a8a9b8a38823ebeb04ec96)
 - core/helmfiles: Added cluster helmfile and clusterReleases [`2553995`](https://github.com/neo9/kube-core/commit/2553995e8a71de34e944daed626a08d0b962336c)
+- release: v0.6.0 [`b5fe2fa`](https://github.com/neo9/kube-core/commit/b5fe2fa8b279ca68eb2aeffc6d4bdcbd2f4eb758)
 - cli/scripts: Fixed namespace generation to work with the new templating workflow [`c2de423`](https://github.com/neo9/kube-core/commit/c2de42372ed20f1474aff3ca4cf8b43860ee9aa7)
 - cli/scripts: Improved detection of secrets to seal/restore [`a0e64dc`](https://github.com/neo9/kube-core/commit/a0e64dc5ec8e6755b360385c03b09dedf4537a4d)
 - cli/scripts: Moved namespace generation to the end, just before post-process [`054d6b2`](https://github.com/neo9/kube-core/commit/054d6b25e8445608c55cd6934ef41bfc0fac7d80)
