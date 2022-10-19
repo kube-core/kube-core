@@ -75,8 +75,8 @@ replicatedConfigMapsPath=${configmaps_path}/replicated
 
 log_debug "Generating configmaps..."
 ${scripts_k8s_configmaps_generate_path} $@
-mkdir -p ${configmaps_path}/configmaps-releases
-cp -rf ${configmaps_path}/output/* ${configmaps_path}/configmaps-releases/
+mkdir -p ${local_path}/configmaps-releases
+cp -rf ${configMapsPath}/* ${local_path}/configmaps-releases/ 2> /dev/null || true
 #### COPY DISABLED
 # log_debug "Copying configmaps..."
 

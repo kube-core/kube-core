@@ -75,8 +75,8 @@ replicatedSecretsPath=${secrets_path}/replicated
 
 log_debug "Generating secrets..."
 ${scripts_k8s_secrets_generate_path} $@
-mkdir -p ${secrets_path}/secrets-releases
-cp -rf ${secrets_path}/output/* ${secrets_path}/secrets-releases/
+mkdir -p ${local_path}/secrets-releases
+cp -rf ${secretsPath}/* ${local_path}/secrets-releases/ 2> /dev/null || true
 
 #### COPY DISABLED
 # log_debug "Copying secrets..."
