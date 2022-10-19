@@ -16,8 +16,10 @@
       cloud.kube-core.io/project: {{ $values.cloud.project }}
       cloud.kube-core.io/location: {{ $values.cloud.default.location }}
       app.kube-core.io/version: {{ $values.core.version }}
+      helmfile.kube-core.io/name: {{ $values.core.helmfileName }}
       release.kube-core.io/type: {{ .item.type }}
       release.kube-core.io/name: {{ $releaseName }}
+      release.kube-core.io/namespace: {{ $releaseNamespace }}
       release.kube-core.io/chart: {{ $chartName }}
       {{- if $values.core.globalHelmMetadataEnabled }}
       app.kubernetes.io/managed-by: Helm
@@ -50,8 +52,10 @@
       cloud.kube-core.io/project: {{ $values.cloud.project }}
       cloud.kube-core.io/location: {{ $values.cloud.default.location }}
       app.kube-core.io/version: {{ $values.core.version }}
+      helmfile.kube-core.io/name: {{ $values.core.helmfileName }}
       release.kube-core.io/type: {{ .item.type }}
       release.kube-core.io/name: {{ $releaseName }}
+      release.kube-core.io/namespace: {{ $releaseNamespace }}
       release.kube-core.io/chart: {{ $chartName }}
       {{- if $values.cluster.common.globalLabels }}
       {{ toYaml $values.cluster.common.globalLabels | nindent 6 }}
@@ -78,8 +82,10 @@
       cloud.kube-core.io/project: {{ $values.cloud.project }}
       cloud.kube-core.io/location: {{ $values.cloud.default.location }}
       app.kube-core.io/version: {{ $values.core.version }}
+      helmfile.kube-core.io/name: {{ $values.core.helmfileName }}
       release.kube-core.io/type: {{ .item.type }}
       release.kube-core.io/name: {{ $releaseName }}
+      release.kube-core.io/namespace: {{ $releaseNamespace }}
       release.kube-core.io/chart: {{ $chartName }}
       {{- if $values.cluster.common.globalLabels }}
       {{ toYaml $values.cluster.common.globalLabels | nindent 6 }}
@@ -103,8 +109,10 @@
       cloud.kube-core.io/project: {{ $values.cloud.project }}
       cloud.kube-core.io/location: {{ $values.cloud.default.location }}
       app.kube-core.io/version: {{ $values.core.version }}
+      helmfile.kube-core.io/name: {{ $values.core.helmfileName }}
       release.kube-core.io/type: {{ .item.type }}
       release.kube-core.io/name: {{ $releaseName }}
+      release.kube-core.io/namespace: {{ $releaseNamespace }}
       release.kube-core.io/chart: {{ $chartName }}
       {{- if $values.cluster.common.globalLabels }}
       {{ toYaml $values.cluster.common.globalLabels | nindent 6 }}
