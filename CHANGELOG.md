@@ -2,12 +2,24 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.6.2](https://github.com/neo9/kube-core/compare/v0.6.1...v0.6.2)
+
+- releases: Rebuilt all releases [`5475dac`](https://github.com/neo9/kube-core/commit/5475dac556138612bfec87447ad30c3711b444d0)
+- core/values: Simplified templating of nginx-ingress-controller values [`ba07d91`](https://github.com/neo9/kube-core/commit/ba07d91efca1adc3e02b688fb412eb9c93caed2a)
+- core/envs: Added some label injections [`208ce5b`](https://github.com/neo9/kube-core/commit/208ce5b35e26d9b6c23d398b1fb4e44f9cbf7cb4)
+- cli/scripts: Fixed wrong path for auto-generated releases input folders [`7f76d0f`](https://github.com/neo9/kube-core/commit/7f76d0f107aa1b21897415311349a4b62e24d501)
+- core/templates: Fixed namespaces generation [`c9da6b5`](https://github.com/neo9/kube-core/commit/c9da6b5155baf2e9e58c64c4b7b670ecf2aa4139)
+- cli/scripts: Changed slicing template to use release.kube-core.io/namespace instead of .metadata.namespace [`a06cc43`](https://github.com/neo9/kube-core/commit/a06cc4349b3cd22ff793f1ac37b7a2fb5b7f89bd)
+
 #### [v0.6.1](https://github.com/neo9/kube-core/compare/v0.6.0...v0.6.1)
+
+> 19 October 2022
 
 - core/releases: Added the possibility to manage namespaces as releases [`b1ba3b9`](https://github.com/neo9/kube-core/commit/b1ba3b9855414e7f0ae8d238c9b6e0d5614e775a)
 - cli/scripts: Complete rework of build logic [`c01c70f`](https://github.com/neo9/kube-core/commit/c01c70f4ceddbed6c5f37e154d1059ad2901bf57)
 - core/templates: Standardized and improved a few templates [`8f5ca98`](https://github.com/neo9/kube-core/commit/8f5ca98f0bd0309ae23771a74bcbefa9ce00cc69)
 - core/releases: Added gitops.enabled on releases to generate a flux Kustomization [`850cd59`](https://github.com/neo9/kube-core/commit/850cd59c02cd10357468ed293ea3ed98c4907e39)
+- release: v0.6.1 [`53d702c`](https://github.com/neo9/kube-core/commit/53d702c553c591e96784dafd94135e05430738bc)
 - cli/scripts: Changed test config files path in default-cluster-config.yaml [`ece1893`](https://github.com/neo9/kube-core/commit/ece1893ca71254a63c8b30c9f3b734a30a5b863a)
 
 #### [v0.6.0](https://github.com/neo9/kube-core/compare/v0.5.7...v0.6.0)
