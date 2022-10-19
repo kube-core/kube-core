@@ -1,4 +1,14 @@
-{{ if not (or (and (eq .Release.Name "nginx-ingress-controller") (eq .Release.Namespace "nginx-ingress")) (and (eq .Release.Name "nginx-istio-ingress-controller") (eq .Release.Namespace "nginx-istio-ingress"))) }}
+{{ if (or (and (eq .Release.Name "nginx-ingress-controller") (eq .Release.Namespace "nginx-ingress")) (and (eq .Release.Name "nginx-istio-ingress-controller") (eq .Release.Namespace "nginx-istio-ingress"))) }}
+## Name of the ingress class to route through this controller
+##
+ingressClassResource:
+  name: {{ index .Values.releases .Release.Name "config" "ingressClass" }}
+  enabled: true
+  default: {{ index .Values.releases .Release.Name "config" "defaultIngressClass" }}
+  controllerClass: {{ index .Values.releases .Release.Name "config" "controllerClass" }}
+  parameters: {}
+electionID: {{ index .Values.releases .Release.Name "config" "ingressClass" }}
+{{ else }}
 # If not core ingress-controller, scope it (e.g for services)
 scope:
   enabled: true
@@ -9,16 +19,6 @@ ingressClassResource:
   controllerClass: {{ index .Values.releases .Release.Name "config" "controllerClass" }}-{{ .Release.Namespace }}
   parameters: {}
 electionID: {{ index .Values.releases .Release.Name "config" "ingressClass" }}-{{ .Release.Namespace }}
-{{ else }}
-## Name of the ingress class to route through this controller
-##
-ingressClassResource:
-  name: {{ index .Values.releases .Release.Name "config" "ingressClass" }}
-  enabled: true
-  default: {{ index .Values.releases .Release.Name "config" "defaultIngressClass" }}
-  controllerClass: {{ index .Values.releases .Release.Name "config" "controllerClass" }}
-  parameters: {}
-electionID: {{ index .Values.releases .Release.Name "config" "ingressClass" }}
 {{ end }}
 
 ## DaemonSet or Deployment
