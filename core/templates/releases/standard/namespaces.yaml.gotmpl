@@ -20,7 +20,9 @@
   labels:
     type: namespace
   values:
-  - "./values/namespace.yaml.gotmpl"
-
+  # - "./values/namespace.yaml.gotmpl"
+  - namespaces:
+      {{ $releaseName }}:
+        enabled: true
 {{- end -}}
 {{- end -}}
