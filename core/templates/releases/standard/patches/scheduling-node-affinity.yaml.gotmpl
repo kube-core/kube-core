@@ -1,7 +1,7 @@
 {{ $values := .values }}
 {{ $releaseName := .releaseName }}
 {{ $releaseNamespace := .releaseNamespace }}
-  {{- .item | getOrNil "options" | getOrNil "forceNamespaceNodeAffinity" }}
+  {{- if .item | getOrNil "options" | getOrNil "forceNamespaceNodeAffinity" }}
   - target:
       kind: Deployment
       name: .*
