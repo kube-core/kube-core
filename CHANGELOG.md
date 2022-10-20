@@ -2,8 +2,15 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.6.5](https://github.com/neo9/kube-core/compare/v0.6.4...v0.6.5)
+
+- core/templates: Fixed missing if in some templates [`4d2b5fb`](https://github.com/neo9/kube-core/commit/4d2b5fb5e22ae6b7fbb46223ab1e465b4593e98f)
+
 #### [v0.6.4](https://github.com/neo9/kube-core/compare/v0.6.3...v0.6.4)
 
+> 20 October 2022
+
+- release: v0.6.4 [`8b887a8`](https://github.com/neo9/kube-core/commit/8b887a8bcba2fa6723f7e183691ee1a399f51b95)
 - core/templates: Fixed missing if in node-affinity template [`008fca2`](https://github.com/neo9/kube-core/commit/008fca2d4724e1112b0700b445a9b3a3285c382b)
 
 #### [v0.6.3](https://github.com/neo9/kube-core/compare/v0.6.2...v0.6.3)
