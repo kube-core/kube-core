@@ -4,6 +4,7 @@ import watch from 'node-watch'
 import * as path from "path";
 import findUp from 'find-up';
 import execa from "execa";
+import * as upath from "upath"
 
 export default class Dev extends BaseCommand {
   static description =
@@ -36,128 +37,148 @@ export default class Dev extends BaseCommand {
 
 
     // console.log(clusterConfigDirPath)
-    
-    let localConfigPath = path.resolve(`${clusterConfigDirPath}/local/config`)
 
-    let secretsInputPath = path.resolve(`${clusterConfigDirPath}/local/secrets/input`)
-    let secretsManifestsPath = path.resolve(`${clusterConfigDirPath}/local/secrets/manifests`)
-    let secretsOutputPath = path.resolve(`${clusterConfigDirPath}/local/secrets/output`)
+    let localDevConfigPath = path.resolve(`${clusterConfigDirPath}/dev/config`)
+    // let localConfigPath = path.resolve(`${clusterConfigDirPath}/local/config`)
 
-    let configMapsInputPath = path.resolve(`${clusterConfigDirPath}/local/configmaps/input`)
-    let configMapsManifestsPath = path.resolve(`${clusterConfigDirPath}/local/configmaps/manifests`)
-    let configMapsOutputPath = path.resolve(`${clusterConfigDirPath}/local/configmaps/output`)
-    
-    
-    console.log(`Watching: ${localConfigPath}`)
+    // let secretsInputPath = path.resolve(`${clusterConfigDirPath}/local/secrets/input`)
+    // let secretsManifestsPath = path.resolve(`${clusterConfigDirPath}/local/secrets/manifests`)
+    // let secretsOutputPath = path.resolve(`${clusterConfigDirPath}/local/secrets/output`)
 
-    console.log(`Watching: ${secretsInputPath}`)
-    console.log(`Watching: ${secretsManifestsPath}`)
-    console.log(`Watching: ${secretsOutputPath}`)
+    // let configMapsInputPath = path.resolve(`${clusterConfigDirPath}/local/configmaps/input`)
+    // let configMapsManifestsPath = path.resolve(`${clusterConfigDirPath}/local/configmaps/manifests`)
+    // let configMapsOutputPath = path.resolve(`${clusterConfigDirPath}/local/configmaps/output`)
 
-    console.log(`Watching: ${configMapsInputPath}`)
-    console.log(`Watching: ${configMapsManifestsPath}`)
-    console.log(`Watching: ${configMapsOutputPath}`)
 
-    watch(localConfigPath, { recursive: true }, async (evt, name) => {
+    console.log(`Watching: ${localDevConfigPath}`)
+    // console.log(`Watching: ${localConfigPath}`)
+
+    // console.log(`Watching: ${secretsInputPath}`)
+    // console.log(`Watching: ${secretsManifestsPath}`)
+    // console.log(`Watching: ${secretsOutputPath}`)
+
+    // console.log(`Watching: ${configMapsInputPath}`)
+    // console.log(`Watching: ${configMapsManifestsPath}`)
+    // console.log(`Watching: ${configMapsOutputPath}`)
+
+    watch(localDevConfigPath, { recursive: true }, async (evt, name) => {
         if (evt == 'update') {
             // let namespacedPath = name.split(path.sep).slice(-4).join('/')
             // console.log('%s changed.', namespacedPath);
-            await this.utils.cliPipe('cat', [`${name}`])
-            
-            // let output = await this.utils.cliPipe('yamllint', [`${name}`, '-c', yamllintConfigPath])
-            let testOutput = await this.utils.testKubernetesManifest(name)
-            // console.log(output)
+            // await this.utils.cliPipe('cat', [`${name}`])
+            try {
+                // await this.utils.cliPipe('kubectl', ['diff', '-f', `${upath.normalizeSafe(name)}`])
+                await this.utils.cliPipe('kubectl', ['apply', '-f', `${upath.normalizeSafe(name)}`])
+            } catch(e: any) {
+                console.log(e.message)
+            }
         } else if (evt == 'remove') {
-
+            await this.utils.cliPipe('kubectl', ['delete', '-f', `${upath.normalizeSafe(name)}`])
         } else {
 
         }
     });
 
-    watch(secretsInputPath, { recursive: true }, async (evt, name) => {
-        if (evt == 'update') {
-            let namespacedPath = name.split(path.sep).slice(-4).join('/')
-            console.log('%s changed.', namespacedPath);
-            let secrets = await this.utils.runClusterScript("src/k8s/secrets/generate.sh", [namespacedPath]);
-        } else if (evt == 'remove') {
+    // watch(localConfigPath, { recursive: true }, async (evt, name) => {
+    //     if (evt == 'update') {
+    //         // let namespacedPath = name.split(path.sep).slice(-4).join('/')
+    //         // console.log('%s changed.', namespacedPath);
+    //         await this.utils.cliPipe('cat', [`${name}`])
 
-        } else {
+    //         // let output = await this.utils.cliPipe('yamllint', [`${name}`, '-c', yamllintConfigPath])
+    //         let testOutput = await this.utils.testKubernetesManifest(name)
+    //         // console.log(output)
+    //     } else if (evt == 'remove') {
 
-        }        
-    });
-    
-    watch(secretsManifestsPath, { recursive: true, filter: /\.yaml$/ }, async (evt, name) => {
-        if (evt == 'update') {
-            let namespacedPath = name.split(path.sep).slice(-4).join('/')
-            console.log('%s changed.', namespacedPath);
-            let secrets = await this.utils.runClusterScript("src/k8s/secrets/generate.sh", [namespacedPath]);
-        } else if (evt == 'remove') {
+    //     } else {
 
-        } else {
+    //     }
+    // });
 
-        }        
-    });
-    
+    // watch(secretsInputPath, { recursive: true }, async (evt, name) => {
+    //     if (evt == 'update') {
+    //         let namespacedPath = name.split(path.sep).slice(-4).join('/')
+    //         console.log('%s changed.', namespacedPath);
+    //         let secrets = await this.utils.runClusterScript("src/k8s/secrets/generate.sh", [namespacedPath]);
+    //     } else if (evt == 'remove') {
 
-    watch(secretsOutputPath, { recursive: true, filter: /\.yaml$/ }, async (evt, name) => {
-        if (evt == 'update') {
-            // console.log(evt)
-            let namespacedPath = name.split(path.sep).slice(-4).join('/')
-            console.log('%s changed.', namespacedPath);
-            // console.log("Applying changes... (dry run for now)")
-            let testOutput = await this.utils.testKubernetesManifest(name)
-            let output = await this.utils.cliPipe('kubectl', ['apply', '-f', name, '--dry-run=client'])
-            // console.log(output)
-        } else if (evt == 'remove') {
+    //     } else {
 
-        } else {
+    //     }
+    // });
 
-        }        
-    });
+    // watch(secretsManifestsPath, { recursive: true, filter: /\.yaml$/ }, async (evt, name) => {
+    //     if (evt == 'update') {
+    //         let namespacedPath = name.split(path.sep).slice(-4).join('/')
+    //         console.log('%s changed.', namespacedPath);
+    //         let secrets = await this.utils.runClusterScript("src/k8s/secrets/generate.sh", [namespacedPath]);
+    //     } else if (evt == 'remove') {
 
-    watch(configMapsInputPath, { recursive: true }, async (evt, name) => {
-        if (evt == 'update') {
-            let namespacedPath = name.split(path.sep).slice(-4).join('/')
-            console.log('%s changed.', namespacedPath);
-            let configMaps = await this.utils.runClusterScript("src/k8s/configmaps/generate.sh", [namespacedPath]);
-            
-        } else if (evt == 'remove') {
+    //     } else {
 
-        } else {
+    //     }
+    // });
 
-        }        
-    });
-    
-    watch(configMapsManifestsPath, { recursive: true, filter: /\.yaml$/ }, async (evt, name) => {
-        if (evt == 'update') {
-            let namespacedPath = name.split(path.sep).slice(-4).join('/')
-            console.log('%s changed.', namespacedPath);
-            let configMaps = await this.utils.runClusterScript("src/k8s/configmaps/generate.sh", [namespacedPath]);
 
-        } else if (evt == 'remove') {
-        } else {
+    // watch(secretsOutputPath, { recursive: true, filter: /\.yaml$/ }, async (evt, name) => {
+    //     if (evt == 'update') {
+    //         // console.log(evt)
+    //         let namespacedPath = name.split(path.sep).slice(-4).join('/')
+    //         console.log('%s changed.', namespacedPath);
+    //         // console.log("Applying changes... (dry run for now)")
+    //         let testOutput = await this.utils.testKubernetesManifest(name)
+    //         let output = await this.utils.cliPipe('kubectl', ['apply', '-f', name, '--dry-run=client'])
+    //         // console.log(output)
+    //     } else if (evt == 'remove') {
 
-        }        
-    });
-    
+    //     } else {
 
-    watch(configMapsOutputPath, { recursive: true, filter: /\.yaml$/ }, async (evt, name) => {
-        if (evt == 'update') {
-            // console.log(evt)
-            let namespacedPath = name.split(path.sep).slice(-4).join('/')
-            console.log('%s changed.', namespacedPath);
-            // console.log("Applying changes... (dry run for now)")
-            
-            let testOutput = await this.utils.testKubernetesManifest(name)
-            let output = await this.utils.cliPipe('kubectl', ['apply', '-f', name, '--dry-run=client'])
+    //     }
+    // });
 
-            // console.log(output)
-        } else if (evt == 'remove') {
+    // watch(configMapsInputPath, { recursive: true }, async (evt, name) => {
+    //     if (evt == 'update') {
+    //         let namespacedPath = name.split(path.sep).slice(-4).join('/')
+    //         console.log('%s changed.', namespacedPath);
+    //         let configMaps = await this.utils.runClusterScript("src/k8s/configmaps/generate.sh", [namespacedPath]);
 
-        } else {
+    //     } else if (evt == 'remove') {
 
-        }        
-    });
+    //     } else {
+
+    //     }
+    // });
+
+    // watch(configMapsManifestsPath, { recursive: true, filter: /\.yaml$/ }, async (evt, name) => {
+    //     if (evt == 'update') {
+    //         let namespacedPath = name.split(path.sep).slice(-4).join('/')
+    //         console.log('%s changed.', namespacedPath);
+    //         let configMaps = await this.utils.runClusterScript("src/k8s/configmaps/generate.sh", [namespacedPath]);
+
+    //     } else if (evt == 'remove') {
+    //     } else {
+
+    //     }
+    // });
+
+
+    // watch(configMapsOutputPath, { recursive: true, filter: /\.yaml$/ }, async (evt, name) => {
+    //     if (evt == 'update') {
+    //         // console.log(evt)
+    //         let namespacedPath = name.split(path.sep).slice(-4).join('/')
+    //         console.log('%s changed.', namespacedPath);
+    //         // console.log("Applying changes... (dry run for now)")
+
+    //         let testOutput = await this.utils.testKubernetesManifest(name)
+    //         let output = await this.utils.cliPipe('kubectl', ['apply', '-f', name, '--dry-run=client'])
+
+    //         // console.log(output)
+    //     } else if (evt == 'remove') {
+
+    //     } else {
+
+    //     }
+    // });
 
 
   }
