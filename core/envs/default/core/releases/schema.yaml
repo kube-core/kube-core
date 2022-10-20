@@ -16,6 +16,8 @@ templates:
     needs: []
     options:
       forceNamespace: true
+      forceNamespaceNodeAffinity: false
+      forceNamespaceNodeSelector: false
       patchIngresses: false
       upgradeIngress: false
       applyDefaultLabelsOnIngress: false
@@ -59,6 +61,8 @@ templates:
     needs: []
     options:
       forceNamespace: true
+      forceNamespaceNodeAffinity: false
+      forceNamespaceNodeSelector: false
       patchIngresses: true
       upgradeIngress: false
       applyDefaultLabelsOnIngress: true
@@ -102,6 +106,8 @@ templates:
     needs: []
     options:
       forceNamespace: true
+      forceNamespaceNodeAffinity: false
+      forceNamespaceNodeSelector: false
       patchIngresses: true
       upgradeIngress: false
       applyDefaultLabelsOnIngress: true

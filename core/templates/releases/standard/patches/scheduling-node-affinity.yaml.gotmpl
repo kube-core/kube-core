@@ -1,0 +1,140 @@
+{{ $values := .values }}
+{{ $releaseName := .releaseName }}
+{{ $releaseNamespace := .releaseNamespace }}
+  {{- .item | getOrNil "options" | getOrNil "forceNamespaceNodeAffinity" }}
+  - target:
+      kind: Deployment
+      name: .*
+    patch:
+      - op: replace
+        path: "/spec/template/spec/tolerations"
+        value:
+        - key: "type"
+          operator: "Equal"
+          value: "{{ $releaseNamespace }}"
+          effect: "NoSchedule"
+        - key: "type"
+          operator: "Equal"
+          value: "{{ $releaseNamespace }}"
+          effect: "NoExecute"
+      - op: replace
+        path: "/spec/template/spec/affinity"
+        value:
+          nodeAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+              - preference:
+                  matchExpressions:
+                    - key: type
+                      operator: In
+                      values:
+                        - "{{ $releaseNamespace }}"
+                weight: 100
+  - target:
+      kind: StatefulSet
+      name: .*
+    patch:
+      - op: replace
+        path: "/spec/template/spec/tolerations"
+        value:
+        - key: "type"
+          operator: "Equal"
+          value: "{{ $releaseNamespace }}"
+          effect: "NoSchedule"
+        - key: "type"
+          operator: "Equal"
+          value: "{{ $releaseNamespace }}"
+          effect: "NoExecute"
+      - op: replace
+        path: "/spec/template/spec/affinity"
+        value:
+          nodeAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+              - preference:
+                  matchExpressions:
+                    - key: type
+                      operator: In
+                      values:
+                        - "{{ $releaseNamespace }}"
+                weight: 100
+  - target:
+      kind: DaemonSet
+      name: .*
+    patch:
+      - op: replace
+        path: "/spec/template/spec/tolerations"
+        value:
+        - key: "type"
+          operator: "Equal"
+          value: "{{ $releaseNamespace }}"
+          effect: "NoSchedule"
+        - key: "type"
+          operator: "Equal"
+          value: "{{ $releaseNamespace }}"
+          effect: "NoExecute"
+      - op: replace
+        path: "/spec/template/spec/affinity"
+        value:
+          nodeAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+              - preference:
+                  matchExpressions:
+                    - key: type
+                      operator: In
+                      values:
+                        - "{{ $releaseNamespace }}"
+                weight: 100
+  - target:
+      kind: Job
+      name: .*
+    patch:
+      - op: replace
+        path: "/spec/template/spec/tolerations"
+        value:
+        - key: "type"
+          operator: "Equal"
+          value: "{{ $releaseNamespace }}"
+          effect: "NoSchedule"
+        - key: "type"
+          operator: "Equal"
+          value: "{{ $releaseNamespace }}"
+          effect: "NoExecute"
+      - op: replace
+        path: "/spec/template/spec/affinity"
+        value:
+          nodeAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+              - preference:
+                  matchExpressions:
+                    - key: type
+                      operator: In
+                      values:
+                        - "{{ $releaseNamespace }}"
+                weight: 100
+  - target:
+      kind: CronJob
+      name: .*
+    patch:
+      - op: replace
+        path: "/spec/jobTemplate/spec/template/spec/tolerations"
+        value:
+        - key: "type"
+          operator: "Equal"
+          value: "{{ $releaseNamespace }}"
+          effect: "NoSchedule"
+        - key: "type"
+          operator: "Equal"
+          value: "{{ $releaseNamespace }}"
+          effect: "NoExecute"
+      - op: replace
+        path: "/spec/jobTemplate/spec/template/spec/affinity"
+        value:
+          nodeAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+              - preference:
+                  matchExpressions:
+                    - key: type
+                      operator: In
+                      values:
+                        - "{{ $releaseNamespace }}"
+                weight: 100
+  {{- end }}
