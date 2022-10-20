@@ -2,10 +2,27 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.6.3](https://github.com/neo9/kube-core/compare/v0.6.3...v0.6.3)
+
+- core/templates: Added forceNamespaceNodeSelector and forceNamespaceNodeAffinity options for all releases [`2258f1a`](https://github.com/neo9/kube-core/commit/2258f1a7908cdf2fb2c152115ee7f38c8e205bf4)
+
+#### [v0.6.3](https://github.com/neo9/kube-core/compare/v0.6.2...v0.6.3)
+
+> 20 October 2022
+
+- core/templates: Added forceNamespaceNodeSelector and forceNamespaceNodeAffinity options for all releases [`363a4db`](https://github.com/neo9/kube-core/commit/363a4db75d02181d82117ca2391ade7e1e799429)
+- cli/dev: Added test kubectl apply on file events [`d662c14`](https://github.com/neo9/kube-core/commit/d662c148de44928d9cdf7a0333468106e9f10278)
+- release: v0.6.3 [`a395c0b`](https://github.com/neo9/kube-core/commit/a395c0b09bbea29ce98cc22de8f813bd168bd2e6)
+- cli/package: Added upath for better cross-platform path capabilities [`79ed2c3`](https://github.com/neo9/kube-core/commit/79ed2c350a935f63fc86e5218e70ab7fa020a2bc)
+- release: v0.6.3 [`d6eb3c2`](https://github.com/neo9/kube-core/commit/d6eb3c29000d54f32b00b698c4351df7e3e2e1cb)
+
 #### [v0.6.2](https://github.com/neo9/kube-core/compare/v0.6.1...v0.6.2)
+
+> 19 October 2022
 
 - releases: Rebuilt all releases [`5475dac`](https://github.com/neo9/kube-core/commit/5475dac556138612bfec87447ad30c3711b444d0)
 - core/values: Simplified templating of nginx-ingress-controller values [`ba07d91`](https://github.com/neo9/kube-core/commit/ba07d91efca1adc3e02b688fb412eb9c93caed2a)
+- release: v0.6.2 [`0c5579b`](https://github.com/neo9/kube-core/commit/0c5579b3ebb5ee32c68f3041c450299902b24693)
 - core/envs: Added some label injections [`208ce5b`](https://github.com/neo9/kube-core/commit/208ce5b35e26d9b6c23d398b1fb4e44f9cbf7cb4)
 - cli/scripts: Fixed wrong path for auto-generated releases input folders [`7f76d0f`](https://github.com/neo9/kube-core/commit/7f76d0f107aa1b21897415311349a4b62e24d501)
 - core/templates: Fixed namespaces generation [`c9da6b5`](https://github.com/neo9/kube-core/commit/c9da6b5155baf2e9e58c64c4b7b670ecf2aa4139)
