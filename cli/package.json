@@ -29,7 +29,8 @@
     "js-yaml": "^4.1.0",
     "node-plop": "^0.31.0",
     "open": "^8.4.0",
-    "plop": "^3.1.0"
+    "plop": "^3.1.0",
+    "upath": "^2.0.1"
   },
   "devDependencies": {
     "@oclif/test": "^2",
