@@ -1,0 +1,100 @@
+{{ $values := .values }}
+{{ $releaseName := .releaseName }}
+{{ $releaseNamespace := .releaseNamespace }}
+  {{- if .item | getOrNil "options" | getOrNil "forceNamespaceNodeSelector" }}
+  - target:
+      kind: Deployment
+      name: .*
+    patch:
+      - op: replace
+        path: "/spec/template/spec/tolerations"
+        value:
+        - key: "type"
+          operator: "Equal"
+          value: "{{ $releaseNamespace }}"
+          effect: "NoSchedule"
+        - key: "type"
+          operator: "Equal"
+          value: "{{ $releaseNamespace }}"
+          effect: "NoExecute"
+      - op: replace
+        path: "/spec/template/spec/nodeSelector"
+        value:
+          type: {{ $releaseNamespace }}
+  - target:
+      kind: StatefulSet
+      name: .*
+    patch:
+      - op: replace
+        path: "/spec/template/spec/tolerations"
+        value:
+        - key: "type"
+          operator: "Equal"
+          value: "{{ $releaseNamespace }}"
+          effect: "NoSchedule"
+        - key: "type"
+          operator: "Equal"
+          value: "{{ $releaseNamespace }}"
+          effect: "NoExecute"
+      - op: replace
+        path: "/spec/template/spec/nodeSelector"
+        value:
+          type: {{ $releaseNamespace }}
+  - target:
+      kind: DaemonSet
+      name: .*
+    patch:
+      - op: replace
+        path: "/spec/template/spec/tolerations"
+        value:
+        - key: "type"
+          operator: "Equal"
+          value: "{{ $releaseNamespace }}"
+          effect: "NoSchedule"
+        - key: "type"
+          operator: "Equal"
+          value: "{{ $releaseNamespace }}"
+          effect: "NoExecute"
+      - op: replace
+        path: "/spec/template/spec/nodeSelector"
+        value:
+          type: {{ $releaseNamespace }}
+  - target:
+      kind: Job
+      name: .*
+    patch:
+      - op: replace
+        path: "/spec/template/spec/tolerations"
+        value:
+        - key: "type"
+          operator: "Equal"
+          value: "{{ $releaseNamespace }}"
+          effect: "NoSchedule"
+        - key: "type"
+          operator: "Equal"
+          value: "{{ $releaseNamespace }}"
+          effect: "NoExecute"
+      - op: replace
+        path: "/spec/template/spec/nodeSelector"
+        value:
+          type: {{ $releaseNamespace }}
+  - target:
+      kind: CronJob
+      name: .*
+    patch:
+      - op: replace
+        path: "/spec/jobTemplate/spec/template/spec/tolerations"
+        value:
+        - key: "type"
+          operator: "Equal"
+          value: "{{ $releaseNamespace }}"
+          effect: "NoSchedule"
+        - key: "type"
+          operator: "Equal"
+          value: "{{ $releaseNamespace }}"
+          effect: "NoExecute"
+      - op: replace
+        path: "/spec/jobTemplate/spec/template/spec/nodeSelector"
+        value:
+          type: {{ $releaseNamespace }}
+  {{- end }}

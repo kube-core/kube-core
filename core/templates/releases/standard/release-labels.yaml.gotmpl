@@ -21,6 +21,12 @@
       release.kube-core.io/name: {{ $releaseName }}
       release.kube-core.io/namespace: {{ $releaseNamespace }}
       release.kube-core.io/chart: {{ $chartName }}
+      {{- if .item | getOrNil "options" | getOrNil "forceNamespaceNodeSelector" }}
+      node.kube-core.io/selector: {{ $releaseNamespace }}
+      {{- end }}
+      {{- .item | getOrNil "options" | getOrNil "forceNamespaceNodeAffinity" }}
+      node.kube-core.io/affinity: {{ $releaseNamespace }}
+      {{- end }}
       {{- if $values.core.globalHelmMetadataEnabled }}
       app.kubernetes.io/managed-by: Helm
       {{- end }}
@@ -57,6 +63,12 @@
       release.kube-core.io/name: {{ $releaseName }}
       release.kube-core.io/namespace: {{ $releaseNamespace }}
       release.kube-core.io/chart: {{ $chartName }}
+      {{- if .item | getOrNil "options" | getOrNil "forceNamespaceNodeSelector" }}
+      node.kube-core.io/selector: {{ $releaseNamespace }}
+      {{- end }}
+      {{- .item | getOrNil "options" | getOrNil "forceNamespaceNodeAffinity" }}
+      node.kube-core.io/affinity: {{ $releaseNamespace }}
+      {{- end }}
       {{- if $values.cluster.common.globalLabels }}
       {{ toYaml $values.cluster.common.globalLabels | nindent 6 }}
       {{- end }}
@@ -87,6 +99,12 @@
       release.kube-core.io/name: {{ $releaseName }}
       release.kube-core.io/namespace: {{ $releaseNamespace }}
       release.kube-core.io/chart: {{ $chartName }}
+      {{- if .item | getOrNil "options" | getOrNil "forceNamespaceNodeSelector" }}
+      node.kube-core.io/selector: {{ $releaseNamespace }}
+      {{- end }}
+      {{- .item | getOrNil "options" | getOrNil "forceNamespaceNodeAffinity" }}
+      node.kube-core.io/affinity: {{ $releaseNamespace }}
+      {{- end }}
       {{- if $values.cluster.common.globalLabels }}
       {{ toYaml $values.cluster.common.globalLabels | nindent 6 }}
       {{- end }}
@@ -114,6 +132,12 @@
       release.kube-core.io/name: {{ $releaseName }}
       release.kube-core.io/namespace: {{ $releaseNamespace }}
       release.kube-core.io/chart: {{ $chartName }}
+      {{- if .item | getOrNil "options" | getOrNil "forceNamespaceNodeSelector" }}
+      node.kube-core.io/selector: {{ $releaseNamespace }}
+      {{- end }}
+      {{- .item | getOrNil "options" | getOrNil "forceNamespaceNodeAffinity" }}
+      node.kube-core.io/affinity: {{ $releaseNamespace }}
+      {{- end }}
       {{- if $values.cluster.common.globalLabels }}
       {{ toYaml $values.cluster.common.globalLabels | nindent 6 }}
       {{- end }}

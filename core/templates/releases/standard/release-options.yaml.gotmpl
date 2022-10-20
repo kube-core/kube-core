@@ -6,9 +6,7 @@
   {{ toYaml .item.strategicMergePatches | nindent 2 }}
   {{- end }}
   jsonPatches:
-  {{- if .item.jsonPatches }}
-  {{ toYaml .item.jsonPatches | nindent 2 }}
-  {{- end }}
+  {{- tpl (readFile "templates/releases/standard/patches/scheduling.yaml.gotmpl") . }}
   {{- if .item.options | getOrNil "forceNamespace" }}
   - target:
       kind: .*
@@ -89,6 +87,10 @@
 
   {{- end }}
   {{- end }}
+  {{- end }}
+
+  {{- if .item.jsonPatches }}
+  {{ toYaml .item.jsonPatches | nindent 2 }}
   {{- end }}
   transformers:
   {{ if $values.core.globalHelmMetadataEnabled }}
