@@ -8,6 +8,7 @@
   chart: ../releases/dist/releases/charts/{{ $chartName }}
   {{- else }}
   chart: {{ .item.chart }}
+  version: {{ .item.chartVersion }}
   {{- end }}
   installed: {{ .item.enabled }}
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
