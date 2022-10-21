@@ -154,7 +154,7 @@ helmfile_build_command() {
     fi
 
 
-    helmfileCommand="helmfile ${helmfileSelectorExpression} -f ${helmfilePath} ${helmfileAction} ${helmfileActionArgs}"
+    helmfileCommand="helmfile -f ${helmfilePath} ${helmfileSelectorExpression} ${helmfileAction} ${helmfileActionArgs}"
 
     echo ${helmfileCommand}
 }
