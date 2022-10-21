@@ -91,9 +91,9 @@ helmfile_template_all() {
     log_debug "${helmfileCommand} > ${releasePath}/all.yaml"
 
     if [[ "$LOG_LEVEL" == "DEBUG" || "$LOG_LEVEL" == "INSANE" ]] ; then
-        ${helmfileCommand} > ${releasePath}/all.yaml
+        ${helmfileCommand} > ${releasePath}/all.yaml || true
     else
-        ${helmfileCommand} > ${releasePath}/all.yaml 2> /dev/null
+        ${helmfileCommand} > ${releasePath}/all.yaml 2> /dev/null || true
     fi
 
     log_debug "Wrote ${releasePath}/all.yaml"
