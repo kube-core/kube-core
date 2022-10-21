@@ -4,9 +4,10 @@
 {{- if .item.strategicMergePatches }}
   strategicMergePatches:
   {{ toYaml .item.strategicMergePatches | nindent 2 }}
-  {{- end }}
+{{- end }}
   jsonPatches:
   {{- tpl (readFile "templates/releases/standard/patches/scheduling.yaml.gotmpl") . }}
+
   {{- if .item.options | getOrNil "forceNamespace" }}
   - target:
       kind: .*
@@ -16,24 +17,13 @@
         path: "/metadata/namespace"
         value: "{{ $releaseNamespace }}"
   {{ end }}
-  {{- if .item.options.patchIngresses }}
+
+{{- if .item.options.patchIngresses }}
   - target:
       kind: Ingress
       name: .*
     patch:
-  {{- if .item.options.removeIngressClassAnnotation }}
-      - op: remove
-        path: "/metadata/annotations/kubernetes.io~1ingress.class"
-  {{- end }}
-  {{- if .item.options.removeIngressClassName }}
-      - op: remove
-        path: "/spec/ingressClassName"
-  {{- end }}
-  {{- if .item.options.injectIngressClassName }}
-      - op: replace
-        path: "/spec/ingressClassName"
-        value: "{{ coalesce $values.applicationsConfig.defaultIngressClass $values.servicesConfig.defaultIngressClass $values.cluster.common.defaultIngressClass }}"
-  {{- end }}
+
   {{- if .item.options.upgradeIngress }}
       - op: replace
         path: "/apiVersion"
@@ -57,37 +47,42 @@
         path: "/spec/rules/0/http/paths/0/backend/serviceName"
       - op: remove
         path: "/spec/rules/0/http/paths/0/backend/servicePort"
-  {{- else if (and .item.options.patchIngresses (or (eq .item.type "application") (eq .item.type "service")) (getOrNil "enabled" (getOrNil "ingress" .item.values))) }}
-  - target:
-      kind: Ingress
-      name: .*
-    patch:
-  {{- if .item.options.removeIngressClassAnnotation }}
+  {{ end }}
+
+  {{- if .item.options.removeIngressClassName }}
+      - op: remove
+        path: "/spec/ingressClassName"
+  {{- end }}
+
+ {{- if .item.options.removeIngressClassAnnotation }}
       - op: remove
         path: "/metadata/annotations/kubernetes.io~1ingress.class"
   {{- end }}
-  {{- if .item.options.removeIngressClassName }}
-      - op: remove
-        path: /spec/ingressClassName
-  {{- end }}
+
   {{- if .item.options.injectIngressClassName }}
       - op: replace
         path: "/spec/ingressClassName"
-        value: {{ index $values.releases "nginx-ingress-controller" "config" "ingressClass" }}-{{ .releaseNamespace }}
+        value: "{{ coalesce $values.applicationsConfig.defaultIngressClass $values.servicesConfig.defaultIngressClass $values.cluster.common.defaultIngressClass }}"
+  {{end }}
+
+  {{- if .item | getOrNil "options" | getOrNil "forceNamespaceIngressClass"}}
+      - op: replace
+        path: "/spec/ingressClassName"
+        value: {{ index $values.releases "nginx-ingress-controller" "config" "ingressClass" }}-{{ $releaseNamespace }}
   {{- end }}
+
   {{- if .item.options.injectIngressHost }}
       - op: replace
         path: "/spec/rules/0/host"
         value: {{ $releaseName }}.{{ $releaseNamespace }}.{{ $values.cluster.config.domain }}
   {{- end }}
+
   {{- if .item.options.injectIngressTls }}
       - op: add
         path: "/spec/tls"
         value: [{"hosts": ["{{ $releaseName }}.{{ $releaseNamespace }}.{{ $values.cluster.config.domain }}"], "secretName": "{{ $releaseName }}.{{ $releaseNamespace }}.{{ $values.cluster.config.domain | replace "." "-"}}-tls"}]
-
   {{- end }}
-  {{- end }}
-  {{- end }}
+{{- end }}
 
   {{- if .item.jsonPatches }}
   {{ toYaml .item.jsonPatches | nindent 2 }}

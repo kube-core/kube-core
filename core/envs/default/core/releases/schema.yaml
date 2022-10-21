@@ -2,7 +2,7 @@ templates:
   release: &release
     config: {}
     context: ""
-    chart: "../releases/dist/releases/charts/n9-api"
+    chart: "kube-core/n9-api"
     chartVersion: "latest"
     enabled: false
     extraReleaseValues: []
@@ -16,6 +16,7 @@ templates:
     needs: []
     options:
       forceNamespace: true
+      forceNamespaceIngressClass: false
       forceNamespaceNodeAffinity: false
       forceNamespaceNodeSelector: false
       patchIngresses: false
@@ -46,7 +47,7 @@ templates:
     templatedValues: {}
   application:
     config: {}
-    chart: "../releases/dist/releases/charts/n9-api"
+    chart: "kube-core/n9-api"
     chartVersion: "latest"
     enabled: false
     context: ""
@@ -61,6 +62,7 @@ templates:
     needs: []
     options:
       forceNamespace: true
+      forceNamespaceIngressClass: false
       forceNamespaceNodeAffinity: false
       forceNamespaceNodeSelector: false
       patchIngresses: true
@@ -91,7 +93,7 @@ templates:
     templatedValues: {}
   service:
     config: {}
-    chart: "bitnami/nginx"
+    chart: "kube-core/n9-api"
     chartVersion: "latest"
     enabled: false
     context: ""
@@ -106,6 +108,7 @@ templates:
     needs: []
     options:
       forceNamespace: true
+      forceNamespaceIngressClass: false
       forceNamespaceNodeAffinity: false
       forceNamespaceNodeSelector: false
       patchIngresses: true
