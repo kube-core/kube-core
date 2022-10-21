@@ -17,6 +17,8 @@ templates:
     options:
       forceNamespace: true
       forceNamespaceIngressClass: false
+      forceNamespaceVisitorGroup: false
+      forceVisitorGroups: ""
       forceNamespaceNodeAffinity: false
       forceNamespaceNodeSelector: false
       patchIngresses: false
@@ -63,6 +65,8 @@ templates:
     options:
       forceNamespace: true
       forceNamespaceIngressClass: false
+      forceNamespaceVisitorGroup: false
+      forceVisitorGroups: ""
       forceNamespaceNodeAffinity: false
       forceNamespaceNodeSelector: false
       patchIngresses: true
@@ -109,6 +113,8 @@ templates:
     options:
       forceNamespace: true
       forceNamespaceIngressClass: false
+      forceNamespaceVisitorGroup: false
+      forceVisitorGroups: ""
       forceNamespaceNodeAffinity: false
       forceNamespaceNodeSelector: false
       patchIngresses: true
