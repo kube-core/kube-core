@@ -2,9 +2,16 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.6.8](https://github.com/neo9/kube-core/compare/v0.6.7...v0.6.8)
+
+- core/templates: Added chartVersion support in release template [`db58c5b`](https://github.com/neo9/kube-core/commit/db58c5b4ae4249a31ead6c94ef0775fed117feb1)
+
 #### [v0.6.7](https://github.com/neo9/kube-core/compare/v0.6.6...v0.6.7)
 
+> 21 October 2022
+
 - core/envs: Added forceVisitorGroups and forceNamespaceVisitorGroup options [`0212b2d`](https://github.com/neo9/kube-core/commit/0212b2deb08094bf5fa42d9d793d5b1ef418dffa)
+- release: v0.6.7 [`40bfe03`](https://github.com/neo9/kube-core/commit/40bfe038e7f1b3792d445413365f1f4167c3a0e8)
 
 #### [v0.6.6](https://github.com/neo9/kube-core/compare/v0.6.5...v0.6.6)
 
