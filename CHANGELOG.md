@@ -2,10 +2,17 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.6.7](https://github.com/neo9/kube-core/compare/v0.6.6...v0.6.7)
+
+- core/envs: Added forceVisitorGroups and forceNamespaceVisitorGroup options [`0212b2d`](https://github.com/neo9/kube-core/commit/0212b2deb08094bf5fa42d9d793d5b1ef418dffa)
+
 #### [v0.6.6](https://github.com/neo9/kube-core/compare/v0.6.5...v0.6.6)
+
+> 21 October 2022
 
 - core/envs: Added forceNamespaceIngressClass option [`0589dbf`](https://github.com/neo9/kube-core/commit/0589dbfcb59f60ae23f82345f0b4a9a87a596e87)
 - core/values: Updated n9-api values template [`1814c16`](https://github.com/neo9/kube-core/commit/1814c1612eb5fe5191f2ea147a748ae420376499)
+- release: v0.6.6 [`a914928`](https://github.com/neo9/kube-core/commit/a9149285c90868dd79871e3a093a61b7b4bec332)
 
 #### [v0.6.5](https://github.com/neo9/kube-core/compare/v0.6.4...v0.6.5)
 
