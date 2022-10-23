@@ -9,7 +9,10 @@ import * as fs from 'fs-extra'
 export default abstract class extends Command {
   public utils;
   public scriptsPath;
+  public clusterContext
   public clusterConfig
+  public clusterConfigPath
+  public clusterConfigDirPath
 
   static flags = {
     // name: Flags.string({
@@ -39,15 +42,19 @@ export default abstract class extends Command {
     this.utils = utils;
     this.scriptsPath = `${path.resolve(`${require.main.filename}/../../scripts`)}`;
     let scriptPath = `${path.join(this.scriptsPath, "src/utils/read-core-path.sh")}`;
-    let corePath = await this.utils.cliQuiet(scriptPath);
-    // let clusterConfigPath = `${path.join(this.corePath, "src/utils/read-core-path.sh")}`
+    let defaultClusterConfigPath = path.join(this.scriptsPath, "default-cluster-config.yaml")
     let file = 'cluster-config.yaml'
+
+    // let corePath = await this.utils.cliQuiet(scriptPath);
+    // let clusterConfigPath = `${path.join(this.corePath, "src/utils/read-core-path.sh")}`
 
     const foundPath = await findUp(file)
     if (!foundPath) {
+      this.clusterContext = false
       // throw new Error(`${file} not found, searching "upwards" from ${process.cwd()}`)
     } else {
 
+      this.clusterContext = true
       let clusterConfigPath = foundPath
       let clusterConfigDirPath = path.dirname(clusterConfigPath)
 
@@ -55,8 +62,13 @@ export default abstract class extends Command {
       // console.log(clusterConfigDirPath)
 
       const clusterConfig = yaml.load((await fs.readFile(clusterConfigPath, "utf8")))
+      const defaultClusterConfig = yaml.load((await fs.readFile(defaultClusterConfigPath, "utf8")))
+
+      const data = {...defaultClusterConfig, ...clusterConfig}
       // console.log(clusterConfig.cluster.config.context)
-      this.clusterConfig = clusterConfig
+      this.clusterConfig = data
+      this.clusterConfigPath = clusterConfigPath
+      this.clusterConfigDirPath = clusterConfigDirPath
 
     }
     // let clusterConfigDirPath = path.join(found, '..')
