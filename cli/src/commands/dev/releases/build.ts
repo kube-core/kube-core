@@ -2,12 +2,12 @@ import { Command, Flags } from "@oclif/core";
 import BaseCommand from "../../../base";
 
 export default class DevReleasesBuild extends BaseCommand {
-  static description = "Builds kube-core releases distribution.";
+  static description = "Builds kube-core dist";
 
-  static examples = [`
-  $ kube-core dev:releases:build # Builds all Releases
-  $ kube-core dev:releases:build tekton # Builds everything that matches the filter (grep)
-  `];
+  static examples = [`# Build all Releases
+$ kube-core dev releases build
+# Build everything that matches the filter (grep)
+$ kube-core dev releases build tekton`];
 
   static flags = {};
 
