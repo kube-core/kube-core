@@ -2,6 +2,11 @@ import * as child from "child_process";
 import { spawn, spawnSync } from "child_process";
 import * as path from "path";
 import * as fs from 'fs-extra'
+import * as upath from "upath"
+import yaml from "js-yaml";
+import * as nodejq from "node-jq";
+import { json } from "stream/consumers";
+import FuzzySet from 'fuzzyset'
 
 // import execa from "execa";
 const execa = require('execa')
@@ -24,10 +29,34 @@ export async function cliQuiet(cmd, args, env = {}) {
     }
 }
 
-export async function cliPipe(cmd, args, env = {}) {
+export async function cliStream(cmd, args, options = {}) {
+  try {
+    let output = execa(cmd, args, options)
+    return output
+    } catch(error) {
+      console.log(error)
+    }
+}
+
+export async function cliStreamPipe(cmd, args, options = {}) {
+  try {
+    let output = execa(cmd, args, options)
+    output.stdout.pipe(process.stdout);
+    output.stderr.pipe(process.stderr);
+    return output
+    } catch(error) {
+      console.log(error)
+    }
+}
+
+export async function cliPipe(cmd, args, env = {}, input = undefined) {
   try {
     // let output = execa("env", args, {maxBuffer: 300_000_000, env: {HELM_DIFF_IGNORE_UNKNOWN_FLAGS: "true", extendEnv: false} })
-    let output = execa(cmd, args, {maxBuffer: 300_000_000, env: env })
+    let extraOptions = {input: undefined}
+    if (input) {
+      extraOptions.input = input
+    }
+    let output = execa(cmd, args, {maxBuffer: 300_000_000, env: env, input: extraOptions.input})
     output.stdout.pipe(process.stdout);
     output.stderr.pipe(process.stderr);
     // process.exit()
@@ -118,7 +147,109 @@ export async function runClusterTestScript(script, args, env = {}) {
   }
   return output
 }
+export async function mkdir(path: string) {
+  try {
+    await fs.mkdir(path, { recursive: true })
+  } catch (e) {
+    console.error(e)
+  }
+}
+export async function loadYamlFilesFromPath(clusterConfigDirPath: string, targetPath = "config", absolute = false) {
+  let filesPath = path.join(clusterConfigDirPath, targetPath)
+  try {
+    let files = []
+    for await (const file of this.getFiles(filesPath)) {
+      let data = yaml.load((await fs.readFile(file, "utf8")))
+      let filePath = upath.normalizeSafe(file)
 
+      if (absolute === false) {
+        filePath = filePath.replace(upath.normalizeSafe(clusterConfigDirPath), "")
+      }
+      files.push(data)
+    }
+    return files
+  } catch (e) {
+    console.error(e)
+  }
+}
+export async function loadYamlFilesFromPathAsDataArray(clusterConfigDirPath: string, targetPath = "config", absolute = false) {
+  let filesPath = path.join(clusterConfigDirPath, targetPath)
+  try {
+    let files = []
+    for await (const file of this.getFiles(filesPath)) {
+      let data = yaml.load((await fs.readFile(file, "utf8")))
+      let filePath = upath.normalizeSafe(file)
+
+      if (absolute === false) {
+        filePath = filePath.replace(upath.normalizeSafe(clusterConfigDirPath), "")
+      }
+      let resource = {"path": filePath, "data": data}
+      files.push(resource)
+    }
+    return files
+  } catch (e) {
+    console.error(e)
+  }
+}
+export async function loadYamlFilesFromPathAsDataObject(clusterConfigDirPath: string, targetPath = "config", absolute = false) {
+  let filesPath = path.join(clusterConfigDirPath, targetPath)
+  try {
+    let files = {}
+    for await (const file of this.getFiles(filesPath)) {
+      let data = yaml.load((await fs.readFile(file, "utf8")))
+      let filePath = upath.normalizeSafe(file)
+
+      if (absolute === false) {
+        filePath = filePath.replace(upath.normalizeSafe(clusterConfigDirPath), "")
+      }
+      files[filePath] = data
+    }
+    return files
+  } catch (e) {
+    console.error(e)
+  }
+}
+export async function getFilesAsList(targetPath) {
+  try {
+    let files = []
+    for await (const file of this.getFiles(upath.normalizeSafe(targetPath))) {
+      files.push(upath.normalizeSafe(file))
+    }
+    return files
+  } catch (e) {
+    console.error(e)
+  }
+}
+export async function loadYamlFilesFromPathAsItemsList(clusterConfigDirPath: string, targetPath = "config", absolute = false) {
+  let filesPath = path.join(clusterConfigDirPath, targetPath)
+  try {
+    let files = {kind: "List", items: []}
+    for await (const file of this.getFiles(filesPath)) {
+      let data = yaml.load((await fs.readFile(file, "utf8")))
+      let filePath = upath.normalizeSafe(file)
+
+      if (absolute === false) {
+        filePath = filePath.replace(upath.normalizeSafe(clusterConfigDirPath), "")
+      }
+      files.items.push(data)
+    }
+    return files
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+export async function* getFiles(dir) {
+  const dirents = await fs.readdir(dir, { withFileTypes: true });
+  for (const dirent of dirents) {
+    const res = path.resolve(dir, dirent.name);
+    if (dirent.isDirectory()) {
+      yield* getFiles(res);
+    } else {
+      yield res;
+    }
+  }
+}
 export async function runClusterScriptAsync(script, args, env = {}) {
   let scriptsPath = `${path.resolve(
     `${require.main.filename}/../../scripts`
@@ -134,6 +265,19 @@ export async function runClusterScriptAsync(script, args, env = {}) {
   }
   return output
 }
+
+export async function jq(filter, path, options) {
+  return new Promise((resolve, reject) => {
+    nodejq.run(filter, path, options)
+    .then((output) => {
+      resolve(output)
+    })
+    .catch((err) => {
+      reject(err)
+    })
+  })
+}
+
 export async function testKubernetesManifest(name) {
 
   let lint
@@ -206,4 +350,21 @@ export async function testKubernetesManifest(name) {
 export function fileExists(path: any) {
   const exists = fs.existsSync(path)
   return exists
+}
+
+
+
+export async function fuzzySearch(values: Array<string>, term: string): Promise<Array<string>> {
+  console.log(typeof term)
+  let fuzzy = FuzzySet(values)
+  let matches = fuzzy.get(term)
+
+  let results = []
+  if(matches) {
+    for (const match of matches) {
+      results.push(match[1])
+    }
+  }
+
+  return results
 }
