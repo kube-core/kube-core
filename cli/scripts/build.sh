@@ -9,8 +9,6 @@ currentScriptPath="$( cd "$( dirname "${currentScript}" )" >/dev/null 2>&1 && pw
 currentScriptShortPath=$(echo "${currentScriptPath}" | awk '{split($0, a, "/scripts/"); print a[2]}')
 
 # Cluster Config
-clusterConfigIsLocal="false"
-
 if [[ ! -z $(find ./cluster-config.yaml 2> /dev/null) ]]; then
     clusterConfigPath=$(echo ./cluster-config.yaml | head -n 1 | xargs realpath 2> /dev/null)
 else
