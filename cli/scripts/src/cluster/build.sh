@@ -89,11 +89,22 @@ else
     rm -rf ${configPath}
 fi
 
+
+if [[ "${arg1}" == "secrets" || "${arg2}" == "secrets" || "${arg3}" == "secrets" ]]
+then
+    ${scripts_gitops_secrets_path}
+fi
+
+# Generating ConfigMaps
+${scripts_gitops_configmaps_path}
+
 # Generating manifests from helmfiles
-${scripts_gitops_helmfile_path} $@
+${scripts_gitops_helmfile_template_path} $@
 
 # Generating manifests from local config
-${scripts_gitops_gitops_path} $@
+${scripts_gitops_build_path}
+
+${scripts_gitops_process_path} $@
 
 # Cleaning up some stuff
 # TODO: Reimplement
