@@ -61,6 +61,9 @@ mv ~/.binenv/kubeseal /usr/local/bin/
 RUN binenv install kustomize 4.5.5 && \
 mv ~/.binenv/kustomize /usr/local/bin/
 
+RUN binenv install gron 0.7.1 && \
+mv ~/.binenv/gron /usr/local/bin/
+
 # Test dependencies
 RUN pip install yamllint
 
