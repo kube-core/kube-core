@@ -144,6 +144,7 @@ run:
   core_overlays: true
   cluster_overlays: true
   slice_by_release: true
+  autoseal_secrets: false
 
 install:
   type: helmfile
