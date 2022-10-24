@@ -89,8 +89,7 @@ else
     rm -rf ${configPath}
 fi
 
-
-if [[ "${arg1}" == "secrets" || "${arg2}" == "secrets" || "${arg3}" == "secrets" ]]
+if [[ "${includeSecrets}" ]]
 then
     ${scripts_gitops_secrets_path}
 fi
@@ -104,18 +103,35 @@ ${scripts_gitops_helmfile_template_path} $@
 # Generating manifests from local config
 ${scripts_gitops_build_path}
 
-${scripts_gitops_process_path} $@
-
 # Cleaning up some stuff
 # TODO: Reimplement
 # ${scripts_gitops_cleanup_path}
 
+# Slicing
+tmpConfigPath=${tmpFolder}/config
+# configPath=${config_path}
+configPath=${tmpConfigPath}
+localPath=${localConfig_path}
+
+slicingFolder=${tmpFolder}/releases/slicing
+mkdir -p ${slicingFolder}
+cd ${tmpConfigPath} &> /dev/null # Remove logs
+manifestsList=$(find . -type f -name '*.yaml')
+
+echo "${manifestsList}" | xargs yq '.' > ${tmpConfigPath}/config.all.yaml
+
+# TODO: Find a way to choose easily how to slice
+# {{(.metadata.labels | index "cluster.kube-core.io/context") |dottodash|replace ":" "-"}}/{{.metadata.namespace}}/{{(.metadata.labels | index "release.kube-core.io/name") |dottodash|replace ":" "-"}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml'
+if [[ "$LOG_LEVEL" == "DEBUG" || "$LOG_LEVEL" == "INSANE" ]] ; then
+    kubectl slice -f ${tmpConfigPath}/config.all.yaml --output-dir ${config_path} --template='{{(.metadata.labels | index "release.kube-core.io/namespace")}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml'
+else
+    kubectl slice -f ${tmpConfigPath}/config.all.yaml --output-dir ${config_path} --template='{{(.metadata.labels | index "release.kube-core.io/namespace")}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml' 2> /dev/null
+fi
+cd - &> /dev/null # Remove logs
+
 # Runs some post-processing on all manifests.
 ${scripts_cluster_process_path} $@
 
-# Restoring all secrets.
-# This forces to handle secrets separately. Any non-commited modification to secrets will be reverted.
-${scripts_gitops_restore_secrets_path}
 
 # Generating a lockfile for our config.
 get_config ${config_path} | sed "s|${clusterConfigDirPath}|.|" | sort -u > ${clusterConfigDirPath}/gitops-config.lock
