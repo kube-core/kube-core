@@ -77,19 +77,6 @@ mkdir -p ${slicingFolder}
 
 initialPath=$(pwd)
 
-cd ${tmpConfigPath} &> /dev/null # Remove logs
-manifestsList=$(find . -type f -name '*.yaml')
-
-echo "${manifestsList}" | xargs yq '.' > ${tmpConfigPath}/config.all.yaml
-
-# TODO: Find a way to choose easily how to slice
-# {{(.metadata.labels | index "cluster.kube-core.io/context") |dottodash|replace ":" "-"}}/{{.metadata.namespace}}/{{(.metadata.labels | index "release.kube-core.io/name") |dottodash|replace ":" "-"}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml'
-if [[ "$LOG_LEVEL" == "DEBUG" || "$LOG_LEVEL" == "INSANE" ]] ; then
-    kubectl slice -f ${tmpConfigPath}/config.all.yaml --output-dir ${config_path} --template='{{(.metadata.labels | index "release.kube-core.io/namespace")}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml'
-else
-    kubectl slice -f ${tmpConfigPath}/config.all.yaml --output-dir ${config_path} --template='{{(.metadata.labels | index "release.kube-core.io/namespace")}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml' 2> /dev/null
-fi
-cd - &> /dev/null # Remove logs
 
 log_info "Deleting empty files..."
 emptyFiles=$(find ${config_path} -name ".yaml")
@@ -99,6 +86,108 @@ if [[ "${emptyFiles}" != "" ]]; then
     log_insane "${emptyFiles}"
     echo "${emptyFiles}" | xargs rm -rf
 fi
+
+
+log_debug "Start Renaming: .yml => .yaml"
+find ${config_path} -name '*.yml' -type f | while read f;
+do
+    newName=$(echo $f | sed 's/yml/yaml/')
+
+    log_debug "Moving: ${f} => ${newName}"
+    mv ${f} ${newName}
+done || true
+log_debug "Done Renaming: .yml => .yaml"
+
+
+log_debug "Start Cleaning: files != .yaml"
+find ${config_path} -type f | grep -vE '\.yaml' | while read f;
+do
+    log_debug "Deleting: ${f}"
+    rm -rf ${f}
+done || true
+log_debug "Done Cleaning: files != .yaml"
+
+# Copying CRDs
+# TODO : Detect unwanted CRDs but do not include them. Treat them separately
+# echo "Getting a local copy of all output CRDs..."
+# mkdir -p ${crds_path}/imported
+# crdsToCopy=$(grep -r -E -l 'kind: CustomResourceDefinition' ${config_path}) || true
+# echo "${crdsToCopy}" | xargs -i cp -rf '{}' ${crds_path}/imported || true
+# echo "Done getting a local copy of all output CRDs"
+
+# Restoring all secrets.
+# This forces to handle secrets separately. Any non-commited modification to secrets will be reverted.
+${scripts_gitops_restore_secrets_path}
+
+
+if [[ "${run_autoseal_secrets}" == "true" ]]; then
+    # Auto-seal secrets
+    # Gets all secrets not managed by replicator (grep could be improved to be more specific)
+    log_info "Checking for non-sealed secrets..."
+
+    # secretsList=$(find ${config_path} -type f -name '*.yaml')
+    # echo "$secretsList"
+    # secretsList=""
+    secretsList=$(grep -r -l -E '^kind: Secret$' ${config_path})
+
+    if [[ "${secretsList}" != "" ]]
+    then
+        log_debug "Secrets found !"
+
+        while read s
+        do
+            # Detecting specific secrets to exclude
+            replicator=$(cat "${s}" | grep 'replicator.v1.mittwald.de/replicate-from')
+            generated=$(cat "${s}" | grep 'secret-generator.v1.mittwald.de/autogenerate')
+            sa=$(cat "${s}" | grep 'type: kubernetes.io/service-account-token')
+            data=$(cat "${s}" | yq '.data | to_entries | select(. | length > 0) | from_entries')
+            stringData=$(cat "${s}" | yq '.stringData | to_entries | select(. | length > 0) | from_entries')
+            hasData="false"
+            hasStringData="false"
+
+            if [[ "${data}" != "" ]]; then
+                hasData="true"
+            fi
+            if [[ "${stringData}" != "" ]]; then
+                hasStringData="true"
+            fi
+
+            if [[ "${replicator}" ]]
+            then
+                log_debug "Skipping replicator managed secret: ${s}"
+
+            elif [[ "${generated}" ]]
+            then
+                log_debug "Skipping in-cluster auto-generated secret: ${s}"
+            elif [[ "${sa}" ]]
+            then
+                log_debug "Skipping service account token: ${s}"
+            elif [[ "${hasData}" != "true" && "${hasStringData}" != "true" ]]
+            then
+                log_debug "Skipping empty secret: ${s}"
+            else
+                log_warn "Detected non-sealed secret: ${s}"
+                log_warn "Please check the source of this secret!"
+                log_warn "If this is not an auto-generated secret, consider provisionning yours instead!"
+                log_warn "Auto-Sealing: ${s}"
+
+                shortPath=$(echo ${s} | sed "s|${clusterConfigDirPath}||")
+                secretTmpPath=$(echo "${tmpConfigPath}/autosealed${shortPath}" | xargs dirname)
+                mkdir -p ${secretTmpPath}
+                cat "${s}" | ${scripts_k8s_secrets_seal_path} | yq -o json | \
+                    jq '.metadata.labels |= {"build.kube-core.io/autosealed": "true"} + .' | \
+                yq -P > ${tmpConfigPath}/autosealed${shortPath}
+                newPath=$(echo "${s}" | sed 's|/secret/|/sealedsecret/|' | xargs dirname)
+                mv ${tmpConfigPath}/autosealed${shortPath} ${newPath}
+                rm "${s}"
+            fi
+        done <<< "${secretsList}" || true
+    else
+        log_info "No non-sealed secrets found !"
+    fi
+fi
+
+
 
 # Cleaning cache
 log_info "Cleaning cache..."
