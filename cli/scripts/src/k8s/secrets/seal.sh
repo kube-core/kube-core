@@ -63,7 +63,12 @@ check_context "${cluster_config_context}"
 ## Seals a Secret locally using sealed-secrets certificate. Reads from stdin.
 ## Docs End ##
 
-cat | \
+
+data=$(cat)
+annotations=$(echo "$data" | yq '.metadata.annotations' -o json | jq -c)
+labels=$(echo "$data" | yq '.metadata.labels' -o json | jq -c)
+
+echo "$data" | \
 yq eval -o json - | jq '.metadata |= ({annotations: {"replicator.v1.mittwald.de/replication-allowed": "true", "replicator.v1.mittwald.de/replication-allowed-namespaces": "*"}} + .)' | yq eval --prettyPrint - | \
 kubeseal \
 --scope cluster-wide \
@@ -71,4 +76,7 @@ kubeseal \
 --controller-namespace=sealed-secrets \
 --format yaml \
 --cert ${secrets_cert_path} \
---v 5
+--v 5 | yq -o json | \
+jq ".metadata.annotations |= ${annotations} + ." | \
+jq ".metadata.labels |= ${labels} + ." | \
+yq -P
