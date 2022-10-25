@@ -24,9 +24,15 @@ spec:
             value:
               - "Push Hook"
               - "Tag Push Hook"
-      - cel:
+      - name: "Apply overlays"
+        ref:
+          name: "cel"
+          kind: ClusterInterceptor
+        params:
+        - name: "overlays"
+          value:
           #filter: "body.ref == 'refs/heads/develop'"
-          overlays:
+          # overlays:
               #The build format hint (jar / image), gives indication about what the pipeline needs to produce. default: image
             - key: build_format
               expression: "requestURL.parseURL().rawQuery.contains('buildFormat=') ? requestURL.parseURL().query['buildFormat'] : 'image'"
