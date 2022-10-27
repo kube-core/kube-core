@@ -4,6 +4,12 @@ directories:
   - path: releases/base
     contents:
       # Base Releases
+      - path: trivy
+        helmChart:
+          name: trivy
+          version: 0.4.17
+          repository:
+            url: https://aquasecurity.github.io/helm-charts
       - path: mongodb-managed
         helmChart:
           name: mongodb-managed

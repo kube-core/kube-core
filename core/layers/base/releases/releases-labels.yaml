@@ -322,3 +322,7 @@ releases:
     labels:
       component: ingress
       group: authn
+  trivy:
+    labels:
+      component: trivy
+      group: devops

@@ -236,3 +236,4 @@ releases:
   dex: *release
   oauth2-proxy: *release
   namespace: *release
+  trivy: *release

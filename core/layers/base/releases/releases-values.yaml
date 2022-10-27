@@ -85,3 +85,14 @@ releases:
   tekton-logging:
     values:
       installCRDs: false
+  trivy: 
+    values:
+      image:
+        tag: "0.32.1"
+      trivy:
+        debugMode: true
+      ingress:
+        enabled: true
+        annotations:
+          nginx.ingress.kubernetes.io/ssl-redirect: "false"
+          nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
