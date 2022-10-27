@@ -1,0 +1,26 @@
+environments:
+  default:
+    values:
+    {{ $entries := readDirEntries "../values/platform/" }}
+    {{ range $item := $entries }}
+    {{ if (contains ".yaml" $item.Name) }}
+    - ../values/platform/{{ $item.Name }}
+    {{ end }}
+    {{ end }}
+    {{ $entries := readDirEntries "../values/dev/" }}
+    {{ range $item := $entries }}
+    {{ if (contains ".yaml" $item.Name) }}
+    - ../values/dev/{{ $item.Name }}
+    {{ end }}
+    {{ end }}
+---
+{{ tpl (readFile "./commons.yaml.gotmpl" ) . }}
+{{ $values := .Values }}
+{{ $env := "production" }}
+{{ $type := "service" }}
+
+{{ if (or (env "KUBE_CORE_DEV") ($values | getOrNil "devMode")) }}
+{{ tpl (readFile $values.org.core.lib.templates.env.localPath) (dict "Values" .Values "env" $env "type" $type) }}
+{{ else }}
+{{ tpl (readFile $values.org.core.lib.templates.env.remotePath) (dict "Values" .Values "env" $env "type" $type) }}
+{{ end }}
