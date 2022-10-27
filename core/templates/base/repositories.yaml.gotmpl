@@ -1,1 +1,5 @@
+{{ if .Values | getOrNil "clusterRepositories" }}
+repositories: {{ toYaml .Values.clusterRepositories | nindent 2 }}
+{{ else }}
 repositories: []
+{{ end }}
