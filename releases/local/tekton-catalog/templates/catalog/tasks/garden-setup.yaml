@@ -179,12 +179,12 @@ spec:
 
           # Variables
           rootPath=$(workspaces.source.path)/$(params.cluster-name)
-          clusterPath=${rootPath}/cluster
+          clusterPath=${rootPath}/kubernetes/cluster
           gardenPath=${rootPath}/$(params.garden-repo-subpath)
           terraformPath=${rootPath}/terraform
           gardenCommand="$(params.garden-command)"
           gardenEnv="$(params.garden-env)"
-          
+
           # TODO: See if we really need to be root
           userHome=/root 
 
@@ -228,7 +228,11 @@ spec:
           echo ${user} > $(workspaces.output.path)/user
           echo -n "${gardenCommand}" > $(results.garden-command.path)
 
-          # sleep 600
+
+          if [[ "$(params.sleep)" == "true" ]]
+          then
+            sleep 600
+          fi
 
           if [[ "$(params.skip-yalc)" == "false" ]]; then
             if [[ "${gardenEnv}" == "dev" || "${gardenEnv}" == "integration" || "${gardenEnv}" == "pr" ]]; then
