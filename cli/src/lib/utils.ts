@@ -3,7 +3,7 @@ import { spawn, spawnSync } from "child_process";
 import * as path from "path";
 import * as fs from 'fs-extra'
 import * as upath from "upath"
-import yaml from "js-yaml";
+import YAML from 'yaml'
 import * as nodejq from "node-jq";
 import { json } from "stream/consumers";
 import FuzzySet from 'fuzzyset'
@@ -159,7 +159,7 @@ export async function loadYamlFilesFromPath(clusterConfigDirPath: string, target
   try {
     let files = []
     for await (const file of this.getFiles(filesPath)) {
-      let data = yaml.load((await fs.readFile(file, "utf8")))
+      let data = YAML.parse((await fs.readFile(file, "utf8")))
       let filePath = upath.normalizeSafe(file)
 
       if (absolute === false) {
@@ -177,7 +177,7 @@ export async function loadYamlFilesFromPathAsDataArray(clusterConfigDirPath: str
   try {
     let files = []
     for await (const file of this.getFiles(filesPath)) {
-      let data = yaml.load((await fs.readFile(file, "utf8")))
+      let data = YAML.parse((await fs.readFile(file, "utf8")))
       let filePath = upath.normalizeSafe(file)
 
       if (absolute === false) {
@@ -196,7 +196,7 @@ export async function loadYamlFilesFromPathAsDataObject(clusterConfigDirPath: st
   try {
     let files = {}
     for await (const file of this.getFiles(filesPath)) {
-      let data = yaml.load((await fs.readFile(file, "utf8")))
+      let data = YAML.parse((await fs.readFile(file, "utf8")))
       let filePath = upath.normalizeSafe(file)
 
       if (absolute === false) {
@@ -225,7 +225,7 @@ export async function loadYamlFilesFromPathAsItemsList(clusterConfigDirPath: str
   try {
     let files = {kind: "List", items: []}
     for await (const file of this.getFiles(filesPath)) {
-      let data = yaml.load((await fs.readFile(file, "utf8")))
+      let data = YAML.parse((await fs.readFile(file, "utf8")))
       let filePath = upath.normalizeSafe(file)
 
       if (absolute === false) {
