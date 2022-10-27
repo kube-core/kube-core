@@ -1,0 +1,182 @@
+# Globals
+- ./layers/config/globals.yaml
+
+####################
+# START - Releases #
+####################
+
+# Schema
+# Default values for all standard releases
+- ./layers/base/schema.yaml
+####################
+
+####################
+# Releases
+# Defines all standard releases
+- ./layers/base/releases.yaml
+# Defines all releases labels
+- ./layers/base/releases-labels.yaml
+# Defines all releases options
+- ./layers/releases/releases-options.yaml
+# Defines all raw releases
+- ./layers/releases/releases-raw.yaml
+# Defines all custom releases
+- ./layers/releases/releases-custom.yaml
+# Defines default templated values for all releases
+- ./layers/releases/releases-config.yaml
+# Defines default overrides for all releases
+- ./layers/releases/releases-values.yaml
+# Defines default secrets for all releases
+- ./layers/releases/releases-secrets.yaml
+# Defines default dynamic secrets for all releases
+- ./layers/releases/releases-dynamic-secrets.yaml
+# Defines default scheduling rules for all releases
+- ./layers/releases/releases-scheduling.yaml
+# Defines default hooks for all releases
+- ./layers/releases/releases-hooks.yaml
+# Defines default patches for all releases
+- ./layers/releases/releases-patches.yaml
+# Defines default scaling for all releases
+- ./layers/releases/releases-scaling.yaml
+####################
+
+####################
+# Applications
+# Defines applications config
+- ./layers/envs/applications.yaml
+# Defines services config
+- ./layers/envs/services.yaml
+####################
+# Cluster
+# Defines cluster releases config
+- ./layers/envs/releases-cluster.yaml
+####################
+####################
+# Namespaces
+# Defines namespaces releases
+- ./layers/releases/namespaces.yaml
+####################
+
+####################
+# END - Releases   #
+####################
+
+
+####################
+# START - Config   #
+####################
+
+####################
+# Core Config - Global Framework Values
+- ./layers/config/core.yaml
+# Cluster Config -  Everyhing related to the cluster
+- ./layers/config/cluster.yaml
+####################
+
+####################
+# END - Config     #
+####################
+
+
+####################
+# START - Packages #
+####################
+
+# Toggle releases easily
+- ./layers/packages/base.yaml
+
+# If test enabled, only use test
+# Used to validate that a fresh cluster works as expected
+{{ if (.Values | get "core.packages.test.enabled" false) }}
+- ./layers/packages/test.yaml
+
+# Else if all enabled, only use all
+# Used for integration test of all releases
+{{ else if (.Values | get "core.packages.all.enabled" false) }}
+- ./layers/packages/all.yaml
+
+# Else, use user defined packages
+# This is the normal behavior, and what consumers should use
+{{ else }}
+
+
+# Essentials
+{{ if (.Values | get "core.packages.cluster-tools.enabled" false) }}
+- ./layers/packages/cluster-tools.yaml
+{{ end }}
+
+{{ if (.Values | get "core.packages.ingress.enabled" false) }}
+- ./layers/packages/ingress.yaml
+{{ end }}
+
+{{ if (.Values | get "core.packages.essentials.enabled" false) }}
+- ./layers/packages/essentials.yaml
+{{ end }}
+
+
+# Observability
+{{ if (.Values | get "core.packages.logging.enabled" false) }}
+- ./layers/packages/logging.yaml
+{{ end }}
+
+{{ if (.Values | get "core.packages.logging.enabled" false) }}
+- ./layers/packages/logging.yaml
+{{ end }}
+
+{{ if (.Values | get "core.packages.test-logging.enabled" false) }}
+- ./layers/packages/test-logging.yaml
+{{ end }}
+
+{{ if (.Values | get "core.packages.minio.enabled" false) }}
+- ./layers/packages/minio.yaml
+{{ end }}
+
+{{ if (.Values | get "core.packages.rabbitmq.enabled" false) }}
+- ./layers/packages/rabbitmq.yaml
+{{ end }}
+
+{{ if (.Values | get "core.packages.monitoring.enabled" false) }}
+- ./layers/packages/monitoring.yaml
+{{ end }}
+
+# Estafette
+{{ if (.Values | get "core.packages.estafette.enabled" false) }}
+- ./layers/packages/estafette.yaml
+{{ end }}
+
+# Tekton
+{{ if (.Values | get "core.packages.tekton.enabled" false) }}
+- ./layers/packages/tekton.yaml
+{{ end }}
+
+# Istio
+{{ if (.Values | get "core.packages.istio.enabled" false) }}
+- ./layers/packages/istio.yaml
+{{ end }}
+
+{{ if (.Values | get "core.packages.crossplane.enabled" false) }}
+- ./layers/packages/crossplane.yaml
+{{ end }}
+
+{{ if (.Values | get "core.packages.kyverno.enabled" false) }}
+- ./layers/packages/kyverno.yaml
+{{ end }}
+
+{{ end }}
+
+####################
+# END - Packages   #
+####################
+
+
+# Custom Layers
+{{ if (.Values | get "core.ha" false) }}
+- ./layers/custom/ha.yaml
+{{ end }}
+
+
+
+# A last chance to override anything :)
+{{ if isFile "./layers/config/overrides.yaml" }}
+- ./layers/config/overrides.yaml
+{{ end }}
