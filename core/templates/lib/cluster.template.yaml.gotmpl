@@ -1,0 +1,39 @@
+{{ $values := .Values }}
+{{ $readfilesPath := "./lib/readfiles.functions.yaml.gotmpl" }}
+{{ $clusterHelmfilePath := "./cluster.helmfile.yaml.gotmpl" }}
+{{ if (or (env "KUBE_CORE_DEV") ($values | getOrNil "devMode")) }}
+{{ $readfilesPath = $values.org.core.lib.functions.readfiles.localPath }}
+{{ $clusterHelmfilePath = $values.org.core.helmfiles.cluster.localPath }}
+{{ else }}
+{{ $readfilesPath = $values.org.core.lib.functions.readfiles.remotePath }}
+{{ $clusterHelmfilePath = $values.org.core.helmfiles.cluster.remotePath }}
+{{ end }}
+helmfiles:
+- path: {{ $clusterHelmfilePath }}
+  values:
+  # Core Values
+  {{ range $values.org.core.values }}
+  - {{ . }}
+  {{ end }}
+  {{ $entries := readDirEntries "../values/core/" }}
+  {{ $clusterWideManifests := false }}
+  {{ range $item := $entries }}
+  {{ if and (contains ".yaml" $item.Name) (not $item.IsDir) }}
+  - ../values/core/{{ $item.Name }}
+  {{ end }}
+  {{ end }}
+
+  - core:
+      clusterEnabled: true
+      releasesEnabled: false
+      applicationsEnabled: false
+      releasesRawEnabled: false
+      releasesCustomEnabled: false
+      namespacesEnabled: false
+
+  {{ if isFile "../values/cluster/config/repositories.yaml" }}
+  - clusterRepositories: {{ (readFile (printf "../values/cluster/config/repositories.yaml")) | nindent 6 }}
+  {{ end }}
+  {{ if isFile "../values/cluster/config/releases.yaml" }}
+  - clusterReleases: {{ (tpl (readFile (printf "../values/cluster/config/releases.yaml")) .) | nindent 6 }}
+  {{ end }}
