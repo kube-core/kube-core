@@ -1,0 +1,21 @@
+releases:
+  kps:
+    config:
+      alertmanager:
+        additionalReceivers: []
+        additionalRoutes: []
+      opsgenie:
+        alerts:
+          apiKey: {}
+          enabled: false
+        enabled: false
+        heartbeat:
+          apiKey: {}
+          enabled: false
+          endpoint: {}
+      robusta:
+        additionalSinks: []
+        enabled: false
+        mainSlack:
+          apiKey: {}
+          channel: {}

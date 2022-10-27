@@ -1,65 +1,64 @@
-# Globals
-- ./envs/globals.yaml
+# Base
+- ./layers/base/config/globals.yaml
+- ./layers/base/config/core.yaml
+- ./layers/base/config/cluster.yaml
+####################
+# Config
+- ./layers/config/globals.yaml
+- ./layers/config/core.yaml
+- ./layers/config/cluster.yaml
+####################
 
 ####################
-# START - Releases #
-####################
-
+# Base
 # Schema
-# Default values for all standard releases
-- ./envs/default/core/releases/schema.yaml
-####################
-
+- ./layers/base/releases/schema.yaml
+# Defines all standard releases
+- ./layers/base/releases/releases.yaml
+# Defines all releases options
+- ./layers/base/releases/releases-options.yaml
+# Defines all releases labels
+- ./layers/base/releases/releases-labels.yaml
+# Defines all raw releases
+- ./layers/base/releases/releases-raw.yaml
+# Defines all custom releases
+- ./layers/base/releases/releases-custom.yaml
+# Defines default templated values for all releases
+- ./layers/base/releases/releases-config.yaml
+# Defines default overrides for all releases
+- ./layers/base/releases/releases-values.yaml
+# Defines default secrets for all releases
+- ./layers/base/releases/releases-secrets.yaml
+# Defines default dynamic secrets for all releases
+- ./layers/base/releases/releases-dynamic-secrets.yaml
+# Defines default scheduling rules for all releases
+- ./layers/base/releases/releases-scheduling.yaml
+# Defines default hooks for all releases
+- ./layers/base/releases/releases-hooks.yaml
+# Defines default patches for all releases
+- ./layers/base/releases/releases-patches.yaml
+# Defines default scaling for all releases
+- ./layers/base/releases/releases-scaling.yaml
+# Defines namespaces releases
+- ./layers/base/releases/namespaces.yaml
 ####################
 # Releases
-# Defines all standard releases
-- ./envs/default/core/releases/releases.yaml
-# Defines all releases labels
-- ./envs/default/core/releases/releases-labels.yaml
-# Defines all releases options
-- ./envs/default/core/releases/releases-options.yaml
-# Defines all raw releases
-- ./envs/default/core/releases/releases-raw.yaml
-# Defines all custom releases
-- ./envs/default/core/releases/releases-custom.yaml
-# Defines default templated values for all releases
-- ./envs/default/core/releases/releases-config.yaml
-# Defines default overrides for all releases
-- ./envs/default/core/releases/releases-values.yaml
-# Defines default secrets for all releases
-- ./envs/default/core/releases/releases-secrets.yaml
-# Defines default dynamic secrets for all releases
-- ./envs/default/core/releases/releases-dynamic-secrets.yaml
-# Defines default scheduling rules for all releases
-- ./envs/default/core/releases/releases-scheduling.yaml
-# Defines default hooks for all releases
-- ./envs/default/core/releases/releases-hooks.yaml
-# Defines default patches for all releases
-- ./envs/default/core/releases/releases-patches.yaml
-# Defines default scaling for all releases
-- ./envs/default/core/releases/releases-scaling.yaml
+- ./layers/releases/releases.yaml
+- ./layers/releases/releases-raw.yaml
+- ./layers/releases/releases-config.yaml
+- ./layers/releases/releases-secrets.yaml
 ####################
 
 ####################
 # Applications
 # Defines applications config
-- ./envs/default/core/releases/applications.yaml
+- ./layers/envs/applications.yaml
 # Defines services config
-- ./envs/default/core/releases/services.yaml
+- ./layers/envs/services.yaml
 ####################
 # Cluster
 # Defines cluster releases config
-- ./envs/default/core/releases/releases-cluster.yaml
-####################
-####################
-# Namespaces
-# Defines namespaces releases
-- ./envs/default/core/releases/namespaces.yaml
-####################
-
-####################
-# Dynamic injection of all extra releases in "./env/default/core/releases/extra"
-{{ exec "bash" (list "-c" (printf "./scripts/read-extra-releases.sh %s" "default")) | indent 0 | trim }}
+- ./layers/envs/releases-cluster.yaml
 ####################
 
 ####################
@@ -73,14 +72,9 @@
 
 ####################
 # Core Config - Global Framework Values
-- ./envs/default/core.yaml
+- ./layers/config/core.yaml
 # Cluster Config -  Everyhing related to the cluster
-- ./envs/default/cluster.yaml
-####################
-
-####################
-# Dynamic injection of all layers in "./env/default/core/config"
-{{ exec "bash" (list "-c" (printf "./scripts/read-layers.sh %s" "default")) | indent 0 | trim }}
+- ./layers/config/cluster.yaml
 ####################
 
 ####################
@@ -93,17 +87,17 @@
 ####################
 
 # Toggle releases easily
-- ./envs/default/core/packages/base.yaml
+- ./layers/packages/base.yaml
 
 # If test enabled, only use test
 # Used to validate that a fresh cluster works as expected
 {{ if (.Values | get "core.packages.test.enabled" false) }}
-- ./envs/default/core/packages/test.yaml
+- ./layers/packages/test.yaml
 
 # Else if all enabled, only use all
 # Used for integration test of all releases
 {{ else if (.Values | get "core.packages.all.enabled" false) }}
-- ./envs/default/core/packages/all.yaml
+- ./layers/packages/all.yaml
 
 # Else, use user defined packages
 # This is the normal behavior, and what consumers should use
@@ -112,68 +106,64 @@
 
 # Essentials
 {{ if (.Values | get "core.packages.cluster-tools.enabled" false) }}
-- ./envs/default/core/packages/cluster-tools.yaml
+- ./layers/packages/cluster-tools.yaml
 {{ end }}
 
 {{ if (.Values | get "core.packages.ingress.enabled" false) }}
-- ./envs/default/core/packages/ingress.yaml
+- ./layers/packages/ingress.yaml
 {{ end }}
 
 {{ if (.Values | get "core.packages.essentials.enabled" false) }}
-- ./envs/default/core/packages/essentials.yaml
+- ./layers/packages/essentials.yaml
 {{ end }}
 
 
 # Observability
 {{ if (.Values | get "core.packages.logging.enabled" false) }}
-- ./envs/default/core/packages/logging.yaml
-{{ end }}
-
-{{ if (.Values | get "core.packages.crds.enabled" false) }}
-- ./envs/default/core/packages/crds.yaml
+- ./layers/packages/logging.yaml
 {{ end }}
 
 {{ if (.Values | get "core.packages.logging.enabled" false) }}
-- ./envs/default/core/packages/logging.yaml
+- ./layers/packages/logging.yaml
 {{ end }}
 
 {{ if (.Values | get "core.packages.test-logging.enabled" false) }}
-- ./envs/default/core/packages/test-logging.yaml
+- ./layers/packages/test-logging.yaml
 {{ end }}
 
 {{ if (.Values | get "core.packages.minio.enabled" false) }}
-- ./envs/default/core/packages/minio.yaml
+- ./layers/packages/minio.yaml
 {{ end }}
 
 {{ if (.Values | get "core.packages.rabbitmq.enabled" false) }}
-- ./envs/default/core/packages/rabbitmq.yaml
+- ./layers/packages/rabbitmq.yaml
 {{ end }}
 
 {{ if (.Values | get "core.packages.monitoring.enabled" false) }}
-- ./envs/default/core/packages/monitoring.yaml
+- ./layers/packages/monitoring.yaml
 {{ end }}
 
 # Estafette
 {{ if (.Values | get "core.packages.estafette.enabled" false) }}
-- ./envs/default/core/packages/estafette.yaml
+- ./layers/packages/estafette.yaml
 {{ end }}
 
 # Tekton
 {{ if (.Values | get "core.packages.tekton.enabled" false) }}
-- ./envs/default/core/packages/tekton.yaml
+- ./layers/packages/tekton.yaml
 {{ end }}
 
 # Istio
 {{ if (.Values | get "core.packages.istio.enabled" false) }}
-- ./envs/default/core/packages/istio.yaml
+- ./layers/packages/istio.yaml
 {{ end }}
 
 {{ if (.Values | get "core.packages.crossplane.enabled" false) }}
-- ./envs/default/core/packages/crossplane.yaml
+- ./layers/packages/crossplane.yaml
 {{ end }}
 
 {{ if (.Values | get "core.packages.kyverno.enabled" false) }}
-- ./envs/default/core/packages/kyverno.yaml
+- ./layers/packages/kyverno.yaml
 {{ end }}
 
 {{ end }}
@@ -185,10 +175,12 @@
 
 # Custom Layers
 {{ if (.Values | get "core.ha" false) }}
-- ./envs/default/core/custom/ha.yaml
+- ./layers/custom/ha.yaml
 {{ end }}
 
 
 
 # A last chance to override anything :)
-- ./envs/overrides.yaml
+{{ if isFile "./layers/config/overrides.yaml" }}
+- ./layers/config/overrides.yaml
+{{ end }}

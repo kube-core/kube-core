@@ -62,7 +62,7 @@ check_requirements
 ## For kube-core releases development. Switches dist releases references to local releases in kube-core.
 ## Docs End ##
 
-releasesPath="${corePath}/core/envs/default/core/releases"
+releasesPath="${corePath}/core/layers/base/config/core/releases"
 coreReleasesPath=${corePath}/releases
 
 # cat ${corePath}/envs/default/core/releases/releases.yaml | sed 's|../releases/dist/releases/charts/|../releases/local/|'
@@ -72,7 +72,7 @@ localReleases=$(cat ${corePath}/vendir-releases.yaml | grep "/releases/local/" |
 echo "Linking local kube-core releases for development..."
 
 echo "${localReleases}" | while read release; do
-    sed -i "s|../releases/.*/${release}|../releases/local/${release}|" ${corePath}/core/envs/default/core/releases/releases.yaml
+    sed -i "s|../releases/.*/${release}|../releases/local/${release}|" ${corePath}/core/layers/base/releases/releases.yaml
 done || true
 
 templatedReleases=$( grep -Erl "../releases/(dist|local)" ${corePath}/core/templates/)

@@ -1,0 +1,11 @@
+core:
+  releasesEnabled: true
+  releasesRawEnabled: true
+  releasesCustomEnabled: true
+  namespacesEnabled: true
+  globalLabelsEnabled: true
+  globalHelmMetadataEnabled: true
+  applicationsEnabled: false
+  servicesEnabled: false
+  clusterEnabled: false
+  version: v1.0.0

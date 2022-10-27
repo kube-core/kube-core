@@ -62,7 +62,7 @@ check_requirements
 ## For kube-core releases development. Builds all dist releases.
 ## Docs End ##
 
-releasesPath="${corePath}/core/envs/default/core/releases"
+releasesPath="${corePath}/core/layers/base/config/core/releases"
 coreReleasesPath=${corePath}/releases
 mkdir -p ${coreReleasesPath}
 

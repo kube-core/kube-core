@@ -62,7 +62,7 @@ check_requirements
 ## For kube-core releases development. DEPRECATED. Switches releases references to legacy mode (not using vendir)
 ## Docs End ##
 
-releasesPath="${corePath}/core/envs/default/core/releases"
+releasesPath="${corePath}/core/layers/base/config/core/releases"
 coreReleasesPath=${corePath}/releases
 
 # cat ${corePath}/envs/default/core/releases/releases.yaml | sed 's|../releases/dist/releases/charts/|../releases/local/|'
@@ -72,14 +72,14 @@ externalReleases=$(cat ${corePath}/vendir-releases.yaml | grep "name:" | awk '{ 
 echo "Linking local kube-core releases for development & prod..."
 
 echo "${localReleases}" | while read release; do
-    sed -i "s|../releases/.*/charts/${release}|../releases/dist/releases/base/${release}|" ${corePath}/core/envs/default/core/releases/releases.yaml
+    sed -i "s|../releases/.*/charts/${release}|../releases/dist/releases/base/${release}|" ${corePath}/core/layers/base/releases/releases.yaml
 done || true
 
 
 echo "Linking external kube-core releases for development & prod..."
 
 echo "${externalReleases}" | while read release; do
-    sed -i "s|../releases/.*/${release}|../releases/dist/releases/base/${release}|" ${corePath}/core/envs/default/core/releases/releases.yaml
+    sed -i "s|../releases/.*/${release}|../releases/dist/releases/base/${release}|" ${corePath}/core/layers/base/releases/releases.yaml
 done || true
 
 templatedReleases=$( grep -Erl "../releases/(dist|local)" ${corePath}/core/templates/)

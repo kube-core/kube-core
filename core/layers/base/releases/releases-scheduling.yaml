@@ -1,4 +1,4 @@
-# cat common/core/envs/default/core/releases/releases-config.yaml | yq e - -P -o json | jq -r '.releases | to_entries[] |  {(.key|tostring): {scheduling:  .value.scheduling}} ' -c | grep -v null | jq -s '{releases: (add)}' | yq e - -P > common/core/envs/default/core/releases/releases-scheduling.yaml
+# cat common/core/layers/base/releases/releases-config.yaml | yq e - -P -o json | jq -r '.releases | to_entries[] |  {(.key|tostring): {scheduling:  .value.scheduling}} ' -c | grep -v null | jq -s '{releases: (add)}' | yq e - -P > common/core/layers/base/releases/releases-scheduling.yaml
 releases:
   container-registry-cleaner:
     scheduling:

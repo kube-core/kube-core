@@ -17,3 +17,8 @@ layers=$(find ${layersPath} -type f -name '*.yaml' -o -name '*.yaml.gotmpl')
 if [[ ! -z "${layers}" ]]; then
   echo "${layers}" | sed 's|.*\/\.\./|./|' | jq -R '[.]' | jq -s 'add' | yq e '.' - -P
 fi
+
+####################
+# Dynamic injection of all extra releases in "./env/default/core/releases/extra"
+# {{ exec "bash" (list "-c" (printf "./scripts/read-extra-releases.sh %s" "default")) | indent 0 | trim }}
+####################
