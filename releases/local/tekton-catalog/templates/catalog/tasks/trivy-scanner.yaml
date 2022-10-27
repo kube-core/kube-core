@@ -1,0 +1,65 @@
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: trivy-scanner
+  labels:
+    app.kubernetes.io/version: "0.1"
+  annotations:
+    tekton.dev/pipelines.minVersion: "0.12.1"
+    tekton.dev/categories: Security
+    tekton.dev/tags: CLI, trivy
+    tekton.dev/displayName: "trivy scanner"
+    tekton.dev/platforms: "linux/amd64"
+spec:
+  description: >-
+    Trivy is a simple and comprehensive scanner for
+    vulnerabilities in container images,file systems
+    ,and Git repositories, as well as for configuration issues.
+
+    This task can be used to scan for vulnenrabilities on the source code
+    in stand alone mode.
+  workspaces:
+    - name: manifest-dir
+  volumes:
+    - name: tekton
+      secret:
+        secretName: tekton
+  params:
+    - name: TRIVY_IMAGE
+      default: docker.io/aquasec/trivy@sha256:418e71f4895cc6f83f824a313e3bbfdd66bd3d9b843678059340361e74f42355
+      description: Trivy scanner image to be used
+    - name: IMAGE_PATH
+      description: Image or Path to be scanned by trivy.
+      type: string
+      default: "nginx:latest"
+    - name: TRIVY_COMMAND
+      description: The trivy command to be executed
+      type: string
+      default: "image"
+    - name: TRIVY_SERVER
+      description: The trivy server 
+      type: string
+
+  steps:
+    - name: trivy-scan
+      image: $(params.TRIVY_IMAGE)
+      workingDir: $(workspaces.manifest-dir.path)
+      volumeMounts:
+        - name: tekton
+          mountPath: /tmp/tekton
+      env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /tmp/tekton/tekton.json
+      script: |
+        #!/usr/bin/env sh
+          cmd="trivy $(params.TRIVY_COMMAND) --trace --no-progress --severity HIGH,CRITICAL --ignore-unfixed --security-checks vuln --server $(params.TRIVY_SERVER) $(params.IMAGE_PATH)"
+          echo "Running trivy task with command below"
+          echo "$cmd"
+          eval "$cmd"
+      args:
+        - "$(params.TRIVY_COMMAND)"
+        - "--no-progress --severity HIGH,CRITICAL --ignore-unfixed --trace --security-checks vuln"
+        - "--server $(params.TRIVY_SERVER)"
+        - "--timeout 15m0s"
+        - "$(params.IMAGE_PATH)"

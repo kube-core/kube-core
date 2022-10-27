@@ -948,6 +948,31 @@ spec:
       - name: data
         workspace: ws
 
+######################################################
+
+{{ if (index .Values.releases "trivy" "enabled") }}
+
+  - name: scan-vulnerabilities
+    taskRef:
+      name: trivy-scanner
+    runAfter:
+    - gradle-build-container-image
+    - maven-build-container-image
+    - builpack-build
+    - buildah-build
+    params:
+      - name: IMAGE_PATH
+        value: $(tasks.detect-tag-to-build.results.TARGET_IMAGE)
+      - name: TRIVY_SERVER
+        value: {{ (index .Values.releases "trivy" "config" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
+    workspaces:
+      - name: manifest-dir
+        workspace: ws
+
+{{ end }}
+
+######################################################
+
   finally:
       - name: notify-build-status
         taskRef:

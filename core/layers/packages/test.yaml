@@ -72,4 +72,9 @@ releases:
     # labels:
     #   package: test
   #   enabled: true
+  trivy:
+    labels:
+      package: test
+    enabled: true
+
 

@@ -291,3 +291,7 @@ releases:
   namespace:
     namespace: cluster-wide-resources
     chart: ../releases/dist/releases/charts/namespace
+
+  trivy:
+    namespace: trivy-server
+    chart: ../releases/dist/releases/charts/trivy

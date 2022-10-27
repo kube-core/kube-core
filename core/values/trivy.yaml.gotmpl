@@ -1,0 +1,15 @@
+ingress:
+  enabled: false
+  ingressClassName: {{ .Values.cluster.common.defaultIngressClass }}
+  annotations: 
+    {{ if .Values.cluster.common.defaultIngressAnnotations }}
+      {{ toYaml .Values.cluster.common.defaultIngressAnnotations | nindent 4 }}
+    {{- end }}
+  hosts:
+    - host: {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
+  path: "/"
+  pathType: Prefix
+  tls:
+    - secretName: {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") | replace "." "-"}}-tls
+      hosts:
+        - {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
