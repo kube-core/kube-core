@@ -81,6 +81,9 @@
       "diff": {
         "description": "Run a diff on a cluster."
       },
+      "gitops": {
+        "description": "Explore and manage your GitOps config"
+      },
       "generate": {
         "description": "Generate various resources."
       },
@@ -103,9 +106,9 @@
     "format": "yarn prettier --write src",
     "postpack": "rm -f oclif.manifest.json",
     "posttest": "yarn lint",
-    "prepack": "yarn build && oclif manifest && oclif readme",
+    "prepack": "yarn build && oclif manifest && oclif readme --multi",
     "test": "mocha --forbid-only \"test/**/*.test.ts\"",
-    "version": "oclif readme && git add README.md"
+    "version": "oclif readme --multi && git add README.md"
   },
   "engines": {
     "node": ">=12.0.0"
