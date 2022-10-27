@@ -1,0 +1,195 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: garden-deploy-projects
+spec:
+  params:
+    - name: projects-repository
+      description: The repository of the cluster to deploy
+      type: string
+    - name: projects-branch
+      description: The branch of the cluster repository to checkout
+      type: string
+      default: develop
+    - name: use-vendir
+      description: Use vendir to retreive repositories
+      type: string
+      default: "false"
+    - name: notify-slack
+      description: Whether or not to notify slack if the pipeline fails
+      type: string
+      default: "false"
+    - name: apps-branch
+      description: The branch of the apps to checkout
+      type: string
+      default: develop
+    - name: garden-env
+      description: The env to use in garden
+      type: string
+      default: dev
+    - name: garden-args
+      description: The args to use in garden
+      type: string
+      default: ""
+    - name: garden-user
+      description: The branch of the garden repository to checkout
+      type: string
+      default: tekton
+    - name: init-project
+      description: A message for the notif
+      type: string
+      default: "true"
+    - name: sleep
+      description: A message for the notif
+      type: string
+      default: "false"
+    - name: garden-repo-subpath
+      description: The garden repository subpath
+      type: string
+      default: "garden"
+    - name: cluster-name
+      description: The name of the cluster to deploy
+      type: string
+      default: dev
+    - name: git-project-name
+      description: Init git project name
+      type: string
+      default: ""
+    - name: cluster-branch
+      description: The branch to checkout
+      type: string
+      default: "develop"
+    - name: garden-branch
+      description: The branch to checkout
+      type: string
+      default: "develop"
+    - name: skip-yalc
+      description: Skip yalc phase
+      type: string
+  
+  workspaces:
+    - name: ws
+  
+  tasks:
+    - name: git-clone-projects
+      taskRef:
+        name: git-clone-branch
+      params:
+        - name: repository
+          value: $(params.projects-repository)
+        - name: branch
+          value: $(params.projects-branch)
+        - name: use-vendir
+          value: $(params.use-vendir)
+      workspaces:
+        - name: input
+          workspace: ws
+        - name: output
+          workspace: ws
+        - name: source
+          workspace: ws
+        - name: data
+          workspace: ws
+    
+    - name: garden-setup
+      runAfter:
+        - git-clone-projects
+      taskRef:
+        name: garden-setup
+      params:
+        - name: cluster-name
+          value: $(params.cluster-name)
+        - name: cluster-repository
+          value: $(params.projects-repository)
+        - name: cluster-branch
+          value: $(params.cluster-branch)
+        - name: garden-branch
+          value: $(params.garden-branch)
+        - name: apps-branch
+          value: $(params.apps-branch)
+        - name: garden-env
+          value: $(params.garden-env)
+        - name: garden-args
+          value: $(params.garden-args)
+        - name: garden-user
+          value: $(params.garden-user)
+        - name: garden-command
+          value: deploy
+        - name: init-project
+          value: $(params.init-project)
+        - name: sleep
+          value: $(params.sleep)
+        - name: skip-yalc
+          value: $(params.skip-yalc)
+        - name: garden-repo-subpath
+          value: $(params.garden-repo-subpath)
+      workspaces:
+        - name: input
+          workspace: ws
+        - name: output
+          workspace: ws
+        - name: source
+          workspace: ws
+        - name: data
+          workspace: ws
+
+    - name: garden-deploy
+      taskRef:
+        name: garden-deploy
+      runAfter:
+        - garden-setup
+      when:
+        - input: $(params.apps-branch)
+          operator: in
+          values:
+            - "develop"
+            - "main"
+      params:
+        - name: apps-branch
+          value: $(params.apps-branch)
+        - name: garden-env
+          value: $(params.garden-env)
+        - name: garden-args
+          value: $(params.garden-args)
+        - name: garden-user
+          value: $(params.garden-user)
+        - name: garden-command
+          value: deploy
+        - name: init-project
+          value: $(params.init-project)
+        - name: sleep
+          value: $(params.sleep)
+        - name: trigger-git-project-name
+          value: $(params.git-project-name)
+        - name: garden-repo-subpath
+          value: $(params.garden-repo-subpath)
+        - name: cluster-name
+          value: $(params.cluster-name)
+      workspaces:
+        - name: input
+          workspace: ws
+        - name: output
+          workspace: ws
+        - name: source
+          workspace: ws
+        - name: data
+          workspace: ws
+
+  finally:
+    - name: notify-slack
+      taskRef:
+        name: send-to-webhook-slack
+      when:
+        - input: "$(tasks.status)"
+          operator: in
+          values:
+            - "Failed"
+        - input: $(params.notify-slack)
+          operator: in
+          values:
+            - "true"
+      params:
+        - name: webhook-secret
+          value: slack-webhook-secret
+        - name: message
+          value: ""
