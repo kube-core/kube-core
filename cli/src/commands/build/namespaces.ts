@@ -13,6 +13,9 @@ export default class BuildNamespaces extends BaseCommand {
   async run(): Promise<void> {
     const { args, argv, flags } = await this.parse(BuildNamespaces);
 
-    await this.utils.runClusterScript("src/gitops/utils/generate-namespaces.sh", argv);
+    await this.utils.runClusterScript(
+      "src/gitops/utils/generate-namespaces.sh",
+      argv
+    );
   }
 }

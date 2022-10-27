@@ -4,10 +4,12 @@ import BaseCommand from "../../../base";
 export default class DevReleasesBuild extends BaseCommand {
   static description = "Builds kube-core dist";
 
-  static examples = [`# Build all Releases
+  static examples = [
+    `# Build all Releases
 $ kube-core dev releases build
 # Build everything that matches the filter (grep)
-$ kube-core dev releases build tekton`];
+$ kube-core dev releases build tekton`,
+  ];
 
   static flags = {};
 

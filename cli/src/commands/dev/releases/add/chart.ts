@@ -7,7 +7,9 @@ import BaseCommand from "../../../../base";
 export default class DevReleasesAddChart extends BaseCommand {
   static description = "Adds a Helm Chart to kube-core.";
 
-  static examples = [`$ kube-core dev releases add chart helm-repository chart-name chart-version`];
+  static examples = [
+    `$ kube-core dev releases add chart helm-repository chart-name chart-version`,
+  ];
 
   static flags = {};
 

@@ -7,7 +7,9 @@ import BaseCommand from "../../../../base";
 export default class DevReleasesAddRelease extends BaseCommand {
   static description = "Adds a Helmfile Release to kube-core.";
 
-  static examples = [`$ kube-core dev releases add release chart-name release-name namespace`];
+  static examples = [
+    `$ kube-core dev releases add release chart-name release-name namespace`,
+  ];
 
   static flags = {};
 
@@ -17,6 +19,9 @@ export default class DevReleasesAddRelease extends BaseCommand {
 
   async run(): Promise<void> {
     const { args, argv, flags } = await this.parse(DevReleasesAddRelease);
-    await this.utils.runCoreScript("commands/dev/releases/add-release.sh", argv);
+    await this.utils.runCoreScript(
+      "commands/dev/releases/add-release.sh",
+      argv
+    );
   }
 }

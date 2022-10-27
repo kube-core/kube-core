@@ -4,29 +4,34 @@ import BaseCommand from "../../base";
 export default class ApplyAll extends BaseCommand {
   static description = "Applies all kube-core config and local config.";
 
-  static examples = [`
+  static examples = [
+    `
     $ kube-core apply:all
     $ kube-core apply:all --dry-run
-  `];
+  `,
+  ];
 
   static flags = {};
 
   static args = [];
 
-  static strict = false
+  static strict = false;
 
   async run(): Promise<void> {
     const { args, argv, flags } = await this.parse(ApplyAll);
-    
-    console.log("Running cluster apply script")
-    const clusterApply = await this.utils.runClusterScript("src/cluster/apply.sh", argv);
-    
-    console.log("Done applying all config")
+
+    console.log("Running cluster apply script");
+    const clusterApply = await this.utils.runClusterScript(
+      "src/cluster/apply.sh",
+      argv
+    );
+
+    console.log("Done applying all config");
 
     // TODO: Decide if we orchestrate this from scripts or from CLI
     // Maybe refactor this, create a ApplyService and use methods from this service instead of copy paste
 
-    // // Applying CRDs 
+    // // Applying CRDs
     // console.log("Applying kube-core and local cluster CRDs (if any)")
     // const coreCrds = await this.utils.runCoreScript("commands/apply/crds.sh", argv);
     // const clusterCrds = await this.utils.runClusterScript("src/cluster/apply/crds.sh", argv);
