@@ -62,7 +62,7 @@ check_requirements
 ## For kube-core development. Lints/formats manifets. To use before a release.
 ## Docs End ##
 
-releasesPath="${corePath}/core/envs/default/core/releases"
+releasesPath="${corePath}/core/layers/base/releases"
 
 releaseFiles=$(find ${releasesPath} -name '*.yaml')
 

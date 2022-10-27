@@ -4,7 +4,7 @@ import path, { dirname } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// console.log(path.join(`${__dirname}`, `./core/envs/default/core/releases/schema.yaml`))
+// console.log(path.join(`${__dirname}`, `./core/layers/base/releases/schema.yaml`))
 // process.exit()
 // console.log(path.join(`${__dirname}`, `./core/releases/vendir-releases.yaml`))
 export default function (plop) {
@@ -244,7 +244,7 @@ const addClusterScriptFileAction = {
 
 const appendReleaseToSchemaAction = {
     type: 'append',
-    path: path.join(`${__dirname}`, `../core/envs/default/core/releases/schema.yaml`),
+    path: path.join(`${__dirname}`, `../core/layers/base/releases/schema.yaml`),
     // pattern: /\# RELEASE/,
     templateFile: 'plop-templates/release-schema-entry.hbs'
 }
@@ -270,7 +270,7 @@ const appendVendirLocalChartAction = {
 
 const appendReleaseAction = {
     type: 'append',
-    path: path.join(`${__dirname}`, `../core/envs/default/core/releases/releases.yaml`),
+    path: path.join(`${__dirname}`, `../core/layers/base/releases/releases.yaml`),
     templateFile: 'plop-templates/release.hbs'
 }
 

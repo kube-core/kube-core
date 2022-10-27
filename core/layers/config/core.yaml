@@ -1,21 +1,19 @@
 # These values must be filled on consumer side !
 core:
-  helmfileName: core
-  ha: false
-  installCRDs: false
-
   packages:
     essentials:
       enabled: false
     logging:
       enabled: false
+    monitoring:
+      enabled: false
+    crossplane:
+      enabled: false
     estafette:
       enabled: false
     tekton:
       enabled: false
-    monitoring:
+    kyverno:
       enabled: false
     istio:
-      enabled: false
-    test:
       enabled: false

@@ -94,7 +94,7 @@ if [[ ! -z "${list}" ]] ; then
 # Looping through releases
 echo "${list}" | while read releasePath;
 do
-    helm lint ${releasePath} -f ${corePath}/core/envs/default/cluster.yaml
+    helm lint ${releasePath} -f ${corePath}/core/layers/base/config/cluster.yaml
 done
 fi
 echo "Done linting !"

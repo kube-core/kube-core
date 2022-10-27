@@ -17,3 +17,9 @@ layers=$(find ${layersPath} -type f -name '*.yaml' -o -name '*.yaml.gotmpl')
 if [[ ! -z "${layers}" ]]; then
   echo "${layers}" | sed 's|.*\/\.\./|./|' | jq -R '[.]' | jq -s 'add' | yq e '.' - -P
 fi
+
+
+####################
+# Dynamic injection of all layers in "./env/default/core/config"
+# {{ exec "bash" (list "-c" (printf "./scripts/read-layers.sh %s" "default")) | indent 0 | trim }}
+####################

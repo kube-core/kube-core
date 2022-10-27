@@ -62,7 +62,7 @@ check_requirements
 ## For kube-core releases development. Switches local releases references to dist releases in kube-core.
 ## Docs End ##
 
-releasesPath="${corePath}/core/envs/default/core/releases"
+releasesPath="${corePath}/core/layers/base/config/core/releases"
 coreReleasesPath=${corePath}/releases
 
 # cat ${corePath}/envs/default/core/releases/releases.yaml | sed 's|../releases/dist/releases/charts/|../releases/local/|'
@@ -72,11 +72,11 @@ externalReleases=$(cat ${corePath}/vendir-releases.yaml | grep "name:" | awk '{ 
 echo "Linking local & external kube-core releases for prod..."
 
 echo "${localReleases}" | while read release; do
-    sed -i "s|../releases/.*/${release}|../releases/dist/releases/charts/${release}|" ${corePath}/core/envs/default/core/releases/releases.yaml
+    sed -i "s|../releases/.*/${release}|../releases/dist/releases/charts/${release}|" ${corePath}/core/layers/base/releases/releases.yaml
 done || true
 
 echo "${externalReleases}" | while read release; do
-    sed -i "s|../releases/.*/${release}|../releases/dist/releases/charts/${release}|" ${corePath}/core/envs/default/core/releases/releases.yaml
+    sed -i "s|../releases/.*/${release}|../releases/dist/releases/charts/${release}|" ${corePath}/core/layers/base/releases/releases.yaml
 done || true
 
 templatedReleases=$( grep -Erl "../releases/(dist|local)" ${corePath}/core/templates/)
