@@ -1,0 +1,6 @@
+{{- $num := . }}
+
+{{- if lt $num 10 }}
+{{- tpl (readFile "./readfiles.functions.yaml.gotmpl") (add 1 $num) }}
+{{- . -}}
+{{- end }}

@@ -1,0 +1,13 @@
+{{- $path := .path -}}
+{{- $readfilesPath := .readfilesPath -}}
+{{- $entries := readDirEntries $path -}}
+{{- if $entries -}}
+{{- range $item := $entries -}}
+{{- $itemPath := (printf "%s/%s" $path $item.Name) -}}
+{{- if $item.IsDir -}}
+{{- tpl (readFile $readfilesPath) (dict "path" $itemPath "readfilesPath" $readfilesPath) -}}
+{{- else -}}
+{{- $itemPath -}};
+{{- end -}}
+{{- end -}}
+{{- end -}}
