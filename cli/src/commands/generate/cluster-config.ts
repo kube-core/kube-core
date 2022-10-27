@@ -2,8 +2,7 @@ import { Command, Flags } from "@oclif/core";
 import BaseCommand from "../../base";
 
 export default class GenerateClusterConfig extends BaseCommand {
-  static description =
-    "Generates cluster-config.yaml from core values.";
+  static description = "Generates cluster-config.yaml from core values.";
 
   static examples = [`$ kube-core generate:cluster-config`];
 

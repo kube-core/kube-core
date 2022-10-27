@@ -17,6 +17,9 @@ export default class DevReleasesAddLocalChart extends BaseCommand {
 
   async run(): Promise<void> {
     const { args, argv, flags } = await this.parse(DevReleasesAddLocalChart);
-    await this.utils.runCoreScript("commands/dev/releases/add-local-chart.sh", argv);
+    await this.utils.runCoreScript(
+      "commands/dev/releases/add-local-chart.sh",
+      argv
+    );
   }
 }

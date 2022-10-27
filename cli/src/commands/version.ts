@@ -14,6 +14,6 @@ export default class ValuesCluster extends BaseCommand {
 
   async run(): Promise<void> {
     const { args, argv, flags } = await this.parse(ValuesCluster);
-    this.log(this.config.pjson.version)    
+    this.log(this.config.pjson.version);
   }
 }

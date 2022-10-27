@@ -12,6 +12,6 @@ export default class BuildCrds extends BaseCommand {
 
   async run(): Promise<void> {
     const { args, argv, flags } = await this.parse(BuildCrds);
-    console.log('Not implemented')
+    console.log("Not implemented");
   }
 }

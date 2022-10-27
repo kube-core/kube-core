@@ -2,8 +2,7 @@ import { Command, Flags } from "@oclif/core";
 import BaseCommand from "../../base";
 
 export default class ScriptsList extends BaseCommand {
-  static description =
-    "Lists all kube-core scripts";
+  static description = "Lists all kube-core scripts";
 
   static examples = [`$ kube-core scripts:list`];
 
