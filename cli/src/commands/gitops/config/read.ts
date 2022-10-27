@@ -52,14 +52,14 @@ $ kube-core-dev gitops config read '.items[] | select(.kind=="Namespace") | .met
       // If arg is given
       if (argv.length > 0) {
         const filter = argv.join(" ")
-        const jqFilterResult = await this.utils.cliStream('jq', ["-C", filter], {input: JSON.stringify(config), maxBuffer: 300_000_000})
+        const jqFilterResult = await this.utils.cliStream('jq', [filter], {input: JSON.stringify(config), maxBuffer: 300_000_000})
         console.log(jqFilterResult.stdout)
       } else {
         if(flags.output === "yaml") {
-          const prettyData = await this.utils.cliStream('yq', ["-P", "-C"], {input: YAML.stringify(config), maxBuffer: 300_000_000})
+          const prettyData = await this.utils.cliStream('yq', [], {input: YAML.stringify(config), maxBuffer: 300_000_000})
           console.log(prettyData.stdout)
         } else if (flags.output === "json") {
-          const prettyData = await this.utils.cliStream('jq', ["-C"], {input: JSON.stringify(config), maxBuffer: 300_000_000})
+          const prettyData = await this.utils.cliStream('jq', [], {input: JSON.stringify(config), maxBuffer: 300_000_000})
           console.log(prettyData.stdout)
         }
       }
