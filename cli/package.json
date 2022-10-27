@@ -27,6 +27,7 @@
     "change-case": "^4.1.2",
     "execa": "5.1.1",
     "fuzzyset": "^1.0.7",
+    "loadash": "^1.0.0",
     "lookpath": "^1.2.2",
     "node-jq": "^2.3.4",
     "node-plop": "^0.31.0",
