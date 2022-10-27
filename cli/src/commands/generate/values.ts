@@ -5,10 +5,9 @@ import YAML from 'yaml'
 import * as fs from 'fs-extra'
 import merge from 'lodash.merge'
 export default class GenerateValues extends BaseCommand {
-  static description =
-    "Work in progress feature. Generates values files for a consumer cluster.";
+  static description = "Quickly generate layers from the core and merges with your local config if already existing";
 
-  static examples = [`$ kube-core generate:values`];
+  static examples = [`$ kube-core generate values`];
 
   static flags = {};
 
@@ -31,6 +30,7 @@ export default class GenerateValues extends BaseCommand {
       let coreFileData = YAML.parse((await fs.readFile(file, "utf8")))
       let mergedData = {}
 
+      // If layer exists locally, we merge both
       if (this.utils.fileExists(targetPath)) {
         // console.log(`File exists: ${targetPath}`)
         let currentFileData = YAML.parse((await fs.readFile(targetPath, "utf8")))
@@ -44,15 +44,17 @@ export default class GenerateValues extends BaseCommand {
       await fs.writeFile(targetPath, YAML.stringify(mergedData))
     }
 
-
     for(let file of releaseFiles) {
       let {name, ext} = upath.parse(file)
       let targetPath = upath.join(localConfigDir, "core/releases", `${name}${ext}`)
       let coreFileData = YAML.parse((await fs.readFile(file, "utf8")))
       let mergedData = {}
 
+      // If layer exists locally, we merge both
       if (this.utils.fileExists(targetPath)) {
+        // console.log(`File exists: ${targetPath}`)
         let currentFileData = YAML.parse((await fs.readFile(targetPath, "utf8")))
+        console.info(`Merging: kube-core:${file.replace(this.corePath, '')}\t<- local:${targetPath.replace(this.clusterConfigDirPath, '')}`)
         mergedData = merge(coreFileData, currentFileData)
         // console.log(mergedData)
       } else {
@@ -61,6 +63,5 @@ export default class GenerateValues extends BaseCommand {
       await this.utils.mkdir(upath.parse(targetPath).dir)
       await fs.writeFile(targetPath, YAML.stringify(mergedData))
     }
-
   }
 }
