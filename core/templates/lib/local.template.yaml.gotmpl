@@ -1,24 +1,31 @@
 {{ $values := .Values }}
-{{ $readfilesPath := "./lib/readfiles.functions.yaml.gotmpl" }}
+{{ $helmfileName := "local" }}
+{{ $helmfilePath := (printf "./%s.helmfile.yaml.gotmpl" $helmfileName) }}
 {{ if (or (env "KUBE_CORE_DEV") ($values | getOrNil "devMode")) }}
-{{ $readfilesPath = $values.org.core.lib.functions.readfiles.localPath }}
+{{ $helmfilePath = (printf "KUBE_CORE_HELMFILES_HELMFILE_NAME_LOCAL_PATH" ) }}
 {{ else }}
-{{ $readfilesPath = $values.org.core.lib.functions.readfiles.remotePath }}
+{{ $remotePath := ($values | getOrNil "org" | getOrNil "core" | getOrNil "helmfiles" | getOrNil $helmfileName | getOrNil "remotePath") }}
+{{ $version := ($values | getOrNil "org" | getOrNil "core" | getOrNil "version") }}
+{{ $remote := ($values | getOrNil "org" | getOrNil "core" | getOrNil "remotePath") }}
+{{ if $remotePath }}
+{{ $helmfilePath = $remotePath }}
+{{ else if (and $version $remote) }}
+{{ $helmfilePath = (printf "%s/core/%s.yaml.gotmpl?ref=%s" $remote $helmfileName $version) }}
+{{ else }}
+{{ $helmfilePath = (printf "KUBE_CORE_HELMFILES_HELMFILE_NAME_REMOTE_PATH") }}
+{{ end }}
 {{ end }}
 helmfiles:
-- path: {{ if (or (env "KUBE_CORE_DEV") ($values | getOrNil "devMode")) }}{{ $values.org.core.helmfiles.local.localPath }}{{ else }}{{ $values.org.core.helmfiles.local.remotePath }}{{ end }}
+- path: {{ $helmfilePath }}
   values:
   # Core Values
+  {{ if $values | getOrNil "org" | getOrNil "core" | getOrNil "values" }}
   {{ range $values.org.core.values }}
   - {{ . }}
   {{ end }}
-  {{ $entries := readDirEntries "../values/core/" }}
-  {{ $clusterWideManifests := false }}
-  {{ range $item := $entries }}
-  {{ if and (contains ".yaml" $item.Name) (not $item.IsDir) }}
-  - ../values/core/{{ $item.Name }}
   {{ end }}
-  {{ end }}
+  {{ tpl (readFile "./lib/printfiles.functions.yaml.gotmpl") (dict "path" "../values/core") | nindent 2 }}
+
 
   # Injecting cluster core config
   - core:
@@ -42,13 +49,8 @@ helmfiles:
         disableCoreValuesLayer: true
         namespace: {{ $item.Name }}
         values:
-          manifests:
-          {{ $files := ((tpl (readFile $readfilesPath) (dict "path" (printf "../local/releases/%s" $item.Name) "readfilesPath" $readfilesPath)) | split ";") }}
-          {{ range $files }}
-          {{ if . }}
-          - {{ readFile . | nindent 12 }}
-          {{ end }}
-          {{ end }}
+          manifests: {{ ((tpl (readFile "./lib/readfilesdata.functions.yaml.gotmpl") (dict "path" (printf "../local/releases/%s" $item.Name) "values" $values))) | nindent 10 }}
+
       {{ else }}
       {{ $clusterWideManifests = true }}
       {{ end }}
@@ -87,13 +89,7 @@ helmfiles:
         disableCoreValuesLayer: true
         namespace: {{ $item.Name }}
         values:
-          manifests:
-          {{ $files := ((tpl (readFile $readfilesPath) (dict "path" (printf "../local/configmaps-releases/%s/configmaps" $item.Name) "readfilesPath" $readfilesPath)) | split ";") }}
-          {{ range $files }}
-          {{ if . }}
-          - {{ readFile . | nindent 12 }}
-          {{ end }}
-          {{ end }}
+          manifests: {{ ((tpl (readFile "./lib/readfilesdata.functions.yaml.gotmpl") (dict "path" (printf  "../local/configmaps-releases/%s/configmaps" $item.Name) "values" $values))) | nindent 10 }}
       {{ else }}
       {{ $clusterWideManifests = true }}
       {{ end }}
@@ -132,13 +128,7 @@ helmfiles:
         disableCoreValuesLayer: true
         namespace: {{ $item.Name }}
         values:
-          manifests:
-          {{ $files := ((tpl (readFile $readfilesPath) (dict "path" (printf "../local/secrets-releases/%s/secrets" $item.Name) "readfilesPath" $readfilesPath)) | split ";") }}
-          {{ range $files }}
-          {{ if . }}
-          - {{ readFile . | nindent 12 }}
-          {{ end }}
-          {{ end }}
+          manifests: {{ ((tpl (readFile "./lib/readfilesdata.functions.yaml.gotmpl") (dict "path" (printf  "../local/secrets-releases/%s/secrets" $item.Name) "values" $values))) | nindent 10 }}
         transformers:
         - apiVersion: builtin
           kind: AnnotationsTransformer

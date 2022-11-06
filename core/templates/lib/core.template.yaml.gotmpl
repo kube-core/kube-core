@@ -1,31 +1,35 @@
 {{ $values := .Values }}
-{{ $readfilesPath := "./lib/readfiles.functions.yaml.gotmpl" }}
-{{ $coreHelmfilePath := "./cluster.helmfile.yaml.gotmpl" }}
+{{ $helmfileName := "core" }}
+{{ $helmfilePath := (printf "./%s.helmfile.yaml.gotmpl" $helmfileName) }}
 {{ if (or (env "KUBE_CORE_DEV") ($values | getOrNil "devMode")) }}
-{{ $readfilesPath = $values.org.core.lib.functions.readfiles.localPath }}
-{{ $coreHelmfilePath = $values.org.core.helmfiles.core.localPath }}
+{{ $helmfilePath = (printf "KUBE_CORE_HELMFILES_HELMFILE_NAME_LOCAL_PATH" ) }}
 {{ else }}
-{{ $readfilesPath = $values.org.core.lib.functions.readfiles.remotePath }}
-{{ $coreHelmfilePath = $values.org.core.helmfiles.core.remotePath }}
+{{ $remotePath := ($values | getOrNil "org" | getOrNil "core" | getOrNil "helmfiles" | getOrNil $helmfileName | getOrNil "remotePath") }}
+{{ $version := ($values | getOrNil "org" | getOrNil "core" | getOrNil "version") }}
+{{ $remote := ($values | getOrNil "org" | getOrNil "core" | getOrNil "remotePath") }}
+{{ if $remotePath }}
+{{ $helmfilePath = $remotePath }}
+{{ else if (and $version $remote) }}
+{{ $helmfilePath = (printf "%s/core/%s.yaml.gotmpl?ref=%s" $remote $helmfileName $version) }}
+{{ else }}
+{{ $helmfilePath = (printf "KUBE_CORE_HELMFILES_HELMFILE_NAME_REMOTE_PATH") }}
+{{ end }}
 {{ end }}
 helmfiles:
-- path: {{ $coreHelmfilePath }}
+- path: {{ $helmfilePath }}
   values:
   # Core Values
+  {{ if $values | getOrNil "org" | getOrNil "core" | getOrNil "values" }}
   {{ range $values.org.core.values }}
   - {{ . }}
   {{ end }}
-  {{ $entries := readDirEntries "../values/core/" }}
-  {{ $clusterWideManifests := false }}
-  {{ range $item := $entries }}
-  {{ if and (contains ".yaml" $item.Name) (not $item.IsDir) }}
-  - ../values/core/{{ $item.Name }}
   {{ end }}
-  {{ end }}
+  {{ tpl (readFile "./lib/printfiles.functions.yaml.gotmpl") (dict "path" "../values/core") | nindent 2 }}
+
   # Injecting applications core config
   - core:
       helmfileName: core
       namespacesEnabled: true
-  - servicesList: {{ toYaml .Values.services | nindent 6 }}
-  - applicationsList: {{ toYaml .Values.applications | nindent 6 }}
-  - environmentsList: {{ toYaml .Values.environments | nindent 6 }}
+  - servicesList: {{ toYaml $values.services | nindent 6 }}
+  - applicationsList: {{ toYaml $values.applications | nindent 6 }}
+  - environmentsList: {{ toYaml $values.environments | nindent 6 }}

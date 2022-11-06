@@ -1,5 +1,5 @@
 {{- $path := .path -}}
-{{- $readfilesPath := "./lib/readfiles.functions.yaml.gotmpl" -}}
+{{- $readfilesPath := "./lib/printfiles.functions.yaml.gotmpl" -}}
 {{- $entries := readDirEntries $path -}}
 {{- if $entries -}}
 {{- range $item := $entries -}}
@@ -7,10 +7,12 @@
 {{- if $item.IsDir -}}
 {{- tpl (readFile $readfilesPath) (dict "path" $itemPath) -}}
 {{- else -}}
+{{- if $itemPath -}}
 {{- $fileData := (readFile $itemPath) -}}
-{{- if (and (not (eq $fileData "")) (contains ".yaml" $item.Name)) -}}
-{{- $itemPath -}};
+{{ if (and (not (eq $fileData "")) (contains ".yaml" $item.Name)) }}
+- {{ $itemPath }}
 {{ end }}
+{{- end -}}
 {{- end -}}
 {{- end -}}
 {{- end -}}
