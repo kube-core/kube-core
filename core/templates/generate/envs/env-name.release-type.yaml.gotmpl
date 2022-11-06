@@ -1,0 +1,10 @@
+environments:
+  default:
+    values:
+    {{ tpl (readFile "./lib/printfiles.functions.yaml.gotmpl") (dict "path" "../values/platform") | nindent 4 }}
+---
+{{ tpl (readFile "./commons.yaml.gotmpl" ) . }}
+{{ $values := .Values }}
+{{ $env := "KUBE_CORE_ENV_NAME" }}
+{{ $type := "KUBE_CORE_RELEASE_TYPE" }}
+{{ tpl (readFile "./lib/env.template.yaml.gotmpl") (dict "Values" .Values "env" $env "type" $type) }}
