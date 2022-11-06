@@ -56,7 +56,7 @@ export default abstract class extends Command {
       `${require.main.filename}/../../scripts`
     )}`;
     this.corePath = `${upath.resolve(`${this.scriptsPath}/../../`)}`;
-    this.coreRemotePath = 'https://github.com/neo9/kube-core.git'
+    this.coreRemotePath = "https://github.com/neo9/kube-core.git";
     let scriptPath = `${upath.join(
       this.scriptsPath,
       "src/utils/read-core-path.sh"

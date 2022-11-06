@@ -2,8 +2,6 @@
 git:
   tagName: "v${version}"
   commitMessage: "release: v${version}"
-  # requireBranch:
-  # - main
   requireCommits: true
   requireCleanWorkingDir: false
   addUntrackedFiles: false
@@ -11,20 +9,7 @@ git:
   changelog: |-
     npx auto-changelog -o CHANGELOG.md --commit-limit false --remote=github -u --hide-credit --release-summary --latest-version ${version} --template=compact
 
-gitlab:
-  releases: true
-  # releaseNotes: generate-release-notes.sh ${latestVersion} ${version}
-  # assets: ["dist/bin/*"]
-
-
 npm: false
-  # publish: false
 
 hooks:
   "after:bump": 'sh -c "kube-core scripts:exec dev_utils_bump ${version}" && npx auto-changelog -o CHANGELOG.md --commit-limit false --remote=github -u --hide-credit --release-summary --latest-version ${version} --template=compact'
-
-# plugins:
-#   "@release-it/bumper":
-#     out:
-#       file: cli/package.json
-#       path: version
