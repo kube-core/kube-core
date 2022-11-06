@@ -40,7 +40,7 @@ export default class Dev extends BaseCommand {
 
       const test = await this.utils.jq(filter, data, options);
       // console.log(test);
-      console.log(this.corePath)
+      console.log(this.corePath);
       return;
     } else {
       console.warn("Aborted. This command only works in cluster context.");

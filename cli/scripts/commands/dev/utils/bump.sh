@@ -67,7 +67,7 @@ currentVersion=$(cat "${corePath}/cli/package.json" | jq '.version')
 
 # TODO: Check if we want to keep track of all patches in metadata
 # yq -i e '.core.version |= "v'${nextVersion}'"' ${corePath}/core/envs/globals.yaml
-yq -i e '.core.version |= "v1.0.0"' ${corePath}/core/envs/globals.yaml
+yq -i e '.core.version |= "v1.0.0"' ${corePath}/core/layers/base/config/globals.yaml
 
 cat ${corePath}/cli/package.json | jq '.version |= "'"${nextVersion}"'"' | sed 's/\r$//' > ${coreTmpFolder}/package.json.tmp
 mv -f ${coreTmpFolder}/package.json.tmp  ${corePath}/cli/package.json
