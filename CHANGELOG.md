@@ -2,8 +2,57 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.7.0](https://github.com/neo9/kube-core/compare/v0.7.0...v0.7.0)
+
+- cli/commands: Reworked generate:helmfiles [`411e082`](https://github.com/neo9/kube-core/commit/411e08213b074725b23e2e38f53aeadd04f24775)
+- core/templates: Reworked templates [`be3aba0`](https://github.com/neo9/kube-core/commit/be3aba09c1edf93ff454b6e665a84996de63f604)
+- cli: Preparing release [`7c836ae`](https://github.com/neo9/kube-core/commit/7c836aeb8e1316c1575baea659b74cb081230fb8)
+
+#### [v0.7.0](https://github.com/neo9/kube-core/compare/v0.6.8...v0.7.0)
+
+> 4 November 2022
+
+- cli/commands: Introduced formatting [`c53aad8`](https://github.com/neo9/kube-core/commit/c53aad820d52a5913b76517980432825b5d99ba4)
+- cli/docs: Updated docs generation [`3acd3c6`](https://github.com/neo9/kube-core/commit/3acd3c68700d79d84f9a7a2cc520e140d0a2667e)
+- core/layers: Reworked all layers [`08ce5c9`](https://github.com/neo9/kube-core/commit/08ce5c95fb37197b872aa81e37e4c34823be1d05)
+- cli/package: Added some libs [`499fe7a`](https://github.com/neo9/kube-core/commit/499fe7a400d9df8f5fe75d888f9c22fa49482d48)
+- core/templates: Added templates for generate command [`63bebbc`](https://github.com/neo9/kube-core/commit/63bebbc3da4b4ab070dfb9c23a3804711a833d16)
+- core/templates: Added templates lib in core [`c6dd929`](https://github.com/neo9/kube-core/commit/c6dd929b8c61d95c124dce801dad0539c009689d)
+- cli/commands: Added commands: gitops config find|read|search [`b70dbfe`](https://github.com/neo9/kube-core/commit/b70dbfeb96fde4d5c7d7521c03521f91693baa56)
+- cli/commands: Removed some unused files [`6d218e6`](https://github.com/neo9/kube-core/commit/6d218e6ea9fef9ac111aa5dc6e928b58322e66ea)
+- cli/commands: Added experimental hot-reload command [`c99a95a`](https://github.com/neo9/kube-core/commit/c99a95a9830795578fdfff5e76fede388d260a0f)
+- cli/utils: Added some functions to utils [`686b735`](https://github.com/neo9/kube-core/commit/686b7354e98b6fe20ddfbb45e5fef15b9dd03ca0)
+- cli/commands: Added kube-core gitops config diff [`42b3b71`](https://github.com/neo9/kube-core/commit/42b3b71f891fc7c7d7e83104c7b0459e9bf0042a)
+- cli/scripts: Removed gitops/process.sh [`f7d3206`](https://github.com/neo9/kube-core/commit/f7d32068fc5b803dd3f4cf1b7e4e2702564ad532)
+- cli/commands: Updated config search to use index if available [`188a0e4`](https://github.com/neo9/kube-core/commit/188a0e43bfad0258387232ed4c567eda1f048cb6)
+- cli/scripts: Removed slicing and added code from removed gitops/process.sh in cluster/process.sh [`e6886f5`](https://github.com/neo9/kube-core/commit/e6886f53d987d5a34c4f1bfcfc6360c93a503476)
+- cli/scripts: Reworked build workflow to start by local config first and then proceed with helmfile templating [`fd89cf6`](https://github.com/neo9/kube-core/commit/fd89cf69d729ec066555ed6ec8b9688dd466637e)
+- cli/commands: Added kube-core gitops config index [`e346a1f`](https://github.com/neo9/kube-core/commit/e346a1f05c4dbbc771f15f90c3d71a94ddeac0b5)
+- cli/commands: Updated some docs [`98308f2`](https://github.com/neo9/kube-core/commit/98308f2c8fac523af8653527b8f404bfe5b95a73)
+- cli/commands: Added command generate helmfiles [`cc3e9f7`](https://github.com/neo9/kube-core/commit/cc3e9f77a887c292a68656e28893e0819f31aa05)
+- cli/commands: Updated generate values to allow merge from core over local [`7257809`](https://github.com/neo9/kube-core/commit/7257809cd7278bc23b02a65001ec1732e575f827)
+- release: v0.7.0 [`1ff81fd`](https://github.com/neo9/kube-core/commit/1ff81fddc7fbec3c74326eede4790b85b622f307)
+- cli/base: Migrated some common logic in base command class [`ff63f05`](https://github.com/neo9/kube-core/commit/ff63f05c17ea39e055712ba297b1a45f7ecfce17)
+- cli/scripts: Moved slicing to cluster/build.sh [`87c1042`](https://github.com/neo9/kube-core/commit/87c1042f06320b49788f531f63f1739d700f2444)
+- cli/commands: Added properties to get current cluster resources [`d37dd2f`](https://github.com/neo9/kube-core/commit/d37dd2f63478edbb50be056889a224a84b98bece)
+- core/releases: Added startupProbe to secret-generator release [`b067c08`](https://github.com/neo9/kube-core/commit/b067c085f776e9e52e1519ad533d7b3b721db5f8)
+- cli/scripts: Added original secret metadata on sealed version [`e9bd8e5`](https://github.com/neo9/kube-core/commit/e9bd8e57b923ed7ffa812b3714685d62ab5772f8)
+- cli/commands: Added comments and logs on generate values [`8adca4d`](https://github.com/neo9/kube-core/commit/8adca4d83ebacbecbff2940e10bfa235062707e7)
+- cli/lib: Replaced js-yaml by yaml [`bec9983`](https://github.com/neo9/kube-core/commit/bec998306b9892eb3b44ff4e4f104f631dd4686c)
+- core/templates: Added clusterRepositories support [`6b5e25a`](https://github.com/neo9/kube-core/commit/6b5e25ab40158ab339c77664708607df54cf19e1)
+- cli/commands: Removed color output on gitops config read as it breaks post-processing [`1053068`](https://github.com/neo9/kube-core/commit/1053068ee181b8792fbd4067002b324aadb144dc)
+- cli/libs: Added loadash [`61566cb`](https://github.com/neo9/kube-core/commit/61566cb194d4a4b5f927581a20fe8684b1628c4c)
+- core/templates: Fixed helmfileName value for lib templates [`050b289`](https://github.com/neo9/kube-core/commit/050b289e242873389eba22f57a5f062ff7cd68d4)
+- cli/scripts: Fixed kube-core build all --filter [`88a38fd`](https://github.com/neo9/kube-core/commit/88a38fd35cf96ff135d8d5dcb078d7d03212ef4f)
+- docker: Added gron v0.7.1 [`cedb4e0`](https://github.com/neo9/kube-core/commit/cedb4e05a4dabef7fc860e49d4a43ddcac2597ad)
+- releases/n9-api: Removed kubeVersion constraint [`2f1cde0`](https://github.com/neo9/kube-core/commit/2f1cde0645a9270487b9c7a5c565dfffcf6ac70d)
+- cli/scripts: Added toggle in cluster-config to  autoseal secrets [`c074391`](https://github.com/neo9/kube-core/commit/c0743919be7d9309cd7b6499458be00d6d87043b)
+
 #### [v0.6.8](https://github.com/neo9/kube-core/compare/v0.6.7...v0.6.8)
 
+> 21 October 2022
+
+- release: v0.6.8 [`5a5a722`](https://github.com/neo9/kube-core/commit/5a5a7225134a35135c8dca49c3a066b92bbdd7f3)
 - core/templates: Added chartVersion support in release template [`db58c5b`](https://github.com/neo9/kube-core/commit/db58c5b4ae4249a31ead6c94ef0775fed117feb1)
 
 #### [v0.6.7](https://github.com/neo9/kube-core/compare/v0.6.6...v0.6.7)
