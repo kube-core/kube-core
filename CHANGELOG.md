@@ -2,23 +2,28 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
-#### [v0.7.0](https://github.com/neo9/kube-core/compare/v0.7.0...v0.7.0)
+#### [v0.7.1](https://github.com/neo9/kube-core/compare/v0.7.0...v0.7.1)
 
-- cli/commands: Reworked generate:helmfiles [`411e082`](https://github.com/neo9/kube-core/commit/411e08213b074725b23e2e38f53aeadd04f24775)
-- core/templates: Reworked templates [`be3aba0`](https://github.com/neo9/kube-core/commit/be3aba09c1edf93ff454b6e665a84996de63f604)
-- cli: Preparing release [`7c836ae`](https://github.com/neo9/kube-core/commit/7c836aeb8e1316c1575baea659b74cb081230fb8)
+- cli/commads: Added some generation capabilities for values and local folders [`361d320`](https://github.com/neo9/kube-core/commit/361d320a83294711be6f740adbc7d257285f4469)
+- core/templates: Added checks to only generate namespaces from enabled core releases [`f766ea8`](https://github.com/neo9/kube-core/commit/f766ea8cbb6fd7ce229516fc4b4ce000a46331cb)
+- cli/docs: Updated docs [`bedaa9c`](https://github.com/neo9/kube-core/commit/bedaa9c13a906f324ab7845c92f591b237bddcb4)
+- cli/commands: Fixed gitops:config:diff checks on filtered data [`ed281eb`](https://github.com/neo9/kube-core/commit/ed281ebb9cf9aff989d62946c9c94b6ec06e26ba)
+- core/layers: Changed default config of ingress-access-operator [`761da4a`](https://github.com/neo9/kube-core/commit/761da4aa431eb284176564d9a57d0ea8c2208163)
 
 #### [v0.7.0](https://github.com/neo9/kube-core/compare/v0.6.8...v0.7.0)
 
-> 4 November 2022
+> 7 November 2022
 
 - cli/commands: Introduced formatting [`c53aad8`](https://github.com/neo9/kube-core/commit/c53aad820d52a5913b76517980432825b5d99ba4)
 - cli/docs: Updated docs generation [`3acd3c6`](https://github.com/neo9/kube-core/commit/3acd3c68700d79d84f9a7a2cc520e140d0a2667e)
 - core/layers: Reworked all layers [`08ce5c9`](https://github.com/neo9/kube-core/commit/08ce5c95fb37197b872aa81e37e4c34823be1d05)
 - cli/package: Added some libs [`499fe7a`](https://github.com/neo9/kube-core/commit/499fe7a400d9df8f5fe75d888f9c22fa49482d48)
+- cli/commands: Reworked generate:helmfiles [`411e082`](https://github.com/neo9/kube-core/commit/411e08213b074725b23e2e38f53aeadd04f24775)
+- core/templates: Reworked templates [`be3aba0`](https://github.com/neo9/kube-core/commit/be3aba09c1edf93ff454b6e665a84996de63f604)
 - core/templates: Added templates for generate command [`63bebbc`](https://github.com/neo9/kube-core/commit/63bebbc3da4b4ab070dfb9c23a3804711a833d16)
 - core/templates: Added templates lib in core [`c6dd929`](https://github.com/neo9/kube-core/commit/c6dd929b8c61d95c124dce801dad0539c009689d)
 - cli/commands: Added commands: gitops config find|read|search [`b70dbfe`](https://github.com/neo9/kube-core/commit/b70dbfeb96fde4d5c7d7521c03521f91693baa56)
+- cli: Preparing release [`7c836ae`](https://github.com/neo9/kube-core/commit/7c836aeb8e1316c1575baea659b74cb081230fb8)
 - cli/commands: Removed some unused files [`6d218e6`](https://github.com/neo9/kube-core/commit/6d218e6ea9fef9ac111aa5dc6e928b58322e66ea)
 - cli/commands: Added experimental hot-reload command [`c99a95a`](https://github.com/neo9/kube-core/commit/c99a95a9830795578fdfff5e76fede388d260a0f)
 - cli/utils: Added some functions to utils [`686b735`](https://github.com/neo9/kube-core/commit/686b7354e98b6fe20ddfbb45e5fef15b9dd03ca0)
@@ -31,7 +36,7 @@ All notable changes to this project will be documented in this file. Dates are d
 - cli/commands: Updated some docs [`98308f2`](https://github.com/neo9/kube-core/commit/98308f2c8fac523af8653527b8f404bfe5b95a73)
 - cli/commands: Added command generate helmfiles [`cc3e9f7`](https://github.com/neo9/kube-core/commit/cc3e9f77a887c292a68656e28893e0819f31aa05)
 - cli/commands: Updated generate values to allow merge from core over local [`7257809`](https://github.com/neo9/kube-core/commit/7257809cd7278bc23b02a65001ec1732e575f827)
-- release: v0.7.0 [`1ff81fd`](https://github.com/neo9/kube-core/commit/1ff81fddc7fbec3c74326eede4790b85b622f307)
+- release: v0.7.0 [`48c8ede`](https://github.com/neo9/kube-core/commit/48c8ede3680318e2d718a611453c7dc1c1cc7708)
 - cli/base: Migrated some common logic in base command class [`ff63f05`](https://github.com/neo9/kube-core/commit/ff63f05c17ea39e055712ba297b1a45f7ecfce17)
 - cli/scripts: Moved slicing to cluster/build.sh [`87c1042`](https://github.com/neo9/kube-core/commit/87c1042f06320b49788f531f63f1739d700f2444)
 - cli/commands: Added properties to get current cluster resources [`d37dd2f`](https://github.com/neo9/kube-core/commit/d37dd2f63478edbb50be056889a224a84b98bece)
