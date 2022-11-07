@@ -92,7 +92,7 @@ $ kube-core gitops config diff --include "preproduction|production" --exclude na
 
       // --exclude
       if (flags.exclude) {
-        if (currentFilteredData.stdout && nextFilteredData.stdout) {
+        if (currentFilteredData && nextFilteredData) {
           currentFilteredData = await this.utils.cliStream(
             "grep",
             ["-vE", flags.exclude],
@@ -123,7 +123,7 @@ $ kube-core gitops config diff --include "preproduction|production" --exclude na
 
         // Check if we already filtered with include or exclude
         if (currentFilteredData) {
-          if (currentFilteredData.stdout && nextFilteredData.stdout) {
+          if (currentFilteredData && nextFilteredData) {
             currentInput = currentFilteredData.stdout;
             nextInput = nextFilteredData.stdout;
           }
