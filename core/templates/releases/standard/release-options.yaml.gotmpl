@@ -181,6 +181,19 @@
       kind: Ingress
       create: true
   {{- end }}
+  {{- if .item.options.injectNamespaceOauth2ProxyOnIngress }}
+  - apiVersion: builtin
+    kind: AnnotationsTransformer
+    metadata:
+      name: inject-oauth2-proxy-on-ingress
+    annotations:
+      nginx.ingress.kubernetes.io/auth-url: {{ printf "https://%s.%s.%s/oauth2/auth" (index $values.releases "oauth2-proxy" "config" "ingress" "subdomain") $releaseNamespace ( $values.cluster.config.domain ) | quote }}
+      nginx.ingress.kubernetes.io/auth-signin: {{ printf "https://%s.%s.%s/oauth2/start" (index $values.releases "oauth2-proxy" "config" "ingress" "subdomain") $releaseNamespace ( $values.cluster.config.domain ) | quote }}
+    fieldSpecs:
+    - path: metadata/annotations
+      kind: Ingress
+      create: true
+  {{- end }}
   {{- if .item.options.injectSatisfyAnyAuthOnIngress }}
   - apiVersion: builtin
     kind: AnnotationsTransformer
