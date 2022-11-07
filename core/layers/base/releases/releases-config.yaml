@@ -158,7 +158,7 @@ releases:
   ingress-access-operator:
     config:
       defaultFiltering:
-        enabled: true
+        enabled: false
       dynamicIstioSidecar:
         enabled: false
       exposer:
