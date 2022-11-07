@@ -1,22 +1,13 @@
-annotations:
-  category: Infrastructure
 apiVersion: v2
 appVersion: 7.3.0
 dependencies:
-- condition: redis.enabled
+- alias: redis
+  condition: redis.enabled
   name: redis
   repository: https://charts.bitnami.com/bitnami
-  version: 17.x.x
-- name: common
-  repository: https://charts.bitnami.com/bitnami
-  tags:
-  - bitnami-common
-  version: 2.x.x
-description: A reverse proxy and static file server that provides authentication using
-  Providers (Google, GitHub, and others) to validate accounts by email, domain or
-  group.
-home: https://github.com/bitnami/charts/tree/master/bitnami/oauth2-proxy
-icon: https://bitnami.com/assets/stacks/oauth2-proxy/img/oauth2-proxy-stack-220x234.png
+  version: ~16.4.0
+description: A reverse proxy that provides authentication with Google, Github or other providers
+home: https://oauth2-proxy.github.io/oauth2-proxy/
 keywords:
 - kubernetes
 - oauth
@@ -24,11 +15,20 @@ keywords:
 - authentication
 - google
 - github
+- redis
+kubeVersion: '>=1.9.0-0'
 maintainers:
-- name: Bitnami
-  url: https://github.com/bitnami/charts
+- email: cedric@desaintmartin.fr
+  name: desaintmartin
+- name: tlawrie
+- email: nicholas.meves@gmail.com
+  name: NickMeves
+- email: joel.speed@hotmail.co.uk
+  name: JoelSpeed
+- email: pierluigi.lenoci@gmail.com
+  name: pierluigilenoci
 name: oauth2-proxy
 sources:
-- https://github.com/bitnami/containers/tree/main/bitnami/oauth2-proxy
 - https://github.com/oauth2-proxy/oauth2-proxy
-version: 3.3.1
+- https://github.com/oauth2-proxy/manifests
+version: 6.3.0

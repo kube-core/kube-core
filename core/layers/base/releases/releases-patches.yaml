@@ -173,32 +173,3 @@ releases:
             port: healthcheck
           failureThreshold: 10
           periodSeconds: 10
-      
-  oauth2-proxy:
-    strategicMergePatches:
-      - apiVersion: apps/v1
-        kind: Deployment
-        metadata:
-          name: oauth2-proxy
-          namespace: oauth2-proxy
-        spec:
-          template:
-            spec:
-              containers:
-                - name: oauth2-proxy
-                  env:
-                    - name: OAUTH2_PROXY_CLIENT_ID
-                      valueFrom:
-                        secretKeyRef:
-                          name: default-oauth2-client
-                          key: DEFAULT_STATIC_CLIENT_ID
-                    - name: OAUTH2_PROXY_CLIENT_SECRET
-                      valueFrom:
-                        secretKeyRef:
-                          name: default-oauth2-client
-                          key: DEFAULT_STATIC_CLIENT_SECRET
-                    - name: OAUTH2_PROXY_COOKIE_SECRET
-                      valueFrom:
-                        secretKeyRef:
-                          name: oauth2-cookie-secret
-                          key: OAUTH2_PROXY_COOKIE_SECRET

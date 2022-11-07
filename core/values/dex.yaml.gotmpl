@@ -1,8 +1,6 @@
-replicaCount: 1
-
 image:
   repository: ghcr.io/dexidp/dex
-  tag: "v2.35.2"
+  tag: "v2.35.3"
 
 https:
   enabled: true
@@ -26,31 +24,33 @@ config:
     logoUrl: {{ index .Values.releases .Release.Name "config" "extra" "logoUrl" }}
   storage:
     type: memory
-
   staticClients:
     - id: "{{ `{{ .Env.DEFAULT_STATIC_CLIENT_ID }}` }}"
       redirectURIs:
         - {{ printf "https://%s.%s/oauth2/callback" (index .Values.releases "oauth2-proxy" "config" "ingress" "subdomain") ( .Values.cluster.config.domain ) }}
-      name: {{ (index .Values.releases .Release.Name "config" "idp" "defaultStaticClientName") }}
+        {{- if ( .Values | getOrNil (printf "releases.%s.config.idp.defaultStaticClient.allowedRedirectURIs" .Release.Name )) }}
+        {{ toYaml (index .Values.releases .Release.Name "config" "idp" "defaultStaticClient" "allowedRedirectURIs")  | nindent 8 }}
+        {{- end }}
+      name: {{ (index .Values.releases .Release.Name "config" "idp" "defaultStaticClient" "name") }}
       secret: "{{ `{{ .Env.DEFAULT_STATIC_CLIENT_SECRET }}` }}"
-    {{ range (index .Values.releases .Release.Name "config" "idp" "extraStaticClients") }}
-    {{ . }}
+    {{ if ( .Values | getOrNil (printf "releases.%s.config.idp.extraStaticClients" .Release.Name)) }}
+    {{ toYaml ( index .Values.releases .Release.Name "config" "idp" "extraStaticClients") | nindent 4 }}
     {{ end }}
   connectors:
     - type: google
       id: default_oidc_provider
       name: {{ index .Values.releases .Release.Name "config" "idp" "mainConnectorName" }}
       config:
-      ## redirect for google
         clientID: $DEFAULT_OIDC_CONNECTORS_ID
         clientSecret: $DEFAULT_OIDC_CONNECTORS_SECRET
         redirectURI: {{ printf "https://%s.%s/callback" (index .Values.releases .Release.Name "config" "ingress" "subdomain") ( .Values.cluster.config.domain ) }}
         scopes:
           - profile
           - email
-    {{ range (index .Values.releases .Release.Name "config" "idp" "extraConnectors") }}
-    {{ . }}
+    {{ if ( .Values | getOrNil (printf "releases.%s.config.idp.extraConnectors" .Release.Name)) }}
+    {{ toYaml ( index .Values.releases .Release.Name "config" "idp" "extraConnectors") | nindent 4 }}
     {{ end }}
+
 volumes:
   - name: tls
     secret:
@@ -85,9 +85,10 @@ envVars:
       secretKeyRef:
         name: {{ (index .Values.releases .Release.Name "secrets" "default-idp-provider" "secretRef" "name" ) }}
         key: DEFAULT_OIDC_CONNECTORS_SECRET
-  {{ range (index .Values.releases .Release.Name "config" "extraEnvVars") }}
-  {{ . }}
+  {{ if ( .Values | getOrNil (printf "releases.%s.config.idp.extraEnvVars" .Release.Name)) }}
+  {{ toYaml ( index .Values.releases .Release.Name "config" "idp" "extraEnvVars") | nindent 2  }}
   {{ end }}
+
 ingress:
   enabled: true
   className: {{ .Values.cluster.common.defaultIngressClass }}
@@ -109,78 +110,13 @@ ingress:
      hosts:
        - {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
 
-serviceAccount:
-  create: true
-  annotations: {}
-  name: ""
+serviceMonitor:
+  enabled: {{ coalesce (index .Values.releases .Release.Name "config" "metrics" "serviceMonitor" "enabled") .Values.core.packages.monitoring.enabled }}
+  namespace: {{ .Release.Namespace }}
+  interval: 30s
 
-rbac:
-  create: true
-  createClusterScoped: true
-
+#TODO: Add storage backend to enable multiple replicas & HA
+replicaCount: 1
 podDisruptionBudget:
   enabled: false
-  minAvailable:
-  maxUnavailable:
-
-service:
-  annotations: {}
-  type: ClusterIP
-  clusterIP: ""
-  ports:
-    http:
-      port: 5556
-    https:
-      port: 5554
-    grpc:
-      port: 5557
-
-serviceMonitor:
-  enabled: false
-  namespace: ""
-  interval:
-  scrapeTimeout:
-  labels: {}
-
-resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
-
-autoscaling:
-  enabled: false
-  minReplicas: 1
-  maxReplicas: 100
-  targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
-
-# -- [Node selector](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) configuration.
-nodeSelector: {}
-
-# -- [Tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) for node taints.
-# See the [API reference](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#scheduling) for details.
-tolerations: []
-
-# -- [Affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity) configuration.
-# See the [API reference](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#scheduling) for details.
-affinity: {}
-
-# -- [TopologySpreadConstraints](https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/) configuration.
-# See the [API reference](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#scheduling) for details.
-topologySpreadConstraints: []
-
-# -- Deployment [strategy](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy) configuration.
-strategy: {}
-  # rollingUpdate:
-  #   maxUnavailable: 1
-  # type: RollingUpdate
-
-networkPolicy:
-  enabled: false
+  minAvailable: 1

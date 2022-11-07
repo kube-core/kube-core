@@ -28,7 +28,9 @@ releases:
   dex:
     config:
       idp:
-        defaultStaticClientName: "Oauth2"
+        defaultStaticClient:
+          name: "Oauth2"
+          allowedRedirectURIs: []
         mainConnectorName: "Default"
         extraConnectors: []
         extraStaticClients: []
@@ -39,6 +41,9 @@ releases:
         annotations: {}
         labels: {}
         subdomain: dex
+      metrics:
+        serviceMonitor:
+          enabled: false
 
   oauth2-proxy:
     config:
@@ -48,7 +53,12 @@ releases:
         subdomain: oauth2
       rules:
         emailDomain: "*"
-        cookieExpiration: "12h"
+        cookieExpiration: 12h
+        allowedDomainRedirection:
+      metrics:
+        enabled: true
+        serviceMonitor:
+          enabled: false
 
   prometheus-pushgateway:
     config:

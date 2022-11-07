@@ -33,6 +33,7 @@ templates:
       injectIngressHost: false
       injectIngressTls: false
       injectOauth2ProxyOnIngress: false
+      injectNamespaceOauth2ProxyOnIngress: false
       injectSatisfyAnyAuthOnIngress: false
       injectionToEnforcePublicAccessFromIngressAccessOperator: false
     patches: {}
@@ -81,6 +82,7 @@ templates:
       injectIngressTls: false
       injectIngressClassName: true
       injectOauth2ProxyOnIngress: false
+      injectNamespaceOauth2ProxyOnIngress: false
       injectSatisfyAnyAuthOnIngress: false
       injectionToEnforcePublicAccessFromIngressAccessOperator: false
     patches: {}
@@ -129,6 +131,7 @@ templates:
       injectIngressTls: false
       injectIngressClassName: true
       injectOauth2ProxyOnIngress: false
+      injectNamespaceOauth2ProxyOnIngress: false
       injectSatisfyAnyAuthOnIngress: false
       injectionToEnforcePublicAccessFromIngressAccessOperator: false
     patches: {}

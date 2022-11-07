@@ -1,6 +1,0 @@
-apiVersion: v1
-kind: Secret
-metadata:
-  name: logstash-default-index-template
-stringData:
-  template: {{ toYaml .Values.cluster.logging.config.indexTemplate.default | nindent 4 }}
