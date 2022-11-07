@@ -1,19 +1,24 @@
 releases:
   cert-manager:
     options:
-      injectReloaderAnnotations: true
       injectClusterLoggingLabel: true
+      # removeIngressClassAnnotation: true
+      injectReloaderAnnotations: true
   chaos-mesh:
     options:
-      patchIngresses: true
-      injectIngressClassName: true
-      applyDefaultLabelsOnIngress: true
       applyDefaultAnnotationsOnIngress: true
+      applyDefaultLabelsOnIngress: true
+      injectIngressClassName: true
       injectReloaderAnnotations: true
-  eck-operator:
+      patchIngresses: true
+  dex:
     options:
       injectReloaderAnnotations: true
+      injectionToEnforcePublicAccessFromIngressAccessOperator: true
+  eck-operator:
+    options:
       injectClusterLoggingLabel: true
+      injectReloaderAnnotations: true
   estafette-gke-node-pool-shifter:
     options:
       injectClusterLoggingLabel: true
@@ -28,169 +33,166 @@ releases:
       injectReloaderAnnotations: true
   external-dns:
     options:
-      injectReloaderAnnotations: true
       injectClusterLoggingLabel: true
+      injectReloaderAnnotations: true
   external-secrets:
     options:
-      injectReloaderAnnotations: true
       injectClusterLoggingLabel: true
-  logging-stack:
-    options:
-      patchIngresses: true
-      injectIngressClassName: true
-      applyDefaultLabelsOnIngress: true
-      applyDefaultAnnotationsOnIngress: true
-  predator:
-    options:
-      patchIngresses: true
-      injectIngressClassName: true
-      applyDefaultLabelsOnIngress: true
-      applyDefaultAnnotationsOnIngress: true
       injectReloaderAnnotations: true
-      injectClusterLoggingLabel: true
   flux:
     options:
-      patchIngresses: true
-      injectIngressClassName: true
-      applyDefaultLabelsOnIngress: true
       applyDefaultAnnotationsOnIngress: true
-      injectReloaderAnnotations: true
+      applyDefaultLabelsOnIngress: true
       injectClusterLoggingLabel: true
+      injectIngressClassName: true
+      injectReloaderAnnotations: true
+      patchIngresses: true
   forecastle:
     options:
-      patchIngresses: true
-      injectIngressClassName: true
-      applyDefaultLabelsOnIngress: true
       applyDefaultAnnotationsOnIngress: true
-      injectReloaderAnnotations: true
+      applyDefaultLabelsOnIngress: true
       injectClusterLoggingLabel: true
+      injectIngressClassName: true
+      injectReloaderAnnotations: true
+      patchIngresses: true
   ingress-access-operator:
     options:
-      injectReloaderAnnotations: true
       injectClusterLoggingLabel: true
+      injectReloaderAnnotations: true
+  istio-grafana:
+    options:
+      applyDefaultAnnotationsOnIngress: true
+      applyDefaultLabelsOnIngress: true
+      injectIngressClassName: true
+      injectReloaderAnnotations: true
+      patchIngresses: true
+      upgradeIngress: true
+  istio-kiali:
+    options:
+      applyDefaultAnnotationsOnIngress: true
+      applyDefaultLabelsOnIngress: true
+      injectIngressClassName: true
+      injectReloaderAnnotations: true
+      patchIngresses: true
+      upgradeIngress: true
+  istio-prometheus:
+    options:
+      applyDefaultAnnotationsOnIngress: true
+      applyDefaultLabelsOnIngress: true
+      injectIngressClassName: true
+      injectReloaderAnnotations: true
+      patchIngresses: true
+      upgradeIngress: true
   keda:
     options:
-      injectReloaderAnnotations: true
       injectClusterLoggingLabel: true
+      injectReloaderAnnotations: true
   kps:
     options:
-      patchIngresses: true
-      injectIngressClassName: true
-      applyDefaultLabelsOnIngress: true
       applyDefaultAnnotationsOnIngress: true
-      # removeIngressClassAnnotation: true
+      applyDefaultLabelsOnIngress: true
+      injectIngressClassName: true
       injectReloaderAnnotations: true
+      patchIngresses: true
   kube-downscaler:
     options:
-      injectReloaderAnnotations: true
       injectClusterLoggingLabel: true
+      injectReloaderAnnotations: true
+  kyverno:
+    options:
+      injectClusterLoggingLabel: true
+      injectReloaderAnnotations: true
   logging-operator:
     options:
-      injectReloaderAnnotations: true
       injectClusterLoggingLabel: true
-  nginx-ingress-controller:
+      injectReloaderAnnotations: true
+  logging-stack:
     options:
-      injectReloaderAnnotations: true
-      injectClusterLoggingLabel: true
-  nginx-istio-ingress-controller:
-    options:
-      injectReloaderAnnotations: true
-      injectClusterLoggingLabel: true
-  patch-operator:
-    options:
-      injectReloaderAnnotations: true
-      injectClusterLoggingLabel: true
+      applyDefaultAnnotationsOnIngress: true
+      applyDefaultLabelsOnIngress: true
+      injectIngressClassName: true
+      patchIngresses: true
   nginx:
     options:
-      patchIngresses: true
-      injectIngressClassName: true
-      applyDefaultLabelsOnIngress: true
       applyDefaultAnnotationsOnIngress: true
+      applyDefaultLabelsOnIngress: true
+      injectIngressClassName: true
       injectReloaderAnnotations: true
-  rabbitmq-managed:
-    options:
       patchIngresses: true
-      injectIngressClassName: true
-      applyDefaultLabelsOnIngress: true
-      applyDefaultAnnotationsOnIngress: true
+  nginx-ingress-controller:
+    options:
+      injectClusterLoggingLabel: true
+      injectReloaderAnnotations: true
+  nginx-istio-ingress-controller:
+    options:
+      injectClusterLoggingLabel: true
+      injectReloaderAnnotations: true
+  oauth2-proxy:
+    options:
+      injectReloaderAnnotations: true
+      injectionToEnforcePublicAccessFromIngressAccessOperator: true
+  patch-operator:
+    options:
+      injectClusterLoggingLabel: true
       injectReloaderAnnotations: true
   polaris:
     options:
+      applyDefaultAnnotationsOnIngress: true
+      applyDefaultLabelsOnIngress: true
+      injectIngressClassName: true
+      injectReloaderAnnotations: true
       patchIngresses: true
       upgradeIngress: true
-      injectIngressClassName: true
-      applyDefaultLabelsOnIngress: true
+  predator:
+    options:
       applyDefaultAnnotationsOnIngress: true
+      applyDefaultLabelsOnIngress: true
+      injectClusterLoggingLabel: true
+      injectIngressClassName: true
       injectReloaderAnnotations: true
+      patchIngresses: true
+  prometheus-pushgateway:
+    options:
+      applyDefaultAnnotationsOnIngress: true
+      applyDefaultLabelsOnIngress: true
+      injectIngressClassName: true
+      injectReloaderAnnotations: true
+      patchIngresses: true
+  rabbitmq-managed:
+    options:
+      applyDefaultAnnotationsOnIngress: true
+      applyDefaultLabelsOnIngress: true
+      injectIngressClassName: true
+      injectReloaderAnnotations: true
+      patchIngresses: true
   reloader:
     options:
-      injectReloaderAnnotations: true
       injectClusterLoggingLabel: true
+      injectReloaderAnnotations: true
   replicator:
     options:
-      injectReloaderAnnotations: true
       injectClusterLoggingLabel: true
+      injectReloaderAnnotations: true
   sealed-secrets:
     options:
-      injectReloaderAnnotations: true
       injectClusterLoggingLabel: true
+      injectReloaderAnnotations: true
   secret-generator:
     options:
       injectClusterLoggingLabel: true
   sloth:
     options:
-      injectReloaderAnnotations: true
       injectClusterLoggingLabel: true
-  istio-kiali:
-    options:
-      patchIngresses: true
-      upgradeIngress: true
-      injectIngressClassName: true
-      applyDefaultLabelsOnIngress: true
-      applyDefaultAnnotationsOnIngress: true
-      injectReloaderAnnotations: true
-  istio-prometheus:
-    options:
-      patchIngresses: true
-      upgradeIngress: true
-      injectIngressClassName: true
-      applyDefaultLabelsOnIngress: true
-      applyDefaultAnnotationsOnIngress: true
-      injectReloaderAnnotations: true
-  istio-grafana:
-    options:
-      patchIngresses: true
-      upgradeIngress: true
-      injectIngressClassName: true
-      applyDefaultLabelsOnIngress: true
-      applyDefaultAnnotationsOnIngress: true
       injectReloaderAnnotations: true
   tekton:
     options:
-      patchIngresses: true
-      injectIngressClassName: true
-      applyDefaultLabelsOnIngress: true
       applyDefaultAnnotationsOnIngress: true
-      injectReloaderAnnotations: true
+      applyDefaultLabelsOnIngress: true
       injectClusterLoggingLabel: true
+      injectIngressClassName: true
+      injectReloaderAnnotations: true
+      patchIngresses: true
   velero:
     options:
-      injectReloaderAnnotations: true
       injectClusterLoggingLabel: true
-  kyverno:
-    options:
       injectReloaderAnnotations: true
-      injectClusterLoggingLabel: true
-  prometheus-pushgateway:
-    options:
-      patchIngresses: true
-      injectIngressClassName: true
-      applyDefaultLabelsOnIngress: true
-      applyDefaultAnnotationsOnIngress: true
-      injectReloaderAnnotations: true
-  dex:
-    options:
-      injectionToEnforcePublicAccessFromIngressAccessOperator: true
-  oauth2-proxy:
-    options:
-      injectionToEnforcePublicAccessFromIngressAccessOperator: true
