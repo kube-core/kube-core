@@ -5,6 +5,7 @@ Generate various resources.
 
 * [`kube-core generate cluster-config`](#kube-core-generate-cluster-config)
 * [`kube-core generate helmfiles`](#kube-core-generate-helmfiles)
+* [`kube-core generate local`](#kube-core-generate-local)
 * [`kube-core generate values`](#kube-core-generate-values)
 
 ## `kube-core generate cluster-config`
@@ -62,6 +63,21 @@ EXAMPLES
   $ kube-core generate helmfiles --defaultEnvs --envs=qa,test
   # Disabling what you don't need
   $ kube-core generate helmfiles --no-lib --no-core --no-services --defaultEnvs
+```
+
+## `kube-core generate local`
+
+Generates all local folders that are used by kube-core
+
+```
+USAGE
+  $ kube-core generate local
+
+DESCRIPTION
+  Generates all local folders that are used by kube-core
+
+EXAMPLES
+  $ kube-core generate local
 ```
 
 ## `kube-core generate values`
