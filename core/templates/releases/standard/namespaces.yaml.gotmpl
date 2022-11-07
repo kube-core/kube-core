@@ -1,28 +1,46 @@
 {{ $values := .Values }}
-{{- $releases := .Values.namespaces }}
+{{- $releases := .Values.releases }}
+{{- $applications := .Values.applications }}
+{{- $services := .Values.services }}
 
-{{- range $releaseName, $release := .Values.namespaces }}
-{{ $release := (merge $release $values.templates.release) }}
-{{- if $release.enabled -}}
+{{ $namespacesList := .Values.namespaces }}
+{{ $releasesList := list }}
 
+{{ if $values.core.releasesEnabled }}
+{{ $releasesList = (.Values | getOrNil "releases" ) }}
+{{ end }}
 
-{{ $newValues := $release }}
+{{- range $namespaceReleaseName, $namespaceRelease := $namespacesList }}
+{{ $namespaceRelease := (merge $namespaceRelease $values.templates.release) }}
+{{- if not (eq ($namespaceRelease | getOrNil "enabled") false ) -}}
+{{ $seen := false }}
+{{ range $coreReleaseName, $coreRelease := $releasesList }}
+{{ if (not $seen) }}
+{{ if (eq ($coreRelease | getOrNil "namespace") $namespaceReleaseName) }}
+{{ if (eq ($coreRelease | getOrNil "enabled") true) }}
+{{ $newValues := $namespaceRelease }}
 {{ $_ := set $newValues "type" "namespace" }}
 {{ $_ := set $newValues "chart" "../releases/dist/releases/charts/namespace" }}
 {{ $_ := set $newValues "needs" "" }}
-- name: ns-{{ $releaseName }}
+
+- name: ns-{{ $namespaceReleaseName }}
   installed: {{ $newValues.enabled }}
   chart: ../releases/dist/releases/charts/namespace
-  namespace: {{ $releaseName }}
+  namespace: {{ $namespaceReleaseName }}
   # namespace: kube-core
   transformers:
-  {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") (dict "values" $values "releaseName" $releaseName "item" $newValues "releaseNamespace" $releaseName ) }}
+  {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") (dict "values" $values "releaseName" $namespaceReleaseName "item" $newValues "releaseNamespace" $namespaceReleaseName ) }}
   labels:
     type: namespace
   values:
   # - "./values/namespace.yaml.gotmpl"
   - namespaces:
-      {{ $releaseName }}:
+      {{ $namespaceReleaseName }}:
         enabled: true
+{{ $seen = true }}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
 {{- end -}}
 {{- end -}}
