@@ -1,158 +1,91 @@
-global:
-  imageRegistry: ""
-  imagePullSecrets: []
-  storageClass: ""
-
-nameOverride: ""
-fullnameOverride: ""
-
-commonLabels: {}
-commonAnnotations: {}
-extraDeploy: []
-
-## Enable diagnostic mode in the deployment
-##
-diagnosticMode:
-  enabled: false
-  command:
-    - sleep
-  args:
-    - infinity
-
-service:
-  type: ClusterIP
-  port: 80
+{{ $releaseNamespace := .Release.Namespace }}
+{{ $releaseName := .Release.Name }}
 
 ingress:
   enabled: true
-  pathType: ImplementationSpecific
-  apiVersion: ""
-  ingressClassName: {{ .Values.cluster.common.defaultIngressClass }}
-  hostname: {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
-  path: /
-  tls: true
+  className: {{ .Values.cluster.common.defaultIngressClass }}
   certManager: true
   annotations:
-  {{ if .Values.cluster.common.defaultIngressAnnotations }}
+  {{- if .Values.cluster.common.defaultIngressAnnotations }}
     {{ toYaml .Values.cluster.common.defaultIngressAnnotations | nindent 4 }}
   {{- end }}
   {{- if (index .Values.releases .Release.Name "config" "ingress" "annotations") }}
     {{ toYaml (index .Values.releases .Release.Name "config" "ingress" "annotations") | nindent 4 }}
   {{- end }}
-
-
-configuration:
-  clientID: ""
-  clientSecret: ""
-  cookieSecret: ""
-  existingSecret: ""
-
+  {{- if eq (index .Values.releases $releaseName "namespace") $releaseNamespace }}
+  hosts: 
+    - {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
+  tls:
+    - secretName: {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") | replace "." "-"}}-tls
+      hosts:
+        - {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
+  {{- else }}
+  hosts: 
+    - {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ $releaseNamespace }}.{{ .Values.cluster.config.domain }}
+  tls:
+    - secretName: {{ printf "%s-%s" (index .Values.releases .Release.Name "config" "ingress" "subdomain") $releaseNamespace | replace "." "-"}}-tls
+      hosts:
+        - {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ $releaseNamespace }}.{{ .Values.cluster.config.domain }}
+  {{- end }}
 
 image:
   registry: docker.io
   repository: bitnami/oauth2-proxy
-  tag: 7.3.0-debian-11-r32
+  tag: 7.4.0-debian-11-r3
 
-configuration:
-  content: {}
+replicaCount: 2
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+
+config:
+  configFile: {}
+  existingConfig: {}
 
 extraArgs:
-  - --redirect-url={{ printf "https://%s.%s/oauth2/callback" (index .Values.releases .Release.Name "config" "ingress" "subdomain") ( .Values.cluster.config.domain ) }}
-  - --whitelist-domain={{ printf "*.%s" .Values.cluster.config.domain }}
-  - --provider=oidc
-  - --oidc-issuer-url={{ printf "https://%s.%s/" (index .Values.releases "dex" "config" "ingress" "subdomain") ( .Values.cluster.config.domain ) }}
-  - --scope=openid email profile
-  - --email-domain={{ (index .Values.releases .Release.Name "config" "rules" "emailDomain") }}
-  - --cookie-domain={{ printf ".%s" .Values.cluster.config.domain }}
-  - --cookie-name={{ printf "secure_%s" .Release.Name | snakecase }}
-  - --cookie-expire={{ (index .Values.releases .Release.Name "config" "rules" "cookieExpiration") }}
-  - --reverse-proxy=true
-  - --upstream=static://202
-  - --pass-user-headers=true
-  - --pass-authorization-header=true
-  - --set-authorization-header=true
-  - --set-xauthrequest=true
+  provider: oidc
+  oidc-issuer-url: {{ printf "https://%s.%s/" (index .Values.releases "dex" "config" "ingress" "subdomain") ( .Values.cluster.config.domain ) | quote }}
+  scope: openid email profile
+  email-domain: {{ (index .Values.releases .Release.Name "config" "rules" "emailDomain") | quote }}
+  cookie-name: {{ printf "secure_%s" .Release.Name | snakecase }}
+  cookie-expire: {{ (index .Values.releases .Release.Name "config" "rules" "cookieExpiration") }}
+  reverse-proxy: true
+  upstream: static://202
+  pass-user-headers: true
+  pass-authorization-header: true
+  set-authorization-header: true
+  set-xauthrequest: true
+  {{- if eq (index .Values.releases $releaseName "namespace") $releaseNamespace }}
+  redirect-url: {{ printf "https://%s.%s/oauth2/callback" (index .Values.releases .Release.Name "config" "ingress" "subdomain") .Values.cluster.config.domain }}
+  whitelist-domain: {{ coalesce (index .Values.releases .Release.Name "config" "rules" "allowedDomainRedirection") (printf "*.%s" .Values.cluster.config.domain) | quote }}
+  cookie-domain: {{ printf ".%s" .Values.cluster.config.domain | quote }}
+  {{- else }}
+  redirect-url: {{ printf "https://%s.%s.%s/oauth2/callback" (index .Values.releases .Release.Name "config" "ingress" "subdomain") $releaseNamespace .Values.cluster.config.domain }}
+  whitelist-domain: {{ coalesce (index .Values.releases .Release.Name "config" "rules" "allowedDomainRedirection") (printf "*.%s.%s" $releaseNamespace .Values.cluster.config.domain) | quote }}
+  cookie-domain: {{ printf ".%s.%s" $releaseNamespace .Values.cluster.config.domain | quote }}
+  {{- end }}
 
+proxyVarsAsSecrets: false
 
-extraEnvVars: {}
-  # As for this version can't 
-  # - name: OAUTH2_PROXY_CLIENT_ID
-  #   valueFrom:
-  #     secretKeyRef:
-  #       name: {{ (index .Values.releases .Release.Name "secrets" "default-oauth2-client" "secretRef" "name" ) }}
-  #       key: DEFAULT_STATIC_CLIENT_ID
-  # - name: OAUTH2_PROXY_CLIENT_SECRET
-  #   valueFrom:
-  #     secretKeyRef:
-  #       name: {{ (index .Values.releases .Release.Name "secrets" "default-oauth2-client" "secretRef" "name" ) }}
-  #       key: DEFAULT_STATIC_CLIENT_SECRET
+extraEnv:
+  - name: OAUTH2_PROXY_CLIENT_ID
+    valueFrom:
+      secretKeyRef:
+        name: {{ (index .Values.releases .Release.Name "secrets" "default-oauth2-client" "secretRef" "name" ) }}
+        key: DEFAULT_STATIC_CLIENT_ID
+  - name: OAUTH2_PROXY_CLIENT_SECRET
+    valueFrom:
+      secretKeyRef:
+        name: {{ (index .Values.releases .Release.Name "secrets" "default-oauth2-client" "secretRef" "name" ) }}
+        key: DEFAULT_STATIC_CLIENT_SECRET
+  - name: OAUTH2_PROXY_COOKIE_SECRET
+    valueFrom:
+      secretKeyRef:
+        name: oauth2-cookie-secret
+        key: OAUTH2_PROXY_COOKIE_SECRET
 
-
-
-## @param replicaCount Number of OAuth2 Proxy replicas to deploy
-##
-replicaCount: 1
-
-resources:
-  limits: {}
-  requests: {}
-
-pdb:
-  create: true
-  minAvailable: 1
-  maxUnavailable: ""
-
-
-
-
-externalRedis:
-  host: ""
-  password: ""
-  port: 6379
-  existingSecret: ""
-
-## @section Redis&reg; sub-chart parameters
-##
-redis:
-  ## @param redis.enabled Deploy Redis&reg; sub-chart
-  ##
-  enabled: false
-  ## @param redis.architecture Redis&reg; architecture
-  ##
-  architecture: "standalone"
-  master:
-    ## @param redis.master.service.port Redis&reg; (without Sentinel) service port
-    ##
-    service:
-      port: 6379
-  replica:
-    ## @param redis.replica.replicaCount Number of Redis&reg; replicas
-    ##
-    replicaCount: 3
-  auth:
-    ## @param redis.auth.enabled Enable Redis&reg; authentication
-    ##
-    enabled: true
-    ## @param redis.auth.existingSecret Secret with Redis&reg; credentials
-    ##
-    existingSecret: ""
-    ## @param redis.auth.existingSecretPasswordKey Key inside the existing secret with Redis&reg; credentials
-    ##
-    existingSecretPasswordKey: ""
-    ## @param redis.auth.sentinel Enable authentication in the Sentinel nodes
-    ##
-    sentinel: true
-  sentinel:
-    ## @param redis.sentinel.enabled Enable Redis&reg; sentinel in the deployment
-    ##
-    enabled: false
-    ## @param redis.sentinel.masterSet Name of the Redis&reg; Sentinel master set
-    ##
-    masterSet: mymaster
-    service:
-      ## @param redis.sentinel.service.port Redis&reg; (with Sentinel) service port
-      ##
-      port: 6379
-      ## @param redis.sentinel.service.sentinelPort Redis&reg; (with Sentinel) sentinel service port
-      ##
-      sentinelPort: 26379
+metrics:
+  enabled: {{ index .Values.releases .Release.Name "config" "metrics" "enabled" }}
+  servicemonitor:
+    enabled: {{ coalesce (index .Values.releases .Release.Name "config" "metrics" "serviceMonitor" "enabled") .Values.core.packages.monitoring.enabled }}
+    interval: 30s
