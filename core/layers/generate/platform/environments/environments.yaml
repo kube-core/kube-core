@@ -1,0 +1,7 @@
+environments:
+  dev: {}
+  default: {}
+  integration: {}
+  validation: {}
+  preproduction: {}
+  production: {}

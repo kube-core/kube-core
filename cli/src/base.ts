@@ -16,7 +16,9 @@ export default abstract class extends Command {
   public clusterConfig;
   public clusterConfigPath;
   public clusterConfigDirPath;
+  public valuesPath;
   public gitopsConfigHasChanges;
+  public values;
 
   static flags = {
     // name: Flags.string({
@@ -49,6 +51,12 @@ export default abstract class extends Command {
 
   async init() {
     this.utils = utils;
+    this.values = {
+      core: {},
+      cluster: {},
+      envs: {},
+      platform: {},
+    }
 
     await this.checkRequirements();
 
@@ -94,6 +102,11 @@ export default abstract class extends Command {
       this.clusterConfig = data;
       this.clusterConfigPath = clusterConfigPath;
       this.clusterConfigDirPath = clusterConfigDirPath;
+      this.valuesPath = upath.join(clusterConfigDirPath, "values");
+
+      // let valuesData = await this.utils.loadValuesAsArray(this.valuesPath)
+      // console.log(merge(...valuesData))
+
 
       // Checking if git workspace is clean
       this.gitopsConfigHasChanges = false;

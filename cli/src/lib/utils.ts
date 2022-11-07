@@ -262,6 +262,36 @@ export async function loadYamlFilesFromPathAsItemsList(
     console.error(e);
   }
 }
+export async function loadValuesAsObjectList(path) {
+  let filesPath = upath.normalizeSafe(path);
+  try {
+    let files = []
+    for await (const file of this.getFiles(filesPath)) {
+      let data = YAML.parse(await fs.readFile(file, "utf8"));
+      let filePath = upath.normalizeSafe(file);
+      const {name, ext} = upath.parse(filePath)
+      files.push({key: name, value: data});
+    }
+    return files;
+  } catch (e) {
+    console.error(e);
+  }
+}
+export async function loadValuesAsArray(path) {
+  let filesPath = upath.normalizeSafe(path);
+  try {
+    let files = []
+    for await (const file of this.getFiles(filesPath)) {
+      let data = YAML.parse(await fs.readFile(file, "utf8"));
+      let filePath = upath.normalizeSafe(file);
+      const {name, ext} = upath.parse(filePath)
+      files.push(data);
+    }
+    return files;
+  } catch (e) {
+    console.error(e);
+  }
+}
 
 export async function* getFiles(dir) {
   const dirents = await fs.readdir(dir, { withFileTypes: true });
