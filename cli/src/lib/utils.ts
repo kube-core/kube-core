@@ -11,6 +11,8 @@ import FuzzySet from "fuzzyset";
 // import execa from "execa";
 const execa = require("execa");
 
+const defaultExecaOptions = { maxBuffer: 900_000_000 }
+
 export async function cli(cmd, ...args) {
   try {
     const { stdout } = await execa(cmd, args);
@@ -418,4 +420,23 @@ export async function fuzzySearch(
   }
 
   return results;
+}
+
+export async function kubectl(command: string) {
+  return await this.cliStream("kubectl", command.split(" "), { defaultExecaOptions });
+}
+
+export async function kubectljson(command: string) {
+  return await this.cliStream("kubectl", [...(command.split(" ")), "-o", "json"], { defaultExecaOptions });
+}
+
+export async function kubectljs(command: string) {
+  return JSON.parse((await this.cliStream("kubectl", [...(command.split(" ")), "-o", "json"], { defaultExecaOptions })).stdout);
+}
+
+export async function kubectljsexec(argv, flags = []) {
+  let verb = argv.shift()
+  let kind = argv.shift()
+  let expr = [verb, kind, ...argv]
+  return JSON.parse((await this.cliStream("kubectl", [...flags, ...expr], { defaultExecaOptions })).stdout);
 }
