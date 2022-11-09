@@ -7,7 +7,14 @@ import * as fs from "fs-extra";
 import merge from "lodash.merge";
 const { lookpath } = require("lookpath");
 
-export default abstract class extends Command {
+
+async function read(stream: NodeJS.ReadStream) {
+  const chunks: Uint8Array[] = []
+  for await (const chunk of stream) chunks.push(chunk as Uint8Array)
+  return Buffer.concat(chunks).toString('utf8')
+}
+
+export default abstract class CustomCommand extends Command {
   public utils;
   public scriptsPath;
   public corePath;
@@ -19,6 +26,8 @@ export default abstract class extends Command {
   public valuesPath;
   public gitopsConfigHasChanges;
   public values;
+
+  static stdin: string
 
   static flags = {
     // name: Flags.string({
@@ -50,6 +59,8 @@ export default abstract class extends Command {
   }
 
   async init() {
+    CustomCommand.stdin = await read(process.stdin)
+
     this.utils = utils;
     this.values = {
       core: {},
