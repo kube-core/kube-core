@@ -10,6 +10,10 @@ serviceAccount:
     eks.amazonaws.com/role-arn: {{ index .Values.releases .Release.Name "config" "role-arn" }}
 {{ end }}
 
+# Delete secret when the certificate is deleted (ownership-based).
+extraArgs:
+  - --enable-certificate-owner-ref
+
 replicaCount: {{ index .Values.releases .Release.Name "config" "replicaCount" }}
 
 webhook:
