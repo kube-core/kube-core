@@ -1,8 +1,8 @@
-import BaseCommand from "../../base";
+import StdinCommand from "../../stdin";
 import { Flags } from "@oclif/core";
 import upath from "upath";
 
-export default class Absorb extends BaseCommand {
+export default class Absorb extends StdinCommand {
   static description =
     "Patch some resources with Helm metadata/labels, and import them quickly as local charts in kube-core.";
 
