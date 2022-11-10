@@ -4,6 +4,9 @@ cluster:
     branch: develop
     config:
       autoMerge: "false"
+      trivy:
+        enabled: false
+        url: http://trivy.trivy-server.svc.cluster.local:4954
       lighthouse:
         bucket: tekton-storage
       run:

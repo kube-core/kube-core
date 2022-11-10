@@ -950,7 +950,7 @@ spec:
 
 ######################################################
 
-{{ if (index .Values.releases "trivy" "enabled") }}
+{{ if .Values.cluster.delivery.config.trivy.enabled }}
 
   - name: scan-vulnerabilities
     taskRef:
@@ -964,7 +964,7 @@ spec:
       - name: IMAGE_PATH
         value: $(tasks.detect-tag-to-build.results.TARGET_IMAGE)
       - name: TRIVY_SERVER
-        value: {{ (index .Values.releases "trivy" "config" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
+        value: {{ .Values.cluster.delivery.config.trivy.url }}
     workspaces:
       - name: manifest-dir
         workspace: ws
