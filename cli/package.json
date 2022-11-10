@@ -1,6 +1,6 @@
 {
   "name": "@kube-core/cli",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "description": "CLI for kube-core",
   "author": "Damien Parbhakar",
   "bin": {
