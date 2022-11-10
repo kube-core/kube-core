@@ -41,20 +41,6 @@ spec:
       type: string
       default: "dev"
 
-    - name: cluster-repository
-      description: The repository to clone
-      type: string
-
-    - name: cluster-branch
-      description: The branch to checkout
-      type: string
-      default: "develop"
-
-    - name: garden-branch
-      description: The branch to checkout
-      type: string
-      default: "develop"
-
     - name: garden-user
       description: The branch to checkout
       type: string
@@ -64,7 +50,6 @@ spec:
       description: The image used by the task
       type: string
       default: neo9sas/devops-tools:v1.5.0
-      
 
     - name: apps-branch
       description: The cluster name
@@ -112,8 +97,8 @@ spec:
       default: "garden"
 
   results:
-  - name: garden-command
-    description: The garden command
+    - name: garden-command
+      description: The garden command
   steps:
     - name: garden-version
       image: $(params.image)
@@ -174,7 +159,7 @@ spec:
           gardenEnv="$(params.garden-env)"
           gardenArgs="$(params.garden-args)"
           projectName="$(params.trigger-git-project-name)"
-          
+
           # TODO: See if we really need to be root
           userHome=/root 
 
@@ -196,10 +181,9 @@ spec:
           echo "Garden command : garden ${gardenCommand} ${projectName} ${gardenArgs} --env=${gardenEnv} --yes"
 
           # garden ${gardenCommand} $(params.garden-args) --env=${gardenEnv} --yes > $(workspaces.output.path)/garden-deploy-logs 2> $(workspaces.output.path)/garden-deploy-errors
-          
+
           rm -rf ~/.garden
-          (garden ${gardenCommand} ${projectName} ${gardenArgs} --env=${gardenEnv} --yes | tee $(workspaces.output.path)/garden-deploy-logs) 3>&1 1>&2 2>&3 | tee $(workspaces.output.path)/garden-deploy-errors
-          
+          (garden ${gardenCommand} ${projectName} ${gardenArgs} --env=${gardenEnv} --yes -l4 | tee $(workspaces.output.path)/garden-deploy-logs) 3>&1 1>&2 2>&3 | tee $(workspaces.output.path)/garden-deploy-errors
           cat .garden/error.log >> /dev/null >> $(workspaces.output.path)/garden-errors
           cat .garden/error.log >> /dev/null > $(workspaces.output.path)/garden-deploy-errors
 
@@ -213,7 +197,7 @@ spec:
           echo "$outputs" > $(workspaces.output.path)/garden-deploy-outputs
 
           envIngresses=""
-          
+
           if [[ "${gardenEnv}" == "dev" || "${gardenEnv}" == "preview" ]]
           then
             echo "Getting ingresses ..."
@@ -223,13 +207,13 @@ spec:
           then
             echo "Getting ingresses ..."
             envIngresses=$(kubectl get ingress -n ${gardenEnv} -o json | jq -r '.items[] | "- http://\(.spec.rules[].host)"')
-          
+
           elif [[ "${gardenEnv}" == "pr" && "${branch}" != "" ]]
           then
             echo "Getting ingresses ..."
             envIngresses=$(kubectl get ingress -n ${gardenEnv}-${branch} -o json | jq -r '.items[] | "- http://\(.spec.rules[].host)"')
           fi
-          
+
           echo "$envIngresses" > $(workspaces.output.path)/env-ingresses
           echo "$envIngresses" > $(workspaces.output.path)/garden-deploy-env-ingresses
 
