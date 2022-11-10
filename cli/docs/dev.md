@@ -3,30 +3,11 @@
 
 Tools for kube-core development.
 
-* [`kube-core dev dev`](#kube-core-dev-dev)
 * [`kube-core dev mode hot-reload`](#kube-core-dev-mode-hot-reload)
 * [`kube-core dev releases add chart`](#kube-core-dev-releases-add-chart)
 * [`kube-core dev releases add local-chart`](#kube-core-dev-releases-add-local-chart)
 * [`kube-core dev releases add release`](#kube-core-dev-releases-add-release)
 * [`kube-core dev releases build`](#kube-core-dev-releases-build)
-
-## `kube-core dev dev`
-
-Command used for development only
-
-```
-USAGE
-  $ kube-core dev dev [-n <value>]
-
-FLAGS
-  -n, --namespace=<value>  [default: default] namespace to use
-
-DESCRIPTION
-  Command used for development only
-
-EXAMPLES
-  $ kube-core dev dev
-```
 
 ## `kube-core dev mode hot-reload`
 

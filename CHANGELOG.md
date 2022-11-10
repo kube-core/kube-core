@@ -2,11 +2,31 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.7.2](https://github.com/neo9/kube-core/compare/v0.7.1...v0.7.2)
+
+- core/releases: Reworked oauth2-proxy to permit multiple deployment as a service [`c079598`](https://github.com/neo9/kube-core/commit/c079598b2baac639d1dd578fc3ad906f169520f8)
+- releases: Added trivy [`1650b18`](https://github.com/neo9/kube-core/commit/1650b18c269cb8716dcf8fc97345a0a07e95e09f)
+- cli/commands: Removed some outdated files [`3c99611`](https://github.com/neo9/kube-core/commit/3c99611cd44268405eee835a8596e22e800e335a)
+- releases: Rebuilt all releases [`660863a`](https://github.com/neo9/kube-core/commit/660863a526efe3f2135fe6260c9085ac11f84b44)
+- releases/tekton-catalog: Adds garden deploy projects pipeline [`d074952`](https://github.com/neo9/kube-core/commit/d07495201df3b7ad4bc361161173c362ca0abcda)
+- core/templates: Added option to inject namespaced oauth2-proxy on ingress [`25718fe`](https://github.com/neo9/kube-core/commit/25718feb73411a84501298ed8e6b3d0b6ea027c4)
+- cli/commands: Added absorb command [`d05de7a`](https://github.com/neo9/kube-core/commit/d05de7a2ff069c16a4704cdaa1b6ec4d70661384)
+- releases/tekton-catalog: Adds new pipeline to deploy keycloak themes [`d4194dc`](https://github.com/neo9/kube-core/commit/d4194dcd632d59ba111c0e4e029d07bd001631bf)
+- cli/lib: Added some functions in utils to wrap kubectl [`460d8b3`](https://github.com/neo9/kube-core/commit/460d8b329407c5fb10cbb656e6c918d4a8f3f8ba)
+- cli/commands: Added stdin piping capabilities for all commands [`3676a88`](https://github.com/neo9/kube-core/commit/3676a881fe2cd7281e809bc74f1f4f4a8b3fcb9b)
+- core/releases: Enabled storage as k8s crd for dex [`2450b6f`](https://github.com/neo9/kube-core/commit/2450b6f1868966da638dae24ff947a5c159768cf)
+- releases/tekton-catalog: Added configuration keys for trivy [`1e89544`](https://github.com/neo9/kube-core/commit/1e89544f3e4931148a6021ac7b178a4eb6f35865)
+- core/values: Enabled certificate owner ref by default for cert-manager [`e963e24`](https://github.com/neo9/kube-core/commit/e963e2449f97fb20cd5e26816228f08b148c03cb)
+- releases/container-registry-operator: Updated deployment [`3bc0bcf`](https://github.com/neo9/kube-core/commit/3bc0bcff92a55ad5d826c2933822c143c4bd2717)
+
 #### [v0.7.1](https://github.com/neo9/kube-core/compare/v0.7.0...v0.7.1)
+
+> 7 November 2022
 
 - cli/commads: Added some generation capabilities for values and local folders [`361d320`](https://github.com/neo9/kube-core/commit/361d320a83294711be6f740adbc7d257285f4469)
 - core/templates: Added checks to only generate namespaces from enabled core releases [`f766ea8`](https://github.com/neo9/kube-core/commit/f766ea8cbb6fd7ce229516fc4b4ce000a46331cb)
 - cli/docs: Updated docs [`bedaa9c`](https://github.com/neo9/kube-core/commit/bedaa9c13a906f324ab7845c92f591b237bddcb4)
+- release: v0.7.1 [`55374e6`](https://github.com/neo9/kube-core/commit/55374e69aaea07156125886b7f07c2123b4f5326)
 - cli/commands: Fixed gitops:config:diff checks on filtered data [`ed281eb`](https://github.com/neo9/kube-core/commit/ed281ebb9cf9aff989d62946c9c94b6ec06e26ba)
 - core/layers: Changed default config of ingress-access-operator [`761da4a`](https://github.com/neo9/kube-core/commit/761da4aa431eb284176564d9a57d0ea8c2208163)
 
