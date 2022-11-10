@@ -204,7 +204,7 @@ $ kube-core gitops config diff --include "preproduction|production" --exclude na
       // const diffData = await this.utils.cliStream('diff', [`${next}`, `${current}`], {maxBuffer: 900_000_000, reject: false})
       const diffData = await this.utils.cliStream(
         "diff",
-        [`--color=always`, `${next}`, `${current}`],
+        [`--color=always`, `${current}`,`${next}`],
         { maxBuffer: 900_000_000, reject: false }
       );
       console.log(diffData.stdout);
