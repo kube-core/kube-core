@@ -2,9 +2,16 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.7.4](https://github.com/neo9/kube-core/compare/v0.7.3...v0.7.4)
+
+- releases/tekton: Upgraded app-hooks EventListener [`d89e9a4`](https://github.com/neo9/kube-core/commit/d89e9a418ff6fa835b27a3959a2fde60d6150e9a)
+
 #### [v0.7.3](https://github.com/neo9/kube-core/compare/v0.7.2...v0.7.3)
 
+> 10 November 2022
+
 - cli/commands: Moved logic to parse stdin from base command class to a dedicated one [`5d6f452`](https://github.com/neo9/kube-core/commit/5d6f4526e0fcd1717e30e91a8ad41ac52f14f1e2)
+- release: v0.7.3 [`73f535f`](https://github.com/neo9/kube-core/commit/73f535f031f28919797d34cd2edefee68f5c2228)
 
 #### [v0.7.2](https://github.com/neo9/kube-core/compare/v0.7.1...v0.7.2)
 
