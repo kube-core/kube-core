@@ -23,7 +23,9 @@ config:
     issuer: {{ default (printf "%s-cluster" .Values.project.name | replace "-" " " | title ) (index .Values.releases .Release.Name "config" "title") }}
     logoUrl: {{ index .Values.releases .Release.Name "config" "extra" "logoUrl" }}
   storage:
-    type: memory
+    type: kubernetes
+    config:
+      inCluster: true
   staticClients:
     - id: "{{ `{{ .Env.DEFAULT_STATIC_CLIENT_ID }}` }}"
       redirectURIs:
@@ -115,8 +117,7 @@ serviceMonitor:
   namespace: {{ .Release.Namespace }}
   interval: 30s
 
-#TODO: Add storage backend to enable multiple replicas & HA
-replicaCount: 1
+replicaCount: 2
 podDisruptionBudget:
-  enabled: false
+  enabled: true
   minAvailable: 1
