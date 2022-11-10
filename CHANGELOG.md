@@ -2,7 +2,13 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.7.3](https://github.com/neo9/kube-core/compare/v0.7.2...v0.7.3)
+
+- cli/commands: Moved logic to parse stdin from base command class to a dedicated one [`5d6f452`](https://github.com/neo9/kube-core/commit/5d6f4526e0fcd1717e30e91a8ad41ac52f14f1e2)
+
 #### [v0.7.2](https://github.com/neo9/kube-core/compare/v0.7.1...v0.7.2)
+
+> 10 November 2022
 
 - core/releases: Reworked oauth2-proxy to permit multiple deployment as a service [`c079598`](https://github.com/neo9/kube-core/commit/c079598b2baac639d1dd578fc3ad906f169520f8)
 - releases: Added trivy [`1650b18`](https://github.com/neo9/kube-core/commit/1650b18c269cb8716dcf8fc97345a0a07e95e09f)
@@ -12,6 +18,7 @@ All notable changes to this project will be documented in this file. Dates are d
 - core/templates: Added option to inject namespaced oauth2-proxy on ingress [`25718fe`](https://github.com/neo9/kube-core/commit/25718feb73411a84501298ed8e6b3d0b6ea027c4)
 - cli/commands: Added absorb command [`d05de7a`](https://github.com/neo9/kube-core/commit/d05de7a2ff069c16a4704cdaa1b6ec4d70661384)
 - releases/tekton-catalog: Adds new pipeline to deploy keycloak themes [`d4194dc`](https://github.com/neo9/kube-core/commit/d4194dcd632d59ba111c0e4e029d07bd001631bf)
+- release: v0.7.2 [`ee159b9`](https://github.com/neo9/kube-core/commit/ee159b996c7fb5afb7f2f24a06772b2ba62385ff)
 - cli/lib: Added some functions in utils to wrap kubectl [`460d8b3`](https://github.com/neo9/kube-core/commit/460d8b329407c5fb10cbb656e6c918d4a8f3f8ba)
 - cli/commands: Added stdin piping capabilities for all commands [`3676a88`](https://github.com/neo9/kube-core/commit/3676a881fe2cd7281e809bc74f1f4f4a8b3fcb9b)
 - core/releases: Enabled storage as k8s crd for dex [`2450b6f`](https://github.com/neo9/kube-core/commit/2450b6f1868966da638dae24ff947a5c159768cf)
