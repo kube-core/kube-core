@@ -33,7 +33,7 @@ $ npm install -g @kube-core/cli
 $ kube-core COMMAND
 running command...
 $ kube-core (--version)
-@kube-core/cli/0.7.0 win32-x64 node-v18.12.0
+@kube-core/cli/0.7.2 win32-x64 node-v18.12.0
 $ kube-core --help [COMMAND]
 USAGE
   $ kube-core COMMAND
@@ -44,6 +44,7 @@ USAGE
 <!-- commands -->
 # Command Topics
 
+* [`kube-core absorb`](docs/absorb.md) - Patch some resources with Helm metadata/labels, and import them quickly as local charts in kube-core.
 * [`kube-core apply`](docs/apply.md) - Apply kube-core and cluster configuration.
 * [`kube-core autocomplete`](docs/autocomplete.md) - display autocomplete installation instructions
 * [`kube-core build`](docs/build.md) - Build kube-core and cluster configuration.

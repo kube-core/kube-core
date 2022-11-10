@@ -12,4 +12,4 @@ git:
 npm: false
 
 hooks:
-  "after:bump": 'sh -c "kube-core scripts:exec dev_utils_bump ${version}" && npx auto-changelog -o CHANGELOG.md --commit-limit false --remote=github -u --hide-credit --release-summary --latest-version ${version} --template=compact'
+  "after:bump": 'sh -c "kube-core scripts:exec dev_utils_bump ${version}" && npx auto-changelog -o CHANGELOG.md --commit-limit false --remote=github -u --hide-credit --release-summary --latest-version ${version} --template=compact && cd ./cli && yarn && yarn prepack && yarn postpack'
