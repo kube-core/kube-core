@@ -8,19 +8,19 @@ export default class GitopsConfigSearch extends BaseCommand {
 
   static examples = [
     `# Search by path in config
-$ kube-core-dev gitops config search /config/velero/deployment
-$ kube-core-dev gitops config search velero/deployment
-$ kube-core-dev gitops config search deployment/velero
+$ kube-core gitops config search /config/velero/deployment
+$ kube-core gitops config search velero/deployment
+$ kube-core gitops config search deployment/velero
 # Search any term. Get all matches in every resource, with partial context.
-$ kube-core-dev gitops config search root
+$ kube-core gitops config search root
 # Stream all resources line by line. You do the search!
-$ kube-core-dev gitops config search
+$ kube-core gitops config search
 # Custom search: find any reference of "nginx" in deployments and spec.containers
-$ kube-core-dev gitops config search | grep /deployment | grep spec.containers | grep nginx
+$ kube-core gitops config search | grep /deployment | grep spec.containers | grep nginx
 # Make your search results human readable
-$ kube-core-dev gitops config search | grep /deployment | grep spec.containers | grep nginx | gron --ungron | yq -P -C
+$ kube-core gitops config search | grep /deployment | grep spec.containers | grep nginx | gron --ungron | yq -P -C
 # Hilight your matches
-$ kube-core-dev gitops config search | grep /deployment | grep spec.containers | grep nginx | gron --ungron | yq -P -C | grep --color=always -E 'nginx|$'`,
+$ kube-core gitops config search | grep /deployment | grep spec.containers | grep nginx | gron --ungron | yq -P -C | grep --color=always -E 'nginx|$'`,
   ];
 
   static flags = {};

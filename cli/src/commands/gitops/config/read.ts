@@ -16,7 +16,7 @@ $ kube-core gitops config read | yq '.items[] | select(.metadata.namespace==null
 # List Deployments
 $ kube-core gitops config read -o json | jq '.items[] | select(.kind=="Deployment)'
 # List Namespaces
-$ kube-core-dev gitops config read '.items[] | select(.kind=="Namespace") | .metadata.name'`,
+$ kube-core gitops config read '.items[] | select(.kind=="Namespace") | .metadata.name'`,
   ];
 
   static flags = {
