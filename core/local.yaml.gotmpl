@@ -1,0 +1,15 @@
+{{ tpl (readFile "./templates/base/bases.yaml.gotmpl") . }}
+
+{{ tpl (readFile "./templates/base/environments.yaml.gotmpl") . }}
+---
+{{ tpl (readFile "./templates/base/repositories.yaml.gotmpl") . }}
+
+{{ tpl (readFile "./templates/base/helm-defaults.yaml.gotmpl") . }}
+
+{{ tpl (readFile "./templates/base/common-labels.yaml.gotmpl") . }}
+{{ tpl (readFile "./templates/base/common-labels-local.yaml.gotmpl") . }}
+
+{{ tpl (readFile "./templates/releases/standard/helmfiles.yaml.gotmpl") . }}
+
+releases:
+{{ tpl (readFile "./templates/base/all-releases.yaml.gotmpl") . }}
