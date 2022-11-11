@@ -29,4 +29,4 @@ EXAMPLES
   $ kubectl get sealedsecrets -n tekton-pipelines -o json | kube-core absorb --force
 ```
 
-_See code: [dist/commands/absorb/index.ts](https://github.com/kube-core/cli/blob/v0.7.4/dist/commands/absorb/index.ts)_
+_See code: [dist/commands/absorb/index.ts](https://github.com/kube-core/cli/blob/v0.7.5/dist/commands/absorb/index.ts)_

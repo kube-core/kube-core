@@ -30,7 +30,7 @@ Generate helmfiles to setup your project quickly
 ```
 USAGE
   $ kube-core generate helmfiles [--lib] [--commons] [--core] [--applications] [--services] [--envs <value>]
-    [--defaultEnvs]
+    [--defaultEnvs] [--localRefs]
 
 FLAGS
   --[no-]applications  Generates applications helmfiles for all environments. Provide --envs or --defaultEnvs with it.
@@ -45,6 +45,7 @@ FLAGS
                        --services.
   --[no-]lib           Generates helmfiles/lib folder, with templates and utility functions. Enabled by default. Use
                        --no-lib to disable.
+  --localRefs          Writes down local helmfile refs instead of using KUBE_CORE_LOCAL_CORE_PATH env var
   --[no-]services      Generates services helmfiles for all environments. Provide --envs or --defaultEnvs with it.
                        Enabled by default. Use --no-services to disable.
 

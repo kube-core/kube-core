@@ -20,4 +20,4 @@ EXAMPLES
   $ kube-core version
 ```
 
-_See code: [dist/commands/version.ts](https://github.com/kube-core/cli/blob/v0.7.4/dist/commands/version.ts)_
+_See code: [dist/commands/version.ts](https://github.com/kube-core/cli/blob/v0.7.5/dist/commands/version.ts)_
