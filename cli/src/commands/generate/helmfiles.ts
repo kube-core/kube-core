@@ -84,6 +84,13 @@ $ kube-core generate helmfiles --no-lib --no-core --no-services --defaultEnvs
       required: false,
       default: false,
     }),
+    localRefs: Flags.boolean({
+      description:
+        "Writes down local helmfile refs instead of using KUBE_CORE_LOCAL_CORE_PATH env var",
+      hidden: false,
+      required: false,
+      default: false,
+    }),
   };
 
   static args = [];
@@ -168,10 +175,6 @@ $ kube-core generate helmfiles --no-lib --no-core --no-services --defaultEnvs
         );
 
         fileData = fileData.replaceAll(
-          "KUBE_CORE_HELMFILES_CORE_LOCAL_PATH",
-          upath.join(this.corePath, "core", "helmfile.yaml.gotmpl")
-        );
-        fileData = fileData.replaceAll(
           "KUBE_CORE_HELMFILES_CORE_REMOTE_PATH",
           [
             `git::${this.coreRemotePath}@`,
@@ -180,20 +183,12 @@ $ kube-core generate helmfiles --no-lib --no-core --no-services --defaultEnvs
           ].join("/")
         );
         fileData = fileData.replaceAll(
-          "KUBE_CORE_HELMFILES_CLUSTER_LOCAL_PATH",
-          upath.join(this.corePath, "core", "cluster.yaml.gotmpl")
-        );
-        fileData = fileData.replaceAll(
           "KUBE_CORE_HELMFILES_CLUSTER_REMOTE_PATH",
           [
             `git::${this.coreRemotePath}@`,
             "core",
             `cluster.yaml.gotmpl?ref=v${this.config.version}`,
           ].join("/")
-        );
-        fileData = fileData.replaceAll(
-          "KUBE_CORE_HELMFILES_LOCAL_LOCAL_PATH",
-          upath.join(this.corePath, "core", "cluster.yaml.gotmpl")
         );
         fileData = fileData.replaceAll(
           "KUBE_CORE_HELMFILES_LOCAL_REMOTE_PATH",
@@ -212,14 +207,6 @@ $ kube-core generate helmfiles --no-lib --no-core --no-services --defaultEnvs
           ].join("/")
         );
         fileData = fileData.replaceAll(
-          "KUBE_CORE_HELMFILES_APPLICATIONS_LOCAL_PATH",
-          upath.join(this.corePath, "core", "applications.yaml.gotmpl")
-        );
-        fileData = fileData.replaceAll(
-          "KUBE_CORE_HELMFILES_SERVICES_LOCAL_PATH",
-          upath.join(this.corePath, "core", "services.yaml.gotmpl")
-        );
-        fileData = fileData.replaceAll(
           "KUBE_CORE_HELMFILES_SERVICES_REMOTE_PATH",
           [
             `git::${this.coreRemotePath}@`,
@@ -227,6 +214,32 @@ $ kube-core generate helmfiles --no-lib --no-core --no-services --defaultEnvs
             `services.yaml.gotmpl?ref=v${this.config.version}`,
           ].join("/")
         );
+
+        if(flags.localRefs) {
+          fileData = fileData.replaceAll(
+            "KUBE_CORE_HELMFILES_CORE_LOCAL_PATH",
+            upath.join(this.corePath, "core", "helmfile.yaml.gotmpl")
+          );
+          fileData = fileData.replaceAll(
+            "KUBE_CORE_HELMFILES_CLUSTER_LOCAL_PATH",
+            upath.join(this.corePath, "core", "cluster.yaml.gotmpl")
+          );
+          fileData = fileData.replaceAll(
+            "KUBE_CORE_HELMFILES_LOCAL_LOCAL_PATH",
+            upath.join(this.corePath, "core", "cluster.yaml.gotmpl")
+          );
+          fileData = fileData.replaceAll(
+            "KUBE_CORE_HELMFILES_APPLICATIONS_LOCAL_PATH",
+            upath.join(this.corePath, "core", "applications.yaml.gotmpl")
+          );
+          fileData = fileData.replaceAll(
+            "KUBE_CORE_HELMFILES_SERVICES_LOCAL_PATH",
+            upath.join(this.corePath, "core", "services.yaml.gotmpl")
+          );
+        }
+
+
+
         await this.utils.mkdir(upath.parse(targetPath).dir);
         await fs.writeFile(targetPath, fileData);
         writtenFiles.lib.push(
