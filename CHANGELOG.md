@@ -2,9 +2,19 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.7.5](https://github.com/neo9/kube-core/compare/v0.7.4...v0.7.5)
+
+- core/templates: Reworked helmfiles, fixed local paths for dev [`b5433a0`](https://github.com/neo9/kube-core/commit/b5433a05047eea620eb8ccaeece56e3418c368e9)
+- cli/commands: Added flag to toggle color output on diff [`5950cdb`](https://github.com/neo9/kube-core/commit/5950cdbc4856b72f76b1d7a54ef11f3322e892ff)
+- cli/docs: Fixed some wrong examples [`94e1d35`](https://github.com/neo9/kube-core/commit/94e1d359d38090abb5cd5157d9d96f2642f9fd1b)
+- cli/commands: Fixed inverted diff result on gitops:config:diff [`d068696`](https://github.com/neo9/kube-core/commit/d068696cbdedac5a4b5e4eaf88c31c065d4890a8)
+
 #### [v0.7.4](https://github.com/neo9/kube-core/compare/v0.7.3...v0.7.4)
 
+> 10 November 2022
+
 - releases/tekton: Upgraded app-hooks EventListener [`d89e9a4`](https://github.com/neo9/kube-core/commit/d89e9a418ff6fa835b27a3959a2fde60d6150e9a)
+- release: v0.7.4 [`fa0bd58`](https://github.com/neo9/kube-core/commit/fa0bd58aaacfab3353e6a7949551a18d56ff9523)
 
 #### [v0.7.3](https://github.com/neo9/kube-core/compare/v0.7.2...v0.7.3)
 

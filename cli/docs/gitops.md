@@ -44,9 +44,10 @@ Search your GitOps Config
 
 ```
 USAGE
-  $ kube-core gitops config diff [--include <value>] [--exclude <value>] [--filter <value>]
+  $ kube-core gitops config diff [--include <value>] [--exclude <value>] [--filter <value>] [--color]
 
 FLAGS
+  --[no-]color       jq filter that will be used to prepare before diff
   --exclude=<value>  Grep filter
   --filter=<value>   jq filter that will be used to prepare before diff
   --include=<value>  Grep filter
@@ -61,6 +62,8 @@ EXAMPLES
   $ kube-core gitops config diff --include secret --exclude "rabbitmq|mongodb"
   # Advanced diff, using include, exclude and filter
   $ kube-core gitops config diff --include "preproduction|production" --exclude namespace --filter='select(to_entries | length > 0) | to_entries | . | map({(.key): {"labels":.value.metadata.labels}}) | add'
+  # Get what will be applied for each resource as json
+  $ kube-core gitops config diff --no-color | grep ">" | sed 's|>||' | awk '{$1=$1};1' | gron --ungron
 ```
 
 ## `kube-core gitops config find`
@@ -107,7 +110,7 @@ EXAMPLES
   # List Deployments
   $ kube-core gitops config read -o json | jq '.items[] | select(.kind=="Deployment)'
   # List Namespaces
-  $ kube-core-dev gitops config read '.items[] | select(.kind=="Namespace") | .metadata.name'
+  $ kube-core gitops config read '.items[] | select(.kind=="Namespace") | .metadata.name'
 ```
 
 ## `kube-core gitops config search`
@@ -123,17 +126,17 @@ DESCRIPTION
 
 EXAMPLES
   # Search by path in config
-  $ kube-core-dev gitops config search /config/velero/deployment
-  $ kube-core-dev gitops config search velero/deployment
-  $ kube-core-dev gitops config search deployment/velero
+  $ kube-core gitops config search /config/velero/deployment
+  $ kube-core gitops config search velero/deployment
+  $ kube-core gitops config search deployment/velero
   # Search any term. Get all matches in every resource, with partial context.
-  $ kube-core-dev gitops config search root
+  $ kube-core gitops config search root
   # Stream all resources line by line. You do the search!
-  $ kube-core-dev gitops config search
+  $ kube-core gitops config search
   # Custom search: find any reference of "nginx" in deployments and spec.containers
-  $ kube-core-dev gitops config search | grep /deployment | grep spec.containers | grep nginx
+  $ kube-core gitops config search | grep /deployment | grep spec.containers | grep nginx
   # Make your search results human readable
-  $ kube-core-dev gitops config search | grep /deployment | grep spec.containers | grep nginx | gron --ungron | yq -P -C
+  $ kube-core gitops config search | grep /deployment | grep spec.containers | grep nginx | gron --ungron | yq -P -C
   # Hilight your matches
-  $ kube-core-dev gitops config search | grep /deployment | grep spec.containers | grep nginx | gron --ungron | yq -P -C | grep --color=always -E 'nginx|$'
+  $ kube-core gitops config search | grep /deployment | grep spec.containers | grep nginx | gron --ungron | yq -P -C | grep --color=always -E 'nginx|$'
 ```
