@@ -13,7 +13,9 @@ $ kube-core gitops config diff
 # Chain include and exclude
 $ kube-core gitops config diff --include secret --exclude "rabbitmq|mongodb"
 # Advanced diff, using include, exclude and filter
-$ kube-core gitops config diff --include "preproduction|production" --exclude namespace --filter='select(to_entries | length > 0) | to_entries | . | map({(.key): {"labels":.value.metadata.labels}}) | add'`,
+$ kube-core gitops config diff --include "preproduction|production" --exclude namespace --filter='select(to_entries | length > 0) | to_entries | . | map({(.key): {"labels":.value.metadata.labels}}) | add'
+# Get what will be applied for each resource as json
+$ kube-core gitops config diff --no-color | grep ">" | sed 's|>||' | awk '{$1=$1};1' | gron --ungron`,
   ];
 
   static flags = {
@@ -31,6 +33,13 @@ $ kube-core gitops config diff --include "preproduction|production" --exclude na
       description: "jq filter that will be used to prepare before diff",
       hidden: false,
       required: false,
+    }),
+    color: Flags.boolean({
+      description: "jq filter that will be used to prepare before diff",
+      hidden: false,
+      required: false,
+      default: true,
+      allowNo: true
     }),
   };
 
@@ -202,9 +211,14 @@ $ kube-core gitops config diff --include "preproduction|production" --exclude na
       }
 
       // const diffData = await this.utils.cliStream('diff', [`${next}`, `${current}`], {maxBuffer: 900_000_000, reject: false})
+      let colorArg = "--color=always"
+
+      if(flags.color === false) {
+        colorArg = "--color=never"
+      }
       const diffData = await this.utils.cliStream(
         "diff",
-        [`--color=always`, `${current}`,`${next}`],
+        [colorArg, `${current}`,`${next}`],
         { maxBuffer: 900_000_000, reject: false }
       );
       console.log(diffData.stdout);
