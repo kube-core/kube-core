@@ -12,7 +12,7 @@ jobs:
         with:
           node-version: '16.x'
           registry-url: 'https://registry.npmjs.org'
-      - run: cd cli && yarn install --frozen-lockfile
-      - run: cd cli && npm publish
+      - run: cd cli && yarn install --frozen-lockfile && yarn prepack
+      - run: cd cli && npm publish && yarn postpack
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
