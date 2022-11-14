@@ -44,44 +44,6 @@ helmfiles:
       releasesRawEnabled: false
       namespacesEnabled: false
       releasesCustomEnabled: false
-  - clusterReleases:
-      {{ $entries := readDirEntries "../local/releases/" }}
-      {{ $clusterWideManifests := false }}
-      {{ range $item := $entries }}
-      {{ if $item.IsDir }}
-      local-config-{{ $item.Name }}:
-        enabled: true
-        chart: kube-core/raw
-        labels:
-          type: local-config
-        disableCoreValuesLayer: true
-        namespace: {{ $item.Name }}
-        values:
-          manifests: {{ ((tpl (readFile "./lib/readfilesdata.functions.yaml.gotmpl") (dict "path" (printf "../local/releases/%s" $item.Name) "values" $values))) | nindent 10 }}
-
-      {{ else }}
-      {{ $clusterWideManifests = true }}
-      {{ end }}
-      {{ end }}
-      {{ if $clusterWideManifests }}
-      local-config-cluster-wide:
-        enabled: true
-        chart: kube-core/raw
-        labels:
-          type: local-config
-        disableCoreValuesLayer: true
-        namespace: cluster-wide-resources
-        values:
-          manifests:
-          {{ range $item := $entries }}
-          {{ if not $item.IsDir }}
-          {{ if contains ".yaml" $item.Name }}
-          {{ $baseName := (split ".yaml" $item.Name)._0 }}
-          - {{ (readFile (printf "../local/releases/%s" $item.Name)) | indent 12 | trim }}
-          {{ end }}
-          {{ end }}
-          {{ end }}
-      {{ end }}
 
   - clusterReleases:
       {{ $entries := readDirEntries "../local/configmaps-releases/" }}
@@ -96,7 +58,8 @@ helmfiles:
           type: local-configmaps
         disableCoreValuesLayer: true
         namespace: {{ $item.Name }}
-        values:
+        templatedValues: |
+          nameOverride: local-configmaps
           manifests: {{ ((tpl (readFile "./lib/readfilesdata.functions.yaml.gotmpl") (dict "path" (printf  "../local/configmaps-releases/%s/configmaps" $item.Name) "values" $values))) | nindent 10 }}
       {{ else }}
       {{ $clusterWideManifests = true }}
@@ -110,7 +73,8 @@ helmfiles:
           type: local-configmaps
         disableCoreValuesLayer: true
         namespace: cluster-wide-resources
-        values:
+        templatedValues: |
+          nameOverride: local-configmaps
           manifests:
           {{ range $item := $entries }}
           {{ if not $item.IsDir }}
@@ -135,7 +99,8 @@ helmfiles:
           type: local-secrets
         disableCoreValuesLayer: true
         namespace: {{ $item.Name }}
-        values:
+        templatedValues: |
+          nameOverride: local-secrets
           manifests: {{ ((tpl (readFile "./lib/readfilesdata.functions.yaml.gotmpl") (dict "path" (printf  "../local/secrets-releases/%s/secrets" $item.Name) "values" $values))) | nindent 10 }}
         transformers:
         - apiVersion: builtin
@@ -160,7 +125,8 @@ helmfiles:
           type: local-secrets
         disableCoreValuesLayer: true
         namespace: cluster-wide-resources
-        values:
+        templatedValues: |
+          nameOverride: local-secrets
           manifests:
           {{ range $item := $entries }}
           {{ if not $item.IsDir }}
@@ -181,4 +147,45 @@ helmfiles:
           - path: metadata/annotations
             kind: SealedSecret
             create: true
+      {{ end }}
+
+  - clusterReleases:
+      {{ $entries := readDirEntries "../local/releases/" }}
+      {{ $clusterWideManifests := false }}
+      {{ range $item := $entries }}
+      {{ if $item.IsDir }}
+      {{ $subEntries := readDirEntries (printf "../local/releases/%s" $item.Name) }}
+      local-releases-{{ $item.Name }}:
+        enabled: true
+        chart: kube-core/raw
+        labels:
+          type: local-releases
+        disableCoreValuesLayer: true
+        namespace: {{ $item.Name }}
+        templatedValues: |
+          nameOverride: local-releases
+          manifests: {{ ((tpl (readFile "./lib/readfilesdata.functions.yaml.gotmpl") (dict "path" (printf  "../local/releases/%s" $item.Name) "values" $values))) | nindent 10 }}
+      {{ else }}
+      {{ $clusterWideManifests = true }}
+      {{ end }}
+      {{ end }}
+      {{ if $clusterWideManifests }}
+      local-releases-cluster-wide:
+        enabled: true
+        chart: kube-core/raw
+        labels:
+          type: local-releases
+        disableCoreValuesLayer: true
+        namespace: cluster-wide-resources
+        templatedValues: |
+          nameOverride: local-releases
+          manifests:
+          {{ range $item := $entries }}
+          {{ if not $item.IsDir }}
+          {{ if contains ".yaml" $item.Name }}
+          {{ $baseName := (split ".yaml" $item.Name)._0 }}
+          - {{ (readFile (printf "../local/releases/%s" $item.Name)) | indent 12 | trim }}
+          {{ end }}
+          {{ end }}
+          {{ end }}
       {{ end }}
