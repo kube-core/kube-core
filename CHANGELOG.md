@@ -2,14 +2,23 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
-#### [v0.7.7](https://github.com/kube-core/kube-core/compare/v0.7.7...v0.7.7)
+#### [v0.7.8](https://github.com/kube-core/kube-core/compare/v0.7.8...v0.7.8)
+
+- cli/commands: Fixed wrong path for generated helmfiles [`2355713`](https://github.com/kube-core/kube-core/commit/2355713ff6a63a3624f4a684cee02b7e1c713b9f)
+
+#### [v0.7.8](https://github.com/kube-core/kube-core/compare/v0.7.7...v0.7.8)
+
+> 14 November 2022
+
+- release: v0.7.8 [`1056d44`](https://github.com/kube-core/kube-core/commit/1056d44a45579a82cde7f9e33c0089484d77dc70)
+- cli/commands: Fixed wrong path for generated helmfiles [`8f02328`](https://github.com/kube-core/kube-core/commit/8f023289c94fde475f9a78521f91caf6d3314e8b)
 
 #### [v0.7.7](https://github.com/kube-core/kube-core/compare/v0.7.6...v0.7.7)
 
 > 14 November 2022
 
 - cli/commands: Added import:manifests command [`1509347`](https://github.com/kube-core/kube-core/commit/1509347354b8ffb6813da702eb35f7316f544903)
-- release: v0.7.7 [`a4c2db2`](https://github.com/kube-core/kube-core/commit/a4c2db209ba3a06bf130a9ac0d5755944413cf22)
+- release: v0.7.7 [`f28bce8`](https://github.com/kube-core/kube-core/commit/f28bce83cc357b765f1b97f6b196f7e87ca412ab)
 - core/templates: Fixed issues with local releases generation [`182520c`](https://github.com/kube-core/kube-core/commit/182520c5e586c525798804a2331aa93ed9fd2a2b)
 - github/actions: Added automatic release on tag [`998dca0`](https://github.com/kube-core/kube-core/commit/998dca0ec0b962f814c915a0041a7190b21eef66)
 - core/values: Added nameOverride on raw values template [`b436b2a`](https://github.com/kube-core/kube-core/commit/b436b2a3385fe725d2e234ce7ea37e0f2d98dee6)
