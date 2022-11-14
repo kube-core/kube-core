@@ -179,7 +179,7 @@ $ kube-core generate helmfiles --no-lib --no-core --no-services --defaultEnvs
           [
             `git::${this.coreRemotePath}@`,
             "core",
-            `helmfile.yaml.gotmpl?ref=v${this.config.version}`,
+            `core.yaml.gotmpl?ref=v${this.config.version}`,
           ].join("/")
         );
         fileData = fileData.replaceAll(
@@ -195,7 +195,7 @@ $ kube-core generate helmfiles --no-lib --no-core --no-services --defaultEnvs
           [
             `git::${this.coreRemotePath}@`,
             "core",
-            `cluster.yaml.gotmpl?ref=v${this.config.version}`,
+            `local.yaml.gotmpl?ref=v${this.config.version}`,
           ].join("/")
         );
         fileData = fileData.replaceAll(
@@ -218,7 +218,7 @@ $ kube-core generate helmfiles --no-lib --no-core --no-services --defaultEnvs
         if(flags.localRefs) {
           fileData = fileData.replaceAll(
             "KUBE_CORE_HELMFILES_CORE_LOCAL_PATH",
-            upath.join(this.corePath, "core", "helmfile.yaml.gotmpl")
+            upath.join(this.corePath, "core", "core.yaml.gotmpl")
           );
           fileData = fileData.replaceAll(
             "KUBE_CORE_HELMFILES_CLUSTER_LOCAL_PATH",
@@ -226,7 +226,7 @@ $ kube-core generate helmfiles --no-lib --no-core --no-services --defaultEnvs
           );
           fileData = fileData.replaceAll(
             "KUBE_CORE_HELMFILES_LOCAL_LOCAL_PATH",
-            upath.join(this.corePath, "core", "cluster.yaml.gotmpl")
+            upath.join(this.corePath, "core", "local.yaml.gotmpl")
           );
           fileData = fileData.replaceAll(
             "KUBE_CORE_HELMFILES_APPLICATIONS_LOCAL_PATH",
