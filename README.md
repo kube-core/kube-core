@@ -28,12 +28,12 @@ Configure once, deploy anywhere, for Kubernetes.
 <!-- Shields -->
 
 ## About
-kube-core is a framework to  manage shared configuration between Kubernetes clusters. \
-It is designed for individuals or teams that manage Kubernetes clusters on a daily basis, and requires prior knowledge of Helm, Helmfile, and Kubernetes.
+kube-core is a framework to manage Cloud Platforms with Kubernetes. \
+It is designed for individuals or teams that manage multiple Kubernetes clusters on a daily basis. Prior knowledge of Helm, Helmfile, Kubernetes, and other industry standard and CNCF tools is recommended.
 
 kube-core can be used to:
-- Deploy commonly used softwares that work together <!-- (see the [list of packages](./docs/packages.md)) -->
-- Standardize Kubernetes cluster configuration management across projects
+- Deploy commonly used softwares that work together
+- Standardize Kubernetes cluster configuration management across your organisation
 - Share envrionment values between Helm Releases to avoid repetition
 - Ease the upgrade process of releases that we use everywhere
 - Provide sensitive defaults to get started quickly on a new cluster
@@ -56,4 +56,4 @@ Used together, they unleash all their power, and give us the kube-core framework
 
 <!-- DOCUMENTATION -->
 ## Documentation
->:warning: The old docs are irrelevant and have been removed. Documentation is being rewritten completely.
+>:warning: The documentation is being rewritten completely and will be available soon.
