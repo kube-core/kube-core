@@ -1,3 +1,4 @@
+nameOverride: {{ .Release.Name }}
 {{ if (.Values | getOrNil "releasesRaw" | getOrNil .Release.Name | getOrNil "manifests") }}
 manifests: {{ toYaml (index .Values.releasesRaw .Release.Name "manifests") | nindent 2 }}
 {{ else }}
