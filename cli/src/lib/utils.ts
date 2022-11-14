@@ -7,6 +7,7 @@ import YAML from "yaml";
 import * as nodejq from "node-jq";
 import { json } from "stream/consumers";
 import FuzzySet from "fuzzyset";
+import merge from "lodash.merge";
 
 // import execa from "execa";
 const execa = require("execa");
@@ -152,6 +153,37 @@ export async function mkdir(path: string) {
     console.error(e);
   }
 }
+
+export async function loadYamlFile(path) {
+  let data = YAML.parse(await fs.readFile(path, "utf8"));
+  return data
+}
+export async function writeYamlFile(path, data) {
+  await this.utils.mkdir(upath.parse(path).dir);
+  await fs.writeFile(path, YAML.stringify(data));
+  return data
+}
+
+export async function mergeYamlFilesAtTargetPath(targetPath, ...sourcePaths) {
+
+  let data = {}
+  let filesData = []
+  for(let path of sourcePaths) {
+    filesData.push(await this.loadYamlFile(path))
+  }
+
+  data = merge(...sourcePaths)
+
+  await this.writeYamlFile(upath.normalizeSafe(targetPath), data)
+
+  return data
+}
+
+export async function importResourcesAsLocalReleases(resources) {
+
+}
+
+
 export async function loadYamlFilesFromPath(
   clusterConfigDirPath: string,
   targetPath = "config",
@@ -161,7 +193,7 @@ export async function loadYamlFilesFromPath(
   try {
     let files = [];
     for await (const file of this.getFiles(filesPath)) {
-      let data = YAML.parse(await fs.readFile(file, "utf8"));
+      let data = await this.loadYamlFile(file)
       let filePath = upath.normalizeSafe(file);
 
       if (absolute === false) {
@@ -186,7 +218,7 @@ export async function loadYamlFilesFromPathAsDataArray(
   try {
     let files = [];
     for await (const file of this.getFiles(filesPath)) {
-      let data = YAML.parse(await fs.readFile(file, "utf8"));
+      let data = await this.loadYamlFile(file)
       let filePath = upath.normalizeSafe(file);
 
       if (absolute === false) {
@@ -212,7 +244,7 @@ export async function loadYamlFilesFromPathAsDataObject(
   try {
     let files = {};
     for await (const file of this.getFiles(filesPath)) {
-      let data = YAML.parse(await fs.readFile(file, "utf8"));
+      let data = await this.loadYamlFile(file)
       let filePath = upath.normalizeSafe(file);
 
       if (absolute === false) {
@@ -239,6 +271,11 @@ export async function getFilesAsList(targetPath) {
     console.error(e);
   }
 }
+
+export async function getFilesAsParsedList(targetPath) {
+  return (await this.getFilesAsList(targetPath)).map(item => upath.parse(item))
+}
+
 export async function loadYamlFilesFromPathAsItemsList(
   clusterConfigDirPath: string,
   targetPath = "config",
@@ -264,6 +301,7 @@ export async function loadYamlFilesFromPathAsItemsList(
     console.error(e);
   }
 }
+
 export async function loadValuesAsObjectList(path) {
   let filesPath = upath.normalizeSafe(path);
   try {
@@ -294,7 +332,6 @@ export async function loadValuesAsArray(path) {
     console.error(e);
   }
 }
-
 export async function* getFiles(dir) {
   const dirents = await fs.readdir(dir, { withFileTypes: true });
   for (const dirent of dirents) {
