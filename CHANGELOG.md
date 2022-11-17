@@ -2,16 +2,19 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
-#### [v0.7.8](https://github.com/kube-core/kube-core/compare/v0.7.8...v0.7.8)
+#### [v0.7.9](https://github.com/kube-core/kube-core/compare/v0.7.8...v0.7.9)
 
-- cli/commands: Fixed wrong path for generated helmfiles [`2355713`](https://github.com/kube-core/kube-core/commit/2355713ff6a63a3624f4a684cee02b7e1c713b9f)
+- core/options: Added options.forceNamespaceByKind [`590611f`](https://github.com/kube-core/kube-core/commit/590611f5e9e51bd7f7ca956e83e5541a49ce69c1)
+- core/templates: Fixed empty clusterReleases merge behavior [`6ed9623`](https://github.com/kube-core/kube-core/commit/6ed962354af7e00873d18081451d76ce3c567ac2)
+- core/values: Changed cert-manager leaderElection namespace [`30a3f5e`](https://github.com/kube-core/kube-core/commit/30a3f5e2921ffc7e65362ed968d8072a8da8f70a)
+- core/globals: Disabled namespaces by default [`ead87de`](https://github.com/kube-core/kube-core/commit/ead87de9ecbaacf9ecade3d20e3b416ec7e5d85f)
 
 #### [v0.7.8](https://github.com/kube-core/kube-core/compare/v0.7.7...v0.7.8)
 
 > 14 November 2022
 
-- release: v0.7.8 [`1056d44`](https://github.com/kube-core/kube-core/commit/1056d44a45579a82cde7f9e33c0089484d77dc70)
-- cli/commands: Fixed wrong path for generated helmfiles [`8f02328`](https://github.com/kube-core/kube-core/commit/8f023289c94fde475f9a78521f91caf6d3314e8b)
+- release: v0.7.8 [`c1c576d`](https://github.com/kube-core/kube-core/commit/c1c576d2d2cc51d669759c3bd900d3efa2d50ee4)
+- cli/commands: Fixed wrong path for generated helmfiles [`2355713`](https://github.com/kube-core/kube-core/commit/2355713ff6a63a3624f4a684cee02b7e1c713b9f)
 
 #### [v0.7.7](https://github.com/kube-core/kube-core/compare/v0.7.6...v0.7.7)
 
