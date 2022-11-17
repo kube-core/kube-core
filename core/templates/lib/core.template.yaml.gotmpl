@@ -37,7 +37,7 @@ helmfiles:
   # Injecting applications core config
   - core:
       helmfileName: {{ $helmfileName }}
-      namespacesEnabled: true
+      namespacesEnabled: false
   - servicesList: {{ toYaml $values.services | nindent 6 }}
   - applicationsList: {{ toYaml $values.applications | nindent 6 }}
   - environmentsList: {{ toYaml $values.environments | nindent 6 }}
