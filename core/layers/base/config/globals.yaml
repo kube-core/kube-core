@@ -2,7 +2,7 @@ core:
   releasesEnabled: true
   releasesRawEnabled: true
   releasesCustomEnabled: true
-  namespacesEnabled: true
+  namespacesEnabled: false
   globalLabelsEnabled: true
   globalHelmMetadataEnabled: true
   applicationsEnabled: false
