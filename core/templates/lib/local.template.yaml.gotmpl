@@ -45,12 +45,12 @@ helmfiles:
       namespacesEnabled: false
       releasesCustomEnabled: false
 
-  - clusterReleases:
       {{ $entries := readDirEntries "../local/configmaps-releases/" }}
       {{ $clusterWideManifests := false }}
       {{ range $item := $entries }}
       {{ if $item.IsDir }}
       {{ $subEntries := readDirEntries (printf "../local/configmaps-releases/%s/configmaps" $item.Name) }}
+  - clusterReleases:
       local-configmaps-{{ $item.Name }}:
         enabled: true
         chart: kube-core/raw
@@ -66,6 +66,7 @@ helmfiles:
       {{ end }}
       {{ end }}
       {{ if $clusterWideManifests }}
+  - clusterReleases:
       local-configmaps-cluster-wide:
         enabled: true
         chart: kube-core/raw
@@ -86,12 +87,12 @@ helmfiles:
           {{ end }}
       {{ end }}
 
-  - clusterReleases:
       {{ $entries := readDirEntries "../local/secrets-releases/" }}
       {{ $clusterWideManifests := false }}
       {{ range $item := $entries }}
       {{ if $item.IsDir }}
       {{ $subEntries := readDirEntries (printf "../local/secrets-releases/%s/secrets" $item.Name) }}
+  - clusterReleases:
       local-secrets-{{ $item.Name }}:
         enabled: true
         chart: kube-core/raw
@@ -118,6 +119,7 @@ helmfiles:
       {{ end }}
       {{ end }}
       {{ if $clusterWideManifests }}
+  - clusterReleases:
       local-secrets-cluster-wide:
         enabled: true
         chart: kube-core/raw
@@ -149,12 +151,12 @@ helmfiles:
             create: true
       {{ end }}
 
-  - clusterReleases:
       {{ $entries := readDirEntries "../local/releases/" }}
       {{ $clusterWideManifests := false }}
       {{ range $item := $entries }}
       {{ if $item.IsDir }}
       {{ $subEntries := readDirEntries (printf "../local/releases/%s" $item.Name) }}
+  - clusterReleases:
       local-releases-{{ $item.Name }}:
         enabled: true
         chart: kube-core/raw
@@ -170,6 +172,7 @@ helmfiles:
       {{ end }}
       {{ end }}
       {{ if $clusterWideManifests }}
+  - clusterReleases:
       local-releases-cluster-wide:
         enabled: true
         chart: kube-core/raw
