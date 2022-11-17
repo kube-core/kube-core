@@ -6,7 +6,7 @@ installCRDs: false
 
 {{ if eq .Values.cloud.provider "aws" }}
 serviceAccount:
-  annotations: 
+  annotations:
     eks.amazonaws.com/role-arn: {{ index .Values.releases .Release.Name "config" "role-arn" }}
 {{ end }}
 
@@ -23,3 +23,7 @@ webhook:
 
 cainjector:
   replicaCount: {{ index .Values.releases .Release.Name "config" "replicaCount" }}
+
+global:
+  leaderElection:
+    namespace: {{ .Release.Namespace }}
