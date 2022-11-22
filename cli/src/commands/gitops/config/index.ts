@@ -19,8 +19,8 @@ $ kube-core build all
 # Build your next index. This generates: ./data/next-full.js
 $ kube-core gitops config index
 # Force refresh example
-$ git stash && kube-core gitops config index --rebuild-current
-$ git stash apply && kube-core build all && gitops config index --rebuild-next`,
+$ git stash && kube-core gitops config index --rebuildCurrent
+$ git stash apply && kube-core build all && gitops config index --rebuildNext`,
   ];
 
   static flags = {
@@ -75,7 +75,7 @@ $ git stash apply && kube-core build all && gitops config index --rebuild-next`,
           await fs.writeFile(indexPath, data.stdout);
           console.log(`Index built at: ${indexPath}`);
         } else {
-          console.log("Next index already exists. Use --rebuild-next");
+          console.log("Next index already exists. Use --rebuildNext");
         }
       } else if (
         this.gitopsConfigHasChanges == false ||
@@ -103,7 +103,7 @@ $ git stash apply && kube-core build all && gitops config index --rebuild-next`,
           await fs.writeFile(indexPath, data.stdout);
           console.log(`Index built at: ${indexPath}`);
         } else {
-          console.log("Next index already exists. Use --rebuild-current");
+          console.log("Next index already exists. Use --rebuildCurrent");
         }
       }
     } else {
