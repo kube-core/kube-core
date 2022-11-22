@@ -67,36 +67,6 @@ if [[ "${cloud_provider}" == "gcp" ]]; then
 
 serviceAccountsConfig="$(cat <<EOF
 serviceAccounts:
-  - name: cluster-manager
-    roles:
-      - roles/container.admin
-      - roles/container.clusterAdmin
-      - roles/container.clusterViewer
-      - roles/container.developer
-      - roles/compute.admin
-  - name: dns-admin
-    roles:
-      - roles/dns.admin
-  - name: gcr-admin
-    roles:
-      - projects/${cloud_project}/roles/gcrAdmin
-  - name: gcs-admin
-    roles:
-      - projects/${cloud_project}/roles/gcsAdmin
-  - name: velero
-    roles:
-      - projects/${cloud_project}/roles/velero
-  - name: thanos
-    roles:
-      - roles/storage.objectAdmin
-  - name: tekton
-    roles:
-      - roles/container.admin
-      - roles/container.clusterAdmin
-      - roles/container.clusterViewer
-      - roles/container.developer
-      - roles/storage.objectAdmin
-      - roles/storage.objectViewer
   - name: crossplane
     roles:
       - roles/iam.serviceAccountUser
@@ -107,15 +77,18 @@ serviceAccounts:
       - roles/redis.admin
       - roles/compute.networkAdmin
       - roles/storage.admin
+      - roles/resourcemanager.projectIamAdmin
+      - roles/dns.admin
+      - roles/iam.roleAdmin
 EOF
 )"
 
-gcloud_prepare_sa_roles
+# gcloud_prepare_sa_roles
 gcloud_generate_sa_config
-gcloud_setup_velero_bucket
-gcloud_setup_thanos_bucket
-gcloud_setup_tekton_bucket
-gcloud_setup_generate_thanos_secret
+# gcloud_setup_velero_bucket
+# gcloud_setup_thanos_bucket
+# gcloud_setup_tekton_bucket
+# gcloud_setup_generate_thanos_secret
 
 else
   log_warn "Scripted setup only works with GCP / GKE for now."

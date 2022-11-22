@@ -28,9 +28,9 @@ gcloud_iam_add_policy_bindings() {
     log_info "Binding roles: [${roles}] to ${serviceAccount}"
     for role in $roles; do
         if [[ "${LOG_LEVEL}" == "DEBUG" || "${LOG_LEVEL}" == "INSANE" ]]; then
-            gcloud projects add-iam-policy-binding ${cloud_project} --member=serviceAccount:${serviceAccount}@${cloud_project}.iam.gserviceaccount.com --role=${role}
+           gcloud projects add-iam-policy-binding ${cloud_project} --member=serviceAccount:${serviceAccount}@${cloud_project}.iam.gserviceaccount.com --role=${role} || true
         else
-                gcloud projects add-iam-policy-binding ${cloud_project} --member=serviceAccount:${serviceAccount}@${cloud_project}.iam.gserviceaccount.com --role=${role} &> /dev/null
+                gcloud projects add-iam-policy-binding ${cloud_project} --member=serviceAccount:${serviceAccount}@${cloud_project}.iam.gserviceaccount.com --role=${role} &> /dev/null || true
         fi
     done
 }
