@@ -34,8 +34,8 @@ EXAMPLES
   # Build your next index. This generates: ./data/next-full.js
   $ kube-core gitops config index
   # Force refresh example
-  $ git stash && kube-core gitops config index --rebuild-current
-  $ git stash apply && kube-core build all && gitops config index --rebuild-next
+  $ git stash && kube-core gitops config index --rebuildCurrent
+  $ git stash apply && kube-core build all && gitops config index --rebuildNext
 ```
 
 ## `kube-core gitops config diff`
