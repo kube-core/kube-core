@@ -1,36 +1,72 @@
+{{ $aws := (eq $.Values.cloud.provider "aws" ) }}
+{{ $gcp := (eq $.Values.cloud.provider "gcp" ) }}
+{{ $provider :=  $.Values.cloud.provider }}
+
 manifests:
   ################################################################################
   # Setting up the default provider configuration.
   ################################################################################
 
+  {{ if (or $gcp $aws) }}
   - apiVersion: pkg.crossplane.io/v1alpha1
     kind: ControllerConfig
     metadata:
-      name: default
+      name: {{ $provider }}
     spec:
       args:
         # Enable ExernalSecretStores alpha feature (publishConnectionDetailsTo).
         - --enable-external-secret-stores
-        - --debug
+        # - --debug
 
-  {{- if or (index .Values.releases "crossplane" "config" "providers" "gcp" "enabled") (eq $.Values.cloud.provider "gcp") }}
   - apiVersion: pkg.crossplane.io/v1
     kind: Provider
     metadata:
-      name: gcp
+      name: {{ $provider }}
     spec:
+      {{ if (eq $provider "gcp") }}
       package: "crossplane/provider-gcp:v0.21.0"
+      {{ else if (eq $provider "aws") }}
+      package: "crossplane/provider-aws:v0.30.1"
+      {{ end }}
       controllerConfigRef:
-        name: default
-  {{- end }}
-
-  {{- if or (index .Values.releases "crossplane" "config" "providers" "aws" "enabled") (eq $.Values.cloud.provider "aws") }}
+        name: {{ $provider }}
+  {{ if $gcp }}
   - apiVersion: pkg.crossplane.io/v1
     kind: Provider
     metadata:
-      name: aws
+      name: upbound-{{ $provider }}
     spec:
-      package: "crossplane/provider-aws:v0.30.1"
+      package: xpkg.upbound.io/upbound/provider-gcp:v0.18.0
+
+  - apiVersion: pkg.crossplane.io/v1alpha1
+    kind: ControllerConfig
+    metadata:
+      name: sql
+
+  - apiVersion: pkg.crossplane.io/v1alpha1
+    kind: ControllerConfig
+    metadata:
+      name: jet-gcp
+    spec:
+      args:
+        - --enable-external-secret-stores
+
+  - apiVersion: pkg.crossplane.io/v1
+    kind: Provider
+    metadata:
+      name: sql
+    spec:
+      package: "crossplane/provider-sql:v0.5.0"
       controllerConfigRef:
-        name: default
-  {{- end }}
+        name: sql
+
+  - apiVersion: pkg.crossplane.io/v1
+    kind: Provider
+    metadata:
+      name: jet-gcp
+    spec:
+      package: "crossplane/provider-jet-gcp:v0.3.0-preview"
+      controllerConfigRef:
+        name: jet-gcp
+  {{ end }}
+  {{ end }}

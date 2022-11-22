@@ -4,7 +4,7 @@ deploymentStrategy: RollingUpdate
 
 image:
   repository: crossplane/crossplane
-  tag: v1.9.0
+  tag: v1.10.1
   pullPolicy: IfNotPresent
 
 nodeSelector: {}
@@ -30,8 +30,7 @@ provider:
 configuration:
   packages: []
 
-imagePullSecrets:
-- dockerhub
+imagePullSecrets: {}
 
 registryCaBundleConfig: {}
 

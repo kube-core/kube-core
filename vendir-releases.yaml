@@ -112,7 +112,7 @@ directories:
       - path: crossplane
         helmChart:
           name: crossplane
-          version: 1.9.0
+          version: 1.10.1
           repository:
             url: https://charts.crossplane.io/stable
 
@@ -363,6 +363,10 @@ directories:
             url: https://oauth2-proxy.github.io/manifests
 
       # Local Releases
+      - path: crossplane-cloud
+        directory:
+          path: ../../../releases/local/crossplane-cloud
+
       - path: namespace
         directory:
           path: ../../../releases/local/namespace

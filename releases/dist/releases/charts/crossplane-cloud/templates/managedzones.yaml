@@ -1,0 +1,6 @@
+{{ if .Values.managedZones }}
+{{ range $key, $value := .Values.managedZones }}
+---
+{{ include "crossplane-cloud.managedzone" (dict "name" $key "value" $value) }}
+{{ end }}
+{{ end }}

@@ -43,7 +43,7 @@
   - "./values/release-dynamic-secrets.yaml.gotmpl"
 {{ end }}
 
-{{ if (index .item "external-secrets") }}
+{{ if (index .item "externalSecretsEnabled") }}
 - name: {{ $releaseName }}-external-secrets
   chart: ../releases/dist/releases/charts/raw
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
@@ -97,4 +97,18 @@
     type: gitops
   values:
   - "./values/release-gitops.yaml.gotmpl"
+{{ end }}
+
+{{ if .item | getOrNil "cloud" | getOrNil "enabled" }}
+- name: {{ $releaseName }}-cloud
+  chart: ../releases/dist/releases/charts/crossplane-cloud
+  kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
+  namespace: {{ .releaseNamespace }}
+  transformers:
+  {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
+  labels:
+    app: {{ $releaseName }}
+    type: cloud
+  values:
+  - "./values/release-cloud.yaml.gotmpl"
 {{ end }}

@@ -1,0 +1,150 @@
+{{ $values := .Values }}
+{{ $releases := (merge $values.releases $values.applicationsList $values.servicesList )}}
+
+{{ $releaseNamespace := .Release.Namespace }}
+{{ $mainReleaseName := (.Release.Name | replace "-cloud" "") }}
+{{ $mainRelease := ($releases | getOrNil $mainReleaseName) }}
+
+{{ $releaseCloud := (index $releases $mainReleaseName "cloud" )}}
+
+cluster: {{ toYaml $values.cluster | nindent 2 }}
+cloud: {{ toYaml $values.cloud | nindent 2 }}
+prefix: {{ $values.cluster.config.name }}
+
+
+{{ $cloudProject := $values.cloud.project }}
+{{ $cloudLocation := $values.cloud.default.location }}
+{{ $clusterName := $values.cluster.config.name }}
+
+{{ if $releaseCloud | getOrNil "enabled" }}
+{{ $name := $mainReleaseName }}
+{{ $initials := (($name | splitList "-") | join " " | initials) }}
+
+{{ $clusterShortName := $values.cluster.config.shortName }}
+{{ $releaseType := ""}}
+{{ if (eq $mainRelease.type "release") }}
+{{ $releaseType = "kc" }}
+{{ else if (eq $mainRelease.type "application") }}
+{{ $releaseType = "app" }}
+{{ else if (eq $mainRelease.type "service") }}
+{{ $releaseType = "svc" }}
+{{ end }}
+
+{{ $autoShortName := "" }}
+{{ $namespace := ($releaseNamespace | substr 0 3) }}
+{{ $autoShortName = (printf "%s-%s-%s-%s" $clusterShortName $releaseType $namespace $initials) }}
+
+{{ $shortName := (coalesce ($mainRelease | getOrNil "shortName") $autoShortName) }}
+
+{{ $releaseServiceAccountName := $shortName | substr 0 30 }}
+{{ $releaseBucketName := $shortName | substr 0 63 }}
+{{ $releaseRoleName := ($shortName | kebabcase | replace "-" "." | untitle) }}
+
+{{ $name = $shortName }}
+
+{{ if (not (eq ($releaseCloud | getOrNil "serviceAccounts" | getOrNil "enabled") false)) }}
+serviceAccounts:
+  {{ $name }}:
+    enabled: true
+    mainReleaseName: {{ $mainReleaseName }}
+    deletionPolicy: Delete
+    project: {{ $cloudProject }}
+    location: {{ $cloudLocation }}
+    namespace: {{ $releaseNamespace }}
+    clusterName: {{ $clusterName }}
+    displayName: {{ $name }}
+    externalName: {{ $releaseServiceAccountName }}
+{{ end }}
+
+
+{{ if (not (eq ($releaseCloud | getOrNil "serviceAccountKeys" | getOrNil "enabled") false)) }}
+serviceAccountKeys:
+  {{ $name }}:
+    enabled: true
+    mainReleaseName: {{ $mainReleaseName }}
+    deletionPolicy: Delete
+    project: {{ $cloudProject }}
+    location: {{ $cloudLocation }}
+    namespace: {{ $releaseNamespace }}
+    clusterName: {{ $clusterName }}
+{{ end }}
+
+{{ if (not (eq ($releaseCloud | getOrNil "buckets" | getOrNil "enabled") false)) }}
+buckets:
+{{ if ($releaseCloud | getOrNil "bucket" | getOrNil "enabled") }}
+  {{ $name }}:
+    enabled: true
+    mainReleaseName: {{ $mainReleaseName }}
+    deletionPolicy: Delete
+    externalName: {{ $releaseBucketName }}
+    project: {{ $cloudProject }}
+    location: {{ $cloudLocation }}
+    namespace: {{ $releaseNamespace }}
+    clusterName: {{ $clusterName }}
+
+{{ if (not (eq ($releaseCloud | getOrNil "bucketPolicies" | getOrNil "enabled") false)) }}
+bucketPolicies:
+  {{ $name }}:
+    enabled: true
+    mainReleaseName: {{ $mainReleaseName }}
+    deletionPolicy: Delete
+    project: {{ $cloudProject }}
+    location: {{ $cloudLocation }}
+    namespace: {{ $releaseNamespace }}
+    clusterName: {{ $clusterName }}
+{{ end }}
+{{ end }}
+{{ end }}
+
+{{ if (not (eq ($releaseCloud | getOrNil "projectIAMCustomRoles" | getOrNil "enabled") false)) }}
+projectIAMCustomRoles:
+  {{ $name }}:
+    enabled: true
+    mainReleaseName: {{ $mainReleaseName }}
+    deletionPolicy: Delete
+    project: {{ $cloudProject }}
+    location: {{ $cloudLocation }}
+    namespace: {{ $releaseNamespace }}
+    clusterName: {{ $clusterName }}
+    externalName: {{ $releaseRoleName }}
+
+    {{ if $releaseCloud | getOrNil "permissions" }}
+    permissions: {{ toYaml $releaseCloud.permissions | nindent 4 }}
+    {{ else }}
+    permissions:
+    - container.pods.list # TODO: variabilisation to remove this
+    {{ end }}
+{{ end }}
+
+{{ if (not (eq ($releaseCloud | getOrNil "projectIAMMembers" | getOrNil "enabled") false)) }}
+projectIAMMembers:
+  {{ $name }}-default:
+    enabled: true
+    mainReleaseName: {{ $mainReleaseName }}
+    deletionPolicy: Delete
+    member: {{ $releaseServiceAccountName }}
+    project: {{ $cloudProject }}
+    location: {{ $cloudLocation }}
+    namespace: {{ $releaseNamespace }}
+    clusterName: {{ $clusterName }}
+    role: projects/{{ $cloudProject }}/roles/{{ $releaseRoleName }}
+  {{ if $releaseCloud | getOrNil "roles" }}
+  {{ range $key, $value := ($releaseCloud | getOrNil "roles") }}
+  {{ $roleTitle := ( . | title | replace "Roles/" "" | replace "." "" | untitle | kebabcase ) }}
+  {{ $hash := $roleTitle }}
+  {{ $name }}-extra-{{ $hash }}:
+    enabled: true
+    mainReleaseName: {{ $mainReleaseName }}
+    deletionPolicy: Delete
+    member: {{ $releaseServiceAccountName }}
+    project: {{ $cloudProject }}
+    location: {{ $cloudLocation }}
+    namespace: {{ $releaseNamespace }}
+    clusterName: {{ $clusterName }}
+    role: {{ . }}
+  {{ end }}
+  {{ end }}
+{{ end }}
+
+
+{{ end }}

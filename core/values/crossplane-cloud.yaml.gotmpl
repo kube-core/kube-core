@@ -1,0 +1,31 @@
+cluster: {{ toYaml .Values.cluster | nindent 2 }}
+cloud: {{ toYaml .Values.cloud | nindent 2 }}
+prefix: {{ .Values.cluster.config.name }}
+
+managedZones:
+  {{ .Values.cluster.config.name }}:
+    dnsName: {{ .Values.cluster.config.domain }}.
+    visibility: public
+
+# projectIAMCustomRoles:
+#   gcr-admin:
+#     permissions:
+#     - storage.objects.get
+#     - storage.objects.create
+#     - storage.objects.list
+#     - storage.objects.update
+#     - storage.objects.delete
+#     - storage.buckets.create
+#     - storage.buckets.get
+#     - cloudbuild.builds.get
+#     - cloudbuild.builds.list
+
+#   gcs-admin:
+#     permissions:
+#     - storage.objects.get
+#     - storage.objects.create
+#     - storage.objects.list
+#     - storage.objects.update
+#     - storage.objects.delete
+#     - storage.buckets.create
+#     - storage.buckets.get

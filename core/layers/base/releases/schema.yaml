@@ -40,6 +40,7 @@ templates:
     release: {}
     scaling: {}
     secrets: {}
+    cloud: {}
     gitops:
       enabled: false
     external-secrets: false
@@ -90,6 +91,7 @@ templates:
     scaling: {}
     external-secrets: false
     secrets: {}
+    cloud: {}
     gitops:
       enabled: false
     dynamicSecrets: {}
@@ -139,6 +141,7 @@ templates:
     scaling: {}
     external-secrets:
     secrets: {}
+    cloud: {}
     gitops:
       enabled: false
     dynamicSecrets: {}
@@ -157,6 +160,7 @@ releases:
   container-registry-operator: *release
   crossplane: *release
   crossplane-buckets: *release
+  crossplane-cloud: *release
   crossplane-provider: *release
   crossplane-provider-config: *release
   eck-operator: *release
