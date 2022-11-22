@@ -29,6 +29,9 @@ releases:
   crossplane-buckets:
     namespace: crossplane-system
     chart: ../releases/dist/releases/charts/crossplane-buckets
+  crossplane-cloud:
+    namespace: crossplane-system
+    chart: ../releases/dist/releases/charts/crossplane-cloud
   crossplane-provider:
     namespace: crossplane-system
     chart: ../releases/dist/releases/charts/raw

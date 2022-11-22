@@ -1,0 +1,6 @@
+{{ if .Values.projectIAMMembers }}
+{{ range $key, $value := .Values.projectIAMMembers }}
+---
+{{ include "crossplane-cloud.projectiammember" (dict "key" $key "value" $value) }}
+{{ end }}
+{{ end }}

@@ -1,0 +1,87 @@
+cloud:
+  provider: gcp # aws|gcp
+  default:
+    location: europe-west1
+
+cluster:
+  config:
+    name: kube-core
+
+# projectIAMCustomRoles:
+#   gcr-admin:
+#     permissions:
+#     - storage.objects.get
+#     - storage.objects.create
+#     - storage.objects.list
+#     - storage.objects.update
+#     - storage.objects.delete
+#     - storage.buckets.create
+#     - storage.buckets.get
+#     - cloudbuild.builds.get
+#     - cloudbuild.builds.list
+#
+#   gcs-admin:
+#     permissions:
+#     - storage.objects.get
+#     - storage.objects.create
+#     - storage.objects.list
+#     - storage.objects.update
+#     - storage.objects.delete
+#     - storage.buckets.create
+#     - storage.buckets.get
+
+# projectIAMMembers:
+#   app: {}
+#     role: roles/dns.admin
+
+# serviceAccountIAMMembers:
+#   app: {}
+#     role: roles/dns.admin
+
+# serviceAccounts:
+#   kube-core: {}
+
+# serviceAccountPolicies:
+#  app: {}
+  # defaultRoles:
+  # - roles/viewer
+  # - roles/editor
+  # defaultRole: false
+  # role: roles/viewer
+  # sa: custom-sa
+  # roles:
+  # - role: roles/editor
+  #   serviceAccountMemberRefs:
+  #   - custom-sa
+
+# serviceAccountsWithKey:
+#   app: {}
+
+# serviceAccountKeys:
+#   app: {}
+
+# buckets:
+#   app: {}
+
+# bucketsWithPolicies:
+#   app: {}
+
+# bucketPolicies:
+#   app: {}
+#     # bucketRef: SuperBucket
+#     # adminRef: omgAdmin
+#     # public: true
+#     # admin: true
+#     # roles:
+#     # - role: roles/storage.objectViewer
+#     #   members:
+#     #     - blabla
+
+# appBuckets:
+#   app: {}
+
+# appServiceAccounts:
+#   app: {}
+
+# apps:
+#   app: {}

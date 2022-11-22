@@ -1,14 +1,13 @@
+{{ $aws := (eq $.Values.cloud.provider "aws" ) }}
+{{ $gcp := (eq $.Values.cloud.provider "gcp" ) }}
+{{ $provider :=  $.Values.cloud.provider }}
+
 manifests:
-  ################################################################################
-  # Configure a default provider configuration for GCP/AWS.
-  #
-  # INFO: We can't put this manifest in `crossplane-provider-gcp` because the CRDs
-  # INFO: for GCP/AWS are not registered yet.
-  ################################################################################
+{{ if $gcp }}
   - apiVersion: gcp.crossplane.io/v1beta1
     kind: ProviderConfig
     metadata:
-      name: default
+      name: {{ $provider }}
     spec:
       projectID: {{ .Values.cloud.project }}
       credentials:
@@ -17,3 +16,30 @@ manifests:
           namespace: {{ .Release.Namespace }}
           name: {{ index .Values.releases "crossplane" "secrets" "credentials" "secretRef" "name" }}
           key: {{ index .Values.releases "crossplane" "secrets" "credentials" "secretRef" "key" }}
+
+  - apiVersion: gcp.upbound.io/v1beta1
+    kind: ProviderConfig
+    metadata:
+      name: upbound-{{ $provider }}
+    spec:
+      projectID: {{ .Values.cloud.project }}
+      credentials:
+        source: Secret
+        secretRef:
+          namespace: {{ .Release.Namespace }}
+          name: {{ index .Values.releases "crossplane" "secrets" "credentials" "secretRef" "name" }}
+          key: {{ index .Values.releases "crossplane" "secrets" "credentials" "secretRef" "key" }}
+
+  - apiVersion: gcp.jet.crossplane.io/v1alpha1
+    kind: ProviderConfig
+    metadata:
+      name: jet-gcp
+    spec:
+      projectID: {{ .Values.cloud.project }}
+      credentials:
+        source: Secret
+        secretRef:
+          namespace: {{ .Release.Namespace }}
+          name: {{ index .Values.releases "crossplane" "secrets" "credentials" "secretRef" "name" }}
+          key: {{ index .Values.releases "crossplane" "secrets" "credentials" "secretRef" "key" }}
+{{ end }}

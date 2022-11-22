@@ -19,6 +19,8 @@ releases:
     enabled: false
   crossplane-buckets:
     enabled: false
+  crossplane-cloud:
+    enabled: false
   crossplane-provider:
     enabled: false
   crossplane-provider-config:
