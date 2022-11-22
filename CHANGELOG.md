@@ -2,8 +2,18 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.8.0](https://github.com/kube-core/kube-core/compare/v0.7.9...v0.8.0)
+
+- core/releases: Added crossplane-cloud chart and releases [`26a9227`](https://github.com/kube-core/kube-core/commit/26a92276f77300640d4cf179ac1272745efb2b90)
+- cli/scripts: Updated cloud setup script to use crossplane [`34276a7`](https://github.com/kube-core/kube-core/commit/34276a7f68a84a323762c5d982d3fdbaf73d706a)
+- core/releases: Upgraded prometheus-adapter [`76d2083`](https://github.com/kube-core/kube-core/commit/76d2083d99ff21632ad79e5053b866b21aab0d41)
+- cli/commands: Fixed typo in gitops:config:index docs [`054aa91`](https://github.com/kube-core/kube-core/commit/054aa91181c7a91ec7e90ee3b4182745759d4a99)
+
 #### [v0.7.9](https://github.com/kube-core/kube-core/compare/v0.7.8...v0.7.9)
 
+> 17 November 2022
+
+- release: v0.7.9 [`3cb6e59`](https://github.com/kube-core/kube-core/commit/3cb6e59f0fa7a7183c23d1bf55aa80449dea8490)
 - core/options: Added options.forceNamespaceByKind [`590611f`](https://github.com/kube-core/kube-core/commit/590611f5e9e51bd7f7ca956e83e5541a49ce69c1)
 - core/templates: Fixed empty clusterReleases merge behavior [`6ed9623`](https://github.com/kube-core/kube-core/commit/6ed962354af7e00873d18081451d76ce3c567ac2)
 - core/values: Changed cert-manager leaderElection namespace [`30a3f5e`](https://github.com/kube-core/kube-core/commit/30a3f5e2921ffc7e65362ed968d8072a8da8f70a)
