@@ -13,6 +13,39 @@ releases:
         - kind: ServiceAccount
           name: kyverno
           namespace: kyverno
+  prometheus-adapter:
+    strategicMergePatches:
+      - apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+          name: prometheus-adapter
+          namespace: monitoring
+        spec:
+          template:
+            spec:
+              containers:
+              - name: prometheus-adapter
+                image: k8s.gcr.io/prometheus-adapter/prometheus-adapter:v0.10.0
+                livenessProbe:
+                  failureThreshold: 5
+                  httpGet:
+                    path: /healthz
+                    port: https
+                    scheme: HTTPS
+                  initialDelaySeconds: 50
+                  periodSeconds: 20
+                  successThreshold: 1
+                  timeoutSeconds: 20
+                readinessProbe:
+                  failureThreshold: 5
+                  httpGet:
+                    path: /healthz
+                    port: https
+                    scheme: HTTPS
+                  initialDelaySeconds: 50
+                  periodSeconds: 20
+                  successThreshold: 1
+                  timeoutSeconds: 20
   velero:
     strategicMergePatches:
       - apiVersion: apps/v1
@@ -26,7 +59,7 @@ releases:
               containers:
                 - env:
                     - name: GOOGLE_APPLICATION_CREDENTIALS
-                      value: /credentials/velero.json
+                      value: /credentials/privateKey
                   name: velero
   patch-operator:
     strategicMergePatches:

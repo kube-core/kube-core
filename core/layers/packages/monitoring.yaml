@@ -7,6 +7,10 @@ releases:
     labels:
       package: monitoring
     enabled: true
+  # prometheus-adapter:
+  #   labels:
+  #     package: monitoring
+  #   enabled: true
   # Not used that much. Probably should be in a monitoring-extras package instead ?
   # sloop:
   #   labels:
