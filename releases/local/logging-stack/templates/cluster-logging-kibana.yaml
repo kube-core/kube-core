@@ -25,6 +25,9 @@ spec:
           - mountPath: /usr/share/kibana/dashboards
             name: kibana-dashboards
             readOnly: true
+          - mountPath: /usr/share/kibana/objects
+            name: kibana-objects
+            readOnly: true
         env:
           - name: ESUSER
             value: elastic
@@ -53,43 +56,89 @@ spec:
                 # Add default data view for cluster
                 dataViewId=$(curl -s -X POST "http://localhost:5601/api/data_views/data_view" -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{"override": true, "data_view": {"title": "{{ .Values.cluster.config.name }}*", "timeFieldName":"@timestamp"}}' -b cookie.txt | sed 's/.*{"data_view":{"id":"\(.*\)","version.*/\1/')
 
-                # Loads dashboards from ConfigMaps, included as ndjson
-                dashboards=$(find /usr/share/kibana/dashboards -type f -name *.ndjson)
+                 # Add data view for each logging flow
+                {{ range .Values.cluster.logging.flows.flows }}
+                {{ .name }}DataViewId=$(curl -s -X POST "http://localhost:5601/api/data_views/data_view" -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{"override": true, "data_view": {"title": "{{ $.Values.cluster.config.name }}.{{ .name }}*", "timeFieldName":"@timestamp"}}' -b cookie.txt | sed 's/.*{"data_view":{"id":"\(.*\)","version.*/\1/')
+                {{ end }}
 
+                {{ if .Values.cluster.logging.integrations.events.enabled }}
+                curl -s -X POST "http://localhost:5601/api/data_views/data_view" -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{"override": true, "data_view": {"title": "{{ $.Values.cluster.config.name }}.events*", "timeFieldName":"@timestamp"}}' -b cookie.txt
+                # {{ end }}
+
+                {{ if .Values.cluster.logging.integrations.tekton.enabled }}
+                curl -s -X POST "http://localhost:5601/api/data_views/data_view" -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{"override": true, "data_view": {"title": "{{ $.Values.cluster.config.name }}.tekton*", "timeFieldName":"@timestamp"}}' -b cookie.txt
+                {{ end }}
+
+
+                # TODO: Use the following for kibana 8.4 when upgrading
+                # curl -s -X POST "http://localhost:5601/api/data_views/data_view" -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{"override": true, "data_view": {"title": "{{ .Values.cluster.config.name }}*","name": "Default Data View for {{ .Values.cluster.config.name }}", "timeFieldName":"@timestamp"}}' -b cookie.txt
+
+                # Loads dashboards from ConfigMaps, included as ndjson
+                dashboards=$(find /usr/share/kibana/dashboards -type f -name '*.ndjson')
                 if [[ "$dashboards" != "" ]]; then
                   while read dashboard; do
                     targetFile="/usr/share/kibana/$(basename $dashboard)"
+                    dataViewTarget=$(basename $dashboard | awk '{split($0, a, "."); print a[1]}')
                     cat $dashboard | sed "s/DATA_VIEW_ID/$dataViewId/g" > $targetFile
+                    {{ range .Values.cluster.logging.flows.flows }}
+                    if [[ "${{.name}}DataViewId" != "" && "$dataViewTarget" == "{{.name}}" ]]; then
+                      cat $dashboard | sed "s/{{.name | upper}}_DATA_VIEW_ID/${{.name}}DataViewId/g" > $targetFile
+                    fi
+                    {{ end }}
                     curl -s -X POST "http://localhost:5601/api/saved_objects/_import?overwrite=true" -H 'kbn-xsrf: true' -b cookie.txt --form file=@$targetFile
                   done <<< "$dashboards"
                 fi
 
                 # Loads dashboards from ConfigMaps, included as url
-                dashboards=$(find /usr/share/kibana/dashboards -type f -name *.url)
+                dashboards=$(find /usr/share/kibana/dashboards -type f -name '*.url')
                 if [[ "$dashboards" != "" ]]; then
                   while read dashboard; do
                     targetFile="/usr/share/kibana/$(basename $dashboard).ndjson"
+                    dataViewTarget=$(basename $dashboard | awk '{split($0, a, "."); print a[1]}')
                     curl -s $dashboard | sed "s/DATA_VIEW_ID/$dataViewId/g" > $targetFile
+                    {{ range .Values.cluster.logging.flows.flows }}
+                    if [[ "${{.name}}DataViewId" != "" && "$dataViewTarget" == "{{.name}}" ]]; then
+                      curl -s $dashboard | sed "s/{{.name | upper}}_DATA_VIEW_ID/${{.name}}DataViewId/g" > $targetFile
+                    fi
+                    {{ end }}
                     curl -s -X POST "http://localhost:5601/api/saved_objects/_import?overwrite=true" -H 'kbn-xsrf: true' -b cookie.txt --form file=@$targetFile
                   done <<< "$dashboards"
                 fi
 
-                # # Add data view for each logging flow
-                # {{ range .Values.cluster.logging.flows.flows }}
-                curl -s -X POST "http://localhost:5601/api/data_views/data_view" -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{"override": true, "data_view": {"title": "{{ $.Values.cluster.config.name }}.{{ .name }}*", "timeFieldName":"@timestamp"}}' -b cookie.txt
-                # {{ end }}
+                {{ if (eq .Values.cluster.logging.dashboards.extraObjects.enabled true) }}
+                # Loads objects from ConfigMaps, included as ndjson
 
-                # {{ if .Values.cluster.logging.integrations.events.enabled }}
-                curl -s -X POST "http://localhost:5601/api/data_views/data_view" -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{"override": true, "data_view": {"title": "{{ $.Values.cluster.config.name }}.events*", "timeFieldName":"@timestamp"}}' -b cookie.txt
-                # {{ end }}
+                objects=$(find /usr/share/kibana/objects -type f -name '*.ndjson')
+                if [[ "$objects" != "" ]]; then
+                  while read object; do
+                    targetFile="/usr/share/kibana/$(basename $object)"
+                    dataViewTarget=$(basename $object | awk '{split($0, a, "."); print a[1]}')
+                    cat $object | sed "s/DATA_VIEW_ID/$dataViewId/g" > $targetFile
+                    {{ range .Values.cluster.logging.flows.flows }}
+                    if [[ "${{.name}}DataViewId" != "" && "$dataViewTarget" == "{{.name}}" ]]; then
+                      cat $object | sed "s/{{.name | upper}}_DATA_VIEW_ID/${{.name}}DataViewId/g" > $targetFile
+                    fi
+                    {{ end }}
+                    curl -s -X POST "http://localhost:5601/api/saved_objects/_import?overwrite=true" -H 'kbn-xsrf: true' -b cookie.txt --form file=@$targetFile
+                  done <<< "$objects"
+                fi
 
-                # {{ if .Values.cluster.logging.integrations.tekton.enabled }}
-                curl -s -X POST "http://localhost:5601/api/data_views/data_view" -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{"override": true, "data_view": {"title": "{{ $.Values.cluster.config.name }}.tekton*", "timeFieldName":"@timestamp"}}' -b cookie.txt
-                # {{ end }}
-
-
-                # TODO: Use the following for kibana 8.4 when upgrading
-                # curl -s -X POST "http://localhost:5601/api/data_views/data_view" -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{"override": true, "data_view": {"title": "{{ .Values.cluster.config.name }}*","name": "Default Data View for {{ .Values.cluster.config.name }}", "timeFieldName":"@timestamp"}}' -b cookie.txt
+                # Loads dashboards from ConfigMaps, included as url
+                objects=$(find /usr/share/kibana/objects -type f -name '*.url')
+                if [[ "$objects" != "" ]]; then
+                  while read object; do
+                    targetFile="/usr/share/kibana/$(basename $object).ndjson"
+                    dataViewTarget=$(basename $object | awk '{split($0, a, "."); print a[1]}')
+                    curl -s $object | sed "s/DATA_VIEW_ID/$dataViewId/g" > $targetFile
+                    {{ range .Values.cluster.logging.flows.flows }}
+                    if [[ "${{.name}}DataViewId" != "" && "$dataViewTarget" == "{{.name}}" ]]; then
+                      curl -s $object | sed "s/{{.name | upper}}_DATA_VIEW_ID/${{.name}}DataViewId/g" > $targetFile
+                    fi
+                    {{ end }}
+                    curl -s -X POST "http://localhost:5601/api/saved_objects/_import?overwrite=true" -H 'kbn-xsrf: true' -b cookie.txt --form file=@$targetFile
+                  done <<< "$objects"
+                fi
+                {{ end }}
         {{ end }}
         resources:
           requests:
@@ -114,6 +163,11 @@ spec:
           defaultMode: 420
           optional: false
           name: {{ .Values.cluster.logging.dashboards.configMap.name }}
+      - name: kibana-objects
+        configMap:
+          defaultMode: 420
+          optional: false
+          name: {{ .Values.cluster.logging.dashboards.extraObjects.configMap.name }}
 
   http:
     tls:

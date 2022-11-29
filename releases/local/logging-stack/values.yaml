@@ -18,6 +18,13 @@ cluster:
   logging:
     dashboards:
       enabled: true
+      extraObjects:
+        enabled: false
+        commons:
+          enabled: false
+        configMap:
+          name: kibana-objects
+          data: {}
       commons:
         enabled: true
       configMap:
