@@ -110,5 +110,6 @@
     app: {{ $releaseName }}
     type: cloud
   values:
-  - "./values/release-cloud.yaml.gotmpl"
+  # - "./values/release-cloud.yaml.gotmpl"
+  - {{ (tpl (readFile "values/release-cloud.yaml.gotmpl") .) | nindent 4 }}
 {{ end }}

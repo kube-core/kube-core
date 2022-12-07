@@ -43,6 +43,12 @@
     annotations:
       meta.helm.sh/release-name: {{ $releaseName }}
       meta.helm.sh/release-namespace: {{ $releaseNamespace }}
+      {{ if $values | getOrNil "core" | getOrNil "enableCloudMetadataDebug"}}
+      {{ if (.item | getOrNil "metadata" | getOrNil "namingConfig") }}
+      data: |
+        {{ toYaml (.item | getOrNil "metadata" | getOrNil "namingConfig") | nindent 8}}
+      {{ end }}
+      {{ end }}
     fieldSpecs:
     - path: metadata/annotations
       create: true
