@@ -69,13 +69,13 @@ cluster:
 # bucketPolicies:
 #   app: {}
 #     # bucketRef: SuperBucket
-#     # adminRef: omgAdmin
+#     # adminRef: test-admin
 #     # public: true
 #     # admin: true
 #     # roles:
 #     # - role: roles/storage.objectViewer
 #     #   members:
-#     #     - blabla
+#     #     - test-member
 
 # appBuckets:
 #   app: {}

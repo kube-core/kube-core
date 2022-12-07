@@ -1,3 +1,4 @@
+{{ if (eq .Values.cluster.logging.dashboards.enabled true) }}
 {{ if (eq .Values.cluster.logging.dashboards.extraObjects.enabled true) }}
 apiVersion: v1
 kind: ConfigMap
@@ -8,5 +9,6 @@ data:
 {{ end }}
 {{ if .Values.cluster.logging.dashboards.extraObjects.configMap.data }}
 {{ toYaml .Values.cluster.logging.dashboards.extraObjects.configMap.data | nindent 2 }}
+{{ end }}
 {{ end }}
 {{ end }}

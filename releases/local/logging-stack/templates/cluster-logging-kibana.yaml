@@ -21,6 +21,7 @@ spec:
     spec:
       containers:
       - name: kibana
+        {{ if (eq .Values.cluster.logging.dashboards.enabled true) }}
         volumeMounts:
           - mountPath: /usr/share/kibana/dashboards
             name: kibana-dashboards
@@ -28,6 +29,7 @@ spec:
           - mountPath: /usr/share/kibana/objects
             name: kibana-objects
             readOnly: true
+        {{ end }}
         env:
           - name: ESUSER
             value: elastic
@@ -157,6 +159,7 @@ spec:
           periodSeconds: 10
           successThreshold: 1
           timeoutSeconds: 5
+      {{ if (eq .Values.cluster.logging.dashboards.enabled true) }}
       volumes:
       - name: kibana-dashboards
         configMap:
@@ -168,7 +171,7 @@ spec:
           defaultMode: 420
           optional: false
           name: {{ .Values.cluster.logging.dashboards.extraObjects.configMap.name }}
-
+      {{ end }}
   http:
     tls:
       selfSignedCertificate:

@@ -1,0 +1,47 @@
+{{ if (eq .Values.cluster.logging.integrations.tekton.enabled true) }}
+apiVersion: logging.banzaicloud.io/v1beta1
+kind: ClusterFlow
+metadata:
+  name: tekton
+  labels:
+    logging.kube-core.io/flow-name: "tekton"
+    logging.kube-core.io/flow-type: "default"
+spec:
+  globalOutputRefs:
+  {{ if .Values.cluster.logging.integrations.gcs.enabled }}
+  - tekton-gcs
+  {{ end }}
+  {{ if .Values.cluster.logging.integrations.minio.enabled }}
+  - tekton-minio
+  {{ end }}
+  {{ if .Values.cluster.logging.integrations.s3.enabled }}
+  - tekton-s3
+  {{ end }}
+  {{ if .Values.cluster.logging.integrations.es.enabled }}
+  - tekton-es
+  {{ end }}
+  filters:
+  - tag_normaliser:
+      format: ${namespace_name}/${pod_name}/${container_name}
+  - record_modifier:
+      records:
+      - cluster: {{ .Values.cluster.config.name }}
+        log_type: 'tekton'
+  # TODO: Refactor the following to make sure all tekton pods are always targeted
+  match:
+    - select:
+        labels:
+          triggers.tekton.dev/eventlistener: cluster-hooks
+    - select:
+        labels:
+          triggers.tekton.dev/eventlistener: app-hooks
+    - select:
+        labels:
+          triggers.tekton.dev/eventlistener: core-hooks
+    - select:
+        labels:
+          triggers.tekton.dev/eventlistener: garden-hooks
+    - select:
+        labels:
+          logging.kube-core.io/flow-name: tekton
+{{ end }}
