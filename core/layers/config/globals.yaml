@@ -8,3 +8,4 @@ core:
   applicationsEnabled: false
   servicesEnabled: false
   clusterEnabled: false
+  enableCloudMetadataDebug: false
