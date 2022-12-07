@@ -1,11 +1,13 @@
-{{ $values := .Values }}
+{{ $values := .values }}
 {{ $releases := (merge $values.releases $values.applicationsList $values.servicesList )}}
 
-{{ $releaseNamespace := .Release.Namespace }}
-{{ $mainReleaseName := (.Release.Name | replace "-cloud" "") }}
-{{ $mainRelease := ($releases | getOrNil $mainReleaseName) }}
+{{ $releaseNamespace := .releaseNamespace }}
+{{ $mainReleaseName := (.releaseName | replace "-cloud" "") }}
+{{ $mainRelease := .item }}
+{{ $cloudNamingConfig := $values.cloud.naming }}
 
 {{ $releaseCloud := (index $releases $mainReleaseName "cloud" )}}
+{{ $releaseCloudEnabled := ($releaseCloud | getOrNil "enabled") }}
 
 cluster: {{ toYaml $values.cluster | nindent 2 }}
 cloud: {{ toYaml $values.cloud | nindent 2 }}
@@ -33,8 +35,12 @@ prefix: {{ $values.cluster.config.name }}
 {{ $autoShortName := "" }}
 {{ $namespace := ($releaseNamespace | substr 0 3) }}
 {{ $autoShortName = (printf "%s-%s-%s-%s" $clusterShortName $releaseType $namespace $initials) }}
-
-{{ $shortName := (coalesce ($mainRelease | getOrNil "shortName") $autoShortName) }}
+{{ $shortName := "" }}
+{{ if (and $releaseCloudEnabled $cloudNamingConfig.enabled) }}
+{{ $shortName = (index $mainRelease.metadata.namingConfig.nameBases (coalesce ($values.cloud.naming.config.templates | getOrNil "custom" | getOrNil "nameBase" | default "" | camelcase | untitle) ($values.cloud.naming.config.templates.default.nameBase | camelcase | untitle))) }}
+{{ else }}
+{{ $shortName = $autoShortName }}
+{{ end }}
 
 {{ $releaseServiceAccountName := $shortName | substr 0 30 }}
 {{ $releaseBucketName := $shortName | substr 0 63 }}
@@ -70,10 +76,14 @@ serviceAccountKeys:
 {{ end }}
 
 {{ if (not (eq ($releaseCloud | getOrNil "buckets" | getOrNil "enabled") false)) }}
+
 buckets:
 {{ if ($releaseCloud | getOrNil "bucket" | getOrNil "enabled") }}
   {{ $name }}:
     enabled: true
+    {{ if (eq ($releaseCloud | getOrNil "bucket" | getOrNil "public") true) }}
+    public: true
+    {{ end }}
     mainReleaseName: {{ $mainReleaseName }}
     deletionPolicy: Delete
     externalName: {{ $releaseBucketName }}
@@ -81,11 +91,39 @@ buckets:
     location: {{ $cloudLocation }}
     namespace: {{ $releaseNamespace }}
     clusterName: {{ $clusterName }}
+{{ end }}
 
-{{ if (not (eq ($releaseCloud | getOrNil "bucketPolicies" | getOrNil "enabled") false)) }}
+{{ if ($releaseCloud | getOrNil "buckets") }}
+
+{{ range $bucketName, $bucketConfig := ($releaseCloud | getOrNil "buckets") }}
+{{ $fullBucketName := (printf "%s-%s" $name $bucketName) }}
+{{ if (gt ($releaseBucketName | len) 63) }}
+{{ $ | getOrNil "BUCKET_NAME_TOO_LONG" | required (printf "Bucket name must be less than 63 chars. Current: %s => %s" $releaseBucketName ($releaseBucketName | len | toString) )}}
+{{ end }}
+
+  {{ $fullBucketName }}:
+    enabled: true
+    {{ if (eq ($bucketConfig | getOrNil "public") true) }}
+    public: true
+    {{ end }}
+    mainReleaseName: {{ $mainReleaseName }}
+    deletionPolicy: Delete
+    externalName: {{ $fullBucketName }}
+    project: {{ $cloudProject }}
+    location: {{ $cloudLocation }}
+    namespace: {{ $releaseNamespace }}
+    clusterName: {{ $clusterName }}
+{{ end }}
+{{ end }}
+
 bucketPolicies:
+{{ if (not (eq ($releaseCloud | getOrNil "buckets" | getOrNil "enabled") false)) }}
+{{ if (not (eq ($releaseCloud | getOrNil "bucketPolicies" | getOrNil "enabled") false)) }}
   {{ $name }}:
     enabled: true
+    {{ if (eq ($releaseCloud | getOrNil "bucket" | getOrNil "public") true) }}
+    public: true
+    {{ end }}
     mainReleaseName: {{ $mainReleaseName }}
     deletionPolicy: Delete
     project: {{ $cloudProject }}
@@ -93,6 +131,30 @@ bucketPolicies:
     namespace: {{ $releaseNamespace }}
     clusterName: {{ $clusterName }}
 {{ end }}
+{{ end }}
+
+{{ if ($releaseCloud | getOrNil "buckets") }}
+{{ range $bucketName, $bucketConfig := ($releaseCloud | getOrNil "buckets") }}
+{{ $fullBucketName := (printf "%s-%s" $name $bucketName) }}
+{{ if (gt ($releaseBucketName | len) 63) }}
+{{ $ | getOrNil "BUCKET_NAME_TOO_LONG" | required (printf "Bucket name must be less than 63 chars. Current: %s => %s" $releaseBucketName ($releaseBucketName | len | toString) )}}
+{{ end }}
+
+{{ if (not (eq ($bucketConfig | getOrNil "policy" | getOrNil "enabled") false)) }}
+  {{ $fullBucketName }}:
+    enabled: true
+    {{ if (eq ($bucketConfig | getOrNil "public") true) }}
+    public: true
+    {{ end }}
+    mainReleaseName: {{ $mainReleaseName }}
+    deletionPolicy: Delete
+    project: {{ $cloudProject }}
+    location: {{ $cloudLocation }}
+    namespace: {{ $releaseNamespace }}
+    clusterName: {{ $clusterName }}
+{{ end }}
+{{ end }}
+
 {{ end }}
 {{ end }}
 
