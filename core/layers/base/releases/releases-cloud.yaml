@@ -42,6 +42,8 @@ releases:
       enabled: true
       bucket:
         enabled: true
+      roles:
+      - roles/storage.objectAdmin
       permissions:
       - compute.disks.get
       - compute.disks.create
