@@ -1,5 +1,0 @@
-applicationsConfig:
-  options:
-    forceNamespaceNodeSelector: true
-    forceNamespaceNodeAffinity: true
-applications: {}

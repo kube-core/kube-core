@@ -1,0 +1,328 @@
+releases:
+  cert-manager:
+    labels:
+      component: certificates
+      group: cluster
+  chaos-mesh:
+    labels: {}
+  chartmuseum:
+    labels:
+      component: chartmuseum
+      group: devops
+  cluster-issuers:
+    labels:
+      component: certificates
+      group: cluster
+  cluster-logging:
+    labels:
+      component: cluster
+      group: logging
+  container-registry-cleaner:
+    labels:
+      component: registry
+      group: cluster
+  container-registry-config:
+    labels:
+      component: registry
+      group: cluster
+  container-registry-operator:
+    labels:
+      component: registry
+      group: cluster
+  crossplane:
+    labels:
+      component: crossplane
+      group: devops
+  crossplane-buckets:
+    labels: {}
+  crossplane-provider:
+    labels:
+      component: crossplane
+      group: devops
+  crossplane-provider-config:
+    labels:
+      component: crossplane
+      group: devops
+  eck-operator:
+    labels:
+      component: eck
+      group: operators
+  efk:
+    labels:
+      component: efk
+      group: logging
+  estafette-gke-node-pool-shifter:
+    labels:
+      cloud: gke
+      component: preemptible
+      group: estafette
+  estafette-gke-preemptible-killer:
+    labels:
+      cloud: gke
+      component: preemptible
+      group: estafette
+  estafette-k8s-node-compactor:
+    labels:
+      cloud: gke
+      component: preemptible
+      group: estafette
+  estafette-vulnerability-scanner:
+    labels:
+      component: scanner
+      group: estafette
+  external-dns:
+    labels:
+      component: dns
+      group: cluster
+  external-secrets:
+    labels:
+      component: external-secrets
+      group: cluster
+  flux:
+    labels:
+      component: flux
+      group: devops
+  flux-config:
+    labels:
+      component: flux
+      group: devops
+  forecastle:
+    labels:
+      component: admin
+      group: cluster
+  imagecache:
+    labels:
+      component: registry
+      group: cluster
+  ingress-access-operator:
+    labels:
+      component: ingress
+      group: operators
+  istio-base:
+    labels:
+      component: base
+      group: istio
+  istio-grafana:
+    labels:
+      component: grafana
+      group: istio
+  istio-ingress-sidecar:
+    labels:
+      component: ingress
+      group: istio
+  istio-kiali:
+    labels:
+      component: kiali
+      group: istio
+  istio-prometheus:
+    labels:
+      component: prometheus
+      group: istio
+  istio-rules-external-services:
+    labels:
+      component: egress
+      group: istio
+  istiod:
+    labels:
+      component: discovery
+      group: istio
+  keda:
+    labels: {}
+  keycloak:
+    labels:
+      component: keycloak
+      group: auth
+  keycloak-dev:
+    labels:
+      component: keycloak
+      group: auth
+  kps:
+    labels:
+      component: kps
+      group: monitoring
+  kube-cleanup-operator:
+    labels:
+      component: cleanup
+      group: operators
+  kube-downscaler:
+    labels:
+      component: scaling
+      group: cluster
+  kube-fledged:
+    labels:
+      component: registry
+      group: cluster
+  kubernetes-dashboard:
+    labels:
+      component: admin
+      group: cluster
+  logging-gcs:
+    labels: {}
+  logging-operator:
+    labels:
+      component: logging
+      group: operators
+  logging-stack:
+    labels:
+      component: stack
+      group: logging
+  metrics-server:
+    labels:
+      component: metrics
+      group: cluster
+  minio-operator:
+    labels:
+      component: minio
+      group: operators
+  minio-tenants:
+    labels:
+      component: tenant
+      group: minio
+  mongodb-atlas-operator:
+    labels:
+      component: atlas
+      group: operators
+  mongodb-operator:
+    labels:
+      component: mongodb
+      group: operators
+  nexus:
+    labels:
+      component: repository
+      group: dev
+  nginx:
+    labels:
+      component: nginx
+      group: test
+  nginx-ingress-controller:
+    labels:
+      component: controller
+      group: ingress
+  nginx-istio-ingress-controller:
+    labels:
+      component: controller
+      group: ingress
+  node-initializer:
+    labels:
+      component: init
+      group: system
+  patch-operator:
+    labels:
+      component: admin
+      group: cluster
+  polaris:
+    labels:
+      component: admin
+      group: cluster
+  predator:
+    labels:
+      component: predator
+      group: dev
+  priority-class:
+    labels:
+      component: config
+      group: system
+  prometheus-adapter:
+    labels: {}
+  rabbitmq-cluster:
+    labels:
+      component: cluster
+      group: rabbitmq
+  rabbitmq-config:
+    labels:
+      component: config
+      group: rabbitmq
+  rabbitmq-operators:
+    labels:
+      component: rabbitmq
+      group: operators
+  reloader:
+    labels:
+      component: tool
+      group: cluster
+  replicator:
+    labels:
+      component: tool
+      group: cluster
+  sealed-secrets:
+    labels:
+      component: secrets
+      group: cluster
+  secret-generator:
+    labels:
+      component: secret-generator
+      group: cluster
+  sloop:
+    labels:
+      component: events
+      group: monitoring
+  sloth:
+    labels:
+      component: sre
+      group: monitoring
+  sonarqube:
+    labels:
+      component: qa
+      group: dev
+  starboard-operator:
+    labels:
+      component: cvs
+      group: security
+  system-config:
+    labels:
+      component: config
+      group: system
+  system-jobs:
+    labels:
+      component: config
+      group: system
+  tekton:
+    labels:
+      component: tekton
+      group: devops
+  tekton-catalog:
+    labels:
+      component: tekton
+      group: devops
+  tekton-logging:
+    labels:
+      component: tekton
+      group: logging
+  test-logging:
+    labels:
+      component: test
+      group: test-logging
+  velero:
+    labels:
+      component: backups
+      group: cluster
+  visitor-groups:
+    labels:
+      component: visitors
+      group: ingress
+  zeebe:
+    labels:
+      component: zeebe
+      group: middleware
+  zeebe-operate:
+    labels:
+      component: zeebe
+      group: middleware
+  kyverno:
+    labels: {}
+  cluster-policies:
+    labels: {}
+  kyverno-policies:
+    labels: {}
+  dex:
+    labels:
+      component: idp
+      group: authn
+  oauth2-proxy:
+    labels:
+      component: ingress
+      group: authn
+  trivy:
+    labels:
+      component: trivy
+      group: devops

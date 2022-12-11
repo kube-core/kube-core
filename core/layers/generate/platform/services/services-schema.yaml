@@ -1,8 +1,0 @@
-servicesConfig:
-  options:
-    forceNamespaceNodeSelector: true
-    forceNamespaceNodeAffinity: true
-services:
-  nginx-ingress-controller:
-    enabled: true
-    chart: kube-core/nginx-ingress-controller

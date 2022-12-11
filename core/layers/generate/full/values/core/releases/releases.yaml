@@ -1,0 +1,486 @@
+releases:
+  cert-manager:
+    shortName: crt-mngr
+    namespace: cert-manager
+    namespaceShortName: crt-mngr
+    chart: ../releases/dist/releases/charts/cert-manager
+  chaos-mesh:
+    shortName: kos-msh
+    namespace: chaos-mesh
+    namespaceShortName: kos-msh
+    chart: ../releases/dist/releases/charts/chaos-mesh
+  chartmuseum:
+    shortName: chrt
+    namespace: chartmuseum
+    namespaceShortName: chrt
+    chart: ../releases/dist/releases/charts/chartmuseum
+  cluster-issuers:
+    shortName: crt-iss
+    namespace: cert-manager
+    namespaceShortName: crt-mngr
+    chart: ../releases/dist/releases/charts/raw
+  cluster-logging:
+    shortName: cls-log
+    namespace: logging
+    namespaceShortName: log
+    chart: ../releases/dist/releases/charts/cluster-logging
+  container-registry-cleaner:
+    shortName: cnt-reg-cln
+    namespace: system-tools
+    namespaceShortName: sys-tls
+    chart: ../releases/dist/releases/charts/container-registry-cleaner
+  container-registry-config:
+    shortName: cnt-reg-cfg
+    namespace: container-registry-operator
+    namespaceShortName: cnt-reg-ope
+    chart: ../releases/dist/releases/charts/container-registry-config
+  container-registry-operator:
+    shortName: cnt-reg-ope
+    namespace: container-registry-operator
+    namespaceShortName: cnt-reg-ope
+    chart: ../releases/dist/releases/charts/container-registry-operator
+  crossplane:
+    shortName: xpln
+    namespace: crossplane-system
+    namespaceShortName: xpln-sys
+    chart: ../releases/dist/releases/charts/crossplane
+  crossplane-buckets:
+    shortName: xpln-bkt
+    namespace: crossplane-system
+    namespaceShortName: xpln-sys
+    chart: ../releases/dist/releases/charts/crossplane-buckets
+  crossplane-cloud:
+    shortName: xpln-clo
+    namespace: crossplane-system
+    namespaceShortName: xpln-sys
+    chart: ../releases/dist/releases/charts/crossplane-cloud
+  crossplane-provider:
+    shortName: xpln-prv
+    namespace: crossplane-system
+    namespaceShortName: xpln-sys
+    chart: ../releases/dist/releases/charts/raw
+    release:
+      needs:
+        - crossplane-system/crossplane
+      wait: true
+  crossplane-provider-config:
+    shortName: xpln-prv-cfg
+    namespace: crossplane-system
+    namespaceShortName: xpln-sys
+    chart: ../releases/dist/releases/charts/raw
+    release:
+      needs:
+        - crossplane-system/crossplane
+        - crossplane-system/crossplane-provider
+      wait: true
+  eck-operator:
+    shortName: eck-ope
+    namespace: elastic-system
+    namespaceShortName: eck-sys
+    chart: ../releases/dist/releases/charts/eck-operator
+  efk:
+    shortName: efk
+    namespace: efk
+    namespaceShortName: efk
+    chart: ../releases/dist/releases/charts/efk
+  estafette-gke-node-pool-shifter:
+    shortName: estf-shift
+    namespace: estafette
+    namespaceShortName: estf
+    chart: ../releases/dist/releases/charts/estafette-gke-node-pool-shifter
+  estafette-gke-preemptible-killer:
+    shortName: estf-kill
+    namespace: estafette
+    namespaceShortName: estf
+    chart: ../releases/dist/releases/charts/estafette-gke-preemptible-killer
+  estafette-k8s-node-compactor:
+    shortName: estf-comp
+    namespace: estafette
+    namespaceShortName: estf
+    chart: ../releases/dist/releases/charts/estafette-k8s-node-compactor
+  estafette-vulnerability-scanner:
+    shortName: estf-scan
+    namespace: estafette
+    namespaceShortName: estf
+    chart: ../releases/dist/releases/charts/estafette-vulnerability-scanner
+  external-dns:
+    shortName: ext-dns
+    namespace: external-dns
+    namespaceShortName: ext-dns
+    chart: ../releases/dist/releases/charts/external-dns
+  external-secrets:
+    shortName: ext-secr
+    namespace: external-secrets
+    namespaceShortName: ext-secr
+    chart: ../releases/dist/releases/charts/external-secrets
+  flux:
+    shortName: flux
+    namespace: flux-system
+    namespaceShortName: flux-sys
+    chart: ../releases/dist/releases/charts/flux
+  flux-config:
+    shortName: flux-cfg
+    namespace: flux-system
+    namespaceShortName: flux-sys
+    chart: ../releases/dist/releases/charts/flux-config
+  forecastle:
+    shortName: frcstl
+    namespace: forecastle
+    namespaceShortName: frcstl
+    chart: ../releases/dist/releases/charts/forecastle
+  imagecache:
+    shortName: img-cac
+    namespace: kube-fledged
+    namespaceShortName:  kub-fleg
+    chart: ../releases/dist/releases/charts/imagecache
+  ingress-access-operator:
+    shortName: ing-acs-ope
+    namespace: ingress-access-operator
+    namespaceShortName: ing-acs-ope
+    chart: ../releases/dist/releases/charts/n9-api
+  istio-base:
+    shortName: istiob
+    namespace: istio-system
+    namespaceShortName: istio
+    chart: ../releases/dist/releases/charts/istio-base
+  istio-grafana:
+    shortName: istio-grf
+    namespace: istio-system
+    namespaceShortName: istio
+    chart: ../releases/dist/releases/charts/istio-grafana
+  istio-ingress-sidecar:
+    shortName: istio-ing-sid
+    namespace: nginx-istio-ingress
+    namespaceShortName: istio-ing
+    chart: ../releases/dist/releases/charts/raw
+    release:
+      wait: true
+  istio-kiali:
+    shortName: istio-kia
+    namespace: istio-system
+    namespaceShortName: istio
+    chart: ../releases/dist/releases/charts/istio-kiali
+  istio-prometheus:
+    shortName: istio-prm
+    namespace: istio-system
+    namespaceShortName: istio
+    chart: ../releases/dist/releases/charts/istio-prometheus
+  istio-rules-external-services:
+    shortName: istio-ext-svc
+    namespace: istio-system
+    namespaceShortName: istio
+    chart: ../releases/dist/releases/charts/istio-rules-external-services
+  istiod:
+    shortName: istiod
+    namespace: istio-system
+    namespaceShortName: istio
+    chart: ../releases/dist/releases/charts/istio-discovery
+  keda:
+    shortName: keda
+    namespace: keda
+    namespaceShortName: keda
+    chart: ../releases/dist/releases/charts/keda
+  keycloak:
+    shortName: kclk
+    namespace: keycloak
+    namespaceShortName: kclk
+    chart: ../releases/dist/releases/charts/keycloak
+  keycloak-dev:
+    shortName: kclk-dev
+    namespace: keycloak
+    namespaceShortName: kclk-dev
+    chart: ../releases/dist/releases/charts/keycloak
+  kps:
+    shortName: kps
+    namespace: monitoring
+    namespaceShortName: mntr
+    chart: ../releases/dist/releases/charts/kps
+  kube-cleanup-operator:
+    shortName: kub-cln-ope
+    namespace: kube-cleanup-operator
+    namespaceShortName: kub-cln-ope
+    chart: ../releases/dist/releases/charts/kube-cleanup-operator
+  kube-downscaler:
+    shortName: kub-down
+    namespace: kube-downscaler
+    namespaceShortName: kub-down
+    chart: ../releases/dist/releases/charts/kube-downscaler
+  kube-fledged:
+    shortName: kub-fleg
+    namespace: kube-fledged
+    namespaceShortName: kub-fleg
+    chart: ../releases/dist/releases/charts/kube-fledged
+  kubernetes-dashboard:
+    shortName: kub-dash
+    namespace: kubernetes-dashboard
+    namespaceShortName: kub-dash
+    chart: ../releases/dist/releases/charts/kubernetes-dashboard
+  logging-gcs:
+    shortName: log-gcs
+    namespace: crossplane-system
+    namespaceShortName: xpln-sys
+    chart: ../releases/dist/releases/charts/crossplane-buckets
+  logging-operator:
+    shortName: log-ope
+    namespace: logging-operator
+    namespaceShortName: log-ope
+    chart: ../releases/dist/releases/charts/logging-operator
+  logging-stack:
+    shortName: log-stack
+    namespace: logging
+    namespaceShortName: log
+    chart: ../releases/dist/releases/charts/logging-stack
+  metrics-server:
+    namespace: system-tools
+    namespaceShortName: sys-tls
+    chart: ../releases/dist/releases/charts/metrics-server
+  minio-operator:
+    shortName: minio-ope
+    namespace: minio-operator
+    namespaceShortName: minio-ope
+    chart: ../releases/dist/releases/charts/minio-operator
+  minio-tenants:
+    shortName: minio-ten
+    namespace: minio
+    namespaceShortName: minio
+    chart: ../releases/dist/releases/charts/minio-tenants
+  mongodb-atlas-operator:
+    shortName: mdb-atl-ope
+    namespace: mongodb-atlas-operator
+    namespaceShortName: mdb-atl-ope
+    chart: ../releases/dist/releases/charts/mongodb-atlas-operator
+  mongodb-operator:
+    shortName: mdb-ope
+    namespace: mongodb-operator
+    namespaceShortName: mdb-ope
+    chart: ../releases/dist/releases/charts/mongodb-community-operator
+  nexus:
+    shortName: nxs
+    namespace: nexus
+    namespaceShortName: nxs
+    chart: ../releases/dist/releases/charts/sonatype-nexus
+  nginx:
+    shortName: ngx
+    namespace: nginx
+    namespaceShortName: ngx
+    chart: ../releases/dist/releases/charts/nginx
+  nginx-ingress-controller:
+    shortName: ngx-ing
+    namespace: nginx-ingress
+    namespaceShortName: ngx-ing
+    chart: ../releases/dist/releases/charts/nginx-ingress-controller
+  nginx-istio-ingress-controller:
+    shortName: istio-ngx-ing
+    extraReleaseValues:
+      - ./values/nginx-ingress-controller.yaml.gotmpl
+    namespace: nginx-istio-ingress
+    namespaceShortName: istio-ngx-ing
+    chart: ../releases/dist/releases/charts/nginx-ingress-controller
+  node-initializer:
+    shortName: nde-ini
+    namespace: node-initializer
+    namespaceShortName: nde-ini
+    chart: ../releases/dist/releases/charts/node-initializer
+  patch-operator:
+    shortName: pch-ope
+    namespace: patch-operator
+    namespaceShortName: pch-ope
+    chart: ../releases/dist/releases/charts/patch-operator
+  polaris:
+    shortName: plrs
+    namespace: polaris
+    namespaceShortName: plrs
+    chart: ../releases/dist/releases/charts/polaris
+  predator:
+    shortName: pred
+    namespace: predator
+    namespaceShortName: pred
+    chart: ../releases/dist/releases/charts/predator
+  priority-class:
+    shortName: prio-cls
+    namespace: system-tools
+    namespaceShortName: sys-tls
+    chart: ../releases/dist/releases/charts/priority-class
+  prometheus-adapter:
+    shortName: prom-ada
+    namespace: monitoring
+    namespaceShortName: mntr
+    chart: ../releases/dist/releases/charts/prometheus-adapter
+  rabbitmq-cluster:
+    shortName: rmq-cls
+    namespace: rabbitmq
+    namespaceShortName: rmq
+    chart: ../releases/dist/releases/charts/rabbitmq-cluster
+  rabbitmq-config:
+    shortName: rmq-cfg
+    namespace: rabbitmq
+    namespaceShortName: rmq
+    chart: ../releases/dist/releases/charts/rabbitmq-config
+  rabbitmq-operators:
+    shortName: rmq-ope
+    namespace: rabbitmq-system
+    namespaceShortName: rmq-sys
+    chart: ../releases/dist/releases/charts/rabbitmq-cluster-operator
+  reloader:
+    shortName: rldr
+    namespace: reloader
+    namespaceShortName: rldr
+    chart: ../releases/dist/releases/charts/reloader
+  replicator:
+    shortName: rptr
+    namespace: replicator
+    namespaceShortName: rptr
+    chart: ../releases/dist/releases/charts/kubernetes-replicator
+  sealed-secrets:
+    shortName: sld-secr
+    namespace: sealed-secrets
+    namespaceShortName:  sld-secr
+    chart: ../releases/dist/releases/charts/sealed-secrets
+  secret-generator:
+    shortName: secr-gen
+    namespace: secret-generator
+    namespaceShortName: secr-gen
+    chart: ../releases/dist/releases/charts/kubernetes-secret-generator
+  sloop:
+    shortName: slp
+    namespace: sloop
+    namespaceShortName: slp
+    chart: ../releases/dist/releases/charts/sloop
+  sloth:
+    shortName: slth
+    namespace: sloth
+    namespaceShortName: slth
+    chart: ../releases/dist/releases/charts/sloth
+  sonarqube:
+    shortName: snrq
+    namespace: sonarqube
+    namespaceShortName: snrq
+    chart: ../releases/dist/releases/charts/sonarqube
+  starboard-operator:
+    shortName: star-ope
+    namespace: starboard-operator
+    namespaceShortName: star-ope
+    chart: ../releases/dist/releases/charts/starboard-operator
+  system-config:
+    shortName: sys-cfg
+    namespace: system-tools
+    namespaceShortName: sys-tls
+    chart: ../releases/dist/releases/charts/raw
+  system-jobs:
+    shortName: sys-jobs
+    namespace: system-tools
+    namespaceShortName: sys-tls
+    chart: ../releases/dist/releases/charts/system-jobs
+  tekton:
+    shortName: tktn
+    namespace: tekton-pipelines
+    namespaceShortName: tktn
+    chart: ../releases/dist/releases/charts/tekton
+  tekton-catalog:
+    shortName: tktn-cat
+    namespace: tekton-pipelines
+    namespaceShortName: tktn
+    chart: ../releases/dist/releases/charts/tekton-catalog
+    release:
+      needs:
+        - tekton-pipelines/tekton
+  tekton-logging:
+    shortName: tktn-log
+    namespace: logging
+    namespaceShortName: log
+    chart: ../releases/dist/releases/charts/tekton-logging
+  test-logging:
+    shortName: test-log
+    namespace: test-logging
+    namespaceShortName: tst-log
+    chart: ../releases/dist/releases/charts/test-logging
+  velero:
+    shortName: vlr
+    namespace: velero
+    namespaceShortName: vlr
+    chart: ../releases/dist/releases/charts/velero
+  visitor-groups:
+    shortName: vgs
+    namespace: ingress-access-operator
+    namespaceShortName: ing-acs-ope
+    chart: ../releases/dist/releases/charts/raw
+  zeebe:
+    shortName: zb
+    namespace: zeebe
+    namespaceShortName: zb
+    chart: ../releases/dist/releases/charts/zeebe-cluster-helm
+  zeebe-operate:
+    shortName: zb-opr
+    namespace: zeebe
+    namespaceShortName: zb
+    chart: ../releases/dist/releases/charts/zeebe-operate-helm
+  kyverno:
+    shortName: kyv
+    namespace: kyverno
+    namespaceShortName: kyv
+    chart: ../releases/dist/releases/charts/kyverno
+  cluster-policies:
+    shortName: cls-pol
+    namespace: cluster-policies
+    namespaceShortName: cls-pol
+    chart: ../releases/dist/releases/charts/cluster-policies
+  kyverno-policies:
+    shortName: kyv-pol
+    namespace: kyverno-policies
+    namespaceShortName: kyv-pol
+    chart: ../releases/dist/releases/charts/kyverno-policies
+  prometheus-pushgateway:
+    shortName: prom-push
+    namespace: monitoring
+    namespaceShortName: mntr
+    chart: ../releases/dist/releases/charts/prometheus-pushgateway
+  descheduler:
+    shortName: desch
+    namespace: kube-system
+    namespaceShortName: kub-sys
+    chart: ../releases/dist/releases/charts/descheduler
+  cluster-rbac:
+    shortName: cls-rbac
+    namespace: cluster-rbac
+    namespaceShortName: cls-rbac
+    chart: ../releases/dist/releases/charts/cluster-rbac
+  node-problem-detector:
+    shortName: node-pb-dtct
+    namespace: node-problem-detector
+    namespaceShortName: node-pb-dtct
+    chart: ../releases/dist/releases/charts/node-problem-detector
+  rabbitmq-managed:
+    shortName: rmq-mng
+    namespace: rabbitmq
+    namespaceShortName: rmq
+    chart: ../releases/dist/releases/charts/rabbitmq-managed
+  mongodb-managed:
+    shortName: mdb-mng
+    namespace: mongodb
+    namespaceShortName: mdb
+    chart: ../releases/dist/releases/charts/mongodb-managed
+  flux-repository:
+    shortName: flux-rep
+    namespace: flux-system
+    namespaceShortName: flx
+    chart: ../releases/dist/releases/charts/flux-repository
+  dex:
+    shortName: dex
+    namespace: dex
+    namespaceShortName: dex
+    chart: ../releases/dist/releases/charts/dex
+  oauth2-proxy:
+    shortName: oth-pxy
+    namespace: oauth2-proxy
+    namespaceShortName: oth-pxy
+    chart: ../releases/dist/releases/charts/oauth2-proxy
+  namespace:
+    shortName: ns
+    namespace: cluster-wide-resources
+    namespaceShortName: cls-wdr
+    chart: ../releases/dist/releases/charts/namespace
+  trivy:
+    shortName: trivy
+    namespace: trivy-server
+    namespaceShortName: trivy
+    chart: ../releases/dist/releases/charts/trivy

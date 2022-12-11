@@ -1,0 +1,50 @@
+releases:
+  crossplane-provider:
+    hooks:
+      - args:
+          - -c
+          - |
+            # !/bin/bash
+            # Wait CRD installation for 60 seconds
+            for (( i=0; i <= 60; i++ )); do
+                conditionMet=$(kubectl wait --timeout 60s --for=condition=established crd/providers.pkg.crossplane.io)
+                if  echo "${conditionMet}" | grep "condition met"; then
+                    echo "Waited $i second. CRDs are up"
+                    exit 0;
+                else
+                    echo "Waiting for CRDs to be up (attempt $i)"
+                    sleep 1;
+                fi;
+            done;
+            exit 1
+        command: "bash"
+        events: ["presync"]
+        showlogs: true
+  crossplane-provider-config:
+    hooks:
+      - args:
+          - -c
+          - |
+            # !/bin/bash
+            # Wait Provider installation for 60 seconds
+            for (( i=0; i <= 60; i++ )); do
+                conditionMet=$(kubectl get providers.pkg.crossplane.io 2>&1)
+                echo $conditionMet
+                if [[ $(echo "${conditionMet}" | grep "No resources found") ]]; then
+                    echo "Waiting for providers to be healty (attempt $i)"
+                    sleep 1;
+                elif [[ $(echo "${conditionMet}" | grep -E "False|Unknown") ]]; then
+                    echo "Waiting for providers to be healty (attempt $i)"
+                    sleep 1;
+                elif [[ $(echo "${conditionMet}" | grep -E "True") ]]; then
+                    echo "Waited $i iterations. All providers are up."
+                    exit 0;
+                else
+                    echo "Uknown status, waiting..."
+                    sleep 1;
+                fi;
+            done;
+            exit 1
+        command: "bash"
+        events: ["presync"]
+        showlogs: true

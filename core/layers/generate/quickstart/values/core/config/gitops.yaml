@@ -1,0 +1,13 @@
+# GitOps Repository & Config
+gitops:
+  enabled: false
+  api: KUBE_CORE_GITOPS_API
+  ssh: KUBE_CORE_GITOPS_SSH
+  web: KUBE_CORE_GITOPS_WEB
+  repository: KUBE_CORE_GITOPS_REPOSITORY
+  mode: full
+  ref: KUBE_CORE_GITOPS_REF
+  path: /config
+  refresh: 1m0s #KUBE_CORE_GITOPS_REFRESH
+  ssh_key: ./keys/.flux-ssh-key
+  autocommit: false #KUBE_CORE_GITOPS_AUTOCOMMIT

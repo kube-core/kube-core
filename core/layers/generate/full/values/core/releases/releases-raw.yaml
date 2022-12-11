@@ -1,0 +1,11 @@
+releasesRaw: {}
+#   namespace-dev:
+#     enabled: true
+#     labels:
+#       type: namespace
+#     manifests:
+#     - apiVersion: v1
+#       kind: Namespace
+#       metadata:
+#         name: dev
+#     namespace: dev

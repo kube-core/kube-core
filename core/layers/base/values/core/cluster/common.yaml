@@ -1,0 +1,39 @@
+cluster:
+  common:
+    globalLabels: {}
+    defaultIngressClass: nginx
+    defaultVisitorGroups: self
+    defaultIssuerName: "letsencrypt-staging"
+    defaultIssuerKind: "ClusterIssuer"
+    # See how to refactor the following
+    # Service
+    defaultServiceAnnotations:
+      ingress.neo9.io/expose-annotations: |-
+        cert-manager.io/cluster-issuer: letsencrypt-staging
+        external-dns.alpha.kubernetes.io/ttl: 5
+        ingress.neo9.io/allowed-visitors: self
+        ingress.neo9.io/access-filtered: true
+        nginx.ingress.kubernetes.io/ssl-redirect: true
+        nginx.ingress.kubernetes.io/force-ssl-redirect: true
+        nginx.ingress.kubernetes.io/proxy-body-size: 200m
+        nginx.org/client-max-body-size: 200m
+        forecastle.stakater.com/expose: true
+        exposeIngressUrl: globally
+      ingress.neo9.io/expose-labels: |-
+        ingress.neo9.io/access-filtered: true
+    defaultServiceLabels:
+      ingress.neo9.io/expose: "true"
+    # Ingress
+    defaultIngressLabels:
+      ingress.neo9.io/access-filtered: "true"
+    defaultIngressAnnotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-staging"
+      external-dns.alpha.kubernetes.io/ttl: "5"
+      ingress.neo9.io/allowed-visitors: "self"
+      ingress.neo9.io/access-filtered: "true"
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/proxy-body-size: "200m"
+      nginx.org/client-max-body-size: "200m"
+      forecastle.stakater.com/expose: "true"
+      exposeIngressUrl: "globally"
