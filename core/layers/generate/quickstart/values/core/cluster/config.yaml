@@ -1,0 +1,28 @@
+cluster:
+  config:
+    corePoliciesEnabled: false
+    clusterPoliciesEnabled: false
+    backups:
+      schedule: "0 12 * * *" #KUBE_CORE_CLUSTER_CONFIG_BACKUPS_SCHEDULE
+    name: KUBE_CORE_CLUSTER_CONFIG_NAME
+    shortName: KUBE_CORE_CLUSTER_CONFIG_SHORT_NAME
+    context: KUBE_CORE_CLUSTER_CONFIG_CONTEXT
+    contextShortName: KUBE_CORE_CLUSTER_CONFIG_CONTEXT_SHORT_NAME
+    domain: KUBE_CORE_CLUSTER_CONFIG_DOMAIN
+    additionnalDomains: [] # KUBE_CORE_CLUSTER_CONFIG_ADDITIONNAL_DOMAINS
+    cidr:
+    - name: cluster-range
+      cidr: KUBE_CORE_CLUSTER_CONFIG_CIDR_CLUSTER_RANGE
+    - name: cluster-nat
+      cidr: KUBE_CORE_CLUSTER_CONFIG_CIDR_CLUSTER_NAT
+    network:
+      type: KUBE_CORE_CLUSTER_CONFIG_NETWORK_TYPE
+    repository:
+      name: KUBE_CORE_CLUSTER_CONFIG_REPOSITORY_NAME
+      url: KUBE_CORE_CLUSTER_CONFIG_REPOSITORY_URL
+      ref: KUBE_CORE_CLUSTER_CONFIG_REPOSITORY_REF
+      path: KUBE_CORE_CLUSTER_CONFIG_REPOSITORY_PATH
+    adminEmail: KUBE_CORE_CLUSTER_CONFIG_ADMIN_EMAIL
+    schedule: "Mon-Fri 08:00-20:00 Europe/Paris" #KUBE_CORE_CLUSTER_CONFIG_SCHEDULE
+    downscalerExcludedNamespaces: "system-tools,namespace-node-affinity" #KUBE_CORE_CLUSTER_CONFIG_DOWNSCALER_EXCLUDED_NAMESPACES
+    extraVisitorGroups: []

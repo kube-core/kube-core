@@ -1,0 +1,98 @@
+releases:
+  chartmuseum:
+    values:
+      extraArgs:
+        - --cache-interval=1m
+      gcp:
+        secret:
+          enabled: false
+          key: chartmuseum-sa.json
+          name: chartmuseum-sa
+  cluster-logging:
+    values:
+      installCRDs: false
+  eck-operator:
+    values:
+      installCRDs: false
+  kubernetes-dashboard:
+    values:
+      resources:
+        limits:
+          cpu: 0.5
+          memory: 200Mi
+        requests:
+          cpu: 50m
+          memory: 100Mi
+  logging-stack:
+    values:
+      installCRDs: false
+  patch-operator:
+    values:
+      enableCertManager: true
+  sealed-secrets:
+    values:
+      crd:
+        create: false
+  tekton:
+    config:
+      app-hooks:
+        ingress:
+          annotations: {}
+          labels: {}
+          subdomain: "app-hooks.tekton-pipelines"
+      cluster-hooks:
+        ingress:
+          annotations: {}
+          labels: {}
+          subdomain: "cluster-hooks.tekton-pipelines"
+      config:
+        hooks:
+          appPushDevelop:
+            templateRef: app-push
+          gardenPushDevelop:
+            templateRef: garden-push
+        templates:
+          appPushDevelop:
+            pipelineRef: app-push
+          gardenPushDevelop:
+            pipelineRef: garden-deploy
+      core-hooks:
+        ingress:
+          annotations: {}
+          labels: {}
+          subdomain: "core-hooks.tekton-pipelines"
+      dashboard:
+        ingress:
+          annotations: {}
+          labels: {}
+          subdomain: "tekton-dashboard.tekton-pipelines"
+      garden-hooks:
+        ingress:
+          annotations: {}
+          labels: {}
+          subdomain: "garden-hooks.tekton-pipelines"
+      pipeline:
+        cleanup:
+          enabled: false
+          keep:
+            pipelineRuns: 100
+            taskRuns: 500
+      storage:
+        bucket: kube-core-tekton-storage
+      webhook:
+        scaling:
+          minAvailable: 2
+  tekton-logging:
+    values:
+      installCRDs: false
+  trivy: 
+    values:
+      image:
+        tag: "0.32.1"
+      trivy:
+        debugMode: true
+      ingress:
+        enabled: true
+        annotations:
+          nginx.ingress.kubernetes.io/ssl-redirect: "false"
+          nginx.ingress.kubernetes.io/force-ssl-redirect: "false"

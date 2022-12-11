@@ -1,5 +1,0 @@
-# These values must be filled on consumer side !
-core:
-  helmfileName: core
-  ha: false
-  installCRDs: false

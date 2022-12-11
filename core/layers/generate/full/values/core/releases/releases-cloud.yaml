@@ -1,0 +1,55 @@
+releases:
+  estafette-gke-node-pool-shifter:
+    cloud:
+      enabled: true
+      roles:
+      - roles/compute.admin
+  estafette-gke-preemptible-killer:
+    cloud:
+      enabled: true
+      roles:
+      - roles/compute.admin
+  cluster-issuers:
+    cloud:
+      enabled: true
+      roles:
+      - roles/dns.admin
+  external-dns:
+    cloud:
+      enabled: true
+      roles:
+      - roles/dns.admin
+  kps:
+    cloud:
+      enabled: true
+      bucket:
+        enabled: true
+      roles:
+      - roles/storage.objectAdmin
+  tekton:
+    cloud:
+      enabled: true
+      roles:
+      - roles/storage.objectAdmin
+  cluster-logging:
+    cloud:
+      enabled: true
+      roles:
+      - roles/storage.objectAdmin
+      - roles/storage.admin
+  velero:
+    cloud:
+      enabled: true
+      bucket:
+        enabled: true
+      roles:
+      - roles/storage.objectAdmin
+      permissions:
+      - compute.disks.get
+      - compute.disks.create
+      - compute.disks.createSnapshot
+      - compute.snapshots.get
+      - compute.snapshots.create
+      - compute.snapshots.useReadOnly
+      - compute.snapshots.delete
+      - compute.zones.get
