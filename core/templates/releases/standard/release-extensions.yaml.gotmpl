@@ -26,7 +26,8 @@
     app: {{ $releaseName }}
     type: secrets
   values:
-  - "./values/release-secrets.yaml.gotmpl"
+  # - "./values/release-secrets.yaml.gotmpl"
+  - {{ (tpl (readFile "values/release-secrets.yaml.gotmpl") .) | nindent 4 }}
 {{ end }}
 
 {{ if .item.dynamicSecrets }}
@@ -54,7 +55,8 @@
     app: {{ $releaseName }}
     type: secrets
   values:
-  - "./values/release-external-secrets.yaml.gotmpl"
+  # - "./values/release-external-secrets.yaml.gotmpl"
+  - {{ (tpl (readFile "values/release-external-secrets.yaml.gotmpl") .) | nindent 4 }}
 {{ end }}
 
 {{ if .item.patches }}
