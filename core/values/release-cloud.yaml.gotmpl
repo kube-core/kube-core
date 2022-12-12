@@ -119,6 +119,8 @@ buckets:
 bucketPolicies:
 {{ if (not (eq ($releaseCloud | getOrNil "buckets" | getOrNil "enabled") false)) }}
 {{ if (not (eq ($releaseCloud | getOrNil "bucketPolicies" | getOrNil "enabled") false)) }}
+{{ if ($releaseCloud | getOrNil "bucket" | getOrNil "enabled") }}
+
   {{ $name }}:
     enabled: true
     {{ if (eq ($releaseCloud | getOrNil "bucket" | getOrNil "public") true) }}
@@ -130,6 +132,7 @@ bucketPolicies:
     location: {{ $cloudLocation }}
     namespace: {{ $releaseNamespace }}
     clusterName: {{ $clusterName }}
+{{ end }}
 {{ end }}
 {{ end }}
 
