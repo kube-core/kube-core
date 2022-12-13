@@ -1,6 +1,0 @@
-{{ if .Values.projectIAMCustomRoles }}
-{{ range $key, $value := .Values.projectIAMCustomRoles }}
----
-{{ include "crossplane-cloud.projectiamcustomrole" (dict "key" $key "value" $value) }}
-{{ end }}
-{{ end }}

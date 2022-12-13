@@ -1,7 +1,0 @@
-{{ if .Values.buckets }}
-{{ range $key, $value := .Values.buckets }}
-
----
-{{ include "crossplane-cloud.bucket" (dict "key" $key "value" $value) }}
-{{ end }}
-{{ end }}

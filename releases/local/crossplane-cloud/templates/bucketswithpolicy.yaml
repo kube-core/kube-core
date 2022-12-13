@@ -1,8 +1,0 @@
-{{ if .Values.bucketsWithPolicies }}
-{{ range $key, $value := .Values.bucketsWithPolicies }}
----
-{{ include "crossplane-cloud.bucket" (dict "key" $key "value" $value) }}
----
-{{ include "crossplane-cloud.bucketpolicy" (dict "key" $key "value" $value) }}
-{{ end }}
-{{ end }}

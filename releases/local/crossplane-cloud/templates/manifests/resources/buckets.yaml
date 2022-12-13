@@ -1,0 +1,14 @@
+{{- include "crossplane-cloud.add-release-metadata-to-values" . -}}
+
+{{ if .Values.buckets }}
+{{ range $key, $value := .Values.buckets }}
+
+{{ $ressource := dict "key" $key "value" $value }}
+{{ $globalpick := pick $.Values "patch" "cloud" "cluster" "release" }}
+{{ $commonvalues := dict "common" $globalpick }}
+{{ $mergedvalues := deepCopy $commonvalues | mustMerge $ressource }}
+
+---
+{{ include "crossplane-cloud.bucket" $mergedvalues }}
+{{ end }}
+{{ end }}
