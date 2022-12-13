@@ -1,0 +1,14 @@
+{{- include "crossplane-cloud.add-release-metadata-to-values" . -}}
+
+{{ if .Values.targetHttpsProxies }}
+{{ range $key, $value := .Values.targetHttpsProxies }}
+
+{{ $ressource := dict "key" $key "value" $value }}
+{{ $globalpick := pick $.Values "patch" "cloud" "cluster" "release" }}
+{{ $commonvalues := dict "common" $globalpick }}
+{{ $mergedvalues := deepCopy $commonvalues | mustMerge $ressource }}
+
+---
+{{ include "crossplane-cloud.targethttpsproxy" $mergedvalues }}
+{{ end }}
+{{ end }}

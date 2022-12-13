@@ -7,6 +7,9 @@ cluster:
   config:
     name: kube-core
 
+patch:
+  serviceAccountName: my-patch-operator-sa
+
 # projectIAMCustomRoles:
 #   gcr-admin:
 #     permissions:
@@ -54,16 +57,10 @@ cluster:
   #   serviceAccountMemberRefs:
   #   - custom-sa
 
-# serviceAccountsWithKey:
-#   app: {}
-
 # serviceAccountKeys:
 #   app: {}
 
 # buckets:
-#   app: {}
-
-# bucketsWithPolicies:
 #   app: {}
 
 # bucketPolicies:
@@ -77,11 +74,59 @@ cluster:
 #     #   members:
 #     #     - test-member
 
-# appBuckets:
+# backendBuckets:
 #   app: {}
+#     # bucketName: app-bucket-name
+#     # enableCdn: true
 
-# appServiceAccounts:
+# globalAdresses:
 #   app: {}
+#     # deletionPolicy: ""
+#     # addressType: ""
+#     # ipVersion: ""
 
-# apps:
+# globalForwardingRules:
 #   app: {}
+#     # loadBalancingScheme: ""
+#     # target:
+#     #   type: targetHttpProxies
+#     #   name: target-proxy-name
+#     # ipAddress: global-adress-name
+
+# targetHttpProxies:
+#   app: {}
+#     # urlMap: urlMap-name
+
+# targetHttpsProxies:
+#   app: {}
+#     # urlMap: urlMap-name
+#     # managedSslCertificates:
+#     # - certificat-1
+#     # - certificat-2
+
+# urlMaps:
+#   app: {}
+#     # hostRule:
+#     #   - hosts:
+#     #     - app.domain.tld
+#     #     pathMatcher: pathmatcher-name
+#     # pathMatcher:
+#     #   - defaultService: backend-bucket-name
+#     #     name: pathmatcher-name
+
+# recordSets:
+#   app: {}
+#     # managedZone: managed-zone-name
+#     # rootDnsName: app.domain.tld.
+#     # rrdatas: []
+#     # # - 1.1.1.1
+#     # # - 2.2.2.2
+#     # patch:
+#     #   injectIpFromLb: false
+#     #   globalAddress: global-address-name
+
+# managedSslCertificates:
+#   app: {}
+#     # domains: []
+#     #   # - app.domain.tld
+#     #   # - app2.domain.tld

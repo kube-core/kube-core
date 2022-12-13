@@ -1,0 +1,14 @@
+{{- include "crossplane-cloud.add-release-metadata-to-values" . -}}
+
+{{ if .Values.urlMaps }}
+{{ range $key, $value := .Values.urlMaps }}
+
+{{ $ressource := dict "key" $key "value" $value }}
+{{ $globalpick := pick $.Values "patch" "cloud" "cluster" "release" }}
+{{ $commonvalues := dict "common" $globalpick }}
+{{ $mergedvalues := deepCopy $commonvalues | mustMerge $ressource }}
+
+---
+{{ include "crossplane-cloud.urlmap" $mergedvalues }}
+{{ end }}
+{{ end }}
