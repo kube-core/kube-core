@@ -9,8 +9,8 @@ metadata:
 spec:
   deletionPolicy: {{ coalesce .value.deletionPolicy "Orphan" }}
   forProvider:
-    member: serviceAccount:{{ $name }}@{{.project}}.iam.gserviceaccount.com
-    role: {{ coalesce .value.role (printf "projects/%s/roles/%s" .project $name) }}
+    member: serviceAccount:{{ $name }}@{{ $.common.cloud.project }}.iam.gserviceaccount.com
+    role: {{ coalesce .value.role (printf "projects/%s/roles/%s" $.common.cloud.project $name) }}
     serviceAccountIdRef:
       name: {{ coalesce .value.sa $name }}
   providerConfigRef:

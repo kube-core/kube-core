@@ -8,14 +8,14 @@ metadata:
     crossplane.io/external-name: {{ coalesce .value.externalName $name }}
 spec:
   deletionPolicy: {{ coalesce .value.deletionPolicy "Orphan" }}
-  location: {{ .value.location }}
+  location: {{ coalesce .value.location .common.cloud.default.location }}
   {{- if (.value.uniformPolicy | default true) }}
   bucketPolicyOnly:
     enabled: true
   {{- end }}
   labels:
     managed-by: "crossplane"
-    cluster: {{ .value.clusterName }}
+    cluster: {{ .common.cluster.config.name }}
     {{- if .value.labels }}
     {{ toYaml (.value.labels) | nindent 4 }}
     {{- end }}
