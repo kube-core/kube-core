@@ -1,6 +1,5 @@
 {{- define "crossplane-cloud.managedsslcertificate" -}}
 {{ $name := (coalesce .value.name .key) }}
-
 apiVersion: compute.gcp.upbound.io/v1beta1
 kind: ManagedSSLCertificate
 metadata:
@@ -17,5 +16,4 @@ spec:
         {{- end }}
   providerConfigRef:
     name: upbound-gcp
-
 {{- end }}

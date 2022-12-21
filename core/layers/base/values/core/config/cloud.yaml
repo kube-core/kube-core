@@ -27,6 +27,22 @@ cloud:
       templates:
         default:
           nameBase: default-pretty
+
+          serviceAccountName: default-serviceAccount
+          serviceAccountKeyName: default-serviceAccountKey
+          bucketName: default-bucket
+          bucketPolicyName: default-bucketPolicy
+          backendBucketName: default-backendBucket
+          roleName: default-role
+          roleIamName: default-roleIam
+          globalAddressName: default-globalAddress
+          globalForwardingRuleName: default-globalForwardingRule
+          targetHttpProxyName: default-targetHttpProxy
+          targetHttpsProxyName: default-targetHttpsProxy
+          urlMapName: default-urlMap
+          recordSetName: default-recordSet
+          managedSslCertificateName: default-managedSslCertificate
+
         # custom:
         #   nameBase: default-short
         #   cloudResourcePrefixTemplate: cloud-resource-prefix-full
@@ -36,6 +52,20 @@ cloud:
       default-full: "{{with .prefixes}}{{.cloudResourcePrefixFull }}-{{ .clusterResourcePrefixFull }}{{end}}"
       default-short: "{{with .prefixes}}{{.cloudResourcePrefixShort }}-{{ .clusterResourcePrefixShort }}{{end}}"
 
+      default-serviceAccount: "{{with .prefixes}}{{.cloudResourcePrefixCompact }}-{{ .clusterResourcePrefixShort }}{{end}}"
+      default-serviceAccountKey: "{{with .prefixes}}{{.cloudResourcePrefixCompact }}-{{ .clusterResourcePrefixShort }}{{end}}"
+      default-bucket: "{{with .prefixes}}{{.cloudResourcePrefixCompact }}-{{ .clusterResourcePrefixShort }}{{end}}"
+      default-bucketPolicy: "{{with .prefixes}}{{.cloudResourcePrefixCompact }}-{{ .clusterResourcePrefixShort }}{{end}}"
+      default-backendBucket: "{{with .prefixes}}{{.cloudResourcePrefixCompact }}-{{ .clusterResourcePrefixShort }}{{end}}"
+      default-role: "{{with .prefixes}}{{.cloudResourcePrefixCompact }}-{{ .clusterResourcePrefixShort }}{{end}}"
+      default-roleIam: "{{with .prefixes}}{{.cloudResourcePrefixCompact }}-{{ .clusterResourcePrefixShort }}{{end}}"
+      default-globalAddress: "{{with .prefixes}}{{.cloudResourcePrefixCompact }}-{{ .clusterResourcePrefixShort }}{{end}}"
+      default-globalForwardingRule: "{{with .prefixes}}{{.cloudResourcePrefixCompact }}-{{ .clusterResourcePrefixShort }}{{end}}"
+      default-targetHttpProxy: "{{with .prefixes}}{{.cloudResourcePrefixCompact }}-{{ .clusterResourcePrefixShort }}{{end}}"
+      default-targetHttpsProxy: "{{with .prefixes}}{{.cloudResourcePrefixCompact }}-{{ .clusterResourcePrefixShort }}{{end}}"
+      default-urlMap: "{{with .prefixes}}{{.cloudResourcePrefixCompact }}-{{ .clusterResourcePrefixShort }}{{end}}"
+      default-recordSet: "{{with .prefixes}}{{.cloudResourcePrefixCompact }}-{{ .clusterResourcePrefixShort }}{{end}}"
+      default-managedSslCertificate: "{{with .prefixes}}{{.cloudResourcePrefixCompact }}-{{ .clusterResourcePrefixShort }}{{end}}"
     prefixTemplates:
       cloud-resource-prefix-full: "{{with .cloud.full}}{{.orgName}}-{{.platformName}}-{{.cloudProvider}}-{{.cloudRegion}}-{{.cloudZone}}-{{.cloudZoneId}}{{end}}"
       cloud-resource-prefix-short: "{{with .cloud.short}}{{.orgName}}-{{.platformName}}-{{.cloudProvider}}-{{.cloudRegion}}-{{.cloudZone}}-{{.cloudZoneId}}{{end}}"

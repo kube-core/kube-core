@@ -14,7 +14,7 @@ spec:
     policy:
       bindings:
       {{- if (not (eq (.value.defaultRole) false)) }}
-      - role: {{ coalesce .value.role (printf "projects/%s/roles/%s" .project $name) }}
+      - role: {{ coalesce .value.role (printf "projects/%s/roles/%s" $.common.cloud.project $name) }}
         serviceAccountMemberRefs:
         - name: {{ coalesce .value.sa $name }}
       {{ end }}
