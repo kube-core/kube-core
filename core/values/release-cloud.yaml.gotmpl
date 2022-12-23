@@ -83,7 +83,7 @@ patch:
 {{ $releaseBucketPolicyName = $shortName | substr 0 63 }}
 {{ $releaseBackendBucketName = $shortName | substr 0 63 }}
 {{ $releaseRoleName = ($shortName | kebabcase | replace "-" "." | untitle) }}
-{{ $releaseRoleIamName = ($shortName | kebabcase | replace "-" "." | untitle) }}
+{{ $releaseRoleIamName = $shortName | substr 0 63 }}
 {{ $releaseGlobalAddressName = $shortName | substr 0 63 }}
 {{ $releaseGlobalForwardingRuleName = $shortName | substr 0 63  }}
 {{ $releaseTargetHttpProxyName = $shortName | substr 0 63  }}
@@ -179,14 +179,12 @@ bucketPolicies:
 {{ end }}
 
 backendBuckets:
-{{ if (not (eq ($releaseCloud | getOrNil "bucket" | getOrNil "enabled") false)) }}
-{{ if (not (eq ($releaseCloud | getOrNil "bucket" | getOrNil "public") false)) }}
+{{ if (eq ($releaseCloud | getOrNil "backendBucket" | getOrNil "enabled") true) }}
   {{ $releaseBackendBucketName }}:
     enabled: true
     bucketName: {{ $releaseBucketName }}
     enableCdn: true
     deletionPolicy: {{ coalesce ($releaseCloud | getOrNil "bucket" | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
-{{ end }}
 {{ end }}
 
 {{ if ($releaseCloud | getOrNil "buckets") }}
@@ -210,10 +208,10 @@ backendBuckets:
 
 {{ if (not (eq ($releaseCloud | getOrNil "projectIAMCustomRoles" | getOrNil "enabled") false)) }}
 projectIAMCustomRoles:
-  {{ $releaseRoleName }}:
+  {{ $name }}:
     enabled: true
     deletionPolicy: {{ coalesce ($releaseCloud | getOrNil "projectIAMCustomRoles" | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
-
+    externalName: {{ $releaseRoleName }}
     {{ if $releaseCloud | getOrNil "permissions" }}
     permissions: {{ toYaml $releaseCloud.permissions | nindent 4 }}
     {{ else }}
@@ -224,7 +222,7 @@ projectIAMCustomRoles:
 
 {{ if (not (eq ($releaseCloud | getOrNil "projectIAMMembers" | getOrNil "enabled") false)) }}
 projectIAMMembers:
-  {{ $releaseRoleIamName }}-default:
+  {{ $name }}-default:
     enabled: true
     deletionPolicy: {{ coalesce ($releaseCloud | getOrNil "projectIAMMembers" | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
     member: {{ $releaseServiceAccountName }}
@@ -233,7 +231,7 @@ projectIAMMembers:
   {{ range $key, $value := ($releaseCloud | getOrNil "roles") }}
   {{ $roleTitle := ( . | title | replace "Roles/" "" | replace "." "" | untitle | kebabcase ) }}
   {{ $hash := $roleTitle }}
-  {{ $releaseRoleIamName }}-extra-{{ $hash }}:
+  {{ $name }}-extra-{{ $hash }}:
     enabled: true
     deletionPolicy: {{ coalesce ($releaseCloud | getOrNil "projectIAMMembers" | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
     member: {{ $releaseServiceAccountName }}
@@ -242,7 +240,7 @@ projectIAMMembers:
   {{ end }}
 {{ end }}
 
-{{ if (not (eq ($releaseCloud | getOrNil "cdn" | getOrNil "enabled") false)) }}
+{{ if (eq ($releaseCloud | getOrNil "cdn" | getOrNil "enabled") true) }}
 globalAdresses:
   {{ $releaseGlobalAddressName }}:
     deletionPolicy: {{ coalesce ($releaseCloud | getOrNil "cdn" | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
