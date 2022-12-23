@@ -18,6 +18,5 @@
 {{- tpl (readFile "templates/releases/standard/release.yaml.gotmpl") (dict "item" $newValues "values" $values "releaseName" $releaseName "releaseNamespace" $values.applicationsConfig.namespace "releaseContext" $values.applicationsConfig.context) }}
 {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") (dict "item" $newValues "values" $values "releaseName" $releaseName "releaseNamespace" $values.applicationsConfig.namespace "releaseContext" $values.applicationsConfig.context) }}
 {{- tpl (readFile "templates/releases/standard/release-extensions.yaml.gotmpl") (dict "item" $newValues "values" $values "releaseName" $releaseName "releaseNamespace" $values.applicationsConfig.namespace "releaseContext" $values.applicationsConfig.context) }}
-
 {{- end -}}
 {{- end -}}
