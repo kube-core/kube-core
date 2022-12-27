@@ -3,6 +3,7 @@
 {{ $releaseNamespace := .releaseNamespace }}
 {{ $chartName := (splitList "/" .item.chart) | last | quote }}
 {{ $chartRepo := (splitList "/" .item.chart) | first | quote }}
+{{ $parentReleaseName := (. | getOrNil "parentReleaseName")}}
 {{- if $values.core.globalLabelsEnabled }}
   - apiVersion: builtin
     kind: LabelTransformer
@@ -19,6 +20,9 @@
       helmfile.kube-core.io/name: {{ $values.core.helmfileName }}
       release.kube-core.io/type: {{ .item.type }}
       release.kube-core.io/name: {{ $releaseName }}
+      {{ if $parentReleaseName }}
+      release.kube-core.io/parent: {{ $parentReleaseName }}
+      {{ end }}
       release.kube-core.io/namespace: {{ $releaseNamespace }}
       release.kube-core.io/chart: {{ $chartName }}
       {{- if .item | getOrNil "options" | getOrNil "forceNamespaceNodeSelector" }}
@@ -67,6 +71,9 @@
       helmfile.kube-core.io/name: {{ $values.core.helmfileName }}
       release.kube-core.io/type: {{ .item.type }}
       release.kube-core.io/name: {{ $releaseName }}
+      {{ if $parentReleaseName }}
+      release.kube-core.io/parent: {{ $parentReleaseName }}
+      {{ end }}
       release.kube-core.io/namespace: {{ $releaseNamespace }}
       release.kube-core.io/chart: {{ $chartName }}
       {{- if .item | getOrNil "options" | getOrNil "forceNamespaceNodeSelector" }}
@@ -103,6 +110,9 @@
       helmfile.kube-core.io/name: {{ $values.core.helmfileName }}
       release.kube-core.io/type: {{ .item.type }}
       release.kube-core.io/name: {{ $releaseName }}
+      {{ if $parentReleaseName }}
+      release.kube-core.io/parent: {{ $parentReleaseName }}
+      {{ end }}
       release.kube-core.io/namespace: {{ $releaseNamespace }}
       release.kube-core.io/chart: {{ $chartName }}
       {{- if .item | getOrNil "options" | getOrNil "forceNamespaceNodeSelector" }}
@@ -136,6 +146,9 @@
       helmfile.kube-core.io/name: {{ $values.core.helmfileName }}
       release.kube-core.io/type: {{ .item.type }}
       release.kube-core.io/name: {{ $releaseName }}
+      {{ if $parentReleaseName }}
+      release.kube-core.io/parent: {{ $parentReleaseName }}
+      {{ end }}
       release.kube-core.io/namespace: {{ $releaseNamespace }}
       release.kube-core.io/chart: {{ $chartName }}
       {{- if .item | getOrNil "options" | getOrNil "forceNamespaceNodeSelector" }}
