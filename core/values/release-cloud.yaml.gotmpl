@@ -14,9 +14,9 @@ cluster: {{ toYaml $values.cluster | nindent 2 }}
 cloud: {{ toYaml $values.cloud | nindent 2 }}
 prefix: {{ $values.cluster.config.name }}
 patch:
-  serviceAccountName: patch-operator-admin
+  serviceAccountName: patch-operator-admin-{{ $releaseNamespace }}-{{ $mainReleaseName }}
 
-{{ $defaultDeletionPolicy := "Orphan" }}
+{{ $defaultDeletionPolicy := $values.cloud.crossplane.defaultDeletionPolicy }}
 
 {{ $cloudProject := $values.cloud.project }}
 {{ $cloudLocation := $values.cloud.default.location }}
@@ -179,12 +179,14 @@ bucketPolicies:
 {{ end }}
 
 backendBuckets:
-{{ if (eq ($releaseCloud | getOrNil "backendBucket" | getOrNil "enabled") true) }}
+{{ if (eq ($releaseCloud | getOrNil "bucket" | getOrNil "public") true) }}
+{{ if (not (eq ($releaseCloud | getOrNil "backendBucket" | getOrNil "enabled") false)) }}
   {{ $releaseBackendBucketName }}:
     enabled: true
     bucketName: {{ $releaseBucketName }}
     enableCdn: true
     deletionPolicy: {{ coalesce ($releaseCloud | getOrNil "bucket" | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+{{ end }}
 {{ end }}
 
 {{ if ($releaseCloud | getOrNil "buckets") }}

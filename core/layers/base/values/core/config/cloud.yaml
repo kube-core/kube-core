@@ -17,6 +17,8 @@ cloud:
     hostname: KUBE_CORE_CLOUD_REGISTRY_HOSTNAME
   default:
     location: KUBE_CORE_CLOUD_DEFAULT_LOCATION
+  crossplane:
+    defaultDeletionPolicy: Orphan
   naming:
     enabled: false
     config:

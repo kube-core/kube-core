@@ -36,7 +36,9 @@ templates:
       injectNamespaceOauth2ProxyOnIngress: false
       injectSatisfyAnyAuthOnIngress: false
       injectionToEnforcePublicAccessFromIngressAccessOperator: false
-    patches: {}
+    patches:
+      enabled: false
+      patches: {}
     release: {}
     scaling: {}
     secrets: {}
@@ -86,7 +88,9 @@ templates:
       injectNamespaceOauth2ProxyOnIngress: false
       injectSatisfyAnyAuthOnIngress: false
       injectionToEnforcePublicAccessFromIngressAccessOperator: false
-    patches: {}
+    patches:
+      enabled: false
+      patches: {}
     release: {}
     scaling: {}
     external-secrets: false
@@ -136,7 +140,9 @@ templates:
       injectNamespaceOauth2ProxyOnIngress: false
       injectSatisfyAnyAuthOnIngress: false
       injectionToEnforcePublicAccessFromIngressAccessOperator: false
-    patches: {}
+    patches:
+      enabled: false
+      patches: {}
     release: {}
     scaling: {}
     external-secrets:
