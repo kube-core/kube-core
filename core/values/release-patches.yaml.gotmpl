@@ -1,36 +1,44 @@
-{{ $values := .Values }}
-{{ $patches := (index .Values.releases (.Release.Name | replace "-patches" "") "patches") }}
+{{ $values := .values }}
+{{ $releases := (merge $values.releases $values.applicationsList $values.servicesList )}}
+
+{{ $releaseNamespace := .releaseNamespace }}
+{{ $mainReleaseName := (.releaseName | replace "-patches" "") }}
+{{ $mainRelease := .item }}
+
+{{ $releasePatches := (index $releases $mainReleaseName "patches" )}}
+{{ $releasePatchesEnabled := ($releasePatches | getOrNil "enabled") }}
+
 manifests:
-{{ if (not (eq .Release.Namespace "patch-operator")) }}
+{{ if (not (eq $releaseNamespace "patch-operator")) }}
 - apiVersion: v1
   kind: ServiceAccount
   metadata:
-    name: patch-operator-admin
+    name: patch-operator-admin-{{ $releaseNamespace }}.{{ $mainReleaseName }}
 
 - apiVersion: rbac.authorization.k8s.io/v1
   kind: ClusterRoleBinding
   metadata:
-    name: patch-operator-admin-{{ .Release.Namespace }}.{{ (.Release.Name | replace "-patches" "") }}
+    name: patch-operator-admin-{{ $releaseNamespace }}.{{ $mainReleaseName }}
   roleRef:
     apiGroup: rbac.authorization.k8s.io
     kind: ClusterRole
     name: cluster-admin
   subjects:
   - kind: ServiceAccount
-    name: patch-operator-admin
-    namespace: {{ .Release.Namespace }}
+    name: patch-operator-admin-{{ $releaseNamespace }}.{{ $mainReleaseName }}
+    namespace: {{ $releaseNamespace }}
 {{ end }}
 
-{{ if $patches }}
+{{ if $releasePatches.patches }}
 - apiVersion: redhatcop.redhat.io/v1alpha1
   kind: Patch
   metadata:
-    name: {{ (.Release.Name | replace "-patches" "") }}
+    name: {{ $mainReleaseName }}
   spec:
     serviceAccountRef:
-      name: patch-operator-admin
+      name: patch-operator-admin-{{ $releaseNamespace }}.{{ $mainReleaseName }}
     patches:
-    {{ range $key, $patch := $patches }}
+    {{ range $key, $patch := $releasePatches.patches }}
       {{ $patch.name }}:
         targetObjectRef: {{ toYaml $patch.targetObjectRef | nindent 10 }}
         patchType: {{ coalesce (getOrNil "patchType" $patch) "application/strategic-merge-patch+json" }}
