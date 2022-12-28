@@ -9,6 +9,6 @@
 {{ $mergedvalues := deepCopy $commonvalues | mustMerge $ressource }}
 
 ---
-{{ include "crossplane-cloud.managedzone" (dict "name" $key "value" $value) }}
+{{ include "crossplane-cloud.managedzone" $mergedvalues }}
 {{ end }}
 {{ end }}

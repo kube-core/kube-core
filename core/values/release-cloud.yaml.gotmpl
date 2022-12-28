@@ -53,7 +53,6 @@ patch:
 {{ $releaseTargetHttpProxyName := "" }}
 {{ $releaseTargetHttpsProxyName := "" }}
 {{ $releaseUrlMapName := "" }}
-{{ $releaseRecordSetName := "" }}
 {{ $releaseManagedSslCertificateName := "" }}
 
 {{ if (and $releaseCloudEnabled $cloudNamingConfig.enabled (not (eq $releaseCloudNamingEnabled false))) }}
@@ -71,7 +70,6 @@ patch:
 {{ $releaseTargetHttpProxyName = (index $mainRelease.metadata.namingConfig.nameBases (coalesce ($values.cloud.naming.config.templates | getOrNil "custom" | getOrNil "targetHttpProxyName" | default "" | camelcase | untitle) ($values.cloud.naming.config.templates.default.targetHttpProxyName | camelcase | untitle))) }}
 {{ $releaseTargetHttpsProxyName = (index $mainRelease.metadata.namingConfig.nameBases (coalesce ($values.cloud.naming.config.templates | getOrNil "custom" | getOrNil "targetHttpsProxyName" | default "" | camelcase | untitle) ($values.cloud.naming.config.templates.default.targetHttpsProxyName | camelcase | untitle))) }}
 {{ $releaseUrlMapName = (index $mainRelease.metadata.namingConfig.nameBases (coalesce ($values.cloud.naming.config.templates | getOrNil "custom" | getOrNil "urlMapName" | default "" | camelcase | untitle) ($values.cloud.naming.config.templates.default.urlMapName | camelcase | untitle))) }}
-{{ $releaseRecordSetName = (index $mainRelease.metadata.namingConfig.nameBases (coalesce ($values.cloud.naming.config.templates | getOrNil "custom" | getOrNil "recordSetName" | default "" | camelcase | untitle) ($values.cloud.naming.config.templates.default.recordSetName | camelcase | untitle))) }}
 {{ $releaseManagedSslCertificateName = (index $mainRelease.metadata.namingConfig.nameBases (coalesce ($values.cloud.naming.config.templates | getOrNil "custom" | getOrNil "managedSslCertificateName" | default "" | camelcase | untitle) ($values.cloud.naming.config.templates.default.managedSslCertificateName | camelcase | untitle))) }}
 
 {{ else }}
@@ -89,7 +87,6 @@ patch:
 {{ $releaseTargetHttpProxyName = $shortName | substr 0 63  }}
 {{ $releaseTargetHttpsProxyName = $shortName | substr 0 63  }}
 {{ $releaseUrlMapName = $shortName | substr 0 63  }}
-{{ $releaseRecordSetName = $shortName | substr 0 63  }}
 {{ $releaseManagedSslCertificateName = $shortName | substr 0 63  }}
 
 {{ end }}
@@ -304,11 +301,7 @@ managedSslCertificates:
 recordSets:
 {{ range $k,$v := ($releaseCloud | getOrNil "cdn" | getOrNil "paths") }}
   {{ range .domains }}
-  {{ $fullRecordSetName := printf "%s-%s" $releaseRecordSetName ( . | replace "." "-" )}}
-  {{ if (gt ($fullRecordSetName | len) 63) }}
-  {{ $ | getOrNil "RECORDSET_NAME_TOO_LONG" | required (printf "RecordSetName name must be less than 63 chars. Current: %s => %s" $fullRecordSetName ($fullRecordSetName | len | toString) )}}
-  {{ end }}
-  {{ $fullRecordSetName }}:
+  {{ printf "%s-a" . | replace "." "-" }}:
     deletionPolicy: {{ coalesce ($releaseCloud | getOrNil "cdn" | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
     managedZone: {{ $releaseCloud | getOrNil "cdn" | getOrNil "managedZone" }}
     rootDnsName: {{ printf "%s." . }}
@@ -316,6 +309,13 @@ recordSets:
     patch:
       injectIpFromLb: true
       globalAddress: {{ $releaseGlobalAddressName }}
+  {{ printf "%s-txt" . | replace "." "-" }}:
+    deletionPolicy: {{ coalesce ($releaseCloud | getOrNil "cdn" | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+    managedZone: {{ $releaseCloud | getOrNil "cdn" | getOrNil "managedZone" }}
+    rootDnsName: {{ printf "%s." . }}
+    type: "TXT"
+    rrdatas: 
+      - "provider=kube-core,crossplane-cloud/owner=$clusterName,releases/namespace=$mainReleaseName/$releaseNamespace"
   {{ end }}
 {{ end }}
 
