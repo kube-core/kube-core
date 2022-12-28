@@ -7,6 +7,7 @@ metadata:
   name: {{ $name }}
   annotations:
     crossplane.io/external-name: {{ coalesce .value.externalName $name }}
+    release.crossplane-cloud.dns/record-type: "A"
 spec:
   deletionPolicy: {{ coalesce .value.deletionPolicy "Orphan" }}
   forProvider:

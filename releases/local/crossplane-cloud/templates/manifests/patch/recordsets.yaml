@@ -8,9 +8,11 @@
 {{ $commonvalues := dict "common" $globalpick }}
 {{ $mergedvalues := deepCopy $commonvalues | mustMerge $ressource }}
 
+{{ if .patch }}
 {{ if .patch.injectIpFromLb }}
 ---
 {{ include "crossplane-cloud.recordset-injectipfromlb" $mergedvalues }}
+{{ end }}
 {{ end }}
 
 {{ end }}
