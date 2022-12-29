@@ -4,9 +4,13 @@
 {{ $release := .item }}
 {{ $releaseName := $release.name }}
 {{ $releaseNamespace := $release.namespace }}
+{{ $releaseType := $release.type }}
 
 {{ $releaseCloud := ($release | getOrNil "cloud") }}
 {{ $releaseCloudEnabled := ($releaseCloud | getOrNil "enabled") }}
+
+{{ $appOrPlatformDict := (dict "type" (dict "release" "platform" "application" "application" "service" "application") "short" (dict "type" (dict "release" "p" "application" "a" "service" "a" )))}}
+{{ $namespaceShortNameDict := dict "dev" "dev" "integration" "int" "validation" "val" "staging" "stg" "preproduction" "ppd" "production" "prd" }}
 
 {{ $coreNamingConfig := (dict "cloud" (dict "full" (dict) "short" (dict)) "release" (dict "full" dict "short" dict)) }}
 {{ $releaseNamingConfig := (dict "cloud" (dict "full" (dict) "short" (dict)) "release" (dict "full" dict "short" dict)) }}
@@ -85,7 +89,7 @@
 {{ $_ := set $namingConfig.cloud.full "cloudZoneId" (coalesce ($releaseNamingConfig.cloud.full.cloudZoneId) ($coreNamingConfig.cloud.full.cloudZoneId)) }}
 {{ $_ := set $namingConfig.cloud.full "cloudDefaultLocation" (coalesce ($releaseNamingConfig.cloud.full.cloudDefaultLocation) ($coreNamingConfig.cloud.full.cloudDefaultLocation)) }}
 {{ $_ := set $namingConfig.cloud.full "clusterName" (coalesce ($releaseNamingConfig.cloud.full.clusterName) ($coreNamingConfig.cloud.full.clusterName)) }}
-{{ $_ := set $namingConfig.cloud.full "appOrPlatform" "platform"}}
+{{ $_ := set $namingConfig.cloud.full "appOrPlatform" (coalesce ($releaseNamingConfig.cloud.full.appOrPlatform) ($appOrPlatformDict.type | getOrNil $releaseType) ($coreNamingConfig.cloud.full.appOrPlatform))}}
 
 {{ $_ := set $namingConfig.cloud.short "orgName" (coalesce ($releaseNamingConfig.cloud.short.orgName) ($coreNamingConfig.cloud.short.orgName)) }}
 {{ $_ := set $namingConfig.cloud.short "platformName" (coalesce ($releaseNamingConfig.cloud.short.platformName) ($coreNamingConfig.cloud.short.platformName)) }}
@@ -98,16 +102,18 @@
 {{ $_ := set $namingConfig.cloud.short "cloudZoneId" (coalesce ($releaseNamingConfig.cloud.short.cloudZoneId) ($coreNamingConfig.cloud.short.cloudZoneId)) }}
 {{ $_ := set $namingConfig.cloud.short "cloudDefaultLocation" (coalesce ($releaseNamingConfig.cloud.short.cloudDefaultLocation) ($coreNamingConfig.cloud.short.cloudDefaultLocation)) }}
 {{ $_ := set $namingConfig.cloud.short "clusterName" (coalesce ($releaseNamingConfig.cloud.short.clusterName) ($coreNamingConfig.cloud.short.clusterName)) }}
-{{ $_ := set $namingConfig.cloud.short "appOrPlatform" "p"}}
+{{ $_ := set $namingConfig.cloud.short "appOrPlatform" (coalesce ($releaseNamingConfig.cloud.short.appOrPlatform) ($appOrPlatformDict.short.type | getOrNil $releaseType) ($coreNamingConfig.cloud.short.appOrPlatform))}}
 {{ end }}
 
 {{ $_ := set $namingConfig.release.full "context" (coalesce $release.context $values.cluster.config.context) }}
-{{ $_ := set $namingConfig.release.full "namespace" $release.namespace }}
-{{ $_ := set $namingConfig.release.full "name" $release.name }}
+{{ $_ := set $namingConfig.release.full "namespace" $releaseNamespace }}
+{{ $_ := set $namingConfig.release.full "name" $releaseName }}
+{{ $_ := set $namingConfig.release.full "appOrPlatform" ($appOrPlatformDict.type | getOrNil $releaseType) }}
 
 {{ $_ := set $namingConfig.release.short "context" (coalesce ($release | getOrNil "contextShortName") ($values.cluster.config.contextShortName)) }}
-{{ $_ := set $namingConfig.release.short "namespace" (coalesce ($release | getOrNil "namespaceShortName")) }}
-{{ $_ := set $namingConfig.release.short "name" (coalesce ($release | getOrNil "shortName")) }}
+{{ $_ := set $namingConfig.release.short "namespace" (coalesce ($release | getOrNil "namespaceShortName") ($namespaceShortNameDict | getOrNil $releaseNamespace)) }}
+{{ $_ := set $namingConfig.release.short "name" (coalesce ($release | getOrNil "shortName") $releaseName) }}
+{{ $_ := set $namingConfig.release.short "appOrPlatform" ($appOrPlatformDict.short.type | getOrNil $releaseType) }}
 
 {{ $prefixDict := $namingConfig }}
 
