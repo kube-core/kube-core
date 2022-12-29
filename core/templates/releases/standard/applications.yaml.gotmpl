@@ -4,9 +4,9 @@
 {{- range $releaseName, $release := $releases }}
 {{ $release := (merge $release $values.templates.application) }}
 {{ $newValues := $release }}
+
 {{ $_ := set $newValues "type" "application" }}
 {{ $_ := set $newValues "name" $releaseName }}
-{{ $_ := set $newValues "namespace" $release.namespace }}
 {{ $_ := set $newValues "namespace" $values.applicationsConfig.namespace }}
 {{ $newItem := (fromYaml (tpl (readFile "templates/releases/standard/release-variables.yaml.gotmpl") (dict "item" $newValues "values" $values))) }}
 {{ $release = (merge $release $newValues $newItem) }}
