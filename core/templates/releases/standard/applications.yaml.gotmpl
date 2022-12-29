@@ -3,20 +3,18 @@
 
 {{- range $releaseName, $release := $releases }}
 {{ $release := (merge $release $values.templates.application) }}
-{{- if $release.enabled -}}
-
 {{ $newValues := $release }}
-{{ $_ := set $newValues "type" "release" }}
+{{ $_ := set $newValues "type" "application" }}
 {{ $_ := set $newValues "name" $releaseName }}
 {{ $_ := set $newValues "namespace" $release.namespace }}
+{{ $_ := set $newValues "namespace" $values.applicationsConfig.namespace }}
 {{ $newItem := (fromYaml (tpl (readFile "templates/releases/standard/release-variables.yaml.gotmpl") (dict "item" $newValues "values" $values))) }}
 {{ $release = (merge $release $newValues $newItem) }}
 {{ $_ := set $.Values.releases $release.name $release }}
 
-{{ $newValues := $release }}
-{{ $_ := set $newValues "type" "application" }}
-{{- tpl (readFile "templates/releases/standard/release.yaml.gotmpl") (dict "item" $newValues "values" $values "releaseName" $releaseName "releaseNamespace" $values.applicationsConfig.namespace "releaseContext" $values.applicationsConfig.context) }}
-{{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") (dict "item" $newValues "values" $values "releaseName" $releaseName "releaseNamespace" $values.applicationsConfig.namespace "releaseContext" $values.applicationsConfig.context) }}
-{{- tpl (readFile "templates/releases/standard/release-extensions.yaml.gotmpl") (dict "item" $newValues "values" $values "releaseName" $releaseName "releaseNamespace" $values.applicationsConfig.namespace "releaseContext" $values.applicationsConfig.context) }}
+{{- if $release.enabled -}}
+{{- tpl (readFile "templates/releases/standard/release.yaml.gotmpl") (dict "item" $release "values" $values "releaseName" $releaseName "releaseNamespace" $values.applicationsConfig.namespace "releaseContext" $values.applicationsConfig.context) }}
+{{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") (dict "item" $release "values" $values "releaseName" $releaseName "releaseNamespace" $values.applicationsConfig.namespace "releaseContext" $values.applicationsConfig.context) }}
+{{- tpl (readFile "templates/releases/standard/release-extensions.yaml.gotmpl") (dict "item" $release "values" $values "releaseName" $releaseName "releaseNamespace" $values.applicationsConfig.namespace "releaseContext" $values.applicationsConfig.context) }}
 {{- end -}}
 {{- end -}}
