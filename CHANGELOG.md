@@ -2,11 +2,51 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.9.0](https://github.com/kube-core/kube-core/compare/v0.8.0...v0.9.0)
+
+- core/layers: Refactored core layers [`961c27e`](https://github.com/kube-core/kube-core/commit/961c27ee1d7da6514e9d2ab502202624b39f3c48)
+- core/releases: Updated crossplane-cloud local chart [`65e05dc`](https://github.com/kube-core/kube-core/commit/65e05dc9472c5348ce6f3794793fb192674bde66)
+- core/templates: Added some extensions & Improved n9-api release extensions integration [`430cdcd`](https://github.com/kube-core/kube-core/commit/430cdcd81691ed85abf23b09ec335e78aeaa772f)
+- releases: Upgraded some releases [`f49f1ed`](https://github.com/kube-core/kube-core/commit/f49f1ed103111ccd884a2dfe6330a3583c9b5f79)
+- core/releases: Added cdn as a ressource for releases-cloud & updated releases-cloud with a default naming convention [`e38cc63`](https://github.com/kube-core/kube-core/commit/e38cc632729bdb626f503c5c40cd760bfc568d29)
+- core/layers: Removed some unused layers [`41135b7`](https://github.com/kube-core/kube-core/commit/41135b7dfaedd4250b7b4fbd372b75a5024b09d4)
+- releases/logging-stack: Added support to provision any Kibana objects through config [`384f162`](https://github.com/kube-core/kube-core/commit/384f162d25b53bd5515fb569af6f811c6ce8ebec)
+- core/layers: Added short names for every release and namespace [`5d38d6c`](https://github.com/kube-core/kube-core/commit/5d38d6c12d56fc23010ca9217d541acffcbc1172)
+- cli/commands: Updated generate:values to work with reworked layers [`667208a`](https://github.com/kube-core/kube-core/commit/667208a3b83212a5630b7449953499cbe67e77ca)
+- core/templates: Added release-variables to inject metadata in releases [`df04eea`](https://github.com/kube-core/kube-core/commit/df04eea00d7c34f51b202ba17cf1a307135093ba)
+- releases: Rebuilt all releases [`e96e1c3`](https://github.com/kube-core/kube-core/commit/e96e1c39081c4c0246369c0d741e157476871c49)
+- core/releases: Updated releases cloud variable in use for naming template [`40da754`](https://github.com/kube-core/kube-core/commit/40da754360849dd32f9855c0f4206c753cbdfd7d)
+- core/values: Reworked release-cloud template [`419d777`](https://github.com/kube-core/kube-core/commit/419d77793feb0aefdbc74bda7cd8961a84034ef5)
+- core/templates: Changed extensions release annotations [`6907c29`](https://github.com/kube-core/kube-core/commit/6907c29dad6a9ea27f257ee33fda38e1475c7498)
+- core/releases: Added naming config to extensions [`96491d1`](https://github.com/kube-core/kube-core/commit/96491d18447c7358b514c3bf7c0f589099d4f888)
+- core/layers: Added cloud.naming configuration [`0f9ec46`](https://github.com/kube-core/kube-core/commit/0f9ec46fb2d3ced2f1f4a1226e630cc1f30b68b1)
+- core/values: Added integration between release-patches and release-cloud [`0de3ee3`](https://github.com/kube-core/kube-core/commit/0de3ee34747247281ff4c6338e2d9b033fcada4c)
+- core/templates: Added cloud naming integration on core releases [`ecc0136`](https://github.com/kube-core/kube-core/commit/ecc0136d1961b3471d590131c4d3242f64e92ec3)
+- cli/scripts: Fixed broken path in some dev commands [`f20fb6c`](https://github.com/kube-core/kube-core/commit/f20fb6c1117809163a0318e3422750b1faec6222)
+- core/releases: Updated releases-cloud recordset usage and naming [`7c9ec16`](https://github.com/kube-core/kube-core/commit/7c9ec16d3532f5d1bd9772d14aba282eb8e9c02b)
+- core/templates: Added release-cloud integration on services [`8f355a1`](https://github.com/kube-core/kube-core/commit/8f355a11c214228655e23db7e734fcaba1c00ef9)
+- core/templates: Reworked application template & Added release-variables [`8d084e1`](https://github.com/kube-core/kube-core/commit/8d084e16eb1a48b762868a09be8d6a43df7f0a46)
+- core/releases: Fixed crossplane-cloud chart & few naming typo [`ec62534`](https://github.com/kube-core/kube-core/commit/ec625342178a3c8b5387aa9b5195978557b12ad9)
+- core/templates: Added dedicated templating for cloud resource with specific naming requirement [`657f799`](https://github.com/kube-core/kube-core/commit/657f7994bd3898217b82f256d7293c903e689a01)
+- core/templates: Added more options for naming in variables template [`b77a967`](https://github.com/kube-core/kube-core/commit/b77a967bcc521be5f5e0ff6aa1c3e3977385004b)
+- core/values: Fixed some templating issues in release-cloud [`d646c72`](https://github.com/kube-core/kube-core/commit/d646c72db9f861b9184187e9732f099ae2380ae2)
+- core/templates: Reworked application release template [`8a4a3fd`](https://github.com/kube-core/kube-core/commit/8a4a3fd32efee75b93dc35c3f63a778cefd50570)
+- core/releases: Reworked application & service release template [`834fb26`](https://github.com/kube-core/kube-core/commit/834fb260fa6e7b191d1f10bfceddffac226c4306)
+- core/layers: Added crossplane cloud integration for container-registry-operator [`137cd14`](https://github.com/kube-core/kube-core/commit/137cd147a2c543cb89321ae22ad833307017063e)
+- core/layers: Added some default values in otherwise empty files [`03ed29a`](https://github.com/kube-core/kube-core/commit/03ed29a28607e6e535fccc713a8e7c45482ff49b)
+- core/values: Fixed wrong condition on release-cloud BucketPolicies [`6df9566`](https://github.com/kube-core/kube-core/commit/6df956601978bfbd1893870d8aabe7e91712a778)
+- core/values: Fixed mongodb-operator watchNamespace default value [`db76d18`](https://github.com/kube-core/kube-core/commit/db76d18a762e9099a15485f5616d98cbdbeab16a)
+- core/layers: Fixed some default permissions in release-cloud [`f9554d6`](https://github.com/kube-core/kube-core/commit/f9554d6b75e3cf42e869b58fcf38fb138330af5c)
+- core/layers: Added global option to enable cloud naming debug [`83515f0`](https://github.com/kube-core/kube-core/commit/83515f01ce4dc08d82cb108ab5a982ae5a508baf)
+
 #### [v0.8.0](https://github.com/kube-core/kube-core/compare/v0.7.9...v0.8.0)
+
+> 22 November 2022
 
 - core/releases: Added crossplane-cloud chart and releases [`26a9227`](https://github.com/kube-core/kube-core/commit/26a92276f77300640d4cf179ac1272745efb2b90)
 - cli/scripts: Updated cloud setup script to use crossplane [`34276a7`](https://github.com/kube-core/kube-core/commit/34276a7f68a84a323762c5d982d3fdbaf73d706a)
 - core/releases: Upgraded prometheus-adapter [`76d2083`](https://github.com/kube-core/kube-core/commit/76d2083d99ff21632ad79e5053b866b21aab0d41)
+- release: v0.8.0 [`a0df9a9`](https://github.com/kube-core/kube-core/commit/a0df9a9b29c73454655b53fa04431edff1d119c9)
 - cli/commands: Fixed typo in gitops:config:index docs [`054aa91`](https://github.com/kube-core/kube-core/commit/054aa91181c7a91ec7e90ee3b4182745759d4a99)
 
 #### [v0.7.9](https://github.com/kube-core/kube-core/compare/v0.7.8...v0.7.9)
