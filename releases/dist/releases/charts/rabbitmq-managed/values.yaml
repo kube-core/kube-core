@@ -31,7 +31,6 @@ cluster:
   extraSpec: {}
 
 vhosts: []
-# Define the list of vhosts.
 # INFO: The default vhost (`/`) is automatically created, you don't need to specify it here.
 #
 # - catalogue
@@ -62,3 +61,12 @@ users: []
 # - name: catalogue-cms-api
 #   permissions:
 #     - vhost: catalogue
+
+policies: []
+  # - name: "ha"
+  #   vhosts: "catalogue"
+  #   pattern: ".*"
+  #   applyTo: "all"
+  #   definition:
+  #     ha-mode: all
+  #     ha-sync-mode: automatic

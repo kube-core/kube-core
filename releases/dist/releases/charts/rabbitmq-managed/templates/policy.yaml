@@ -1,0 +1,18 @@
+{{- range $policy := .Values.policies }}
+---
+apiVersion: rabbitmq.com/v1beta1
+kind: Policy
+metadata:
+  name: {{ include "rabbitmq-managed.fullname" $ }}-policy-{{ $policy.name }}
+spec:
+  name: {{ $policy.name }}
+  vhost: {{ $policy.vhost }}
+  pattern: {{ $policy.pattern }}
+  applyTo: {{ $policy.applyTo }}
+  definition:
+    {{- toYaml $policy.definition | nindent 4 }}
+  rabbitmqClusterReference:
+    name: {{ include "rabbitmq-managed.fullname" $ }}
+    namespace: {{ $.Release.Namespace }}
+
+{{- end }}

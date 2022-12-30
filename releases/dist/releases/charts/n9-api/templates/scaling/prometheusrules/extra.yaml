@@ -1,0 +1,20 @@
+{{ $values := .Values }}
+{{ $releaseName := (include "n9-api.fullname" .) }}
+{{ $releaseNamespace := .Release.Namespace }}
+{{ $scaling := (index .Values "scaling") }}
+{{ $monitoring := (index .Values "monitoring") }}
+{{ $scalingName := $releaseName }}
+{{ $nameBase := (printf "%s_%s" (snakecase $releaseNamespace) (snakecase $releaseName)) }}
+{{ $recordNameBase := (printf "%s_%s" (snakecase $releaseNamespace) (snakecase $releaseName)) }}
+
+{{- if (and $monitoring.rules.extraRules $monitoring.rules.extraRulesEnabled) }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: {{ $releaseName }}-hpa-extra.rules
+  namespace: {{ $releaseNamespace }}
+spec:
+  groups:
+  - name: {{ $releaseName }}-hpa-extra.rules
+    rules: {{ toYaml $monitoring.rules.extraRules | nindent 4 }}
+{{- end }}
