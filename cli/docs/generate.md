@@ -87,7 +87,17 @@ Quickly generate layers from the core and merges with your local config if alrea
 
 ```
 USAGE
-  $ kube-core generate values
+  $ kube-core generate values [--base] [--full] [--quickstart] [--envs]
+
+FLAGS
+  --[no-]base        Generates core, cluster and local helmfiles to allow using kube-core platform. Enabled by default.
+                     Use --no-core to disable.
+  --[no-]envs        Generates core, cluster and local helmfiles to allow using kube-core platform. Enabled by default.
+                     Use --no-core to disable.
+  --[no-]full        Generates core, cluster and local helmfiles to allow using kube-core platform. Enabled by default.
+                     Use --no-core to disable.
+  --[no-]quickstart  Generates core, cluster and local helmfiles to allow using kube-core platform. Enabled by default.
+                     Use --no-core to disable.
 
 DESCRIPTION
   Quickly generate layers from the core and merges with your local config if already existing
