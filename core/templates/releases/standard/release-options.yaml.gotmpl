@@ -269,6 +269,37 @@
       create: true
   {{- end }}
 
+  {{- if .item.options.forceNamespaceClusterIssuer }}
+  - apiVersion: builtin
+    kind: AnnotationsTransformer
+    metadata:
+      name: force-namespace-cluster-issuer
+    annotations:
+    {{ if (eq (.item.options.forceNamespaceClusterIssuer | toString) "true") }}
+      cert-manager.io/cluster-issuer: {{ $releaseNamespace }}
+    {{ else }}
+      cert-manager.io/cluster-issuer: {{ .item.options.forceNamespaceClusterIssuer }}
+    {{ end }}
+    fieldSpecs:
+    - path: metadata/annotations
+      kind: Ingress
+      create: true
+  {{- end }}
+
+  {{- if .item.options.forceClusterIssuer }}
+  - apiVersion: builtin
+    kind: AnnotationsTransformer
+    metadata:
+      name: force-cluster-issuer
+    annotations:
+      cert-manager.io/cluster-issuer: {{ .item.options.forceClusterIssuer }}
+    fieldSpecs:
+    - path: metadata/annotations
+      kind: Ingress
+      create: true
+  {{- end }}
+
+
   {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
   {{- if .item.hooks }}
   hooks:

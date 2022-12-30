@@ -1,0 +1,9 @@
+{{ $values := .values }}
+{{ $releases := (merge $values.releases $values.applicationsList $values.servicesList )}}
+{{ $releaseNamespace := .releaseNamespace }}
+
+{{ $mainReleaseName := (.releaseName | replace "-scaling" "") }}
+{{ $mainRelease := ($releases | getOrNil $mainReleaseName) }}
+{{ $currentRelease := ($releases | getOrNil .releaseName) }}
+
+scaling: {{ toYaml (index $releases $mainReleaseName "scaling") | nindent 2 }}

@@ -1,0 +1,10 @@
+cluster-nginx:
+  enabled: true
+  chart: kube-core/nginx
+  namespace: nginx
+  values: {{ (readFile "../values/cluster/releases/nginx.yaml") | nindent 10 }}
+# cluster-nginx:
+#   enabled: false
+#   chart: bitnami/nginx
+#   namespace: nginx
+#   values: {{ (readFile "../values/cluster/releases/nginx.yaml") | nindent 10 }}

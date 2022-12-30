@@ -15,9 +15,14 @@ templates:
     namespace: "default"
     needs: []
     options:
+      renderRelease: true
+      renderOptions: true
+      renderExtensions: true
       forceNamespace: true
       forceNamespaceIngressClass: false
       forceNamespaceVisitorGroup: false
+      forceClusterIssuer: ""
+      forceNamespaceClusterIssuer: false
       forceVisitorGroups: ""
       forceNamespaceNodeAffinity: false
       forceNamespaceNodeSelector: false
@@ -42,6 +47,15 @@ templates:
     release: {}
     scaling: {}
     secrets: {}
+    extensions:
+      dynamicSecretsEnabled: true
+      configmapsEnabled: true
+      extraManifestsEnabled: true
+      rawManifestsEnabled: true
+      externalSecretsEnabled: true
+    extraManifests: {}
+    rawManifests: {}
+    configmaps: {}
     cloud: {}
     gitops:
       enabled: false
@@ -67,9 +81,14 @@ templates:
     namespace: "default"
     needs: []
     options:
+      renderRelease: true
+      renderOptions: true
+      renderExtensions: true
       forceNamespace: true
       forceNamespaceIngressClass: false
       forceNamespaceVisitorGroup: false
+      forceClusterIssuer: ""
+      forceNamespaceClusterIssuer: false
       forceVisitorGroups: ""
       forceNamespaceNodeAffinity: false
       forceNamespaceNodeSelector: false
@@ -95,6 +114,15 @@ templates:
     scaling: {}
     external-secrets: false
     secrets: {}
+    extensions:
+      dynamicSecretsEnabled: true
+      configmapsEnabled: true
+      extraManifestsEnabled: true
+      rawManifestsEnabled: true
+      externalSecretsEnabled: true
+    extraManifests: {}
+    rawManifests: {}
+    configmaps: {}
     cloud: {}
     gitops:
       enabled: false
@@ -119,9 +147,14 @@ templates:
     namespace: "default"
     needs: []
     options:
+      renderRelease: true
+      renderOptions: true
+      renderExtensions: true
       forceNamespace: true
       forceNamespaceIngressClass: false
       forceNamespaceVisitorGroup: false
+      forceClusterIssuer: ""
+      forceNamespaceClusterIssuer: false
       forceVisitorGroups: ""
       forceNamespaceNodeAffinity: false
       forceNamespaceNodeSelector: false
@@ -147,6 +180,15 @@ templates:
     scaling: {}
     external-secrets:
     secrets: {}
+    extensions:
+      dynamicSecretsEnabled: true
+      configmapsEnabled: true
+      extraManifestsEnabled: true
+      rawManifestsEnabled: true
+      externalSecretsEnabled: true
+    extraManifests: {}
+    rawManifests: {}
+    configmaps: {}
     cloud: {}
     gitops:
       enabled: false

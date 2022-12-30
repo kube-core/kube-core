@@ -4,14 +4,14 @@
 ingressClassResource:
   name: {{ index .Values.releases .Release.Name "config" "ingressClass" }}
   enabled: true
-  default: {{ index .Values.releases .Release.Name "config" "defaultIngressClass" }}
+  default: true
   controllerClass: {{ index .Values.releases .Release.Name "config" "controllerClass" }}
   parameters: {}
 electionID: {{ index .Values.releases .Release.Name "config" "ingressClass" }}
+extraArgs:
+  ingress-class: {{ index .Values.releases .Release.Name "config" "ingressClass" }}
 {{ else }}
 # If not core ingress-controller, scope it (e.g for services)
-scope:
-  enabled: true
 ingressClassResource:
   name: {{ index .Values.releases .Release.Name "config" "ingressClass" }}-{{ .Release.Namespace }}
   enabled: true
@@ -19,7 +19,12 @@ ingressClassResource:
   controllerClass: {{ index .Values.releases .Release.Name "config" "controllerClass" }}-{{ .Release.Namespace }}
   parameters: {}
 electionID: {{ index .Values.releases .Release.Name "config" "ingressClass" }}-{{ .Release.Namespace }}
+
+extraArgs:
+  ingress-class: {{ index .Values.releases .Release.Name "config" "ingressClass" }}-{{ .Release.Namespace }}
 {{ end }}
+
+
 
 ## DaemonSet or Deployment
 ##
@@ -164,3 +169,12 @@ affinity: {{ toYaml (index .Values.releases .Release.Name "config" "affinity") |
 
 pdb:
   create: true
+
+rbac:
+  rules:
+    - apiGroups:
+        - ""
+      resources:
+        - "*"
+      verbs:
+        - "*"

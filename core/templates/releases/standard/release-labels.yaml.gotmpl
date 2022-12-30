@@ -23,6 +23,7 @@
       {{ if $parentReleaseName }}
       release.kube-core.io/parent: {{ $parentReleaseName }}
       {{ end }}
+      release.kube-core.io/group: {{ coalesce $parentReleaseName $releaseName }}
       release.kube-core.io/namespace: {{ $releaseNamespace }}
       release.kube-core.io/chart: {{ $chartName }}
       {{- if .item | getOrNil "options" | getOrNil "forceNamespaceNodeSelector" }}

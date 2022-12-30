@@ -1,0 +1,20 @@
+applications:
+  app:
+    # envFromSecret:
+    # - MAIL_HOST
+    rabbitmq:
+      enabled: false
+      ref: apps-rabbitmq
+      # secretMappings:
+      #   RABBITMQ_SERVER: RABBITMQ_HOST
+    mongodb:
+      enabled: false
+      ref: apps-mongodb
+      # secretMappings:
+      #   DATABASE_HOST: MONGODB_HOST
+    values:
+      image:
+        repository: neo9sas/devops-tools
+  #   options:
+  #     injectIngressTls: true
+  #     injectIngressHost: true
