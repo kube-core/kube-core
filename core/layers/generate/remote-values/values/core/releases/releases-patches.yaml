@@ -1,0 +1,208 @@
+releases:
+  kyverno:
+    manifests:
+    - apiVersion: rbac.authorization.k8s.io/v1
+      kind: ClusterRoleBinding
+      metadata:
+        name: kyverno-admin
+      roleRef:
+        apiGroup: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: cluster-admin
+      subjects:
+        - kind: ServiceAccount
+          name: kyverno
+          namespace: kyverno
+  prometheus-adapter:
+    strategicMergePatches:
+      - apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+          name: prometheus-adapter
+          namespace: monitoring
+        spec:
+          template:
+            spec:
+              containers:
+              - name: prometheus-adapter
+                image: k8s.gcr.io/prometheus-adapter/prometheus-adapter:v0.10.0
+                livenessProbe:
+                  failureThreshold: 5
+                  httpGet:
+                    path: /healthz
+                    port: https
+                    scheme: HTTPS
+                  initialDelaySeconds: 50
+                  periodSeconds: 20
+                  successThreshold: 1
+                  timeoutSeconds: 20
+                readinessProbe:
+                  failureThreshold: 5
+                  httpGet:
+                    path: /healthz
+                    port: https
+                    scheme: HTTPS
+                  initialDelaySeconds: 50
+                  periodSeconds: 20
+                  successThreshold: 1
+                  timeoutSeconds: 20
+  velero:
+    strategicMergePatches:
+      - apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+          name: velero
+          namespace: velero
+        spec:
+          template:
+            spec:
+              containers:
+                - env:
+                    - name: GOOGLE_APPLICATION_CREDENTIALS
+                      value: /credentials/privateKey
+                  name: velero
+  patch-operator:
+    strategicMergePatches:
+    - apiVersion: admissionregistration.k8s.io/v1
+      kind: MutatingWebhookConfiguration
+      metadata:
+        name: patch-operator-mutating-webhook-configuration
+      webhooks:
+        - admissionReviewVersions:
+            - v1
+          clientConfig:
+            service:
+              name: patch-operator-webhook-service
+              namespace: patch-operator
+              path: /mutate-redhatcop-redhat-io-v1alpha1-patch
+          failurePolicy: Fail
+          name: mpatch.kb.io
+          rules:
+            - apiGroups:
+                - redhatcop.redhat.io
+              apiVersions:
+                - v1alpha1
+              operations:
+                - CREATE
+              resources:
+                - patches
+            - apiGroups:
+                - ""
+              apiVersions:
+                - apps/v1
+              operations:
+                - CREATE
+              resources:
+                - deployments
+                - statefulsets
+                - services
+                - ingresses
+          sideEffects: None
+  chaos-mesh:
+    jsonPatches:
+    - target:
+        kind: Deployment
+        name: chaos-controller-manager
+      patch:
+      - op: "remove"
+        path: "/spec/template/metadata/annotations/rollme"
+    - target:
+        kind: Certificate
+        name: .*
+      patch:
+      - op: "replace"
+        path: "/apiVersion"
+        value: "cert-manager.io/v1"
+    - target:
+        kind: Issuer
+        name: .*
+      patch:
+      - op: "replace"
+        path: "/apiVersion"
+        value: "cert-manager.io/v1"
+  predator:
+    manifests:
+      - apiVersion: rbac.authorization.k8s.io/v1
+        kind: ClusterRoleBinding
+        metadata:
+          name: predator-admin
+        roleRef:
+          apiGroup: rbac.authorization.k8s.io
+          kind: ClusterRole
+          name: cluster-admin
+        subjects:
+          - kind: ServiceAccount
+            name: predator
+            namespace: predator
+      - apiVersion: batch/v1
+        kind: Job
+        metadata:
+          name: predator-init
+          generateName: predator-init-
+          namespace: predator
+        spec:
+          template:
+            metadata:
+              generateName: predator-init-
+              namespace: predator
+            spec:
+              serviceAccountName: predator
+              restartPolicy: Never
+              containers:
+                - command:
+                    - /bin/bash
+                    - -c
+                    - |
+                      # set -x
+                      domains=$(kubectl get ingress -A --no-headers | awk '{print $1" "$2" "$4}')
+
+                      protocol="https"
+                      url="/"
+                      count=0
+
+                      # Wait for predator
+                      while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' http://predator:80/v1/jobs)" != "200" ]]; do sleep 5; done
+
+                      # Cleanup jobs and tests
+                      if [[ "$CLEANUP" == "true" ]]; then
+                        curl -s http://predator:80/v1/jobs | jq '.[].id' -r | xargs -i curl -X DELETE http://predator:80/v1/jobs/'{}'
+                        curl -s http://predator:80/v1/tests | jq '.[].id' -r | xargs -i curl -X DELETE http://predator:80/v1/tests/'{}'
+                      fi
+
+                      existingTestsIds=$(curl http://predator:80/v1/tests | jq '.[].id' -r)
+
+                      if [[ -z "${existingTestsIds}" ]]; then
+                        echo "No existing tests, provisionning default stuff ..."
+
+                        curl -s -X PUT -H 'Content-Type: application/json' http://predator:80/v1/config -d '{"metrics_plugin_name":"prometheus","prometheus_metrics":{"push_gateway_url":"http://prometheus-gateway.monitoring:9091"}}'
+
+                        while read -r namespace name domain; do
+
+                            testId=$(curl -s -X POST -H 'Content-Type: application/json' http://predator:80/v1/tests -d '{"id":"'"${count}"'","name":"'"${namespace}/${name}"'","description":"Auto-generated: '"${protocol}://${domain}${url}"'","type":"basic","artillery_test":{"config":{"target":"'"${protocol}://${domain}"'","plugins":{"expect":{}}},"scenarios":[{"name":"Scenario 1","weight":100,"flow":[{"get":{"url":"'"${url}"'","headers":{},"capture":[],"expect":[{"statusCode":"200"}],"gzip":true,"forever":true,"probability":100}}]}]}}' | jq -r '.id')
+
+                            curl -s -X POST -H 'Content-Type: application/json' http://predator:80/v1/jobs -d '{"test_id":"'"${testId}"'","type":"load_test","cron_expression":"*/10 * * * *","parallelism":1,"max_virtual_users":250,"arrival_rate":100,"duration":600,"environment":"test","enabled":false,"test_name":"'"${namespace}/${name}"'"}'
+
+                        (( count ++ ))
+                        done <<< "${domains}"
+                      fi
+                      # sleep 600
+                  env:
+                    - name: CLEANUP
+                      value: "false"
+                  image: neo9sas/devops-tools:latest
+                  name: predator-setup
+
+  secret-generator:
+    jsonPatches:
+    - target:
+        kind: Deployment
+        name: secret-generator
+      patch:
+      - op: "add"
+        path: "/spec/template/spec/containers/0/startupProbe"
+        value:
+          httpGet:
+            path: /readyz
+            port: healthcheck
+          failureThreshold: 10
+          periodSeconds: 10

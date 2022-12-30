@@ -1,12 +1,15 @@
 {{ $values := .Values }}
+{{ $releases := (merge $values.releases $values.applicationsList $values.servicesList )}}
 {{ $releaseNamespace := .Release.Namespace }}
 {{ $releaseName := .Release.Name }}
+{{ $release := ($releases | getOrNil $releaseName) }}
+{{ $rabbitmq := ($release | getOrNil "rabbitmq") }}
 
 name:
   appNameOverride: {{ $releaseName }}
 
 image:
-{{ if (.Values.applicationsList | getOrNil $releaseName) }}
+{{ if ($release) }}
   repository: "{{ (printf "%s/%s/%s" $values.cloud.registry.hostname $values.cloud.project $releaseName) }}"
 {{ else }}
   repository: neo9sas/devops-tools
@@ -23,23 +26,106 @@ service:
   port: 8080
 
 deployment:
+  replicaCount: 2
   annotations:
     reloader.stakater.com/auto: 'true'
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 100M
+  requests:
+    cpu: 100m
+    memory: 100M
 
 logging:
   enabled: true
 
+monitoring:
+  rules:
+    enabled: true
+
+scaling:
+  enabled: true
+  minReplicaCount: 2
+  maxReplicaCount: 10
+  serviceAccessFreq:
+    enabled: true
+    threshold: 2
+{{ if (and $rabbitmq.enabled $rabbitmq | getOrNil "queues") }}
+  rabbitmq:
+    enabled: true
+    # queues:
+    #   - name: my-queue
+    #     value: 1
+{{ end }}
+pdb:
+  minAvailable: 2
 pod:
+  {{ if ($release | getOrNil "configmaps") }}
+  {{ range $key, $value := $release.configmaps }}
+  mounts:
+    configMap:
+      - mountPath: /data/configmaps
+        name: {{ $releaseName }}-{{ $key }}
+  {{ end }}
+  {{ end }}
+
   env:
     secrets:
-      {{ if (.Values.applicationsList | getOrNil $releaseName | getOrNil "envFromSecret") }}
+      {{ if ($release | getOrNil "envFromSecret") }}
       {{ range (index .Values.applicationsList $releaseName "envFromSecret") }}
       - secretName: {{ $releaseName }}
         secretKey: {{ . }}
       {{ end }}
       {{ end }}
-{{ if (.Values.applicationsList | getOrNil $releaseName) }}
-{{ if (and (.Values.applicationsList | getOrNil $releaseName | getOrNil "external-secrets") (.Values.applicationsList | getOrNil $releaseName | getOrNil "mongodb" | getOrNil "enabled")) }}
+
+      {{ if ($release | getOrNil "external-secrets" | getOrNil "dynamic-secrets" | getOrNil "enabled") }}
+      {{ range $key, $value := $release.dynamicSecrets }}
+      {{ $keys := ( $value.secretRef.key | splitList ",") }}
+      {{ range $keys }}
+      - secretName: {{ $releaseName }}-dynamic-secrets-{{ $key }}
+        secretKey: {{ . }}
+      {{ end }}
+      {{ end }}
+      {{ end }}
+
+      {{ if ($release | getOrNil "secrets") }}
+      {{ range $key, $value := $release.secrets }}
+      {{ range ($value.secretRef.key | splitList ",") }}
+      - secretName: {{ $value.secretRef.name }}
+        secretKey: {{ . }}
+        name: {{ (printf "%s_%s" $value.secretRef.name .) | snakecase | upper | replace "." "_" }}
+      {{ end }}
+      {{ end }}
+      {{ end }}
+
+      {{ if ($release | getOrNil "external-secrets" | getOrNil "generated" | getOrNil "enabled") }}
+      {{ range $key, $value := (index $release "external-secrets" "generated" "secrets") }}
+
+      {{ $keys := list }}
+      {{ if ($value | getOrNil "template") }}
+      {{ $keys = ($value.template | keys) }}
+      {{ else if ($value | getOrNil "templatedData") }}
+      {{ $templatedTemplate := (tpl ($value.templatedTemplate) (dict "coreValues" $values "releaseValues" $release "releaseNamespace" $releaseNamespace)) }}
+      {{ $data := (fromYaml $templatedTemplate) }}
+      {{ $keys = ($data | keys) }}
+      {{ range $keys }}
+      - secretName: {{ $releaseName }}-external-secrets-{{ $key }}
+        secretKey: {{ . }}
+      {{ end }}
+      {{ end }}
+
+      {{ range $keys }}
+      - secretName: {{ $releaseName }}-generated-{{ $key }}
+        secretKey: {{ . }}
+      {{ end }}
+
+      {{ end }}
+      {{ end }}
+
+      {{ if ($release) }}
+      {{ if (and ($release | getOrNil "external-secrets") ($release | getOrNil "mongodb" | getOrNil "enabled")) }}
       - secretName: {{ $releaseName }}-mongodb
         secretKey: MONGODB_URI
       - secretName: {{ $releaseName }}-mongodb
@@ -52,12 +138,12 @@ pod:
         secretKey: DATABASE_USERNAME
       - secretName: {{ $releaseName }}-mongodb
         secretKey: DATABASE_PASSWORD
-{{ end }}
-{{ if (and (.Values.applicationsList | getOrNil $releaseName | getOrNil "external-secrets") (.Values.applicationsList | getOrNil $releaseName | getOrNil "rabbitmq" | getOrNil "enabled")) }}
+      {{ end }}
+      {{ if (and ($release | getOrNil "external-secrets") $rabbitmq.enabled) }}
       - secretName: {{ $releaseName }}-rabbitmq
         secretKey: RABBITMQ_URI
-{{ end }}
-{{ end }}
+      {{ end }}
+      {{ end }}
 
 ingress:
   className: "{{ coalesce $values.applicationsConfig.defaultIngressClass $values.servicesConfig.defaultIngressClass $values.cluster.common.defaultIngressClass }}"
@@ -71,6 +157,7 @@ metrics:
   enabled: true
   serviceMonitor:
     enabled: true
+    interval: 2s
 
 flux:
   enabled: true
