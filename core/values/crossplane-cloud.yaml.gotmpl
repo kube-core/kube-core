@@ -2,10 +2,12 @@ cluster: {{ toYaml .Values.cluster | nindent 2 }}
 cloud: {{ toYaml .Values.cloud | nindent 2 }}
 prefix: {{ .Values.cluster.config.name }}
 
+{{ if (and (eq .Release.Name "crossplane-cloud") (eq .Release.Namespace "crossplane-cloud")) }}
 managedZones:
   {{ .Values.cluster.config.name }}:
     dnsName: {{ .Values.cluster.config.domain }}.
     visibility: public
+{{ end }}
 
 # projectIAMCustomRoles:
 #   gcr-admin:
