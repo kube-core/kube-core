@@ -244,7 +244,7 @@ const addClusterScriptFileAction = {
 
 const appendReleaseToSchemaAction = {
     type: 'append',
-    path: path.join(`${__dirname}`, `../core/layers/base/releases/schema.yaml`),
+    path: path.join(`${__dirname}`, `../core/layers/base/values/core/releases/schema.yaml`),
     // pattern: /\# RELEASE/,
     templateFile: 'plop-templates/release-schema-entry.hbs'
 }
@@ -270,7 +270,7 @@ const appendVendirLocalChartAction = {
 
 const appendReleaseAction = {
     type: 'append',
-    path: path.join(`${__dirname}`, `../core/layers/base/releases/releases.yaml`),
+    path: path.join(`${__dirname}`, `../core/layers/base/values/core/releases/releases.yaml`),
     templateFile: 'plop-templates/release.hbs'
 }
 
