@@ -1,0 +1,40 @@
+{{ $values := .Values }}
+{{ $releaseName := (include "n9-api.fullname" .) }}
+{{ $releaseNamespace := .Release.Namespace }}
+{{ $scaling := (index .Values "scaling") }}
+{{ $monitoring := (index .Values "monitoring") }}
+{{ $scalingName := $releaseName }}
+{{ $nameBase := (printf "%s_%s" (snakecase $releaseNamespace) (snakecase $releaseName)) }}
+{{ $recordNameBase := (printf "%s_%s" (snakecase $releaseNamespace) (snakecase $releaseName)) }}
+
+{{ if $monitoring.rules.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: {{ $releaseName }}-hpa-app.rules
+  namespace: {{ $releaseNamespace }}
+spec:
+  groups:
+  - name: {{ $releaseName }}-hpa-app.rules
+    rules:
+
+    {{- if $monitoring.rules.cpuAvg.enabled }}
+    - expr: rate(container_cpu_usage_seconds_total{namespace="{{ coalesce $monitoring.rules.cpuAvg.namespace $releaseNamespace }}", pod=~"{{ coalesce $monitoring.rules.cpuAvg.podQuery $scalingName }}-.*", image!="", container="{{ coalesce $monitoring.rules.cpuAvg.container $scalingName }}"}[{{ coalesce $monitoring.rules.cpuAvg.window }}])
+      record: "{{ $nameBase }}_cpu_usage_ratio"
+    {{- end }}
+
+    {{- if $monitoring.rules.memoryAvg.enabled }}
+    - expr: sum(container_memory_working_set_bytes{namespace="{{ coalesce $monitoring.rules.memoryAvg.namespace $releaseNamespace }}", pod=~"{{ coalesce $monitoring.rules.memoryAvg.podQuery $scalingName }}-.*", image!="", container="{{ coalesce $monitoring.rules.memoryAvg.container $scalingName }}"}) / sum(cluster:namespace:pod_memory:active:kube_pod_container_resource_requests{namespace="{{ coalesce $monitoring.rules.memoryAvg.namespace $releaseNamespace }}", pod=~"{{ coalesce $monitoring.rules.memoryAvg.podQuery $scalingName }}-.*", container="{{ coalesce $monitoring.rules.memoryAvg.container $scalingName }}"})
+      record: "{{ $nameBase }}_memory_usage_ratio"
+    {{- end }}
+
+    {{- if $monitoring.rules.ingressAccessFreq.enabled }}
+    - expr: sum(rate(nginx_ingress_controller_requests{exported_namespace="{{ coalesce $monitoring.rules.ingressAccessFreq.namespace $releaseNamespace }}", ingress="{{ coalesce $monitoring.rules.ingressAccessFreq.name $scalingName }}"}[{{ coalesce $monitoring.rules.ingressAccessFreq.window }}]))
+      record: "{{ $nameBase }}_ingress_access_frequency"
+    {{- end }}
+
+    {{- if $monitoring.rules.serviceAccessFreq.enabled }}
+    - expr: sum(rate(http_requests_total{service="{{ coalesce $monitoring.rules.serviceAccessFreq.name $scalingName }}", namespace="{{ coalesce $monitoring.rules.serviceAccessFreq.namespace $releaseNamespace }}"}[{{ coalesce $monitoring.rules.serviceAccessFreq.window }}]))
+      record: "{{ $nameBase }}_service_access_frequency"
+    {{- end }}
+{{ end }}

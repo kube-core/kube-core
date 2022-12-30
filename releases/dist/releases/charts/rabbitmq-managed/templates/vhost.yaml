@@ -15,7 +15,7 @@ kind: Vhost
 metadata:
   name: {{ include "rabbitmq-managed.fullname" $ }}-vhost-{{ . | kebabcase }}
 spec:
-  name: {{ . }}
+  name: {{ . | kebabcase }}
   rabbitmqClusterReference:
     name: {{ include "rabbitmq-managed.fullname" $ }}
     namespace: {{ $.Release.Namespace }}

@@ -142,14 +142,6 @@ resources: {}
   #   cpu: 100m
   #   memory: 128Mi
 
-## Relate to horizontal pod autoscaling
-autoscaling:
-  enabled: false
-  minReplicas: 1
-  maxReplicas: 100
-  targetCPUUtilizationPercentage: 80
-  targetMemoryUtilizationPercentage: 80
-
 ## Define value relative to kube scheduling
 scheduling:
   nodeSelector: {}
@@ -417,3 +409,78 @@ flux:
 
 logging:
   enabled: false # Adds logging.kube-core.io/flow-name: app annotation to catch logs with logging-operator
+
+monitoring:
+  prometheusEndpoint: http://prometheus-operated.monitoring.svc.cluster.local:9090
+  rules:
+    enabled: false
+    extraRulesEnabled: true
+    extraRules: []
+    # extraRules:
+    # - expr: rabbitmq_queue_messages{namespace="namespace", queue="my-queue"}
+    #   record: "my_namespace_my_api_rabbitmq_my_queue_queue_messages"
+    rabbitmq:
+      enabled: false
+      queues:
+        default: false # If true, generates rules for queues based on API name
+        scaling: true # Only works if scaling.rabbitmq.queues is filled
+    cpuAvg:
+      enabled: true
+      window: 1m
+      podQuery: ""
+      # container: elasticsearch
+      # namespace: logging-es-http
+    memoryAvg:
+      enabled: true
+      podQuery: ""
+      # container: elasticsearch
+      # namespace: logging-es-http
+      # name: logging-es-http
+    ingressAccessFreq:
+      enabled: false
+      window: 1m
+      # namespace: logging-es-http
+      # name: logging-es-http
+    serviceAccessFreq:
+      enabled: true
+      window: 1m
+      # namespace: logging
+      # name: logging-es-http
+
+
+scaling:
+  enabled: false
+  extraTriggersEnabled: true
+  minReplicaCount: 1
+  maxReplicaCount: 100
+  rabbitmq:
+    enabled: false
+    default:
+      enabled: false
+      in: 1
+      out: 1
+    queues: []
+    # queues:
+    # - name: my-queue
+    #   value: 1
+  cpuAvg:
+    enabled: true
+    threshold: 0.90
+  memoryAvg:
+    enabled: true
+    threshold: 0.90
+  ingressAccessFreq:
+    enabled: false
+    threshold: 100
+  serviceAccessFreq:
+    enabled: true
+    threshold: 100
+  extraTriggers: []
+  # extraTriggers:
+  # - type: prometheus
+  #   metricType: Value
+  #   metadata:
+  #     serverAddress: http://prometheus-operated.monitoring.svc.cluster.local:9090
+  #     metricName: "my_metric"
+  #     threshold: "1"
+  #     query: "my_prom_query"

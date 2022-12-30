@@ -1,0 +1,103 @@
+{{ $values := .Values }}
+{{ $releaseName := (include "n9-api.fullname" .) }}
+{{ $releaseNamespace := .Release.Namespace }}
+{{ $scaling := (index .Values "scaling") }}
+{{ $monitoring := (index .Values "monitoring") }}
+{{ $scalingName := $releaseName }}
+{{ $nameBase := (printf "%s_%s" (snakecase $releaseNamespace) (snakecase $releaseName)) }}
+{{ $recordNameBase := (printf "%s_%s" (snakecase $releaseNamespace) (snakecase $releaseName)) }}
+
+{{ if $scaling.enabled }}
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: {{ $releaseName }}
+  namespace: {{ $releaseNamespace }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ $releaseName }}
+  minReplicaCount: {{ coalesce $scaling.minReplicaCount $values.deployment.replicaCount }}
+  maxReplicaCount: {{ coalesce $scaling.maxReplicaCount $values.deployment.replicaCount }}
+  triggers:
+  {{- range $scaling.extraTriggers }}
+  - {{- toYaml . | nindent 4 }}
+  {{- end }}
+
+  {{- if $scaling.rabbitmq.enabled }}
+
+  {{- range $key, $value := $scaling.rabbitmq.queues }}
+  - type: prometheus
+    metricType: Value
+    metadata:
+      serverAddress: {{ $values.monitoring.prometheusEndpoint }}
+      metricName: "{{ $nameBase }}_rabbitmq_{{ snakecase $value.name }}_queue_messages"
+      threshold: {{ coalesce $value.threshold 1 | quote }}
+      query: "{{ $nameBase }}_rabbitmq_{{ snakecase $value.name }}_queue_messages"
+  {{- end }}
+
+  {{- if $monitoring.rules.rabbitmq.queues.default }}
+  - type: prometheus
+    metricType: Value
+    metadata:
+      serverAddress: {{ $values.monitoring.prometheusEndpoint }}
+      metricName: "{{ $nameBase }}_rabbitmq_in_queue_messages"
+      threshold: {{ $scaling.rabbitmq.default.in 1 | quote }}
+      query: "{{ $nameBase }}_rabbitmq_in_queue_messages"
+  - type: prometheus
+    metadata:
+      serverAddress: {{ $values.monitoring.prometheusEndpoint }}
+      metricName: "{{ $nameBase }}_rabbitmq_out_queue_messages"
+      threshold: {{ $scaling.rabbitmq.default.out 1 | quote }}
+      query: "{{ $nameBase }}_rabbitmq_out_queue_messages"
+  {{- end }}
+
+  {{- end }}
+
+  {{- if $scaling.memoryAvg.enabled }}
+  {{- if $monitoring.rules.memoryAvg }}
+  - type: prometheus
+    metricType: Value
+    metadata:
+      serverAddress: {{ $values.monitoring.prometheusEndpoint }}
+      metricName: {{ $releaseNamespace }}_{{ snakecase $releaseName }}_memory_usage_ratio
+      threshold: {{ coalesce $scaling.memoryAvg.threshold | quote }}
+      query: avg({{ $releaseNamespace }}_{{ snakecase $releaseName }}_memory_usage_ratio)
+  {{- end }}
+  {{- end }}
+
+  {{- if $scaling.cpuAvg.enabled }}
+  {{- if $monitoring.rules.cpuAvg }}
+  - type: prometheus
+    metricType: Value
+    metadata:
+      serverAddress: {{ $values.monitoring.prometheusEndpoint }}
+      metricName: {{ $nameBase }}_cpu_usage_ratio
+      threshold: {{ coalesce $scaling.cpuAvg.threshold | quote }}
+      query: avg({{ $nameBase }}_cpu_usage_ratio)
+  {{- end }}
+  {{- end }}
+
+  {{- if $scaling.ingressAccessFreq.enabled }}
+  {{- if $monitoring.rules.ingressAccessFreq }}
+  - type: prometheus
+    metadata:
+      serverAddress: {{ $values.monitoring.prometheusEndpoint }}
+      metricName:  {{ $nameBase }}_ingress_access_frequency
+      threshold: {{ coalesce $scaling.ingressAccessFreq.threshold | quote }}
+      query: {{ $nameBase }}_ingress_access_frequency
+  {{- end }}
+  {{- end }}
+
+  {{- if $scaling.serviceAccessFreq.enabled }}
+  {{- if $monitoring.rules.serviceAccessFreq }}
+  - type: prometheus
+    metadata:
+      serverAddress: {{ $values.monitoring.prometheusEndpoint }}
+      metricName:  {{ $nameBase }}_service_access_frequency
+      threshold: {{ coalesce $scaling.serviceAccessFreq.threshold | quote }}
+      query: {{ $nameBase }}_service_access_frequency
+  {{- end }}
+  {{- end }}
+{{ end }}

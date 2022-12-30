@@ -21,7 +21,7 @@ spec:
   {{- with  .Values.deployment.minReadySeconds }}
   minReadySeconds: {{ . | quote }}
   {{- end }}
-  {{- if not .Values.hpa.enabled }}
+  {{- if (or (not .Values.hpa.enabled) (not .Values.scaling.enabled)) }}
   replicas: {{ .Values.deployment.replicaCount }}
   {{- end }}
   strategy:

@@ -1,0 +1,36 @@
+{{ $values := .Values }}
+{{ $releaseName := (include "n9-api.fullname" .) }}
+{{ $releaseNamespace := .Release.Namespace }}
+{{ $scaling := (index .Values "scaling") }}
+{{ $monitoring := (index .Values "monitoring") }}
+{{ $scalingName := $releaseName }}
+{{ $nameBase := (printf "%s_%s" (snakecase $releaseNamespace) (snakecase $releaseName)) }}
+{{ $recordNameBase := (printf "%s_%s" (snakecase $releaseNamespace) (snakecase $releaseName)) }}
+
+{{ if $monitoring.rules.enabled }}
+{{- if $monitoring.rules.rabbitmq.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: {{ $releaseName }}-hpa-rabbitmq.rules
+  namespace: {{ $releaseNamespace }}
+spec:
+  groups:
+  - name: {{ $releaseName }}-hpa.rules
+    rules:
+    {{- if $monitoring.rules.rabbitmq.queues.default }}
+    - expr: rabbitmq_queue_messages{namespace="{{ $releaseNamespace }}", service!="", queue="{{ $releaseNamespace }}.{{ $releaseName }}.in"}
+      record: "{{ $nameBase }}_rabbitmq_in_messages"
+    - expr: rabbitmq_queue_messages{namespace="{{ $releaseNamespace }}", service!="", queue="{{ $releaseNamespace }}.{{ $releaseName }}.out"}
+      record: "{{ $nameBase }}_rabbitmq_out_messages"
+    {{ end }}
+    {{- if $monitoring.rules.rabbitmq.queues.scaling }}
+    {{- if $scaling.rabbitmq.enabled }}
+    {{- range $key, $value := $scaling.rabbitmq.queues }}
+    - expr: rabbitmq_queue_messages{namespace="{{ $releaseNamespace }}", service!="", queue="{{ $value.name }}"}
+      record: "{{ $nameBase }}_rabbitmq_{{ snakecase $value.name }}_queue_messages"
+    {{- end }}
+    {{- end }}
+    {{- end }}
+{{ end }}
+{{ end }}

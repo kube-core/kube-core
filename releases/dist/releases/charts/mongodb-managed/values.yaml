@@ -8,6 +8,10 @@ replicaCount: 3
 nameOverride: ""
 fullnameOverride: ""
 
+mongodb:
+  version: 4.2.6
+  featureCompatibilityVersion: 4.2
+
 # -- Create a service account for the operator god sake.
 serviceAccount:
   create: true
