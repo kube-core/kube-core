@@ -36,6 +36,7 @@ cloud:
           backendBucketName: default-pretty
           iamMemberName: default-pretty
           iamRoleName: default-pretty
+          iamRoleExternalName: default-pretty
           globalAddressName: default-pretty
           globalForwardingRuleName: default-pretty
           targetHttpProxyName: default-pretty
@@ -51,6 +52,9 @@ cloud:
       default-pretty: "{{with .prefixes}}{{.cloudResourcePrefixCompact }}-{{ .clusterResourcePrefixShort }}{{end}}"
       default-full: "{{with .prefixes}}{{.cloudResourcePrefixFull }}-{{ .clusterResourcePrefixFull }}{{end}}"
       default-short: "{{with .prefixes}}{{.cloudResourcePrefixShort }}-{{ .clusterResourcePrefixShort }}{{end}}"
+      default-iamRoleExternal: |-
+        {{with .prefixes}}{{ printf "%s.%s" .cloudResourcePrefixCompact .clusterResourcePrefixShort | replace "-" "."}}{{end}}
+
       # default-serviceAccount: ""
       # default-serviceAccountKey: ""
       # default-bucket: ""
