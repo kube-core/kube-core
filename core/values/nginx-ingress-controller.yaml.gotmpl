@@ -11,6 +11,7 @@ electionID: {{ index .Values.releases .Release.Name "config" "ingressClass" }}
 extraArgs:
   ingress-class: {{ index .Values.releases .Release.Name "config" "ingressClass" }}
 {{ else }}
+fullnameOverride: nginx-ingress-controller-{{ .Release.Namespace }}
 # If not core ingress-controller, scope it (e.g for services)
 ingressClassResource:
   name: {{ index .Values.releases .Release.Name "config" "ingressClass" }}-{{ .Release.Namespace }}
