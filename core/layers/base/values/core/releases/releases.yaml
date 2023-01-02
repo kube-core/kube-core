@@ -484,3 +484,8 @@ releases:
     namespace: trivy-server
     namespaceShortName: trivy
     chart: ../releases/dist/releases/charts/trivy
+  goldilocks:
+    shortName: goldilocks
+    namespace: goldilocks
+    namespaceShortName: goldilocks
+    chart: ../releases/dist/releases/charts/goldilocks
