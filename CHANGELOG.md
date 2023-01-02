@@ -20,6 +20,7 @@ All notable changes to this project will be documented in this file. Dates are d
 - core/templates: Changed extensions release annotations [`6907c29`](https://github.com/kube-core/kube-core/commit/6907c29dad6a9ea27f257ee33fda38e1475c7498)
 - core/releases: Added naming config to extensions [`96491d1`](https://github.com/kube-core/kube-core/commit/96491d18447c7358b514c3bf7c0f589099d4f888)
 - core/layers: Added cloud.naming configuration [`0f9ec46`](https://github.com/kube-core/kube-core/commit/0f9ec46fb2d3ced2f1f4a1226e630cc1f30b68b1)
+- release: v0.9.0 [`369bf37`](https://github.com/kube-core/kube-core/commit/369bf37833c9e07b61e0e14af4a37541e3f7c6ad)
 - core/values: Added integration between release-patches and release-cloud [`0de3ee3`](https://github.com/kube-core/kube-core/commit/0de3ee34747247281ff4c6338e2d9b033fcada4c)
 - core/templates: Added cloud naming integration on core releases [`ecc0136`](https://github.com/kube-core/kube-core/commit/ecc0136d1961b3471d590131c4d3242f64e92ec3)
 - cli/scripts: Fixed broken path in some dev commands [`f20fb6c`](https://github.com/kube-core/kube-core/commit/f20fb6c1117809163a0318e3422750b1faec6222)
