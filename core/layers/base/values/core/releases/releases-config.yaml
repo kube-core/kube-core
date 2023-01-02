@@ -406,7 +406,7 @@ releases:
         annotations: {}
         labels: {}
         subdomain: zebee-operate
-  
+
   trivy:
     config:
       ingress:
@@ -416,10 +416,18 @@ releases:
 
   goldilocks:
     config:
-      dashboard:  
+      dashboard:
         replicaCount: 1
         ingress:
           enabled: true
           annotations: {}
           labels: {}
           subdomain: goldilocks
+  opencost:
+    config:
+      openUi:
+        ingress:
+          enabled: true
+          annotations: {}
+          labels: {}
+          subdomain: opencost

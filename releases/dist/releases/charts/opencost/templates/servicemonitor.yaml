@@ -1,0 +1,21 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: opencost
+  namespace: moni
+spec:
+  endpoints:
+  - port: opencost
+    honorLabels: true
+    interval: 1m
+    scrapeTimeout: 10s
+    path: /metrics
+    scheme: http
+  namespaceSelector:
+    matchNames:
+    - opencost
+  selector:
+    matchLabels:
+      app: opencost
+  targetLabels:
+    - app

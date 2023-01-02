@@ -490,7 +490,12 @@ releases:
     namespaceShortName: kc
     chart: ../releases/dist/releases/charts/app-extensions
   goldilocks:
-    shortName: goldilocks
+    shortName: gdlks
     namespace: goldilocks
-    namespaceShortName: goldilocks
+    namespaceShortName: gdlks
     chart: ../releases/dist/releases/charts/goldilocks
+  opencost:
+    shortName: ocst
+    namespace: opencost
+    namespaceShortName: ocst
+    chart: ../releases/dist/releases/charts/opencost
