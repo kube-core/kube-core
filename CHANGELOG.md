@@ -2,8 +2,18 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.9.1](https://github.com/kube-core/kube-core/compare/v0.9.0...v0.9.1)
+
+- releases: Upgraded nginx-ingress-controller to v9.3.24 [`61d43e5`](https://github.com/kube-core/kube-core/commit/61d43e52eb65787b23e19d3b065b57d3ec03e570)
+- core/values: Fixed rabbitmq conditions in n9-api templates [`ea94965`](https://github.com/kube-core/kube-core/commit/ea949658ff98c3d60fd922215dc6b39256dd3964)
+- cli: Fixed version bump in scripts:exec dev_utils_bump [`c1e327f`](https://github.com/kube-core/kube-core/commit/c1e327fc80d9a2c34e49368a2a06fba49e23a656)
+- core/values: Added fullnameOverride including namespace for NIC deployments [`031170a`](https://github.com/kube-core/kube-core/commit/031170a470f9207bdef003b69dd2b4dfa5297a07)
+
 #### [v0.9.0](https://github.com/kube-core/kube-core/compare/v0.8.0...v0.9.0)
 
+> 2 January 2023
+
+- release: v0.9.0 [`d7b47c1`](https://github.com/kube-core/kube-core/commit/d7b47c1f750c2fdf4a123e138ec8cd47911c26e5)
 - core/layers: Refactored core layers [`961c27e`](https://github.com/kube-core/kube-core/commit/961c27ee1d7da6514e9d2ab502202624b39f3c48)
 - core/releases: Updated crossplane-cloud local chart [`65e05dc`](https://github.com/kube-core/kube-core/commit/65e05dc9472c5348ce6f3794793fb192674bde66)
 - core/templates: Added some extensions & Improved n9-api release extensions integration [`430cdcd`](https://github.com/kube-core/kube-core/commit/430cdcd81691ed85abf23b09ec335e78aeaa772f)
