@@ -484,3 +484,8 @@ releases:
     namespace: trivy-server
     namespaceShortName: trivy
     chart: ../releases/dist/releases/charts/trivy
+  opencost:
+    shortName: opencost
+    namespace: opencost
+    namespaceShortName: opencost
+    chart: ../releases/dist/releases/charts/opencost

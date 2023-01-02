@@ -413,3 +413,12 @@ releases:
         annotations: {}
         labels: {}
         subdomain: trivy-server
+
+  opencost:
+    config:
+      openUi:  
+        ingress:
+          enabled: true
+          annotations: {}
+          labels: {}
+          subdomain: opencost

@@ -1,0 +1,10 @@
+kubeCost:
+  prometheusServerEndpoint: http://my-prometheus-server.prometheus.svc
+  # cloudProviderApiKey: XXXXXXXXXXXXXXXXXXXXXXX
+  cloudApiKeySecretName: secret-name
+  clusterId: cluster-one
+  thanosQueryUrl: http://my-thanos-server.thanos.svc
+
+openUi:
+  ingress:
+    enabled: true

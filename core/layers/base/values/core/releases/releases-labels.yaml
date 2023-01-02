@@ -326,3 +326,7 @@ releases:
     labels:
       component: trivy
       group: devops
+  opencost:
+    labels:
+      component: opencost
+      group: finops
