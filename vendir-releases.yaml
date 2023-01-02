@@ -4,6 +4,12 @@ directories:
   - path: releases/base
     contents:
       # Base Releases
+      - path: goldilocks
+        helmChart:
+          name: goldilocks
+          version: 6.3.3
+          repository:
+            url: https://charts.fairwinds.com/stable
       - path: trivy
         helmChart:
           name: trivy

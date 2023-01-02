@@ -442,3 +442,4 @@ releases:
   oauth2-proxy: *release
   namespace: *release
   trivy: *release
+  goldilocks: *release

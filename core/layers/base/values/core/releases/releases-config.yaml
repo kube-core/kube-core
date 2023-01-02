@@ -413,3 +413,13 @@ releases:
         annotations: {}
         labels: {}
         subdomain: trivy-server
+
+  goldilocks:
+    config:
+      dashboard:  
+        replicaCount: 1
+        ingress:
+          enabled: true
+          annotations: {}
+          labels: {}
+          subdomain: goldilocks

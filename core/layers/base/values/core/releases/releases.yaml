@@ -489,3 +489,8 @@ releases:
     namespace: kube-core
     namespaceShortName: kc
     chart: ../releases/dist/releases/charts/app-extensions
+  goldilocks:
+    shortName: goldilocks
+    namespace: goldilocks
+    namespaceShortName: goldilocks
+    chart: ../releases/dist/releases/charts/goldilocks
