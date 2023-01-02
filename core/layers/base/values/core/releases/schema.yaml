@@ -443,3 +443,4 @@ releases:
   namespace: *release
   trivy: *release
   goldilocks: *release
+  opencost: *release

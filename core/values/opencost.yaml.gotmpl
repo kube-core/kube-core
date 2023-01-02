@@ -1,0 +1,17 @@
+openUi:
+  ingress:
+    enabled: true
+    ingressClassName: {{ .Values.cluster.common.defaultIngressClass }}
+    annotations: 
+    {{ if .Values.cluster.common.defaultIngressAnnotations }}
+      {{ toYaml .Values.cluster.common.defaultIngressAnnotations | nindent 4 }}
+    {{- end }}
+    hosts:
+      - host: {{ (index .Values.releases .Release.Name "config" "openUi" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
+        paths:
+          - path: /
+            type: ImplementationSpecific
+    tls:
+    - secretName: {{ (index .Values.releases .Release.Name "config" "openUi" "ingress" "subdomain") | replace "." "-"}}-tls
+      hosts:
+      - {{ (index .Values.releases .Release.Name "config" "openUi" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}

@@ -334,3 +334,7 @@ releases:
     labels:
       component: goldilocks
       group: finops
+  opencost:
+    labels:
+      component: opencost
+      group: finops
