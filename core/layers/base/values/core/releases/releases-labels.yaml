@@ -330,3 +330,7 @@ releases:
     labels:
       component: trivy
       group: devops
+  goldilocks:
+    labels:
+      component: goldilocks
+      group: finops
