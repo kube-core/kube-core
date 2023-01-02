@@ -52,7 +52,7 @@ scaling:
   serviceAccessFreq:
     enabled: true
     threshold: 2
-{{ if (and $rabbitmq.enabled $rabbitmq | getOrNil "queues") }}
+{{ if (and ($rabbitmq | getOrNil "enabled") $rabbitmq | getOrNil "queues") }}
   rabbitmq:
     enabled: true
     # queues:
@@ -139,7 +139,7 @@ pod:
       - secretName: {{ $releaseName }}-mongodb
         secretKey: DATABASE_PASSWORD
       {{ end }}
-      {{ if (and ($release | getOrNil "external-secrets") $rabbitmq.enabled) }}
+      {{ if (and ($release | getOrNil "external-secrets") ($rabbitmq | getOrNil "enabled")) }}
       - secretName: {{ $releaseName }}-rabbitmq
         secretKey: RABBITMQ_URI
       {{ end }}
