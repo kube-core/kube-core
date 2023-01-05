@@ -10,7 +10,7 @@ spec:
   deletionPolicy: {{ coalesce .value.deletionPolicy "Orphan" }}
   forProvider:
     serviceAccountRef:
-      name: {{ coalesce .value.externalName $name }}
+      name: {{ coalesce .value.serviceAccountName .value.externalName $name }}
   publishConnectionDetailsTo:
     name: {{ coalesce .value.externalName $name }}
     {{- if .value.metadata }}
