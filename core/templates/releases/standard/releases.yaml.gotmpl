@@ -2,9 +2,9 @@
 {{- $releases := .Values.releases }}
 
 {{- range $releaseName, $release := $releases }}
-{{- if $release.enabled -}}
-
+{{ $release := (merge $release $values.templates.release) }}
 {{ $newValues := $release }}
+
 {{ $_ := set $newValues "type" "release" }}
 {{ $_ := set $newValues "name" $releaseName }}
 {{ $_ := set $newValues "namespace" $release.namespace }}
@@ -12,9 +12,9 @@
 {{ $release = (merge $release $newValues $newItem) }}
 {{ $_ := set $.Values.releases $release.name $release }}
 
+{{- if $release.enabled -}}
 {{- tpl (readFile "templates/releases/standard/release.yaml.gotmpl") (dict "item" $release "values" $values "releaseName" $releaseName "releaseNamespace" $release.namespace "releaseContext" $values.cluster.config.context) }}
 {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") (dict "item" $release "values" $values "releaseName" $releaseName "releaseNamespace" $release.namespace "releaseContext" $values.cluster.config.context) }}
 {{- tpl (readFile "templates/releases/standard/release-extensions.yaml.gotmpl") (dict "item" $release "values" $values "releaseName" $releaseName "releaseNamespace" $release.namespace "releaseContext" $values.cluster.config.context) }}
-
 {{- end -}}
 {{- end -}}
