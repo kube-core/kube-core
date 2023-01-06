@@ -1,0 +1,13 @@
+{{ $values := .values }}
+{{ $releases := (merge $values.releases $values.applicationsList $values.servicesList )}}
+{{ $releaseNamespace := .releaseNamespace }}
+
+{{ $cloudProject := $values.cloud.project }}
+{{ $cloudLocation := $values.cloud.default.location }}
+{{ $clusterName := $values.cluster.config.name }}
+
+{{ $mainReleaseName := (.releaseName | replace "-rabbitmq-config" "") }}
+{{ $mainRelease := ($releases | getOrNil $mainReleaseName) }}
+{{ $currentRelease := ($releases | getOrNil .releaseName) }}
+
+{{ $ingressClassName := (coalesce $values.applicationsConfig.defaultIngressClass $values.servicesConfig.defaultIngressClass $values.cluster.common.defaultIngressClass) }}

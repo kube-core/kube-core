@@ -363,6 +363,7 @@ directories:
             url: https://oauth2-proxy.github.io/manifests
 
       # Local Releases
+
       - path: crossplane-cloud
         directory:
           path: ../../../releases/local/crossplane-cloud
@@ -491,6 +492,9 @@ directories:
       - path: app-scaling
         directory:
           path: ../../../releases/local/app-scaling
+      - path: app-extensions
+        directory:
+          path: ../../../releases/local/app-extensions
 
   # - path: releases/crds
   #   contents:
