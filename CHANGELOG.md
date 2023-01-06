@@ -2,9 +2,22 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.9.2](https://github.com/kube-core/kube-core/compare/v0.9.1...v0.9.2)
+
+- releases: Added app-extensions chart [`289b639`](https://github.com/kube-core/kube-core/commit/289b639618ac2ed1461509bb8273988aa2f15de1)
+- core/templates: Reworked extensions and options [`574c7a5`](https://github.com/kube-core/kube-core/commit/574c7a5a23c76ef42d35ccde2ff54cb9225787d2)
+- core/values: Improved app integration with extensions and services [`a7802a1`](https://github.com/kube-core/kube-core/commit/a7802a10b1f8f7af99b2e7c1693870b72dc1f27a)
+- core/templates: Added rabbitmq extension [`522d045`](https://github.com/kube-core/kube-core/commit/522d0458d0228ea7aa5eb2c563c5980f0485aa8f)
+- core/layers: Updated some default release options [`ffb6e75`](https://github.com/kube-core/kube-core/commit/ffb6e7522228cc4660ff21c54fd4a5deba9233c6)
+- core/releases: Added possibility to specify serviceaccountkeyname for cloud releases [`7694ccb`](https://github.com/kube-core/kube-core/commit/7694ccb0a86cee5565dcd5ad4183ba71283022a7)
+- core/templates: Added env options injection on applications and services [`33527a0`](https://github.com/kube-core/kube-core/commit/33527a03aa97d9901efc4b9591dafe2f2d676001)
+
 #### [v0.9.1](https://github.com/kube-core/kube-core/compare/v0.9.0...v0.9.1)
 
+> 2 January 2023
+
 - releases: Upgraded nginx-ingress-controller to v9.3.24 [`61d43e5`](https://github.com/kube-core/kube-core/commit/61d43e52eb65787b23e19d3b065b57d3ec03e570)
+- release: v0.9.1 [`d9e3ec8`](https://github.com/kube-core/kube-core/commit/d9e3ec84ab48bac7fb56c78fb1fa972c3fe4968c)
 - core/values: Fixed rabbitmq conditions in n9-api templates [`ea94965`](https://github.com/kube-core/kube-core/commit/ea949658ff98c3d60fd922215dc6b39256dd3964)
 - cli: Fixed version bump in scripts:exec dev_utils_bump [`c1e327f`](https://github.com/kube-core/kube-core/commit/c1e327fc80d9a2c34e49368a2a06fba49e23a656)
 - core/values: Added fullnameOverride including namespace for NIC deployments [`031170a`](https://github.com/kube-core/kube-core/commit/031170a470f9207bdef003b69dd2b4dfa5297a07)
