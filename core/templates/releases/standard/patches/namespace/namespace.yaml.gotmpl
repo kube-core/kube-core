@@ -1,0 +1,25 @@
+{{ $values := .values }}
+{{ $releaseName := .releaseName }}
+{{ $releaseNamespace := .releaseNamespace }}
+
+  {{- if .item.options | getOrNil "forceNamespace" }}
+  - target:
+      kind: .*
+      name: .*
+    patch:
+      - op: replace
+        path: "/metadata/namespace"
+        value: "{{ $releaseNamespace }}"
+  {{ end }}
+  {{ if (.item.options | getOrNil "forceNamespaceByKind") }}
+  {{ $kinds := ((.item.options | getOrNil "forceNamespaceByKind") | split ",")}}
+  {{ range $kinds }}
+  - target:
+      kind: {{ . }}
+      name: .*
+    patch:
+      - op: replace
+        path: "/metadata/namespace"
+        value: "{{ $releaseNamespace }}"
+  {{ end }}
+  {{ end }}

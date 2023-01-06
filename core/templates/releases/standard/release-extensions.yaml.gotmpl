@@ -3,14 +3,15 @@
 {{ $_ := set . "parentReleaseName" $releaseName }}
 
 {{ if .item.manifests }}
-{{ $extensionName := (printf "%s-manifests" $releaseName)}}
+{{ $extensionType := "manifests" }}
+{{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 - name: {{ $extensionName }}
   chart: ../releases/dist/releases/charts/raw
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
   namespace: {{ .releaseNamespace }}
-  transformers:
   {{ $_ := set . "releaseName" $extensionName }}
-  {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
+  {{ $_ := set . "extensionType" $extensionType }}
+  {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") . }}
   {{ $_ := set . "releaseName" .parentReleaseName }}
   labels:
     app: {{ $releaseName }}
@@ -22,14 +23,15 @@
 {{ end }}
 
 {{ if (and .item.configmaps (not (eq .item.extensions.configmapsEnabled false))) }}
-{{ $extensionName := (printf "%s-configmaps" $releaseName)}}
+{{ $extensionType := "configmaps" }}
+{{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 - name: {{ $extensionName }}
   chart: ../releases/dist/releases/charts/raw
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
   namespace: {{ .releaseNamespace }}
-  transformers:
   {{ $_ := set . "releaseName" $extensionName }}
-  {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
+  {{ $_ := set . "extensionType" $extensionType }}
+  {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") . }}
   {{ $_ := set . "releaseName" .parentReleaseName }}
   labels:
     app: {{ $releaseName }}
@@ -40,14 +42,15 @@
 {{ end }}
 
 {{ if (and .item.extraManifests (not (eq .item.extensions.extraManifestsEnabled false))) }}
-{{ $extensionName := (printf "%s-extra-manifests" $releaseName)}}
+{{ $extensionType := "extra-manifests" }}
+{{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 - name: {{ $extensionName }}
   chart: ../releases/dist/releases/charts/raw
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
   namespace: {{ .releaseNamespace }}
-  transformers:
   {{ $_ := set . "releaseName" $extensionName }}
-  {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
+  {{ $_ := set . "extensionType" $extensionType }}
+  {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") . }}
   {{ $_ := set . "releaseName" .parentReleaseName }}
   labels:
     app: {{ $releaseName }}
@@ -59,14 +62,15 @@
 {{ end }}
 
 {{ if (and .item.rawManifests (not (eq .item.extensions.rawManifestsEnabled false))) }}
-{{ $extensionName := (printf "%s-raw-manifests" $releaseName)}}
+{{ $extensionType := "raw-manifests" }}
+{{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 - name: {{ $extensionName }}
   chart: ../releases/dist/releases/charts/raw
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
   namespace: {{ .releaseNamespace }}
-  transformers:
   {{ $_ := set . "releaseName" $extensionName }}
-  {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
+  {{ $_ := set . "extensionType" $extensionType }}
+  {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") . }}
   {{ $_ := set . "releaseName" .parentReleaseName }}
   labels:
     app: {{ $releaseName }}
@@ -78,14 +82,15 @@
 {{ end }}
 
 {{ if .item.secrets }}
-{{ $extensionName := (printf "%s-secrets" $releaseName)}}
+{{ $extensionType := "secrets" }}
+{{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 - name: {{ $extensionName }}
   chart: ../releases/dist/releases/charts/raw
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
   namespace: {{ .releaseNamespace }}
-  transformers:
   {{ $_ := set . "releaseName" $extensionName }}
-  {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
+  {{ $_ := set . "extensionType" $extensionType }}
+  {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") . }}
   {{ $_ := set . "releaseName" .parentReleaseName }}
   labels:
     app: {{ $releaseName }}
@@ -96,14 +101,15 @@
 {{ end }}
 
 {{ if (and (index .item "dynamicSecrets") .item.extensions.dynamicSecretsEnabled) }}
-{{ $extensionName := (printf "%s-dynamic-secrets" $releaseName)}}
+{{ $extensionType := "dynamic-secrets" }}
+{{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 - name: {{ $extensionName }}
   chart: ../releases/dist/releases/charts/raw
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
   namespace: {{ .releaseNamespace }}
-  transformers:
   {{ $_ := set . "releaseName" $extensionName }}
-  {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
+  {{ $_ := set . "extensionType" $extensionType }}
+  {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") . }}
   {{ $_ := set . "releaseName" .parentReleaseName }}
   labels:
     app: {{ $releaseName }}
@@ -114,14 +120,15 @@
 {{ end }}
 
 {{ if (and (index .item "external-secrets") .item.extensions.externalSecretsEnabled) }}
-{{ $extensionName := (printf "%s-external-secrets" $releaseName)}}
+{{ $extensionType := "external-secrets" }}
+{{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 - name: {{ $extensionName }}
   chart: ../releases/dist/releases/charts/raw
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
   namespace: {{ .releaseNamespace }}
-  transformers:
   {{ $_ := set . "releaseName" $extensionName }}
-  {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
+  {{ $_ := set . "extensionType" $extensionType }}
+  {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") . }}
   {{ $_ := set . "releaseName" .parentReleaseName }}
   labels:
     app: {{ $releaseName }}
@@ -132,14 +139,15 @@
 {{ end }}
 
 {{ if (or .item.patches.enabled (.item | getOrNil "cloud" | getOrNil "cdn" | getOrNil "enabled")) }}
-{{ $extensionName := (printf "%s-patches" $releaseName)}}
+{{ $extensionType := "patches" }}
+{{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 - name: {{ $extensionName }}
   chart: ../releases/dist/releases/charts/raw
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
   namespace: {{ .releaseNamespace }}
-  transformers:
   {{ $_ := set . "releaseName" $extensionName }}
-  {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
+  {{ $_ := set . "extensionType" $extensionType }}
+  {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") . }}
   {{ $_ := set . "releaseName" .parentReleaseName }}
   labels:
     app: {{ $releaseName }}
@@ -150,14 +158,15 @@
 {{ end }}
 
 {{ if .item.scaling }}
-{{ $extensionName := (printf "%s-scaling" $releaseName)}}
+{{ $extensionType := "scaling" }}
+{{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 - name: {{ $extensionName }}
   chart: ../releases/dist/releases/charts/app-scaling
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
   namespace: {{ .releaseNamespace }}
-  transformers:
   {{ $_ := set . "releaseName" $extensionName }}
-  {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
+  {{ $_ := set . "extensionType" $extensionType }}
+  {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") . }}
   {{ $_ := set . "releaseName" .parentReleaseName }}
   labels:
     app: {{ $releaseName }}
@@ -167,14 +176,15 @@
 {{ end }}
 
 {{ if .item.gitops.enabled }}
-{{ $extensionName := (printf "%s-gitops" $releaseName)}}
+{{ $extensionType := "gitops" }}
+{{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 - name: {{ $extensionName }}
   chart: ../releases/dist/releases/charts/raw
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
   namespace: {{ .releaseNamespace }}
-  transformers:
   {{ $_ := set . "releaseName" $extensionName }}
-  {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
+  {{ $_ := set . "extensionType" $extensionType }}
+  {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") . }}
   {{ $_ := set . "releaseName" .parentReleaseName }}
   labels:
     app: {{ $releaseName }}
@@ -184,14 +194,15 @@
 {{ end }}
 
 {{ if .item | getOrNil "cloud" | getOrNil "enabled" }}
-{{ $extensionName := (printf "%s-cloud" $releaseName)}}
+{{ $extensionType := "cloud" }}
+{{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 - name: {{ $extensionName }}
   chart: ../releases/dist/releases/charts/crossplane-cloud
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
   namespace: {{ .releaseNamespace }}
-  transformers:
   {{ $_ := set . "releaseName" $extensionName }}
-  {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") . }}
+  {{ $_ := set . "extensionType" $extensionType }}
+  {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") . }}
   {{ $_ := set . "releaseName" .parentReleaseName }}
   labels:
     app: {{ $releaseName }}

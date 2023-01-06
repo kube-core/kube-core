@@ -1,0 +1,24 @@
+{{ $values := .values }}
+{{ $releaseName := .releaseName }}
+{{ $releaseNamespace := .releaseNamespace }}
+{{ $chartName := (splitList "/" .item.chart) | last | quote }}
+{{ $chartRepo := (splitList "/" .item.chart) | first | quote }}
+{{ $parentReleaseName := (. | getOrNil "parentReleaseName")}}
+  {{- if .item.options.injectReloaderAnnotations }}
+  - apiVersion: builtin
+    kind: AnnotationsTransformer
+    metadata:
+      name: inject-reloader-annotations
+    annotations:
+      reloader.stakater.com/auto: "true"
+    fieldSpecs:
+    - path: metadata/annotations
+      kind: Deployment
+      create: true
+    - path: metadata/annotations
+      kind: StatefulSet
+      create: true
+    - path: metadata/annotations
+      kind: DaemonSet
+      create: true
+  {{- end }}

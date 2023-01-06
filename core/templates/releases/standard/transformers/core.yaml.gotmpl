@@ -1,0 +1,7 @@
+  {{- tpl (readFile "templates/releases/standard/transformers/core/global.labels.yaml.gotmpl") . }}
+  {{- tpl (readFile "templates/releases/standard/transformers/core/global.annotations.yaml.gotmpl") . }}
+
+  {{- tpl (readFile "templates/releases/standard/transformers/core/cronjob.labels.yaml.gotmpl") . }}
+  {{- tpl (readFile "templates/releases/standard/transformers/core/deployment.labels.yaml.gotmpl") . }}
+  {{- tpl (readFile "templates/releases/standard/transformers/core/deployment.annotations.yaml.gotmpl") . }}
+  {{- tpl (readFile "templates/releases/standard/transformers/core/rabbitmq.labels.yaml.gotmpl") . }}

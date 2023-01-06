@@ -1,0 +1,24 @@
+{{ $values := .values }}
+{{ $releaseName := .releaseName }}
+{{ $releaseNamespace := .releaseNamespace }}
+{{ $chartName := (splitList "/" .item.chart) | last | quote }}
+{{ $chartRepo := (splitList "/" .item.chart) | first | quote }}
+{{ $parentReleaseName := (. | getOrNil "parentReleaseName")}}
+{{- if $values.core.globalLabelsEnabled }}
+  - apiVersion: builtin
+    kind: AnnotationsTransformer
+    metadata:
+      name: apply-global-annotations-on-everything
+    annotations:
+      meta.helm.sh/release-name: {{ $releaseName }}
+      meta.helm.sh/release-namespace: {{ $releaseNamespace }}
+      {{ if $values | getOrNil "core" | getOrNil "enableCloudMetadataDebug"}}
+      {{ if (.item | getOrNil "metadata" | getOrNil "namingConfig") }}
+      data: |
+        {{ toYaml (.item | getOrNil "metadata" | getOrNil "namingConfig") | nindent 8}}
+      {{ end }}
+      {{ end }}
+    fieldSpecs:
+    - path: metadata/annotations
+      create: true
+{{ end }}
