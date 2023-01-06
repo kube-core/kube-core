@@ -1,4 +1,8 @@
 releases:
+  app-extensions:
+    labels:
+      component: certificates
+      group: cluster
   cert-manager:
     labels:
       component: certificates

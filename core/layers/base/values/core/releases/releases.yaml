@@ -484,3 +484,8 @@ releases:
     namespace: trivy-server
     namespaceShortName: trivy
     chart: ../releases/dist/releases/charts/trivy
+  app-extensions:
+    shortName: appx
+    namespace: kube-core
+    namespaceShortName: kc
+    chart: ../releases/dist/releases/charts/app-extensions

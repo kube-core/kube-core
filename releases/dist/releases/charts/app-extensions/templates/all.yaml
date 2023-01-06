@@ -1,0 +1,15 @@
+{{- include "app-extensions.add-release-metadata-to-values" . -}}
+
+{{ $values := .Values}}
+{{ range $kindName, $kindList := $values.resources }}
+{{ range $key, $value := $kindList }}
+
+{{ $ressource := dict "key" $key "value" $value }}
+{{ $globalpick := pick $values "patch" "cloud" "cluster" "release" }}
+{{ $commonvalues := dict "common" $globalpick }}
+{{ $mergedvalues := deepCopy $commonvalues | mustMerge $ressource }}
+
+---
+{{ include (printf "app-extensions.%s" ($kindName | kebabcase)) $mergedvalues }}
+{{ end }}
+{{ end }}
