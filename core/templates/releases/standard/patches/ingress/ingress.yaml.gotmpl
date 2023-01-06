@@ -1,0 +1,69 @@
+{{ $values := .values }}
+{{ $releaseName := .releaseName }}
+{{ $releaseNamespace := .releaseNamespace }}
+
+{{- if .item.options.patchIngresses }}
+  - target:
+      kind: Ingress
+      name: .*
+    patch:
+
+  {{- if .item.options.upgradeIngress }}
+      - op: replace
+        path: "/apiVersion"
+        value: "networking.k8s.io/v1"
+      - op: add
+        path: "/spec/rules/0/http/paths/0/path"
+        value: "/"
+      - op: add
+        path: "/spec/rules/0/http/paths/0/pathType"
+        value: "Prefix"
+      - op: add
+        path: "/spec/rules/0/http/paths/0/backend/service"
+        value: {"name":"", "port": {"number":""}}
+      - op: copy
+        from: "/spec/rules/0/http/paths/0/backend/serviceName"
+        path: "/spec/rules/0/http/paths/0/backend/service/name"
+      - op: copy
+        from: "/spec/rules/0/http/paths/0/backend/servicePort"
+        path: "/spec/rules/0/http/paths/0/backend/service/port/number"
+      - op: remove
+        path: "/spec/rules/0/http/paths/0/backend/serviceName"
+      - op: remove
+        path: "/spec/rules/0/http/paths/0/backend/servicePort"
+  {{ end }}
+
+  {{- if .item.options.removeIngressClassName }}
+      - op: remove
+        path: "/spec/ingressClassName"
+  {{- end }}
+
+ {{- if .item.options.removeIngressClassAnnotation }}
+      - op: remove
+        path: "/metadata/annotations/kubernetes.io~1ingress.class"
+  {{- end }}
+
+  {{- if .item.options.injectIngressClassName }}
+      - op: replace
+        path: "/spec/ingressClassName"
+        value: "{{ coalesce $values.applicationsConfig.defaultIngressClass $values.servicesConfig.defaultIngressClass $values.cluster.common.defaultIngressClass }}"
+  {{end }}
+
+  {{- if .item | getOrNil "options" | getOrNil "forceNamespaceIngressClass"}}
+      - op: replace
+        path: "/spec/ingressClassName"
+        value: {{ index $values.releases "nginx-ingress-controller" "config" "ingressClass" }}-{{ $releaseNamespace }}
+  {{- end }}
+
+  {{- if .item.options.injectIngressHost }}
+      - op: replace
+        path: "/spec/rules/0/host"
+        value: {{ $releaseName }}.{{ $releaseNamespace }}.{{ $values.cluster.config.domain }}
+  {{- end }}
+
+  {{- if .item.options.injectIngressTls }}
+      - op: add
+        path: "/spec/tls"
+        value: [{"hosts": ["{{ $releaseName }}.{{ $releaseNamespace }}.{{ $values.cluster.config.domain }}"], "secretName": "{{ $releaseName }}.{{ $releaseNamespace }}.{{ $values.cluster.config.domain | replace "." "-"}}-tls"}]
+  {{- end }}
+{{- end }}

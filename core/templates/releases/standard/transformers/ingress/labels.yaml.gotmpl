@@ -1,0 +1,16 @@
+{{ $values := .values }}
+{{ $releaseName := .releaseName }}
+{{ $releaseNamespace := .releaseNamespace }}
+
+  {{- if .item.options.applyDefaultLabelsOnIngress }}
+  - apiVersion: builtin
+    kind: LabelTransformer
+    metadata:
+      name: apply-default-labels-on-ingress
+    labels:
+      {{ toYaml $values.cluster.common.defaultIngressLabels | nindent 6 }}
+    fieldSpecs:
+    - path: metadata/labels
+      kind: Ingress
+      create: true
+  {{- end }}

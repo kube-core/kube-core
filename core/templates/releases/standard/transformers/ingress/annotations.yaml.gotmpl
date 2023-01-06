@@ -1,0 +1,130 @@
+{{ $values := .values }}
+{{ $releaseName := .releaseName }}
+{{ $releaseNamespace := .releaseNamespace }}
+
+  {{- if .item.options.applyDefaultAnnotationsOnIngress }}
+  - apiVersion: builtin
+    kind: AnnotationsTransformer
+    metadata:
+      name: apply-default-annotations-on-ingress
+    annotations:
+      {{ toYaml $values.cluster.common.defaultIngressAnnotations | nindent 6 }}
+    fieldSpecs:
+    - path: metadata/annotations
+      kind: Ingress
+      create: true
+  {{- end }}
+  {{- if .item.options.injectOauth2ProxyOnIngress }}
+  - apiVersion: builtin
+    kind: AnnotationsTransformer
+    metadata:
+      name: inject-oauth2-proxy-on-ingress
+    annotations:
+      nginx.ingress.kubernetes.io/auth-url: {{ printf "https://%s.%s/oauth2/auth" (index $values.releases "oauth2-proxy" "config" "ingress" "subdomain") ( $values.cluster.config.domain ) | quote }}
+      nginx.ingress.kubernetes.io/auth-signin: {{ printf "https://%s.%s/oauth2/start" (index $values.releases "oauth2-proxy" "config" "ingress" "subdomain") ( $values.cluster.config.domain ) | quote }}
+    fieldSpecs:
+    - path: metadata/annotations
+      kind: Ingress
+      create: true
+  {{- end }}
+  {{- if .item.options.injectNamespaceOauth2ProxyOnIngress }}
+  - apiVersion: builtin
+    kind: AnnotationsTransformer
+    metadata:
+      name: inject-oauth2-proxy-on-ingress
+    annotations:
+      nginx.ingress.kubernetes.io/auth-url: {{ printf "https://%s.%s.%s/oauth2/auth" (index $values.releases "oauth2-proxy" "config" "ingress" "subdomain") $releaseNamespace ( $values.cluster.config.domain ) | quote }}
+      nginx.ingress.kubernetes.io/auth-signin: {{ printf "https://%s.%s.%s/oauth2/start" (index $values.releases "oauth2-proxy" "config" "ingress" "subdomain") $releaseNamespace ( $values.cluster.config.domain ) | quote }}
+    fieldSpecs:
+    - path: metadata/annotations
+      kind: Ingress
+      create: true
+  {{- end }}
+  {{- if .item.options.injectSatisfyAnyAuthOnIngress }}
+  - apiVersion: builtin
+    kind: AnnotationsTransformer
+    metadata:
+      name: inject-satisfy-any-auth-on-ingress
+    annotations:
+      nginx.ingress.kubernetes.io/satisfy: "any"
+    fieldSpecs:
+    - path: metadata/annotations
+      kind: Ingress
+      create: true
+  {{- end }}
+  {{- if .item.options.injectionToEnforcePublicAccessFromIngressAccessOperator }}
+  - apiVersion: builtin
+    kind: AnnotationsTransformer
+    metadata:
+      name: inject-allowed-visitors-to-public-on-ingress
+    annotations:
+      ingress.neo9.io/allowed-visitors: "public"
+      ingress.neo9.io/access-filtered: "false"
+      nginx.ingress.kubernetes.io/satisfy: "any"
+    fieldSpecs:
+    - path: metadata/annotations
+      kind: Ingress
+      create: true
+  - apiVersion: builtin
+    kind: LabelTransformer
+    metadata:
+      name: injecty-access-filtered-false-on-ingress
+    labels:
+      ingress.neo9.io/access-filtered: "false"
+    fieldSpecs:
+    - path: metadata/labels
+      kind: Ingress
+      create: true
+  {{- end }}
+  {{- if .item.options.forceNamespaceVisitorGroup }}
+  - apiVersion: builtin
+    kind: AnnotationsTransformer
+    metadata:
+      name: force-namespace-visitorgroup
+    annotations:
+      ingress.neo9.io/allowed-visitors: "{{ $releaseNamespace }}"
+    fieldSpecs:
+    - path: metadata/annotations
+      kind: Ingress
+      create: true
+  {{- end }}
+  {{- if .item.options.forceVisitorGroups }}
+  - apiVersion: builtin
+    kind: AnnotationsTransformer
+    metadata:
+      name: force-visitorgroups
+    annotations:
+      ingress.neo9.io/allowed-visitors: "{{ .item.options.forceVisitorGroups  }}"
+    fieldSpecs:
+    - path: metadata/annotations
+      kind: Ingress
+      create: true
+  {{- end }}
+  {{- if .item.options.forceNamespaceClusterIssuer }}
+  - apiVersion: builtin
+    kind: AnnotationsTransformer
+    metadata:
+      name: force-namespace-cluster-issuer
+    annotations:
+    {{ if (eq (.item.options.forceNamespaceClusterIssuer | toString) "true") }}
+      cert-manager.io/cluster-issuer: {{ $releaseNamespace }}
+    {{ else }}
+      cert-manager.io/cluster-issuer: {{ .item.options.forceNamespaceClusterIssuer }}
+    {{ end }}
+    fieldSpecs:
+    - path: metadata/annotations
+      kind: Ingress
+      create: true
+  {{- end }}
+  {{- if .item.options.forceClusterIssuer }}
+  - apiVersion: builtin
+    kind: AnnotationsTransformer
+    metadata:
+      name: force-cluster-issuer
+    annotations:
+      cert-manager.io/cluster-issuer: {{ .item.options.forceClusterIssuer }}
+    fieldSpecs:
+    - path: metadata/annotations
+      kind: Ingress
+      create: true
+  {{- end }}
