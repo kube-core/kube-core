@@ -1,0 +1,171 @@
+{{ $values := .values }}
+{{ $releases := (merge $values.releases $values.applicationsList $values.servicesList )}}
+{{ $releaseNamespace := .releaseNamespace }}
+
+{{ $cloudProject := $values.cloud.project }}
+{{ $cloudLocation := $values.cloud.default.location }}
+{{ $clusterName := $values.cluster.config.name }}
+
+{{ $mainReleaseName := (.releaseName | replace "-rabbitmq-config" "") }}
+{{ $mainRelease := ($releases | getOrNil $mainReleaseName) }}
+{{ $currentRelease := ($releases | getOrNil .releaseName) }}
+
+{{ $rabbitmq := ($mainRelease | getOrNil "rabbitmq") }}
+{{ $rabbitmqClusterRef := (coalesce ($rabbitmq | getOrNil "ref") (printf "%s-rabbitmq" $mainReleaseName)) }}
+{{ $rabbitmqSecretRefTemplate := (printf "rabbitmq-user-%s-rabbitmq-cluster-%s-%s-creds" $rabbitmqClusterRef $releaseNamespace $mainReleaseName) }}
+
+{{ $defaultVhost := "/" }}
+
+{{ $rabbitmqType := (coalesce ($rabbitmq | getOrNil "type") "shared") }}
+
+{{ $rabbitmqDedicated := (eq $rabbitmqType "dedicated") }}
+{{ $rabbitmqShared := (eq $rabbitmqType "shared") }}
+{{ $rabbitmqExternal := (eq $rabbitmqType "external") }}
+
+{{ if $rabbitmqDedicated }}
+# {{ $defaultVhost = $mainReleaseName }}
+{{ $defaultVhost = "apps" }}
+{{ else if $rabbitmqShared }}
+{{ $defaultVhost = "apps" }}
+{{ else }}
+# {{ $defaultVhost = "/" }}
+{{ $defaultVhost = "apps" }}
+{{ end }}
+
+{{ $ingressClassName := (coalesce $values.applicationsConfig.defaultIngressClass $values.servicesConfig.defaultIngressClass $values.cluster.common.defaultIngressClass) }}
+resources:
+
+  {{ if (eq ($rabbitmq | getOrNil "type") "dedicated") }}
+  rabbitmq-cluster:
+    {{ $mainReleaseName }}:
+      name: {{ $rabbitmqClusterRef }}
+      replicas: 1
+
+  rabbitmq-vhost:
+    {{ $mainReleaseName }}-root:
+      vhost: "/"
+      rabbitmqClusterName: {{ $rabbitmqClusterRef }}
+      rabbitmqClusterNamespace: {{ $releaseNamespace }}
+    {{ $mainReleaseName }}-default:
+      vhost: "{{ $mainReleaseName }}"
+      rabbitmqClusterName: {{ $rabbitmqClusterRef }}
+      rabbitmqClusterNamespace: {{ $releaseNamespace }}
+    {{ $mainReleaseName }}-apps:
+      vhost: "apps"
+      rabbitmqClusterName: {{ $rabbitmqClusterRef }}
+      rabbitmqClusterNamespace: {{ $releaseNamespace }}
+  rabbitmq-policy:
+    {{ $mainReleaseName }}:
+      rabbitmqClusterName: {{ $rabbitmqClusterRef }}
+      rabbitmqClusterNamespace: {{ $releaseNamespace }}
+
+  kube-ingress:
+    {{ $mainReleaseName }}-rabbitmq:
+      ingressClassName: {{ $ingressClassName }}
+      annotations:
+        forecastle.stakater.com/icon: https://www.rabbitmq.com/img/logo-rabbitmq.svg
+        forecastle.stakater.com/expose: "true"
+  {{ end }}
+
+  rabbitmq-user:
+    {{ $mainReleaseName }}:
+      # name: {{ $mainReleaseName }}-{{ $rabbitmqClusterRef }}
+      {{ if ($rabbitmq | getOrNil "disableImportCredentialsSecret") }}
+      importCredentialsSecret: false
+      {{ else }}
+      importCredentialsSecret: true
+      {{ end }}
+      secretNameOverride: {{ $rabbitmqSecretRefTemplate }}
+      rabbitmqClusterName: {{ $rabbitmqClusterRef }}
+      rabbitmqClusterNamespace: {{ $releaseNamespace }}
+      tags:
+      - policymaker
+      - monitoring
+      - management
+      - administrator
+
+  rabbitmq-permission:
+    {{ $mainReleaseName }}:
+      rabbitmqClusterName: {{ $rabbitmqClusterRef }}
+      rabbitmqClusterNamespace: {{ $releaseNamespace }}
+      vhost: {{ coalesce ($rabbitmq | getOrNil "vhost") $defaultVhost }}
+
+      # Permissions defaults to read ".*"
+      read: true
+      write: true
+      configure: true
+
+      # Custom user
+      # userName: my-rabbitmq-user-name
+      # userRef: my-rabbitmq-user-ref
+
+      # Custom permissions
+      # customPermissions:
+      #   read: "custom"
+
+
+{{ if $rabbitmq | getOrNil "defaultTopologyEnabled" }}
+  rabbitmq-exchange:
+  {{ if ($rabbitmq | getOrNil "queues" | getOrNil "default" | getOrNil "enabled") }}
+    {{ $releaseNamespace }}-{{ $mainReleaseName }}-in:
+      rabbitmqClusterName: {{ $rabbitmqClusterRef }}
+      rabbitmqClusterNamespace: {{ $releaseNamespace }}
+    {{ $releaseNamespace }}-{{ $mainReleaseName }}-out:
+      rabbitmqClusterName: {{ $rabbitmqClusterRef }}
+      rabbitmqClusterNamespace: {{ $releaseNamespace }}
+  {{ end }}
+  {{ if ($rabbitmq | getOrNil "queues" | getOrNil "custom" | getOrNil "enabled") }}
+  {{ range ($rabbitmq | getOrNil "queues" | getOrNil "custom" | getOrNil "queues") }}
+  {{ $name := .name }}
+  {{ if ($rabbitmq | getOrNil "queues" | getOrNil "custom" | getOrNil "prefix") }}
+  {{ $name = (printf "%s-%s-%s" $releaseNamespace $mainReleaseName .name) }}
+  {{ end }}
+    {{ $name }}:
+      rabbitmqClusterName: {{ $rabbitmqClusterRef }}
+      rabbitmqClusterNamespace: {{ $releaseNamespace }}
+  {{ end }}
+  {{ end }}
+
+  rabbitmq-queue:
+  {{ if ($rabbitmq | getOrNil "queues" | getOrNil "default" | getOrNil "enabled") }}
+    {{ $releaseNamespace }}-{{ $mainReleaseName }}-in:
+      rabbitmqClusterName: {{ $rabbitmqClusterRef }}
+      rabbitmqClusterNamespace: {{ $releaseNamespace }}
+    {{ $releaseNamespace }}-{{ $mainReleaseName }}-out:
+      rabbitmqClusterName: {{ $rabbitmqClusterRef }}
+      rabbitmqClusterNamespace: {{ $releaseNamespace }}
+  {{ end }}
+  {{ if ($rabbitmq | getOrNil "queues" | getOrNil "custom" | getOrNil "enabled") }}
+  {{ range ($rabbitmq | getOrNil "queues" | getOrNil "custom" | getOrNil "queues") }}
+  {{ $name := .name }}
+  {{ if ($rabbitmq | getOrNil "queues" | getOrNil "custom" | getOrNil "prefix") }}
+  {{ $name = (printf "%s-%s-%s" $releaseNamespace $mainReleaseName .name) }}
+  {{ end }}
+    {{ $name }}:
+      rabbitmqClusterName: {{ $rabbitmqClusterRef }}
+      rabbitmqClusterNamespace: {{ $releaseNamespace }}
+  {{ end }}
+  {{ end }}
+
+  rabbitmq-binding:
+  {{ if ($rabbitmq | getOrNil "queues" | getOrNil "default" | getOrNil "enabled") }}
+    {{ $releaseNamespace }}-{{ $mainReleaseName }}-in:
+      rabbitmqClusterName: {{ $rabbitmqClusterRef }}
+      rabbitmqClusterNamespace: {{ $releaseNamespace }}
+    {{ $releaseNamespace }}-{{ $mainReleaseName }}-out:
+      rabbitmqClusterName: {{ $rabbitmqClusterRef }}
+      rabbitmqClusterNamespace: {{ $releaseNamespace }}
+  {{ end }}
+  {{ if ($rabbitmq | getOrNil "queues" | getOrNil "custom" | getOrNil "enabled") }}
+  {{ range ($rabbitmq | getOrNil "queues" | getOrNil "custom" | getOrNil "queues") }}
+  {{ $name := .name }}
+  {{ if ($rabbitmq | getOrNil "queues" | getOrNil "custom" | getOrNil "prefix") }}
+  {{ $name = (printf "%s-%s-%s" $releaseNamespace $mainReleaseName .name) }}
+  {{ end }}
+    {{ $name }}:
+      rabbitmqClusterName: {{ $rabbitmqClusterRef }}
+      rabbitmqClusterNamespace: {{ $releaseNamespace }}
+  {{ end }}
+  {{ end }}
+
+  {{ end }}
