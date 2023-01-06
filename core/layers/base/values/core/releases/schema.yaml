@@ -85,7 +85,7 @@ templates:
       renderOptions: true
       renderExtensions: true
       forceNamespace: true
-      forceNamespaceIngressClass: false
+      forceNamespaceIngressClass: true
       forceNamespaceVisitorGroup: false
       forceClusterIssuer: ""
       forceNamespaceClusterIssuer: false
@@ -98,10 +98,10 @@ templates:
       applyDefaultAnnotationsOnIngress: true
       removeIngressClassAnnotation: false
       removeIngressClassName: false
-      injectReloaderAnnotations: false
+      injectReloaderAnnotations: true
       injectClusterLoggingLabel: true
-      injectIngressHost: false
-      injectIngressTls: false
+      injectIngressHost: true
+      injectIngressTls: true
       injectIngressClassName: true
       injectOauth2ProxyOnIngress: false
       injectNamespaceOauth2ProxyOnIngress: false
@@ -151,23 +151,23 @@ templates:
       renderOptions: true
       renderExtensions: true
       forceNamespace: true
-      forceNamespaceIngressClass: false
+      forceNamespaceIngressClass: true
       forceNamespaceVisitorGroup: false
       forceClusterIssuer: ""
       forceNamespaceClusterIssuer: false
       forceVisitorGroups: ""
       forceNamespaceNodeAffinity: false
       forceNamespaceNodeSelector: false
-      patchIngresses: true
+      patchIngresses: false
       upgradeIngress: false
       applyDefaultLabelsOnIngress: true
       applyDefaultAnnotationsOnIngress: true
       removeIngressClassAnnotation: false
       removeIngressClassName: false
-      injectReloaderAnnotations: false
+      injectReloaderAnnotations: true
       injectClusterLoggingLabel: true
-      injectIngressHost: false
-      injectIngressTls: false
+      injectIngressHost: true
+      injectIngressTls: true
       injectIngressClassName: true
       injectOauth2ProxyOnIngress: false
       injectNamespaceOauth2ProxyOnIngress: false
@@ -216,6 +216,7 @@ servicesConfig:
 clusterReleases: {}
 clusterRepositories: []
 releases:
+  app-extensions: *release
   cert-manager: *release
   chaos-mesh: *release
   chartmuseum: *release
@@ -276,7 +277,6 @@ releases:
   priority-class: *release
   prometheus-adapter: *release
   rabbitmq-cluster: *release
-  rabbitmq-config: *release
   rabbitmq-operators: *release
   reloader: *release
   replicator: *release

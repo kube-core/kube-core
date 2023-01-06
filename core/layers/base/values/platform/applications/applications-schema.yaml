@@ -1,7 +1,17 @@
 applicationsConfig:
   options:
-    forceNamespaceNodeSelector: true
-    forceNamespaceNodeAffinity: true
+    forceNamespace: false
+    forceNamespaceNodeSelector: false
+    forceNamespaceNodeAffinity: false
+    applyDefaultAnnotationsOnIngress: false
+    applyDefaultLabelsOnIngress: false
+    injectClusterLoggingLabel: false
+    injectIngressClassName: false
+    injectReloaderAnnotations: false
+    patchIngresses: false
+    injectIngressHost: false
+    injectIngressTls: false
+    forceNamespaceClusterIssuer: false
 applications:
   app:
     enabled: false
