@@ -211,3 +211,32 @@
   # - "./values/release-cloud.yaml.gotmpl"
   - {{ (tpl (readFile "values/release-cloud.yaml.gotmpl") .) | nindent 4 }}
 {{ end }}
+
+
+{{ $rabbitmq := (.item | getOrNil "rabbitmq") }}
+{{ $rabbitmqEnabled := ($rabbitmq | getOrNil "enabled") }}
+
+{{ if ($rabbitmqEnabled) }}
+{{ $extensionType := "rabbitmq-config" }}
+{{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
+
+- name: {{ $extensionName }}
+  chart: ../releases/dist/releases/charts/app-extensions
+  kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
+  namespace: {{ .releaseNamespace }}
+  {{ $_ := set . "releaseName" $extensionName }}
+  {{ $_ := set . "extensionType" $extensionType }}
+  {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") . }}
+  {{ $_ := set . "releaseName" .parentReleaseName }}
+  labels:
+    app: {{ $releaseName }}
+    type: rabbitmq
+  values:
+  - bucket:
+      test: {}
+
+
+  # - "./values/release-cloud.yaml.gotmpl"
+  # - {{ (tpl (readFile "values/release-rabbitmq-config.yaml.gotmpl") .) | nindent 4 }}
+
+{{ end }}
