@@ -5,6 +5,12 @@
 {{ $release := ($releases | getOrNil $releaseName) }}
 {{ $rabbitmq := ($release | getOrNil "rabbitmq") }}
 
+{{ $defaultReplicaCount := 2 }}
+
+{{ if (eq $releaseNamespace "dev") }}
+{{ $defaultReplicaCount = 1 }}
+{{ end }}
+
 name:
   appNameOverride: {{ $releaseName }}
 
@@ -26,17 +32,17 @@ service:
   port: 8080
 
 deployment:
-  replicaCount: 2
+  replicaCount: {{ $defaultReplicaCount }}
   annotations:
     reloader.stakater.com/auto: 'true'
 
 resources:
   limits:
-    cpu: 100m
-    memory: 100M
+    cpu: 250m
+    memory: 250Mi
   requests:
-    cpu: 100m
-    memory: 100M
+    cpu: 250m
+    memory: 250Mi
 
 logging:
   enabled: true
@@ -44,10 +50,14 @@ logging:
 monitoring:
   rules:
     enabled: true
-
+{{ if (and ($rabbitmq | getOrNil "enabled") $rabbitmq | getOrNil "queues") }}
+    queues:
+      default: true
+      scaling: true
+{{ end }}
 scaling:
   enabled: true
-  minReplicaCount: 2
+  minReplicaCount: {{ $defaultReplicaCount }}
   maxReplicaCount: 10
   serviceAccessFreq:
     enabled: true
@@ -55,7 +65,7 @@ scaling:
 {{ if (and ($rabbitmq | getOrNil "enabled") $rabbitmq | getOrNil "queues") }}
   rabbitmq:
     enabled: true
-    # queues:
+    queues:
     #   - name: my-queue
     #     value: 1
 {{ end }}
@@ -140,6 +150,16 @@ pod:
         secretKey: DATABASE_PASSWORD
       {{ end }}
       {{ if (and ($release | getOrNil "external-secrets") ($rabbitmq | getOrNil "enabled")) }}
+      - secretName: {{ $releaseName }}-rabbitmq
+        secretKey: RABBITMQ_SERVER
+      - secretName: {{ $releaseName }}-rabbitmq
+        secretKey: RABBITMQ_PORT
+      - secretName: {{ $releaseName }}-rabbitmq
+        secretKey: RABBITMQ_VHOST
+      - secretName: {{ $releaseName }}-rabbitmq
+        secretKey: RABBITMQ_USER
+      - secretName: {{ $releaseName }}-rabbitmq
+        secretKey: RABBITMQ_PASSWORD
       - secretName: {{ $releaseName }}-rabbitmq
         secretKey: RABBITMQ_URI
       {{ end }}

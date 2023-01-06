@@ -1,7 +1,15 @@
 {{ $releaseName := .Release.Name }}
+{{ $releaseNamespace := .Release.Namespace }}
+{{ $values := .Values }}
+{{ $defaultReplicaCount := 3 }}
+
+{{ if (eq $releaseNamespace "dev") }}
+{{ $defaultReplicaCount = 1 }}
+{{ end }}
 enabled: true
 nameOverride: {{ $releaseName }}
 fullnameOverride: {{ $releaseName }}
+replicaCount: {{ $defaultReplicaCount }}
 users:
   - name: {{ $releaseName }}-admin
     db: admin
@@ -12,17 +20,23 @@ users:
       - name: dbAdminAnyDatabase
 
 {{ range $applicationName, $application := .Values.applicationsList }}
-{{ if $application | getOrNil "mongodb" | getOrNil "enabled" }}
-{{ if $application | getOrNil "mongodb" | getOrNil "ref" }}
-{{ if (or (eq ($application | getOrNil "mongodb" | getOrNil "ref") $releaseName) (eq ($application | getOrNil "mongodb" | getOrNil "ref") "all")) }}
-  - name: {{ $releaseName }}-{{ $applicationName }}
+{{ if ($application | getOrNil "mongodb" | getOrNil "enabled") }}
+{{ if (eq ($application | getOrNil "mongodb" | getOrNil "ref") $releaseName) }}
+  - name: {{ $applicationName }}
+    db: {{ $applicationName }}
     roles:
       - name: readWrite
 {{ end }}
 {{ end }}
 {{ end }}
-{{ end }}
 
+resources:
+  limits:
+    cpu: "2"
+    memory: 2Gi
+  requests:
+    cpu: "0.3"
+    memory: 128M
 
 mongodbMonitoring:
   user:

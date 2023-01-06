@@ -1,4 +1,12 @@
 {{ $releaseName := .Release.Name }}
+{{ $releaseNamespace := .Release.Namespace }}
+{{ $values := .Values }}
+{{ $defaultReplicaCount := 3 }}
+
+{{ if (eq $releaseNamespace "dev") }}
+{{ $defaultReplicaCount = 1 }}
+{{ end }}
+
 nameOverride: {{ $releaseName }}
 fullnameOverride: {{ $releaseName }}
 ingress:
@@ -9,8 +17,15 @@ ingress:
   host: {{ $releaseName }}.{{ .Release.Namespace }}.{{ .Values.cluster.config.domain }}
 
 cluster:
-  replicaCount: 1
+  replicaCount: {{ $defaultReplicaCount }}
   extraSpec:
+    resources:
+      limits:
+        cpu: "2"
+        memory: 2Gi
+      requests:
+        cpu: "0.3"
+        memory: 128M
     override:
       statefulSet:
         spec:
@@ -19,21 +34,21 @@ cluster:
               labels:
                 logging.kube-core.io/flow-name: app
 vhosts:
-- {{ $releaseName }}
+{{ if (eq $releaseName "rabbitmq") }}
+- {{ $releaseNamespace }}
+{{ else if (not (eq $releaseName "rabbitmq")) }}
+{{ $rabbitmqName := $releaseName | replace "-rabbitmq" "" }}
+- {{ $rabbitmqName }}
+{{ end }}
+
 
 users:
 - name: {{ $releaseName }}-admin
   permissions:
-  - vhost: /
-  - vhost: {{ $releaseName }}
-{{ range $applicationName, $application := .Values.applicationsList }}
-{{ if $application | getOrNil "rabbitmq" | getOrNil "enabled" }}
-{{ if $application | getOrNil "rabbitmq" | getOrNil "ref" }}
-{{ if (or (eq ($application | getOrNil "rabbitmq" | getOrNil "ref") $releaseName) (eq ($application | getOrNil "rabbitmq" | getOrNil "ref") "all")) }}
-- name: {{ $applicationName }}
-  permissions:
-  - vhost: {{ $releaseName }}
-{{ end }}
-{{ end }}
-{{ end }}
-{{ end }}
+  - vhost: "/"
+  {{ if (eq $releaseName "rabbitmq") }}
+  - vhost: {{ $releaseNamespace }}
+  {{ else if (not (eq $releaseName "rabbitmq")) }}
+  {{ $rabbitmqName := $releaseName | replace "-rabbitmq" "" }}
+  - vhost: {{ $rabbitmqName }}
+  {{ end }}
