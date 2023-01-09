@@ -1,0 +1,37 @@
+apiVersion: logging.banzaicloud.io/v1beta1
+kind: ClusterOutput
+metadata:
+  name: tekton-output-gcs
+spec:
+  gcs:
+    auto_create_bucket: false
+    bucket: {{ .Values.bucket_name }}
+    project: {{ .Values.project }}
+    path: ${$.kubernetes.namespace_name}/${$.kubernetes.pod_name}/${$.kubernetes.container_name}/
+    object_key_format: '%{path}%{time_slice}_%{index}.log'
+    store_as: json
+    format:
+      type: json
+    buffer:
+      chunk_limit_records: 512
+      chunk_limit_size: 32M
+      disable_chunk_backup: true
+      flush_at_shutdown: true
+      flush_interval: 60s
+      flush_mode: interval
+      flush_thread_count: 16
+      overflow_action: drop_oldest_chunk
+      retry_forever: false
+      retry_max_interval: "30"
+      retry_timeout: 1h
+      retry_type: exponential_backoff
+      tags: time,$.kubernetes.namespace_name,$.kubernetes.pod_name,$.kubernetes.container_name
+      timekey: 1m
+      timekey_use_utc: true
+      timekey_wait: 1m
+      total_limit_size: 16384M
+    credentials_json:
+      valueFrom:
+        secretKeyRef:
+          key: {{ .Values.credentials_secret_key }}
+          name: {{ .Values.credentials_secret_name }}

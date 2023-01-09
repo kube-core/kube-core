@@ -1,0 +1,11 @@
+apiVersion: logging.banzaicloud.io/v1beta1
+kind: ClusterFlow
+metadata:
+  name: tekton-flow-gcs
+spec:
+  globalOutputRefs:
+  - tekton-output-gcs
+  match:
+  - select:
+      namespaces: 
+      - tekton-pipelines

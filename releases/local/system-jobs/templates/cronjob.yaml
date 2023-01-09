@@ -65,10 +65,10 @@ spec:
                 - -c
                 - |
                   # Cleans up workloads
-                  kubectl get pods -A | grep -E "{{ .Values.cleaner.includes }}" | awk '{print "kubectl -n "$1" delete pod "$2}' | bash
+                  kubectl get pods -A {{ if .Values.cleaner.excludeTekton }}| grep -vE "tekton"{{ end }}{{ if .Values.cleaner.excludeCatalogue }}| grep -vE "catalogue"{{ end }}| grep -E "{{ .Values.cleaner.includes }}" | awk '{print "kubectl -n "$1" delete pod "$2}' | bash
 
                   # Cleans up stale Terminating pods
-                  kubectl get pods -A | grep -E "{{ .Values.cleaner.includes }}" | awk '{print "kubectl -n "$1" delete pod "$2" --force --grace-period=0"}' | bash
+                  kubectl get pods -A {{ if .Values.cleaner.excludeTekton }}| grep -vE "tekton"{{ end }}{{ if .Values.cleaner.excludeCatalogue }}| grep -vE "catalogue"{{ end }}| grep -E "{{ .Values.cleaner.includes }}" | awk '{print "kubectl -n "$1" delete pod "$2" --force --grace-period=0"}' | bash
             {{ end }}
             {{ if .Values.tainter.enabled }}
             - name: tainter
