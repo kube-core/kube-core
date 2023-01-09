@@ -1,0 +1,4 @@
+project: project
+bucket_name: bucket
+credentials_secret_name: secret-name
+credentials_secret_key: secret-key
