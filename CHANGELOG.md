@@ -2,7 +2,13 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.9.3](https://github.com/kube-core/kube-core/compare/v0.9.2...v0.9.3)
+
+- core/templates: Fixed broken condition & Added extraValues for applications [`055c9af`](https://github.com/kube-core/kube-core/commit/055c9af69fc14a83ce91151834fa2f9250de9913)
+
 #### [v0.9.2](https://github.com/kube-core/kube-core/compare/v0.9.1...v0.9.2)
+
+> 7 January 2023
 
 - releases: Added app-extensions chart [`289b639`](https://github.com/kube-core/kube-core/commit/289b639618ac2ed1461509bb8273988aa2f15de1)
 - core/templates: Reworked extensions and options [`574c7a5`](https://github.com/kube-core/kube-core/commit/574c7a5a23c76ef42d35ccde2ff54cb9225787d2)
@@ -11,6 +17,7 @@ All notable changes to this project will be documented in this file. Dates are d
 - core/layers: Updated some default release options [`ffb6e75`](https://github.com/kube-core/kube-core/commit/ffb6e7522228cc4660ff21c54fd4a5deba9233c6)
 - core/releases: Added possibility to specify serviceaccountkeyname for cloud releases [`7694ccb`](https://github.com/kube-core/kube-core/commit/7694ccb0a86cee5565dcd5ad4183ba71283022a7)
 - core/templates: Added env options injection on applications and services [`33527a0`](https://github.com/kube-core/kube-core/commit/33527a03aa97d9901efc4b9591dafe2f2d676001)
+- release: v0.9.2 [`21b119e`](https://github.com/kube-core/kube-core/commit/21b119eac9c5dbb4d7554e55485a83a9a260eabb)
 
 #### [v0.9.1](https://github.com/kube-core/kube-core/compare/v0.9.0...v0.9.1)
 
