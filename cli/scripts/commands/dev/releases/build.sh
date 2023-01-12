@@ -115,12 +115,7 @@ do
 
     # Generating CRDs
     # TODO: Fix robusta default values
-    helm template --include-crds ${releasePath} --set crd.create=true --set installCRDs=true --set kps-robusta.clusterName="default" --set kps-robusta.enableServiceMonitors=true \
-    # -f ${corePath}/core/layers/base/config/cluster.yaml \
-    # -f ${corePath}/core/layers/base/config/core.yaml \
-    # -f ${corePath}/core/layers/config/cluster.yaml \
-    # -f ${corePath}/core/layers/config/core.yaml \
-    > ${templateOutput}
+    helm template --include-crds ${releasePath} --set crd.create=true --set installCRDs=true --set kps-robusta.clusterName="default" --set kps-robusta.enableServiceMonitors=true > ${templateOutput}
     kubectl slice --template '{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml' --output-dir ${crdsTmpFolder}/generated -f ${templateOutput} &> /dev/null
 
     # Packing the chart properly
@@ -136,7 +131,7 @@ do
         rm -rf ${templateOutput} ${crdsTmpFolder}
 
         # Removing Dependencies as we have a fresh chart just for CRDs
-        cat ${releaseCRDsPath}/Chart.yaml | yq e 'del(.dependencies)' - > ${releaseCRDsPath}/Chart.yaml.out
+        cat ${releaseCRDsPath}/Chart.yaml | yq 'del(.dependencies)' > ${releaseCRDsPath}/Chart.yaml.out
         cp -f ${releaseCRDsPath}/Chart.yaml.out ${releaseCRDsPath}/Chart.yaml &> /dev/null || true
         rm -rf ${releaseCRDsPath}/Chart.yaml.out
 

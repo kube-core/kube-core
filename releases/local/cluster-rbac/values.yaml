@@ -1,3 +1,5 @@
+cloud:
+  provider: gcp
 users:
   cluster-admin: []
   admin: []

@@ -18,8 +18,8 @@ spec:
         params:
           - name: secretRef
             value:
-              secretName: {{ (index .Values.releases "tekton" "secrets" "git-webhooks-token" "secretRef" "name") }}
-              secretKey: {{ (index .Values.releases "tekton" "secrets" "git-webhooks-token" "secretRef" "key") }}
+              secretName: {{ (index .Values "tekton" "secrets" "git-webhooks-token" "secretRef" "name") }}
+              secretKey: {{ (index .Values "tekton" "secrets" "git-webhooks-token" "secretRef" "key") }}
           - name: eventTypes
             value:
               - "Push Hook"

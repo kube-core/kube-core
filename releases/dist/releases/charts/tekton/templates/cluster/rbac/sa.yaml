@@ -4,31 +4,31 @@ metadata:
   namespace: tekton-pipelines
   name: tekton
 secrets:
-{{ if (eq (index .Values.releases "tekton" "secrets" "git-ssh" "enabled") true) }}
-- name: {{ (index .Values.releases "tekton" "secrets" "git-ssh" "secretRef" "name") }}
+{{ if (eq (index .Values "tekton" "secrets" "git-ssh" "enabled") true) }}
+- name: {{ (index .Values "tekton" "secrets" "git-ssh" "secretRef" "name") }}
 {{ end }}
 
-{{ if (eq (index .Values.releases "tekton" "secrets" "git-webhooks-token" "enabled") true) }}
-- name: {{ (index .Values.releases "tekton" "secrets" "git-webhooks-token" "secretRef" "name") }}
+{{ if (eq (index .Values "tekton" "secrets" "git-webhooks-token" "enabled") true) }}
+- name: {{ (index .Values "tekton" "secrets" "git-webhooks-token" "secretRef" "name") }}
 {{ end }}
 
-{{ if (eq (index .Values.releases "tekton" "secrets" "git-api-token" "enabled") true) }}
-- name: {{ (index .Values.releases "tekton" "secrets" "git-api-token" "secretRef" "name") }}
+{{ if (eq (index .Values "tekton" "secrets" "git-api-token" "enabled") true) }}
+- name: {{ (index .Values "tekton" "secrets" "git-api-token" "secretRef" "name") }}
 {{ end }}
 
-{{ if (eq (index .Values.releases "tekton" "secrets" "github-read-token" "github-enabled") true) }}
-- name: {{ (index .Values.releases "tekton" "secrets" "github-read-token" "secretRef" "name") }}
+{{ if (eq (index .Values "tekton" "secrets" "github-read-token" "github-enabled") true) }}
+- name: {{ (index .Values "tekton" "secrets" "github-read-token" "secretRef" "name") }}
 {{ end }}
 
-{{ if (eq (index .Values.releases "tekton" "secrets" "docker-registry" "enabled") true) }}
-- name: {{ (index .Values.releases "tekton" "secrets" "docker-registry" "secretRef" "name") }}
+{{ if (eq (index .Values "tekton" "secrets" "docker-registry" "enabled") true) }}
+- name: {{ (index .Values "tekton" "secrets" "docker-registry" "secretRef" "name") }}
 {{ end }}
 
-{{ if (eq (index .Values.releases "tekton" "secrets" "credentials" "enabled") true) }}
-- name: {{ (index .Values.releases "tekton" "secrets" "credentials" "secretRef" "name") }}
+{{ if (eq (index .Values "tekton" "secrets" "credentials" "enabled") true) }}
+- name: {{ (index .Values "tekton" "secrets" "credentials" "secretRef" "name") }}
 {{ end }}
 
 imagePullSecrets:
-{{ if (eq (index .Values.releases "tekton" "secrets" "credentials" "enabled") true) }}
-- name: {{ (index .Values.releases "tekton" "secrets" "credentials" "secretRef" "name") }}
+{{ if (eq (index .Values "tekton" "secrets" "credentials" "enabled") true) }}
+- name: {{ (index .Values "tekton" "secrets" "credentials" "secretRef" "name") }}
 {{ end }}

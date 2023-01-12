@@ -42,8 +42,8 @@ spec:
             - --log-format=json
             - --namespace=tekton-pipelines
             - --stream-logs=true
-            {{ if  .Values.releases.tekton.config.pipeline.externalLogs.enabled }}
-            - --external-logs={{ .Values.releases.tekton.config.pipeline.externalLogs.endpoint }}
+            {{ if  .Values.tekton.config.pipeline.externalLogs.enabled }}
+            - --external-logs={{ .Values.tekton.config.pipeline.externalLogs.endpoint }}
             {{ end }}
           env:
             - name: INSTALLED_NAMESPACE
@@ -69,4 +69,3 @@ spec:
         runAsUser: 65532
       serviceAccountName: tekton-dashboard
       volumes: []
-

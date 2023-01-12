@@ -1,0 +1,6 @@
+cluster:
+  common:
+    defaultServiceAnnotations: {}
+    defaultServiceLabels: {}
+    defaultIngressAnnotations: {}
+    defaultIngressLabels: {}
