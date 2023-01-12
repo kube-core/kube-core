@@ -65,6 +65,72 @@ templates:
     transformers: {}
     values: {}
     templatedValues: {}
+  raw:
+    config: {}
+    context: ""
+    chart: "kube-core/raw"
+    chartVersion: "latest"
+    enabled: false
+    extraReleaseValues: []
+    hooks: {}
+    type: "release"
+    injectCoreValues: false
+    jsonPatches: {}
+    labels: {}
+    manifests: []
+    namespace: "default"
+    needs: []
+    options:
+      renderRelease: true
+      renderOptions: true
+      renderExtensions: false
+      forceNamespace: false
+      forceNamespaceIngressClass: false
+      forceNamespaceVisitorGroup: false
+      forceClusterIssuer: ""
+      forceNamespaceClusterIssuer: false
+      forceVisitorGroups: ""
+      forceNamespaceNodeAffinity: false
+      forceNamespaceNodeSelector: false
+      patchIngresses: false
+      upgradeIngress: false
+      applyDefaultLabelsOnIngress: false
+      applyDefaultAnnotationsOnIngress: false
+      removeIngressClassAnnotation: false
+      removeIngressClassName: false
+      injectReloaderAnnotations: false
+      injectClusterLoggingLabel: false
+      injectIngressClassName: false
+      injectIngressHost: false
+      injectIngressTls: false
+      injectOauth2ProxyOnIngress: false
+      injectNamespaceOauth2ProxyOnIngress: false
+      injectSatisfyAnyAuthOnIngress: false
+      injectionToEnforcePublicAccessFromIngressAccessOperator: false
+    patches:
+      enabled: false
+      patches: {}
+    release: {}
+    scaling: {}
+    secrets: {}
+    extensions:
+      dynamicSecretsEnabled: true
+      configmapsEnabled: true
+      extraManifestsEnabled: true
+      rawManifestsEnabled: true
+      externalSecretsEnabled: true
+    extraManifests: {}
+    rawManifests: {}
+    configmaps: {}
+    cloud: {}
+    gitops:
+      enabled: false
+    external-secrets: false
+    dynamicSecrets: {}
+    strategicMergePatches: {}
+    transformers: {}
+    values: {}
+    templatedValues: {}
   application:
     config: {}
     chart: "kube-core/n9-api"
