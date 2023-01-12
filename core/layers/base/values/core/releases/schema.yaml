@@ -408,7 +408,6 @@ releases:
   predator: *release
   priority-class: *release
   prometheus-adapter: *release
-  rabbitmq-cluster: *release
   rabbitmq-operators: *release
   reloader: *release
   replicator: *release
