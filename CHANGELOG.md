@@ -2,8 +2,18 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.10.0](https://github.com/kube-core/kube-core/compare/v0.9.3...v0.10.0)
+
+- core/templates: Removed releasesCustom feature completely [`c73d298`](https://github.com/kube-core/kube-core/commit/c73d2985daf6b600112cc2a29ee127e1e3fe1740)
+- core/templates: Removed some unused template [`15378d8`](https://github.com/kube-core/kube-core/commit/15378d858d57c950e4f4a0a626417925aeb84a15)
+- core/templates: Updated raw releases to include release-options template [`55cb1a2`](https://github.com/kube-core/kube-core/commit/55cb1a27f13de5a973c277e1b826728e67ce34c4)
+- core/templates: Updated namespace releases to include release-options template [`c8c523b`](https://github.com/kube-core/kube-core/commit/c8c523bc54357f071f2cc6c3ea8097aa154e01b9)
+
 #### [v0.9.3](https://github.com/kube-core/kube-core/compare/v0.9.2...v0.9.3)
 
+> 10 January 2023
+
+- release: v0.9.3 [`b50a72e`](https://github.com/kube-core/kube-core/commit/b50a72ec92ab072ef1a5e676449b489a7e68a7d9)
 - core/templates: Fixed broken condition & Added extraValues for applications [`055c9af`](https://github.com/kube-core/kube-core/commit/055c9af69fc14a83ce91151834fa2f9250de9913)
 
 #### [v0.9.2](https://github.com/kube-core/kube-core/compare/v0.9.1...v0.9.2)
