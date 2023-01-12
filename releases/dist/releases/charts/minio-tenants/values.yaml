@@ -1,3 +1,10 @@
+cluster:
+  common:
+    defaultServiceAnnotations: {}
+    defaultServiceLabels: {}
+    defaultIngressAnnotations: {}
+    defaultIngressLabels: {}
+
 tenant:
   servers: 4
   volumesPerServer: 4

@@ -1,5 +1,42 @@
+# Git Provider & Config
+git:
+  provider: KUBE_CORE_GIT_PROVIDER
+  web: KUBE_CORE_GIT_WEB
+  github_read_token: ./keys/.github-read-token #KUBE_CORE_GITHUB_READ_TOKEN
+  api:
+    url: KUBE_CORE_GIT_API_URL
+    host: KUBE_CORE_GIT_API_HOST
+    token: ./keys/.git-api-token #KUBE_CORE_GIT_API_TOKEN
+  ssh:
+    url: KUBE_CORE_GIT_SSH_URL
+    host: KUBE_CORE_GIT_SSH_HOST
+    key: ./keys/.git-ssh-key #KUBE_CORE_GIT_SSH_KEY
+    known_hosts: ./keys/.git-ssh-hosts #KUBE_CORE_GIT_SSH_KNOWN_HOSTS
+  webhooks:
+    token: ./keys/.git-webhooks-token #KUBE_CORE_GIT_WEBHOOKS_TOKEN
+  bot:
+    user: KUBE_CORE_GIT_BOT_USER
+    name: KUBE_CORE_GIT_BOT_NAME
+
+cloud:
+  provider: KUBE_CORE_CLOUD_PROVIDER
+  default:
+    location: KUBE_CORE_CLOUD_DEFAULT_LOCATION
+  registry:
+    hostname: REGISTRY
 # Cluster configuration
 cluster:
+  common:
+    defaultIngressAnnotations: {}
+    defaultServiceAnnotations: {}
+  config:
+    name: KUBE_CORE_CLUSTER_CONFIG_NAME
+    repository:
+      name: KUBE_CORE_CLUSTER_CONFIG_REPOSITORY_NAME
+      url: KUBE_CORE_CLUSTER_CONFIG_REPOSITORY_URL
+      ref: KUBE_CORE_CLUSTER_CONFIG_REPOSITORY_REF
+      path: KUBE_CORE_CLUSTER_CONFIG_REPOSITORY_PATH
+    adminEmail: KUBE_CORE_CLUSTER_CONFIG_ADMIN_EMAIL
   logging:
     integrations:
       tekton:
@@ -8,7 +45,11 @@ cluster:
     namespace: integration
     branch: develop
     config:
+      apply:
+        enabled: false
+        dry: ""
       autoMerge: "false"
+      kubeCoreImage: k8skubecore/kube-core:latest
       lighthouse:
         bucket: tekton-storage
       run:
@@ -25,43 +66,10 @@ cluster:
         image: "ihebchakroun/node-14.15.4-chrome-lighthouse:latest"
 
 
-externalLogs:
-  enabled: false
-  endpoint: http://tekton-logs-server.logging.svc.cluster.local:3000/logs
+
+
+
 tekton:
-  pipeline:
-    cleanup:
-      enabled: true
-  webhook:
-    scaling:
-      minAvailable: 2
-  storage:
-    bucket: kube-core-tekton-storage
-  core-hooks:
-    ingress:
-      subdomain: "core-hooks.tekton-pipelines"
-      annotations: {}
-      labels: {}
-  cluster-hooks:
-    ingress:
-      subdomain: "cluster-hooks.tekton-pipelines"
-      annotations: {}
-      labels: {}
-  app-hooks:
-    ingress:
-      subdomain: "app-hooks.tekton-pipelines"
-      annotations: {}
-      labels: {}
-  garden-hooks:
-    ingress:
-      subdomain: "garden-hooks.tekton-pipelines"
-      annotations: {}
-      labels: {}
-  dashboard:
-    ingress:
-      subdomain: "tekton-dashboard.tekton-pipelines"
-      annotations: {}
-      labels: {}
   config:
     hooks:
       appPushDevelop:
@@ -73,10 +81,43 @@ tekton:
         pipelineRef: app-push
       gardenPushDevelop:
         pipelineRef: garden-deploy
-
-releases:
-  tekton:
-    secrets:
+    pipeline:
+      cleanup:
+        enabled: true
+      externalLogs:
+        enabled: false
+        endpoint: http://tekton-logs-server.logging.svc.cluster.local:3000/logs
+    webhook:
+      scaling:
+        minAvailable: 2
+    storage:
+      bucket: kube-core-tekton-storage
+    core-hooks:
+      ingress:
+        subdomain: "core-hooks.tekton-pipelines"
+        annotations: {}
+        labels: {}
+    cluster-hooks:
+      ingress:
+        subdomain: "cluster-hooks.tekton-pipelines"
+        annotations: {}
+        labels: {}
+    app-hooks:
+      ingress:
+        subdomain: "app-hooks.tekton-pipelines"
+        annotations: {}
+        labels: {}
+    garden-hooks:
+      ingress:
+        subdomain: "garden-hooks.tekton-pipelines"
+        annotations: {}
+        labels: {}
+    dashboard:
+      ingress:
+        subdomain: "tekton-dashboard.tekton-pipelines"
+        annotations: {}
+        labels: {}
+  secrets:
       credentials:
         crossplaneGenerated: false
         description: Credentials to authenticate to your Cloud Provider.

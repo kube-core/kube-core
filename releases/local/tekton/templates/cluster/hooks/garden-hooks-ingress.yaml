@@ -4,7 +4,7 @@ metadata:
   name: garden-hooks
 spec:
   rules:
-  - host: {{ (index .Values.tekton "garden-hooks" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
+  - host: {{ (index .Values.tekton.config "garden-hooks" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
     http:
       paths:
       - backend:
@@ -16,5 +16,5 @@ spec:
         pathType: Prefix
   tls:
   - hosts:
-    - {{ (index .Values.tekton "garden-hooks" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
-    secretName: {{ (index .Values.tekton "garden-hooks" "ingress" "subdomain") | replace "." "-"}}-tls
+    - {{ (index .Values.tekton.config "garden-hooks" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
+    secretName: {{ (index .Values.tekton.config "garden-hooks" "ingress" "subdomain") | replace "." "-"}}-tls

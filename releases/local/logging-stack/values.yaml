@@ -16,6 +16,7 @@ cluster:
   config:
     name: test
   logging:
+    flows: {}
     dashboards:
       enabled: true
       extraObjects:
@@ -47,6 +48,8 @@ cluster:
             limits:
               cpu: 2
               memory: 4Gi
+      kibana:
+        enabled: true
       fluentbit:
         nodeSelector: {}
         enabled: true

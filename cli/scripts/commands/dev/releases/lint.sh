@@ -95,10 +95,6 @@ if [[ ! -z "${list}" ]] ; then
 echo "${list}" | while read releasePath;
 do
     helm lint ${releasePath} --set crd.create=true --set installCRDs=true --set kps-robusta.clusterName="default" --set kps-robusta.enableServiceMonitors=true
-    # -f ${corePath}/core/layers/base/config/cluster.yaml \
-    # -f ${corePath}/core/layers/base/config/core.yaml \
-    # -f ${corePath}/core/layers/config/cluster.yaml \
-    # -f ${corePath}/core/layers/config/core.yaml
 done
 fi
 echo "Done linting !"
