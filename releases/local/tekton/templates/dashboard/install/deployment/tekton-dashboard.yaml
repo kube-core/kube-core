@@ -40,9 +40,11 @@ spec:
             - --read-only=false
             - --log-level=info
             - --log-format=json
-            - --namespace=
+            - --namespace=tekton-pipelines
             - --stream-logs=true
-            - --external-logs=
+            {{ if  .Values.releases.tekton.config.pipeline.externalLogs.enabled }}
+            - --external-logs={{ .Values.releases.tekton.config.pipeline.externalLogs.endpoint }}
+            {{ end }}
           env:
             - name: INSTALLED_NAMESPACE
               valueFrom:
