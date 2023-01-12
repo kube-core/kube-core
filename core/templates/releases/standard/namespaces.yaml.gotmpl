@@ -11,7 +11,7 @@
 {{ end }}
 
 {{- range $namespaceReleaseName, $namespaceRelease := $namespacesList }}
-{{ $namespaceRelease := (merge $namespaceRelease $values.templates.release) }}
+{{ $namespaceRelease := (merge $namespaceRelease $values.templates.namespace) }}
 {{- if not (eq ($namespaceRelease | getOrNil "enabled") false ) -}}
 {{ $seen := false }}
 {{ range $coreReleaseName, $coreRelease := $releasesList }}
@@ -28,8 +28,7 @@
   chart: ../releases/dist/releases/charts/namespace
   namespace: {{ $namespaceReleaseName }}
   # namespace: kube-core
-  transformers:
-  {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") (dict "values" $values "releaseName" $namespaceReleaseName "item" $newValues "releaseNamespace" $namespaceReleaseName ) }}
+  {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") (dict "values" $values "releaseName" $namespaceReleaseName "item" $newValues "releaseNamespace" $namespaceReleaseName ) }}
   labels:
     type: namespace
   values:
