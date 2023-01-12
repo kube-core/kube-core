@@ -91,10 +91,6 @@ releases:
     enabled: false
   priority-class:
     enabled: false
-  rabbitmq-cluster:
-    enabled: false
-  rabbitmq-config:
-    enabled: false
   rabbitmq-operators:
     enabled: false
   reloader:

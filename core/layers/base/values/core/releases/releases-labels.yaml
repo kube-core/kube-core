@@ -228,14 +228,6 @@ releases:
       group: system
   prometheus-adapter:
     labels: {}
-  rabbitmq-cluster:
-    labels:
-      component: cluster
-      group: rabbitmq
-  rabbitmq-config:
-    labels:
-      component: config
-      group: rabbitmq
   rabbitmq-operators:
     labels:
       component: rabbitmq

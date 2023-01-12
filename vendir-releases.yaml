@@ -474,12 +474,6 @@ directories:
       - path: priority-class
         directory:
           path: ../../../releases/local/priority-class
-      - path: rabbitmq-cluster
-        directory:
-          path: ../../../releases/local/rabbitmq-cluster
-      - path: rabbitmq-config
-        directory:
-          path: ../../../releases/local/rabbitmq-config
       - path: sloop
         directory:
           path: ../../../releases/local/sloop
