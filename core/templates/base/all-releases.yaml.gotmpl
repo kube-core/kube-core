@@ -10,10 +10,6 @@
 {{ tpl (readFile "templates/releases/standard/releases-raw.yaml.gotmpl") . }}
 {{- end -}}
 
-{{- if .Values.core.releasesCustomEnabled -}}
-{{ tpl (readFile "templates/releases/custom/releases-custom.yaml.gotmpl") . }}
-{{- end -}}
-
 {{- end -}}
 
 {{- if .Values.core.applicationsEnabled -}}
