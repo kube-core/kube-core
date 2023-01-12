@@ -1,1 +1,5 @@
 cluster: {{ toYaml .Values.cluster | nindent 2 }}
+project: {{ .Values.cloud.project }}
+bucket_name: {{ .Values.cloud.projectShortName }}-tekton-logs
+credentials_secret_name: logging-gcs
+credentials_secret_key: privateKey

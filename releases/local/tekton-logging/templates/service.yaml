@@ -1,0 +1,19 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: tekton-logs-server
+  annotations:
+  {{ if .Values.cluster.common.defaultServiceAnnotations }}
+  {{ toYaml .Values.cluster.common.defaultServiceAnnotations | nindent 4 }}
+  {{ end }}
+  labels:
+    app: tekton-logs-server
+  {{ if .Values.cluster.common.defaultServiceLabels }}
+  {{ toYaml .Values.cluster.common.defaultServiceLabels | nindent 4 }}
+  {{ end }}
+spec:
+  ports:
+  - port: 3000
+    targetPort: 3000
+  selector:
+    app: logs-server-gcs
