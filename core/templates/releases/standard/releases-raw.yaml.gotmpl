@@ -1,29 +1,33 @@
 {{ $raw := .Values.releasesRaw }}
 {{ $values := .Values }}
 {{- range $key, $value := $raw }}
-{{ if $value.enabled }}
+{{ $release := (merge $value $values.templates.raw) }}
+{{ if $release.enabled }}
 
 - name: {{ $key }}
-  installed: {{ $value.enabled }}
+  installed: {{ $release.enabled }}
   chart: ../releases/dist/releases/charts/raw
-  namespace: {{ $value.namespace }}
-  transformers:
-  {{ $_ := set $value "chart" "../releases/dist/releases/charts/raw" }}
-  {{ $_ := set $value "type" "raw" }}
-  {{ $_ := set $value "needs" "" }}
-  {{- tpl (readFile "templates/releases/standard/release-labels.yaml.gotmpl") (dict "values" $values "releaseName" $key "item" $value "releaseNamespace" $value.namespace ) }}
+  namespace: {{ $release.namespace }}
+
+  {{ $_ := set $release "chart" "../releases/dist/releases/charts/raw" }}
+  {{ $_ := set $release "type" "raw" }}
+  {{ $_ := set $release "needs" "" }}
+
+  {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") (dict "values" $values "releaseName" $key "item" $release "releaseNamespace" $release.namespace ) }}
   version: 1.0.1
-  {{ if $value.needs }}
-  needs: {{ toYaml $value.needs | nindent 2 }}
+  {{ if $release.needs }}
+  needs: {{ toYaml $release.needs | nindent 2 }}
   {{ end }}
-  {{ if $value.labels }}
-  labels: {{ toYaml $value.labels | nindent 4 }}
+  {{ if $release.labels }}
+  labels: {{ toYaml $release.labels | nindent 4 }}
     app: {{ $key }}
     component: manifests
+    type: {{ $release.type }}
   {{ else }}
   labels:
     app: {{ $key }}
     component: manifests
+    type: {{ $release.type }}
   {{ end }}
   values:
   - "./values/raw.yaml.gotmpl"
