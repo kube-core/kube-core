@@ -1,5 +1,6 @@
 cluster: {{ toYaml .Values.cluster | nindent 2}}
 cloud: {{ toYaml .Values.cloud | nindent 2}}
 git: {{ toYaml .Values.git | nindent 2}}
-tekton: {{ toYaml (index .Values.releases .Release.Name "config") | nindent 2 }}
-releases: {{ toYaml .Values.releases | nindent 2}}
+tekton:
+  config: {{ toYaml (index .Values.releases .Release.Name "config") | nindent 4 }}
+  secrets: {{ toYaml (index .Values.releases .Release.Name "secrets") | nindent 4 }}
