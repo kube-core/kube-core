@@ -6,7 +6,6 @@ clusterOperator:
     enabled: {{ index .Values.releases "kps" "enabled" }}
     serviceMonitor:
       enabled: true
-      namespace: {{ index .Values.releases "kps" "namespace" }}
 
 msgTopologyOperator:
   fullnameOverride: rabbitmq-topology-operator
@@ -14,4 +13,3 @@ msgTopologyOperator:
     enabled: {{ index .Values.releases "kps" "enabled" }}
     serviceMonitor:
       enabled: true
-      namespace: {{ index .Values.releases "kps" "namespace" }}
