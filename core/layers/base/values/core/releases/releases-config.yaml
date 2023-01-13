@@ -1,4 +1,54 @@
 releases:
+  tekton:
+    config:
+      pipeline:
+        externalLogs:
+          enabled: true
+        cleanup:
+          enabled: true
+          keep:
+            pipelineRuns: 100
+            taskRuns: 500
+      storage:
+        bucket: kube-core-tekton-storage
+      webhook:
+        scaling:
+          minAvailable: 2
+      hooks:
+        appPushDevelop:
+          templateRef: app-push
+        gardenPushDevelop:
+          templateRef: garden-push
+      templates:
+        appPushDevelop:
+          pipelineRef: app-push
+        gardenPushDevelop:
+          pipelineRef: garden-deploy
+      app-hooks:
+        ingress:
+          annotations: {}
+          labels: {}
+          subdomain: "app-hooks.tekton-pipelines"
+      cluster-hooks:
+        ingress:
+          annotations: {}
+          labels: {}
+          subdomain: "cluster-hooks.tekton-pipelines"
+      core-hooks:
+        ingress:
+          annotations: {}
+          labels: {}
+          subdomain: "core-hooks.tekton-pipelines"
+      dashboard:
+        ingress:
+          annotations: {}
+          labels: {}
+          subdomain: "tekton-dashboard.tekton-pipelines"
+      garden-hooks:
+        ingress:
+          annotations: {}
+          labels: {}
+          subdomain: "garden-hooks.tekton-pipelines"
   kyverno:
     config:
       extraResourceFilters: []
