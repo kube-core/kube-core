@@ -127,7 +127,7 @@ echo "${manifestsList}" | grep -v .gitkeep | while read f; do
   log_debug "Processing $f file..."
 
   namespace=$(dirname $f | xargs basename)
-  if [[ "${namespace}" == "input" ]]
+  if [[ "${namespace}" == "manifests" ]]
   then
     namespace="configmaps"
   fi
