@@ -2,7 +2,13 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.11.1](https://github.com/kube-core/kube-core/compare/v0.11.0...v0.11.1)
+
+- cli/scripts: Added helmfile.concurrency parameter to mitigate concurrent I/O issues [`be67be6`](https://github.com/kube-core/kube-core/commit/be67be6209d6be1099170c5179bc3a5b9d507131)
+
 #### [v0.11.0](https://github.com/kube-core/kube-core/compare/v0.10.0...v0.11.0)
+
+> 19 January 2023
 
 - releases: Upgrades & Regeneration [`c8ea7e0`](https://github.com/kube-core/kube-core/commit/c8ea7e05dd276d68fd3adf71f01ab73fa91271d7)
 - core/layers: Removed generate folder [`ef93fcd`](https://github.com/kube-core/kube-core/commit/ef93fcdf1005511ae6793bdcc14cd41705cb2a0f)
@@ -15,6 +21,7 @@ All notable changes to this project will be documented in this file. Dates are d
 - releases: Added opencost [`5d6fc81`](https://github.com/kube-core/kube-core/commit/5d6fc8149a3179d3d6f941ce418ea7f7171c997e)
 - cli/build: Replaced local build outputs with releases by default [`4fb73aa`](https://github.com/kube-core/kube-core/commit/4fb73aac661c7955874e8a4731d5c02711424226)
 - core/layers: Migrated tekton values to config [`f760c75`](https://github.com/kube-core/kube-core/commit/f760c75ab5776679ca9259fe569e0de14885d2da)
+- release: v0.11.0 [`b8e199e`](https://github.com/kube-core/kube-core/commit/b8e199e3e4b0e04ea1e6896bc480f45d3b99568b)
 - core/values: Fixed tekton values template [`6169f7b`](https://github.com/kube-core/kube-core/commit/6169f7b99f93f4bcbcc35ac64e065c4416b43e78)
 - core/values: Removed kps namespace for rabbitmq-operator service monitor [`8a5147c`](https://github.com/kube-core/kube-core/commit/8a5147ce89a657ca315aaae8de1efd5c246a10da)
 
