@@ -11,7 +11,6 @@ nameOverride: {{ $releaseName }}
 fullnameOverride: {{ $releaseName }}
 ingress:
   enabled: true
-  className: "{{ coalesce .Values.applicationsConfig.defaultIngressClass .Values.servicesConfig.defaultIngressClass .Values.cluster.common.defaultIngressClass }}"
   tls:
     enabled: true
   host: {{ $releaseName }}.{{ .Release.Namespace }}.{{ .Values.cluster.config.domain }}
@@ -19,6 +18,9 @@ ingress:
 cluster:
   replicaCount: {{ $defaultReplicaCount }}
   extraSpec:
+    rabbitmq:
+      additionalConfig: |
+        prometheus.return_per_object_metrics = true
     resources:
       limits:
         cpu: "2"

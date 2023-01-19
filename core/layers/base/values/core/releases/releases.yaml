@@ -449,6 +449,16 @@ releases:
     namespace: mongodb
     namespaceShortName: mdb
     chart: ../releases/dist/releases/charts/mongodb-managed
+  postgres-managed:
+    shortName: pgs-mng
+    namespace: postgres
+    namespaceShortName: pgs
+    chart: ../releases/dist/releases/charts/postgres-managed
+  postgres-operator:
+    shortName: pgs-ope
+    namespace: postgres
+    namespaceShortName: pgs
+    chart: ../releases/dist/releases/charts/postgres-operator
   flux-repository:
     shortName: flux-rep
     namespace: flux-system
@@ -489,3 +499,8 @@ releases:
     namespace: opencost
     namespaceShortName: ocst
     chart: ../releases/dist/releases/charts/opencost
+  env-config:
+    shortName: env
+    namespace: kube-core
+    namespaceShortName: kc
+    chart: ../releases/dist/releases/charts/env-config

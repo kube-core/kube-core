@@ -262,6 +262,17 @@ releases:
       keycloak: {}
       postgresql: {}
   kps:
+    scheduling:
+      all:
+        tolerations:
+          - key: "type"
+            operator: "Equal"
+            value: "system"
+            effect: "NoSchedule"
+          - key: "type"
+            operator: "Equal"
+            value: "system"
+            effect: "NoExecute"
     config:
       alertmanager:
         additionalReceivers: []

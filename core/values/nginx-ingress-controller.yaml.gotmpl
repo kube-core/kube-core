@@ -2,27 +2,27 @@
 ## Name of the ingress class to route through this controller
 ##
 ingressClassResource:
-  name: {{ index .Values.releases .Release.Name "config" "ingressClass" }}
+  name: {{ .Values.cluster.common.defaultIngressClass }}
   enabled: true
   default: true
-  controllerClass: {{ index .Values.releases .Release.Name "config" "controllerClass" }}
+  controllerClass: kube-core.io/{{ .Values.cluster.common.defaultIngressClass }}
   parameters: {}
-electionID: {{ index .Values.releases .Release.Name "config" "ingressClass" }}
+electionID: {{ .Values.cluster.common.defaultIngressClass }}
 extraArgs:
-  ingress-class: {{ index .Values.releases .Release.Name "config" "ingressClass" }}
+  ingress-class: {{ .Values.cluster.common.defaultIngressClass }}
 {{ else }}
 fullnameOverride: nginx-ingress-controller-{{ .Release.Namespace }}
 # If not core ingress-controller, scope it (e.g for services)
 ingressClassResource:
-  name: {{ index .Values.releases .Release.Name "config" "ingressClass" }}-{{ .Release.Namespace }}
+  name: {{ .Values.cluster.common.defaultIngressClass }}-{{ .Release.Namespace }}
   enabled: true
   default: false
-  controllerClass: {{ index .Values.releases .Release.Name "config" "controllerClass" }}-{{ .Release.Namespace }}
+  controllerClass: kube-core.io/{{ .Values.cluster.common.defaultIngressClass }}-{{ .Release.Namespace }}
   parameters: {}
-electionID: {{ index .Values.releases .Release.Name "config" "ingressClass" }}-{{ .Release.Namespace }}
+electionID: {{ .Values.cluster.common.defaultIngressClass }}-{{ .Release.Namespace }}
 
 extraArgs:
-  ingress-class: {{ index .Values.releases .Release.Name "config" "ingressClass" }}-{{ .Release.Namespace }}
+  ingress-class: {{ .Values.cluster.common.defaultIngressClass }}-{{ .Release.Namespace }}
 {{ end }}
 
 

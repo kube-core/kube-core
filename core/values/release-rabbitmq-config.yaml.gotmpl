@@ -1,5 +1,5 @@
 {{ $values := .values }}
-{{ $releases := (merge $values.releases $values.applicationsList $values.servicesList )}}
+{{ $releases := (merge $values.releases $values.applications $values.services )}}
 {{ $releaseNamespace := .releaseNamespace }}
 
 {{ $cloudProject := $values.cloud.project }}
@@ -22,6 +22,12 @@
 {{ $rabbitmqShared := (eq $rabbitmqType "shared") }}
 {{ $rabbitmqExternal := (eq $rabbitmqType "external") }}
 
+{{ $defaultReplicaCount := 3 }}
+
+{{ if (eq $releaseNamespace "dev") }}
+{{ $defaultReplicaCount = 1 }}
+{{ end }}
+
 {{ if $rabbitmqDedicated }}
 # {{ $defaultVhost = $mainReleaseName }}
 {{ $defaultVhost = "apps" }}
@@ -39,7 +45,7 @@ resources:
   rabbitmq-cluster:
     {{ $mainReleaseName }}:
       name: {{ $rabbitmqClusterRef }}
-      replicas: 1
+      replicas: {{ (coalesce ($rabbitmq | getOrNil "replicaCount") $defaultReplicaCount) }}
 
   rabbitmq-vhost:
     {{ $mainReleaseName }}-root:
@@ -107,19 +113,16 @@ resources:
 {{ if $rabbitmq | getOrNil "defaultTopologyEnabled" }}
   rabbitmq-exchange:
   {{ if ($rabbitmq | getOrNil "queues" | getOrNil "default" | getOrNil "enabled") }}
-    {{ $releaseNamespace }}-{{ $mainReleaseName }}-in:
+    {{ $mainReleaseName }}-in:
       rabbitmqClusterName: {{ $rabbitmqClusterRef }}
       rabbitmqClusterNamespace: {{ $releaseNamespace }}
-    {{ $releaseNamespace }}-{{ $mainReleaseName }}-out:
+    {{ $mainReleaseName }}-out:
       rabbitmqClusterName: {{ $rabbitmqClusterRef }}
       rabbitmqClusterNamespace: {{ $releaseNamespace }}
   {{ end }}
   {{ if ($rabbitmq | getOrNil "queues" | getOrNil "custom" | getOrNil "enabled") }}
   {{ range ($rabbitmq | getOrNil "queues" | getOrNil "custom" | getOrNil "queues") }}
   {{ $name := .name }}
-  {{ if ($rabbitmq | getOrNil "queues" | getOrNil "custom" | getOrNil "prefix") }}
-  {{ $name = (printf "%s-%s-%s" $releaseNamespace $mainReleaseName .name) }}
-  {{ end }}
     {{ $name }}:
       rabbitmqClusterName: {{ $rabbitmqClusterRef }}
       rabbitmqClusterNamespace: {{ $releaseNamespace }}
@@ -128,19 +131,16 @@ resources:
 
   rabbitmq-queue:
   {{ if ($rabbitmq | getOrNil "queues" | getOrNil "default" | getOrNil "enabled") }}
-    {{ $releaseNamespace }}-{{ $mainReleaseName }}-in:
+    {{ $mainReleaseName }}-in:
       rabbitmqClusterName: {{ $rabbitmqClusterRef }}
       rabbitmqClusterNamespace: {{ $releaseNamespace }}
-    {{ $releaseNamespace }}-{{ $mainReleaseName }}-out:
+    {{ $mainReleaseName }}-out:
       rabbitmqClusterName: {{ $rabbitmqClusterRef }}
       rabbitmqClusterNamespace: {{ $releaseNamespace }}
   {{ end }}
   {{ if ($rabbitmq | getOrNil "queues" | getOrNil "custom" | getOrNil "enabled") }}
   {{ range ($rabbitmq | getOrNil "queues" | getOrNil "custom" | getOrNil "queues") }}
   {{ $name := .name }}
-  {{ if ($rabbitmq | getOrNil "queues" | getOrNil "custom" | getOrNil "prefix") }}
-  {{ $name = (printf "%s-%s-%s" $releaseNamespace $mainReleaseName .name) }}
-  {{ end }}
     {{ $name }}:
       rabbitmqClusterName: {{ $rabbitmqClusterRef }}
       rabbitmqClusterNamespace: {{ $releaseNamespace }}
@@ -149,19 +149,16 @@ resources:
 
   rabbitmq-binding:
   {{ if ($rabbitmq | getOrNil "queues" | getOrNil "default" | getOrNil "enabled") }}
-    {{ $releaseNamespace }}-{{ $mainReleaseName }}-in:
+    {{ $mainReleaseName }}-in:
       rabbitmqClusterName: {{ $rabbitmqClusterRef }}
       rabbitmqClusterNamespace: {{ $releaseNamespace }}
-    {{ $releaseNamespace }}-{{ $mainReleaseName }}-out:
+    {{ $mainReleaseName }}-out:
       rabbitmqClusterName: {{ $rabbitmqClusterRef }}
       rabbitmqClusterNamespace: {{ $releaseNamespace }}
   {{ end }}
   {{ if ($rabbitmq | getOrNil "queues" | getOrNil "custom" | getOrNil "enabled") }}
   {{ range ($rabbitmq | getOrNil "queues" | getOrNil "custom" | getOrNil "queues") }}
   {{ $name := .name }}
-  {{ if ($rabbitmq | getOrNil "queues" | getOrNil "custom" | getOrNil "prefix") }}
-  {{ $name = (printf "%s-%s-%s" $releaseNamespace $mainReleaseName .name) }}
-  {{ end }}
     {{ $name }}:
       rabbitmqClusterName: {{ $rabbitmqClusterRef }}
       rabbitmqClusterNamespace: {{ $releaseNamespace }}
@@ -169,3 +166,14 @@ resources:
   {{ end }}
 
   {{ end }}
+
+{{ if $rabbitmq | getOrNil "customTopologyEnabled" }}
+{{ range $kindName, $kindList := $rabbitmq | getOrNil "customTopology" }}
+  rabbitmq-{{ $kindName }}:
+{{ range $resourceName, $resourceConfig := $kindList }}
+    {{ $_ := set $resourceConfig "rabbitmqClusterName" (coalesce ($resourceConfig | getOrNil "rabbitmqClusterName") $rabbitmqClusterRef) }}
+    {{ $_ := set $resourceConfig "rabbitmqClusterNamespace" (coalesce ($resourceConfig | getOrNil "rabbitmqClusterNamespace") $releaseNamespace) }}
+    {{ $resourceName }}: {{ toYaml $resourceConfig | nindent 6 }}
+{{ end }}
+{{ end }}
+{{ end }}

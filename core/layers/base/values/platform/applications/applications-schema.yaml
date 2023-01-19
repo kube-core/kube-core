@@ -6,7 +6,7 @@ applicationsConfig:
     applyDefaultAnnotationsOnIngress: false
     applyDefaultLabelsOnIngress: false
     injectClusterLoggingLabel: false
-    injectIngressClassName: false
+    injectDefaultIngressClassName: false
     injectReloaderAnnotations: false
     patchIngresses: false
     injectIngressHost: false

@@ -1,5 +1,5 @@
 {{ $values := .values }}
-{{ $releases := (merge $values.releases $values.applicationsList $values.servicesList )}}
+{{ $releases := (merge $values.releases $values.applications $values.services )}}
 
 {{ $releaseNamespace := .releaseNamespace }}
 {{ $mainReleaseName := (.releaseName | replace "-patches" "") }}
