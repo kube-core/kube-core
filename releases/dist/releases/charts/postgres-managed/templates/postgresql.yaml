@@ -1,0 +1,100 @@
+{{- $value := $.Values.cluster -}}
+apiVersion: acid.zalan.do/v1
+kind: postgresql
+metadata:
+  name: {{ printf "%s-%s" (required "A .Values.cluster.teamIdPrefix is required to create the cluster" $value.teamIdPrefix) ( coalesce $value.name (include "postgres-managed.fullname" .)) }}
+  {{- if $value.preConfigured.controllerId }}
+  annotations:
+    acid.zalan.do/controller: {{ $value.preConfigured.controllerId | quote }}
+  {{- with $value.annotations }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- else }}
+  {{- with $value.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- end }}
+spec:
+  postgresql:
+    version: {{ $value.version | quote }}
+  teamId: {{ $value.teamIdPrefix | quote }}
+  numberOfInstances: {{ $value.replicaCount }}
+  enableLogicalBackup: {{ $value.enableLogicalBackup }}
+  volume:
+    size: {{ $value.storage.size }}
+    {{- if $value.storage.class }}
+    storageClass: {{ $value.storage.class }}
+    {{- end }}
+  {{- with $value.resources }}
+  resources:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with $value.tolerations }}
+  tolerations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.cluster.nodeAffinity }}
+  affinity:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- if $value.preConfigured.awsBackup.roleIam }}
+  podAnnotations:
+    iam.amazonaws.com/role: {{ $value.preConfigured.awsBackup.roleIam | quote }}
+  {{- with $value.podAnnotations }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- else }}
+  {{- with $value.podAnnotations }}
+  podAnnotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- end }}
+  {{- if $value.preConfigured.gcpBackup.secretName }}
+  additionalVolumes:
+  - mountPath: /var/secrets/google
+    name: gcp-backup
+    volumeSource:
+      secret:
+        secretName: {{ $value.preConfigured.gcpBackup.secretName }}
+  {{- end }}
+  env:
+    {{- if $value.preConfigured.wallGBackup }}
+    - name: USE_WALG_BACKUP
+      value: "true"
+    - name: USE_WALG_RESTORE
+      value: "true"
+    - name: CLONE_USE_WALG_RESTORE
+      value: "true"
+    {{- end }}
+    {{- if $value.preConfigured.gcpBackup.secretKey }}
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: {{ printf "/var/secrets/google/%s" $value.preConfigured.gcpBackup.secretKey }}
+    {{- end }}
+    {{- if $value.preConfigured.gcpBackup.bucketName }}
+    - name: WAL_GS_BUCKET
+      value: {{ $value.preConfigured.gcpBackup.bucketName }}
+    {{- end }}
+    {{- if $value.preConfigured.awsBackup.bucketName }}
+    - name: WAL_S3_BUCKET
+      value: {{ $value.preConfigured.awsBackup.bucketName }}
+    {{- end }}
+    {{- if $value.preConfigured.awsBackup.secretName }}
+    - name: AWS_ACCESS_KEY_ID
+      valueFrom:
+        secretKeyRef:
+          key: AWS_ACCESS_KEY_ID
+          name: {{ $value.preConfigured.awsBackup.secretName }}
+    - name: AWS_SECRET_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          key: AWS_SECRET_ACCESS_KEY
+          name: {{ $value.preConfigured.awsBackup.secretName }}
+    {{- end }}
+    {{- if $value.preConfigured.awsBackup.prefix }}
+    - name: WALG_S3_PREFIX
+      value: {{ printf "s3://%s/%s" $value.preConfigured.awsBackup.bucketName $value.preConfigured.awsBackup.prefix }}
+    {{- end }}
+  {{- with $value.additionnalSpec }}
+  {{- toYaml . | nindent 2 }}
+  {{- end }}

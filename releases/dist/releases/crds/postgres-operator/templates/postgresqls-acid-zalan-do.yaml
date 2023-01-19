@@ -5,8 +5,6 @@ metadata:
   name: postgresqls.acid.zalan.do
   labels:
     app.kubernetes.io/name: postgres-operator
-  annotations:
-    "helm.sh/hook": crd-install
 spec:
   group: acid.zalan.do
   names:
@@ -150,18 +148,12 @@ spec:
                       - "transaction"
                   numberOfInstances:
                     type: integer
-                    minimum: 2
+                    minimum: 1
                   resources:
                     type: object
-                    required:
-                      - requests
-                      - limits
                     properties:
                       limits:
                         type: object
-                        required:
-                          - cpu
-                          - memory
                         properties:
                           cpu:
                             type: string
@@ -171,9 +163,6 @@ spec:
                             pattern: '^(\d+(e\d+)?|\d+(\.\d+)?(e\d+)?[EPTGMK]i?)$'
                       requests:
                         type: object
-                        required:
-                          - cpu
-                          - memory
                         properties:
                           cpu:
                             type: string
@@ -200,12 +189,23 @@ spec:
                 type: boolean
               enableMasterLoadBalancer:
                 type: boolean
+              enableMasterPoolerLoadBalancer:
+                type: boolean
               enableReplicaLoadBalancer:
+                type: boolean
+              enableReplicaPoolerLoadBalancer:
                 type: boolean
               enableShmVolume:
                 type: boolean
-              init_containers:  # deprecated
+              env:
                 type: array
+                nullable: true
+                items:
+                  type: object
+                  x-kubernetes-preserve-unknown-fields: true
+              init_containers:
+                type: array
+                description: deprecated
                 nullable: true
                 items:
                   type: object
@@ -232,8 +232,8 @@ spec:
                     items:
                       type: object
                       required:
-                      - weight
                       - preference
+                      - weight
                       properties:
                         preference:
                           type: object
@@ -345,14 +345,17 @@ spec:
                     type: boolean
                   synchronous_mode_strict:
                     type: boolean
+                  synchronous_node_count:
+                    type: integer
                   ttl:
                     type: integer
               podAnnotations:
                 type: object
                 additionalProperties:
                   type: string
-              pod_priority_class_name:  # deprecated
+              pod_priority_class_name:
                 type: string
+                description: deprecated
               podPriorityClassName:
                 type: string
               postgresql:
@@ -363,14 +366,13 @@ spec:
                   version:
                     type: string
                     enum:
-                      - "9.3"
-                      - "9.4"
                       - "9.5"
                       - "9.6"
                       - "10"
                       - "11"
                       - "12"
                       - "13"
+                      - "14"
                   parameters:
                     type: object
                     additionalProperties:
@@ -397,19 +399,14 @@ spec:
                             type: boolean
                     secretNamespace:
                       type: string
-              replicaLoadBalancer:  # deprecated
+              replicaLoadBalancer:
                 type: boolean
+                description: deprecated
               resources:
                 type: object
-                required:
-                  - requests
-                  - limits
                 properties:
                   limits:
                     type: object
-                    required:
-                      - cpu
-                      - memory
                     properties:
                       cpu:
                         type: string
@@ -438,9 +435,6 @@ spec:
                         # than the corresponding limit.
                   requests:
                     type: object
-                    required:
-                      - cpu
-                      - memory
                     properties:
                       cpu:
                         type: string
@@ -468,11 +462,54 @@ spec:
                 type: integer
               standby:
                 type: object
-                required:
-                  - s3_wal_path
                 properties:
                   s3_wal_path:
                     type: string
+                  gs_wal_path:
+                    type: string
+                  standby_host:
+                    type: string
+                  standby_port:
+                    type: string
+                oneOf:
+                - required:
+                  - s3_wal_path
+                - required:
+                  - gs_wal_path
+                - required:
+                  - standby_host
+              streams:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - applicationId
+                    - database
+                    - tables
+                  properties:
+                    applicationId:
+                      type: string
+                    batchSize:
+                      type: integer
+                    database:
+                      type: string
+                    filter:
+                      type: object
+                      additionalProperties:
+                        type: string
+                    tables:
+                      type: object
+                      additionalProperties:
+                        type: object
+                        required:
+                          - eventType
+                        properties:
+                          eventType:
+                            type: string
+                          idColumn:
+                            type: string
+                          payloadColumn:
+                            type: string
               teamId:
                 type: string
               tls:
@@ -494,10 +531,6 @@ spec:
                 type: array
                 items:
                   type: object
-                  required:
-                    - key
-                    - operator
-                    - effect
                   properties:
                     key:
                       type: string
@@ -516,14 +549,14 @@ spec:
                         - PreferNoSchedule
                     tolerationSeconds:
                       type: integer
-              useLoadBalancer:  # deprecated
+              useLoadBalancer:
                 type: boolean
+                description: deprecated
               users:
                 type: object
                 additionalProperties:
                   type: array
                   nullable: true
-                  description: "Role flags specified here must not contradict each other"
                   items:
                     type: string
                     enum:
@@ -555,6 +588,16 @@ spec:
                     - SUPERUSER
                     - nosuperuser
                     - NOSUPERUSER
+              usersWithInPlaceSecretRotation:
+                type: array
+                nullable: true
+                items:
+                  type: string
+              usersWithSecretRotation:
+                type: array
+                nullable: true
+                items:
+                  type: string
               volume:
                 type: object
                 required:
@@ -569,17 +612,26 @@ spec:
                         type: array
                         items:
                           type: object
+                          required:
+                            - key
+                            - operator
                           properties:
                             key:
                               type: string
                             operator:
                               type: string
+                              enum:
+                                - DoesNotExists
+                                - Exists
+                                - In
+                                - NotIn
                             values:
                               type: array
                               items:
                                 type: string
                       matchLabels:
                         type: object
+                        x-kubernetes-preserve-unknown-fields: true
                   size:
                     type: string
                     pattern: '^(\d+(e\d+)?|\d+(\.\d+)?(e\d+)?[EPTGMK]i?)$'

@@ -1,0 +1,82 @@
+# Default values for postgres-managed.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+cluster:
+  # -- Name of the cluster, if not specified will be the name of the release
+  name: ""
+  # -- [Required] TeamId, also the prefix for postgresql ressources
+  teamIdPrefix: ""
+  # -- Annotations for the postgresql ressources
+  annotations: {}
+    ## Those are to use to delete postgresql cluster when deletion protection is activated on operator
+    # delete-date: "YEAR-MONTH-DAY"
+    # delete-clustername: "teamIdPrefix-name"
+  # -- Annotations applied to the pod
+  podAnnotations: {}
+  # -- Postgresql version to use (9.5, 9.6, 10, 11, 12, 13, 14)
+  version: 13
+  # -- Numbler of instances in the cluster
+  replicaCount: 1
+  # -- Enable logical backup, require aws or gcp bucket connection
+  enableLogicalBackup: false
+  storage:
+  # -- Default storageClass to use
+    class: ""
+    size: 5Gi
+
+  ## Preconfigured option to easily enable features specific in cluster defintion, instead of operator configuration
+  preConfigured:
+    # -- ControllerID to specify to use the matching postgres operator
+    controllerId:
+    # -- Enabled Wall G backup archive instead of default Wall E
+    wallGBackup: true
+    gcpBackup:
+      secretName: ""
+      secretKey: ""
+      bucketName: ""
+    awsBackup:
+      secretName: ""
+      prefix: ""
+      bucketName: ""
+      roleIam: ""
+
+  # -- Add values directly into the spec of the postgresql, to create DB, clone another cluster, etc. (check commented values)
+  additionnalSpec: {}
+    # preparedDatabases:
+    #   myApp: {}
+
+    # clone:
+    #   cluster: "teamID-cluster-name" # depends on naming and index in bucket to fetch
+    #   uid: "76ba952f-5632-4f42-8d7e-df7e9abba6c8"
+    #   timestamp: "2039-11-27T16:36:19.000+00:00"
+
+  # -- Limits and requested resources, if different from operator
+  resources: {}
+    # limits:
+    #   cpu: 500m
+    #   memory: 500Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 100Mi
+  # -- Add tolerations to posgresql cluster pods
+  tolerations: []
+    # - effect: NoExecute
+    #   key: node.kubernetes.io/not-ready
+    #   operator: Exists
+    #   tolerationSeconds: 300
+    # - effect: NoExecute
+    #   key: node.kubernetes.io/unreachable
+    #   operator: Exists
+    #   tolerationSeconds: 300
+  # -- Currently only node affinity can be used
+  nodeAffinity: []
+    # preferredDuringSchedulingIgnoredDuringExecution:
+    # - weight: 1
+    #   preference:
+    #     matchExpressions:
+    #     - key: label-1
+    #       operator: In
+    #       values:
+    #       - key-1
+
