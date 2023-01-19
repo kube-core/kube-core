@@ -1,7 +1,6 @@
 {{- define "app-extensions.rabbitmq-cluster" -}}
 {{- $name := (coalesce .value.name .key) }}
-{{ $rabbitmqClusterName := (coalesce .value.rabbitmqClusterName .common.release.name) }}
-{{ $rabbitmqClusterNamespace := (coalesce .value.rabbitmqClusterNamespace .common.release.namespace) }}
+{{- $namespace := (coalesce .value.namespace "default") }}
 
 apiVersion: rabbitmq.com/v1beta1
 kind: RabbitmqCluster
@@ -20,6 +19,7 @@ spec:
   rabbitmq:
     additionalConfig: |
       log.console.level = error
+      prometheus.return_per_object_metrics = true
   {{ end }}
   {{- with .value.extraSpec }}
     {{- toYaml . | nindent 2 }}
