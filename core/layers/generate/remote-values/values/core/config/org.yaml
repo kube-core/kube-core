@@ -1,7 +1,0 @@
-org:
-  name: KUBE_CORE_ORG_NAME
-  shortName: KUBE_CORE_ORG_SHORT_NAME
-  description: KUBE_CORE_ORG_DESCRIPTION
-  repository: KUBE_CORE_ORG_REPOSITORY
-  ref: KUBE_CORE_ORG_REF
-  path: KUBE_CORE_ORG_PATH
