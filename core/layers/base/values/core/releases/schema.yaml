@@ -220,7 +220,7 @@ templates:
       renderOptions: true
       renderExtensions: true
       forceNamespace: true
-      forceNamespaceIngressClass: true
+      forceNamespaceIngressClass: false
       forceNamespaceVisitorGroup: false
       forceClusterIssuer: ""
       forceNamespaceClusterIssuer: false
@@ -235,8 +235,8 @@ templates:
       removeIngressClassName: false
       injectReloaderAnnotations: true
       injectClusterLoggingLabel: true
-      injectIngressHost: true
-      injectIngressTls: true
+      injectIngressHost: false
+      injectIngressTls: false
       injectDefaultIngressClassName: true
       injectOauth2ProxyOnIngress: false
       injectNamespaceOauth2ProxyOnIngress: false
@@ -287,7 +287,7 @@ templates:
       renderOptions: true
       renderExtensions: true
       forceNamespace: true
-      forceNamespaceIngressClass: true
+      forceNamespaceIngressClass: false
       forceNamespaceVisitorGroup: false
       forceClusterIssuer: ""
       forceNamespaceClusterIssuer: false
@@ -302,8 +302,8 @@ templates:
       removeIngressClassName: false
       injectReloaderAnnotations: true
       injectClusterLoggingLabel: true
-      injectIngressHost: true
-      injectIngressTls: true
+      injectIngressHost: false
+      injectIngressTls: false
       injectDefaultIngressClassName: true
       injectOauth2ProxyOnIngress: false
       injectNamespaceOauth2ProxyOnIngress: false
