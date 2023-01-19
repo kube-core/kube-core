@@ -8,7 +8,7 @@ releases:
     options:
       applyDefaultAnnotationsOnIngress: true
       applyDefaultLabelsOnIngress: true
-      injectIngressClassName: true
+      injectDefaultIngressClassName: true
       injectReloaderAnnotations: true
       patchIngresses: true
   dex:
@@ -44,7 +44,7 @@ releases:
       applyDefaultAnnotationsOnIngress: true
       applyDefaultLabelsOnIngress: true
       injectClusterLoggingLabel: true
-      injectIngressClassName: true
+      injectDefaultIngressClassName: true
       injectReloaderAnnotations: true
       patchIngresses: true
   forecastle:
@@ -52,7 +52,7 @@ releases:
       applyDefaultAnnotationsOnIngress: true
       applyDefaultLabelsOnIngress: true
       injectClusterLoggingLabel: true
-      injectIngressClassName: true
+      injectDefaultIngressClassName: true
       injectReloaderAnnotations: true
       patchIngresses: true
   ingress-access-operator:
@@ -63,7 +63,7 @@ releases:
     options:
       applyDefaultAnnotationsOnIngress: true
       applyDefaultLabelsOnIngress: true
-      injectIngressClassName: true
+      injectDefaultIngressClassName: true
       injectReloaderAnnotations: true
       patchIngresses: true
       upgradeIngress: true
@@ -71,7 +71,7 @@ releases:
     options:
       applyDefaultAnnotationsOnIngress: true
       applyDefaultLabelsOnIngress: true
-      injectIngressClassName: true
+      injectDefaultIngressClassName: true
       injectReloaderAnnotations: true
       patchIngresses: true
       upgradeIngress: true
@@ -79,7 +79,7 @@ releases:
     options:
       applyDefaultAnnotationsOnIngress: true
       applyDefaultLabelsOnIngress: true
-      injectIngressClassName: true
+      injectDefaultIngressClassName: true
       injectReloaderAnnotations: true
       patchIngresses: true
       upgradeIngress: true
@@ -91,7 +91,7 @@ releases:
     options:
       applyDefaultAnnotationsOnIngress: true
       applyDefaultLabelsOnIngress: true
-      injectIngressClassName: true
+      injectDefaultIngressClassName: true
       injectReloaderAnnotations: true
       patchIngresses: true
   kube-downscaler:
@@ -110,13 +110,13 @@ releases:
     options:
       applyDefaultAnnotationsOnIngress: true
       applyDefaultLabelsOnIngress: true
-      injectIngressClassName: true
+      injectDefaultIngressClassName: true
       patchIngresses: true
   nginx:
     options:
       applyDefaultAnnotationsOnIngress: true
       applyDefaultLabelsOnIngress: true
-      injectIngressClassName: true
+      injectDefaultIngressClassName: true
       injectReloaderAnnotations: true
       patchIngresses: true
   nginx-ingress-controller:
@@ -139,7 +139,7 @@ releases:
     options:
       applyDefaultAnnotationsOnIngress: true
       applyDefaultLabelsOnIngress: true
-      injectIngressClassName: true
+      injectDefaultIngressClassName: true
       injectReloaderAnnotations: true
       patchIngresses: true
       upgradeIngress: true
@@ -148,21 +148,21 @@ releases:
       applyDefaultAnnotationsOnIngress: true
       applyDefaultLabelsOnIngress: true
       injectClusterLoggingLabel: true
-      injectIngressClassName: true
+      injectDefaultIngressClassName: true
       injectReloaderAnnotations: true
       patchIngresses: true
   prometheus-pushgateway:
     options:
       applyDefaultAnnotationsOnIngress: true
       applyDefaultLabelsOnIngress: true
-      injectIngressClassName: true
+      injectDefaultIngressClassName: true
       injectReloaderAnnotations: true
       patchIngresses: true
   rabbitmq-managed:
     options:
       applyDefaultAnnotationsOnIngress: true
       applyDefaultLabelsOnIngress: true
-      injectIngressClassName: true
+      injectDefaultIngressClassName: true
       injectReloaderAnnotations: true
       patchIngresses: true
   reloader:
@@ -189,7 +189,7 @@ releases:
       applyDefaultAnnotationsOnIngress: true
       applyDefaultLabelsOnIngress: true
       injectClusterLoggingLabel: true
-      injectIngressClassName: true
+      injectDefaultIngressClassName: true
       injectReloaderAnnotations: true
       patchIngresses: true
   velero:

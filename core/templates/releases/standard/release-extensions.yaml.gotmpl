@@ -81,7 +81,17 @@
   - {{ (tpl (readFile "values/release-raw-manifests.yaml.gotmpl") .) | nindent 4 }}
 {{ end }}
 
-{{ if .item.secrets }}
+
+{{ if .item.extensions.replicatedSecretsEnabled }}
+{{ $hasEnabledSecrets := false }}
+{{ range $key, $value := .item.secrets }}
+{{ if ($value | getOrNil "enabled") }}
+{{ $hasEnabledSecrets = true }}
+{{ end }}
+{{ end }}
+{{ if (and (index .item "secrets") $hasEnabledSecrets) }}
+
+
 {{ $extensionType := "secrets" }}
 {{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 - name: {{ $extensionName }}
@@ -99,8 +109,18 @@
   # - "./values/release-secrets.yaml.gotmpl"
   - {{ (tpl (readFile "values/release-secrets.yaml.gotmpl") .) | nindent 4 }}
 {{ end }}
+{{ end }}
 
-{{ if (and (index .item "dynamicSecrets") .item.extensions.dynamicSecretsEnabled) }}
+{{ if .item.extensions.dynamicSecretsEnabled }}
+{{ $generateRabbitmqSecret := (and (.item | getOrNil "rabbitmq") (.item | getOrNil "external-secrets" | getOrNil "rabbitmq" | getOrNil "enabled") (not (.item | getOrNil "rabbitmq" | getOrNil "secretRef"))) }}
+
+{{ $hasEnabledSecrets := false }}
+{{ range $key, $value := .item.dynamicSecrets }}
+{{ if ($value | getOrNil "enabled") }}
+{{ $hasEnabledSecrets = true }}
+{{ end }}
+{{ end }}
+{{ if (or (and $hasEnabledSecrets (index .item "dynamicSecrets")) $generateRabbitmqSecret) }}
 {{ $extensionType := "dynamic-secrets" }}
 {{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 - name: {{ $extensionName }}
@@ -118,8 +138,16 @@
   # - "./values/release-dynamic-secrets.yaml.gotmpl"
   - {{ (tpl (readFile "values/release-dynamic-secrets.yaml.gotmpl") .) | nindent 4 }}
 {{ end }}
+{{ end }}
 
-{{ if (and (index .item "external-secrets") .item.extensions.externalSecretsEnabled) }}
+{{ if .item.extensions.externalSecretsEnabled }}
+{{ $hasEnabledSecrets := false }}
+{{ range $key, $value := (.item | getOrNil "external-secrets" | getOrNil "generated" | getOrNil "secrets") }}
+{{ if ($value | getOrNil "enabled") }}
+{{ $hasEnabledSecrets = true }}
+{{ end }}
+{{ end }}
+{{ if (and (index .item "external-secrets") (or (and $hasEnabledSecrets (.item | getOrNil "external-secrets" | getOrNil "generated" | getOrNil "enabled")))) }}
 {{ $extensionType := "external-secrets" }}
 {{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 - name: {{ $extensionName }}
@@ -136,6 +164,7 @@
   values:
   # - "./values/release-external-secrets.yaml.gotmpl"
   - {{ (tpl (readFile "values/release-external-secrets.yaml.gotmpl") .) | nindent 4 }}
+{{ end }}
 {{ end }}
 
 {{ if (or .item.patches.enabled (.item | getOrNil "cloud" | getOrNil "cdn" | getOrNil "enabled")) }}
@@ -232,11 +261,7 @@
     app: {{ $releaseName }}
     type: rabbitmq
   values:
-  - bucket:
-      test: {}
-
-
   # - "./values/release-cloud.yaml.gotmpl"
-  # - {{ (tpl (readFile "values/release-rabbitmq-config.yaml.gotmpl") .) | nindent 4 }}
+  - {{ (tpl (readFile "values/release-rabbitmq-config.yaml.gotmpl") .) | nindent 4 }}
 
 {{ end }}

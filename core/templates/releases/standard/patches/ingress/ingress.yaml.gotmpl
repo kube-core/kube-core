@@ -43,16 +43,16 @@
         path: "/metadata/annotations/kubernetes.io~1ingress.class"
   {{- end }}
 
-  {{- if .item.options.injectIngressClassName }}
+  {{- if .item.options.injectDefaultIngressClassName }}
       - op: replace
         path: "/spec/ingressClassName"
         value: "{{ coalesce $values.applicationsConfig.defaultIngressClass $values.servicesConfig.defaultIngressClass $values.cluster.common.defaultIngressClass }}"
-  {{end }}
+  {{ end }}
 
-  {{- if .item | getOrNil "options" | getOrNil "forceNamespaceIngressClass"}}
+  {{- if .item.options.forceNamespaceIngressClass}}
       - op: replace
         path: "/spec/ingressClassName"
-        value: {{ index $values.releases "nginx-ingress-controller" "config" "ingressClass" }}-{{ $releaseNamespace }}
+        value: {{ (coalesce (index $values.cluster.common.defaultIngressClass) "nginx") }}-{{ $releaseNamespace }}
   {{- end }}
 
   {{- if .item.options.injectIngressHost }}

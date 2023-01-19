@@ -1,15 +1,67 @@
 {{ $values := .values }}
-{{ $chartName := ((splitList "/" .item.chart) | last) }}
-{{ $chartRepo := ((splitList "/" .item.chart) | first) }}
+{{ $devMode := (or (env "KUBE_CORE_DEV") ($values | getOrNil "devMode")) }}
 {{ $releaseName := .releaseName }}
+
+{{ $releasesDistChartsPath := "../releases/dist/releases/charts" }}
+{{ $releasesLocalChartsPath := "../releases/local" }}
+
+{{ $isRelease := (eq .item.type "release") }}
+{{ $isApplication := (eq .item.type "application") }}
+{{ $isService := (eq .item.type "service") }}
+{{ $isCluster := (eq .item.type "cluster") }}
+
+{{ $chartPath := (coalesce .item.chart (printf "kube-core/%s" $releaseName)) }}
+{{ $chartName := ((splitList "/" $chartPath) | last) }}
+{{ $chartRepo := ((splitList "/" $chartPath) | first) }}
+{{ $chartExistsInDist := (isFile (printf "%s/%s/Chart.yaml" $releasesDistChartsPath $chartName)) }}
+{{ $chartExistsInLocal := (isFile (printf "%s/%s/Chart.yaml" $releasesLocalChartsPath $chartName)) }}
+{{ $isCoreReleaseWithoutCoreChart := (and $isRelease (not $chartExistsInDist) (not $chartExistsInLocal)) }}
+{{ $chartIsAppChart := (eq $chartName "n9-api") }}
+
+{{ if (and $isCoreReleaseWithoutCoreChart false) }}
+{{/*TODO: Re-implement it higher in state*/}}
+{{ $chartPath = "kube-core/raw"}}
+{{ $chartName = "raw" }}
+{{ $chartRepo = "kube-core" }}
+{{ $_ := set .item "chart" "kube-core/raw" }}
+{{ end }}
+
+{{ $valuesTemplateExistForChart := (isFile (printf "./values/%s.yaml.gotmpl" $chartName)) }}
+
+
+{{ $chartRepoIsCore := (eq $chartRepo "kube-core") }}
+{{ $disableCoreValuesChart := (.item | getOrNil "disableCoreValuesChart") }}
+{{ $disableCoreValuesLayer := (.item | getOrNil "disableCoreValuesLayer") }}
+
+
+{{- if (and $chartRepoIsCore (not $disableCoreValuesChart)) }}
+{{ if (and $devMode $chartExistsInLocal) }}
+{{ $chartPath = (printf "%s/%s" $releasesLocalChartsPath $chartName) }}
+{{ else }}
+{{ $chartPath = (printf "%s/%s" $releasesDistChartsPath $chartName) }}
+{{ end }}
+{{ end }}
+
+
+{{ $valuesName := $releaseName }}
+{{ $renderValues := false }}
+
+{{ if $isRelease }}
+{{ $renderValues = true }}
+{{- else if (and (or $isApplication) $chartExistsInDist $chartRepoIsCore $chartIsAppChart) }}
+{{ $valuesName = "n9-api" }}
+{{ $renderValues = true }}
+{{- else if (and (or $isService $isCluster) $valuesTemplateExistForChart $chartRepoIsCore (not $disableCoreValuesLayer)) }}
+{{ $valuesName = $chartName }}
+{{ $renderValues = true }}
+{{- end }}
+
+{{ $valuesPath := (printf "./values/%s.yaml.gotmpl" $valuesName) }}
+
 - name: {{ .releaseName }}
   namespace: {{ .releaseNamespace }}
-  {{- if (and (or (eq .item.type "application") (eq .item.type "service") (eq .item.type "cluster")) (isFile (printf "../releases/dist/releases/charts/%s/Chart.yaml" $chartName)) (eq $chartRepo "kube-core") (not (.item | getOrNil "disableCoreValuesChart"))) }}
-  chart: ../releases/dist/releases/charts/{{ $chartName }}
-  {{- else }}
-  chart: {{ .item.chart }}
+  chart: {{ $chartPath }}
   version: {{ .item.chartVersion }}
-  {{- end }}
   installed: {{ .item.enabled }}
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
   labels:
@@ -24,13 +76,9 @@
   {{- if .item.injectCoreValues -}}
   - {{ toYaml $values | nindent 4 | trim }}
   {{- end }}
-  {{- if (eq .item.type "release") }}
-  - "./values/{{ .releaseName }}.yaml.gotmpl" {{/*# Release has to have a value file, even empty*/}}
-  {{- else if (and (or (eq .item.type "application")) (isFile (printf "../releases/dist/releases/charts/%s/Chart.yaml" $chartName)) (eq $chartRepo "kube-core") (eq $chartName "n9-api")) }}
-  - "./values/n9-api.yaml.gotmpl"
-  {{- else if (and (or (eq .item.type "service") (eq .item.type "cluster")) (isFile (printf "./values/%s.yaml.gotmpl" $chartName)) (eq $chartRepo "kube-core") (not (.item | getOrNil "disableCoreValuesLayer"))) }}
-  - {{ (printf "./values/%s.yaml.gotmpl" $chartName) }}
-  {{- end }}
+  {{ if $renderValues }}
+  - {{ $valuesPath }}
+  {{ end }}
   {{- if .item.extraReleaseValues }} {{/*# Adding extra values (not in .item.release because of toYaml above)*/}}
   {{- range .item.extraReleaseValues }}
   - "{{ . }}"

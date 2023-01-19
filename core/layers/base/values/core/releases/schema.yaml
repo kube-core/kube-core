@@ -2,7 +2,7 @@ templates:
   release: &release
     config: {}
     context: ""
-    chart: "kube-core/n9-api"
+    chart: ""
     chartVersion: "latest"
     enabled: false
     extraReleaseValues: []
@@ -34,7 +34,7 @@ templates:
       removeIngressClassName: false
       injectReloaderAnnotations: false
       injectClusterLoggingLabel: false
-      injectIngressClassName: false
+      injectDefaultIngressClassName: false
       injectIngressHost: false
       injectIngressTls: false
       injectOauth2ProxyOnIngress: false
@@ -48,6 +48,7 @@ templates:
     scaling: {}
     secrets: {}
     extensions:
+      replicatedSecretsEnabled: true
       dynamicSecretsEnabled: true
       configmapsEnabled: true
       extraManifestsEnabled: true
@@ -59,7 +60,7 @@ templates:
     cloud: {}
     gitops:
       enabled: false
-    external-secrets: false
+    external-secrets: {}
     dynamicSecrets: {}
     strategicMergePatches: {}
     transformers: {}
@@ -100,7 +101,7 @@ templates:
       removeIngressClassName: false
       injectReloaderAnnotations: false
       injectClusterLoggingLabel: false
-      injectIngressClassName: false
+      injectDefaultIngressClassName: false
       injectIngressHost: false
       injectIngressTls: false
       injectOauth2ProxyOnIngress: false
@@ -114,6 +115,7 @@ templates:
     scaling: {}
     secrets: {}
     extensions:
+      replicatedSecretsEnabled: true
       dynamicSecretsEnabled: true
       configmapsEnabled: true
       extraManifestsEnabled: true
@@ -125,7 +127,7 @@ templates:
     cloud: {}
     gitops:
       enabled: false
-    external-secrets: false
+    external-secrets: {}
     dynamicSecrets: {}
     strategicMergePatches: {}
     transformers: {}
@@ -166,7 +168,7 @@ templates:
       removeIngressClassName: false
       injectReloaderAnnotations: false
       injectClusterLoggingLabel: false
-      injectIngressClassName: false
+      injectDefaultIngressClassName: false
       injectIngressHost: false
       injectIngressTls: false
       injectOauth2ProxyOnIngress: false
@@ -180,6 +182,7 @@ templates:
     scaling: {}
     secrets: {}
     extensions:
+      replicatedSecretsEnabled: true
       dynamicSecretsEnabled: true
       configmapsEnabled: true
       extraManifestsEnabled: true
@@ -191,7 +194,7 @@ templates:
     cloud: {}
     gitops:
       enabled: false
-    external-secrets: false
+    external-secrets: {}
     dynamicSecrets: {}
     strategicMergePatches: {}
     transformers: {}
@@ -234,7 +237,7 @@ templates:
       injectClusterLoggingLabel: true
       injectIngressHost: true
       injectIngressTls: true
-      injectIngressClassName: true
+      injectDefaultIngressClassName: true
       injectOauth2ProxyOnIngress: false
       injectNamespaceOauth2ProxyOnIngress: false
       injectSatisfyAnyAuthOnIngress: false
@@ -244,9 +247,10 @@ templates:
       patches: {}
     release: {}
     scaling: {}
-    external-secrets: false
+    external-secrets: {}
     secrets: {}
     extensions:
+      replicatedSecretsEnabled: true
       dynamicSecretsEnabled: true
       configmapsEnabled: true
       extraManifestsEnabled: true
@@ -290,7 +294,7 @@ templates:
       forceVisitorGroups: ""
       forceNamespaceNodeAffinity: false
       forceNamespaceNodeSelector: false
-      patchIngresses: false
+      patchIngresses: true
       upgradeIngress: false
       applyDefaultLabelsOnIngress: true
       applyDefaultAnnotationsOnIngress: true
@@ -300,7 +304,7 @@ templates:
       injectClusterLoggingLabel: true
       injectIngressHost: true
       injectIngressTls: true
-      injectIngressClassName: true
+      injectDefaultIngressClassName: true
       injectOauth2ProxyOnIngress: false
       injectNamespaceOauth2ProxyOnIngress: false
       injectSatisfyAnyAuthOnIngress: false
@@ -313,6 +317,7 @@ templates:
     external-secrets:
     secrets: {}
     extensions:
+      replicatedSecretsEnabled: true
       dynamicSecretsEnabled: true
       configmapsEnabled: true
       extraManifestsEnabled: true
@@ -329,6 +334,12 @@ templates:
     transformers: {}
     values: {}
     templatedValues: {}
+envConfig:
+  namespace: apps
+  defaultIngressClass: ""
+  domain: ""
+  bucketPrefix: ""
+  context: ""
 applications: {}
 applicationsList: {}
 applicationsConfig:
@@ -436,6 +447,8 @@ releases:
   node-problem-detector: *release
   rabbitmq-managed: *release
   mongodb-managed: *release
+  postgres-managed: *release
+  postgres-operator: *release
   flux-repository: *release
   dex: *release
   oauth2-proxy: *release
@@ -443,3 +456,4 @@ releases:
   trivy: *release
   goldilocks: *release
   opencost: *release
+  env-config: *release

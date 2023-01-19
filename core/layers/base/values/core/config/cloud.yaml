@@ -36,7 +36,7 @@ cloud:
           backendBucketName: default-pretty
           iamMemberName: default-pretty
           iamRoleName: default-pretty
-          iamRoleExternalName: default-pretty
+          iamRoleExternalName: default-iamRoleExternal
           globalAddressName: default-pretty
           globalForwardingRuleName: default-pretty
           targetHttpProxyName: default-pretty

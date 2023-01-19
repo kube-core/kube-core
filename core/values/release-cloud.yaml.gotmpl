@@ -1,5 +1,5 @@
 {{ $values := .values }}
-{{ $releases := (merge $values.releases $values.applicationsList $values.servicesList )}}
+{{ $releases := (merge $values.releases $values.applications $values.services )}}
 
 {{ $releaseNamespace := .releaseNamespace }}
 {{ $mainReleaseName := (.releaseName | replace "-cloud" "") }}
@@ -8,7 +8,7 @@
 
 {{ $releaseCloud := (index $releases $mainReleaseName "cloud" )}}
 {{ $releaseCloudEnabled := ($releaseCloud | getOrNil "enabled") }}
-{{ $releaseCloudNamingEnabled := $releaseCloud | getOrNil "naming" | getOrNil "enabled" }}
+{{ $releaseCloudNamingEnabled := ($releaseCloud | getOrNil "naming" | getOrNil "enabled") }}
 
 cluster: {{ toYaml $values.cluster | nindent 2 }}
 cloud: {{ toYaml $values.cloud | nindent 2 }}
@@ -327,7 +327,7 @@ recordSets:
     managedZone: {{ $releaseCloud | getOrNil "cdn" | getOrNil "managedZone" }}
     rootDnsName: {{ printf "%s." . }}
     type: "TXT"
-    rrdatas: 
+    rrdatas:
       - {{ printf "provider=kube-core,crossplane-cloud/owner=%s,releases/namespace=%s/%s" $clusterName $mainReleaseName $releaseNamespace}}
   {{ end }}
 {{ end }}
