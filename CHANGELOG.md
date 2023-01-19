@@ -2,12 +2,31 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.11.0](https://github.com/kube-core/kube-core/compare/v0.10.0...v0.11.0)
+
+- releases: Upgrades & Regeneration [`c8ea7e0`](https://github.com/kube-core/kube-core/commit/c8ea7e05dd276d68fd3adf71f01ab73fa91271d7)
+- core/layers: Removed generate folder [`ef93fcd`](https://github.com/kube-core/kube-core/commit/ef93fcdf1005511ae6793bdcc14cd41705cb2a0f)
+- releases: Added goldilocks [`bd8deb4`](https://github.com/kube-core/kube-core/commit/bd8deb496c4a0890811153e316a91dace6e5086a)
+- releases: Reworked postgres & Added integrations with releases [`2ecc0ff`](https://github.com/kube-core/kube-core/commit/2ecc0ff3d405574b97feba6898f55c78b967a595)
+- releases: Various linting fixes & Regeneration [`5b16249`](https://github.com/kube-core/kube-core/commit/5b162499877b3f8c6c3ed4d8fa0b14358d6e699b)
+- releases: Removed some useless releases [`562a8a1`](https://github.com/kube-core/kube-core/commit/562a8a11aca11c39e760946fc47e4939ab422dfb)
+- core: Reworked releases, applications & services [`511afcf`](https://github.com/kube-core/kube-core/commit/511afcf69eea75f4b4e4104cbe27d211a9f7d6a3)
+- releases/tekton: Added logs persistance [`339eac9`](https://github.com/kube-core/kube-core/commit/339eac967a0d3f12745e312e34b964d0fc9d0768)
+- releases: Added opencost [`5d6fc81`](https://github.com/kube-core/kube-core/commit/5d6fc8149a3179d3d6f941ce418ea7f7171c997e)
+- cli/build: Replaced local build outputs with releases by default [`4fb73aa`](https://github.com/kube-core/kube-core/commit/4fb73aac661c7955874e8a4731d5c02711424226)
+- core/layers: Migrated tekton values to config [`f760c75`](https://github.com/kube-core/kube-core/commit/f760c75ab5776679ca9259fe569e0de14885d2da)
+- core/values: Fixed tekton values template [`6169f7b`](https://github.com/kube-core/kube-core/commit/6169f7b99f93f4bcbcc35ac64e065c4416b43e78)
+- core/values: Removed kps namespace for rabbitmq-operator service monitor [`8a5147c`](https://github.com/kube-core/kube-core/commit/8a5147ce89a657ca315aaae8de1efd5c246a10da)
+
 #### [v0.10.0](https://github.com/kube-core/kube-core/compare/v0.9.3...v0.10.0)
+
+> 12 January 2023
 
 - core/templates: Removed releasesCustom feature completely [`c73d298`](https://github.com/kube-core/kube-core/commit/c73d2985daf6b600112cc2a29ee127e1e3fe1740)
 - core/templates: Removed some unused template [`15378d8`](https://github.com/kube-core/kube-core/commit/15378d858d57c950e4f4a0a626417925aeb84a15)
 - core/templates: Updated raw releases to include release-options template [`55cb1a2`](https://github.com/kube-core/kube-core/commit/55cb1a27f13de5a973c277e1b826728e67ce34c4)
 - core/templates: Updated namespace releases to include release-options template [`c8c523b`](https://github.com/kube-core/kube-core/commit/c8c523bc54357f071f2cc6c3ea8097aa154e01b9)
+- release: v0.10.0 [`7d3aba6`](https://github.com/kube-core/kube-core/commit/7d3aba6e599b1cd3f9a0589e54ed7e1f4b121691)
 
 #### [v0.9.3](https://github.com/kube-core/kube-core/compare/v0.9.2...v0.9.3)
 
