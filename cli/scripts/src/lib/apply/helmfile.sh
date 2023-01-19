@@ -154,7 +154,7 @@ helmfile_build_command() {
     fi
 
 
-    helmfileCommand="helmfile -f ${helmfilePath} ${helmfileSelectorExpression} ${helmfileAction} ${helmfileActionArgs}"
+    helmfileCommand="helmfile --concurrency=${helmfile_concurrency} -f ${helmfilePath} ${helmfileSelectorExpression} ${helmfileAction} ${helmfileActionArgs}"
 
     echo ${helmfileCommand}
 }

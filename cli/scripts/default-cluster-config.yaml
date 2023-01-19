@@ -91,6 +91,7 @@ keys:
 
 helmfile:
   path: ./helmfile.yaml
+  concurrency: "0"
 
 helmfiles:
   path: ./helmfiles
