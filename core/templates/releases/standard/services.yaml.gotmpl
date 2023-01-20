@@ -2,7 +2,7 @@
 {{- $releases := .Values.services }}
 
 {{- range $releaseName, $release := $releases }}
-{{ $release := (merge $release $values.templates.service) }}
+{{ $release := (mergeOverwrite (deepCopy $values.templates.service) $release) }}
 {{ $newValues := $release }}
 
 {{ $_ := set $newValues "type" "service" }}
