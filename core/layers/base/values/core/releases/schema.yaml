@@ -227,17 +227,17 @@ templates:
       forceVisitorGroups: ""
       forceNamespaceNodeAffinity: false
       forceNamespaceNodeSelector: false
-      patchIngresses: true
+      patchIngresses: false
       upgradeIngress: false
-      applyDefaultLabelsOnIngress: true
-      applyDefaultAnnotationsOnIngress: true
+      applyDefaultLabelsOnIngress: false
+      applyDefaultAnnotationsOnIngress: false
       removeIngressClassAnnotation: false
       removeIngressClassName: false
-      injectReloaderAnnotations: true
-      injectClusterLoggingLabel: true
+      injectReloaderAnnotations: false
+      injectClusterLoggingLabel: false
+      injectDefaultIngressClassName: false
       injectIngressHost: false
       injectIngressTls: false
-      injectDefaultIngressClassName: true
       injectOauth2ProxyOnIngress: false
       injectNamespaceOauth2ProxyOnIngress: false
       injectSatisfyAnyAuthOnIngress: false
@@ -294,17 +294,17 @@ templates:
       forceVisitorGroups: ""
       forceNamespaceNodeAffinity: false
       forceNamespaceNodeSelector: false
-      patchIngresses: true
+      patchIngresses: false
       upgradeIngress: false
-      applyDefaultLabelsOnIngress: true
-      applyDefaultAnnotationsOnIngress: true
+      applyDefaultLabelsOnIngress: false
+      applyDefaultAnnotationsOnIngress: false
       removeIngressClassAnnotation: false
       removeIngressClassName: false
-      injectReloaderAnnotations: true
-      injectClusterLoggingLabel: true
+      injectReloaderAnnotations: false
+      injectClusterLoggingLabel: false
+      injectDefaultIngressClassName: false
       injectIngressHost: false
       injectIngressTls: false
-      injectDefaultIngressClassName: true
       injectOauth2ProxyOnIngress: false
       injectNamespaceOauth2ProxyOnIngress: false
       injectSatisfyAnyAuthOnIngress: false
