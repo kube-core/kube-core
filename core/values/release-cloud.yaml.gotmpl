@@ -102,6 +102,7 @@ bucketPolicies:
     {{ if (eq ($releaseCloud | getOrNil "bucket" | getOrNil "public") true) }}
     public: true
     {{ end }}
+    adminRef: {{ coalesce ($releaseCloud | getOrNil "policy" | getOrNil "adminRef") $releaseServiceAccountName }}
     deletionPolicy: {{ coalesce ($releaseCloud | getOrNil "bucketPolicies" | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "bucket" | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
 {{ end }}
 {{ end }}
@@ -120,6 +121,7 @@ bucketPolicies:
     {{ if (eq ($bucketConfig | getOrNil "public") true) }}
     public: true
     {{ end }}
+    adminRef: {{ coalesce ($bucketConfig | getOrNil "policy" | getOrNil "adminRef") $releaseServiceAccountName }}
     deletionPolicy: {{ coalesce ($bucketConfig | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
 {{ end }}
 {{ end }}
