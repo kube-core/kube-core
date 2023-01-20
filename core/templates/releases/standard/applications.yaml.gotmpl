@@ -2,7 +2,7 @@
 {{- $releases := .Values.applications }}
 
 {{- range $releaseName, $release := $releases }}
-{{ $release := (merge $release $values.templates.application) }}
+{{ $release := (mergeOverwrite (deepCopy $values.templates.application) $release) }}
 {{ $newValues := $release }}
 
 {{ $_ := set $newValues "type" "application" }}
