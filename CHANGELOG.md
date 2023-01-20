@@ -2,8 +2,18 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.11.2](https://github.com/kube-core/kube-core/compare/v0.11.1...v0.11.2)
+
+- core/layers: Changed all patches for applications and services options to false by default [`0e40825`](https://github.com/kube-core/kube-core/commit/0e40825fb5c459d5e59ef546ea66d530e68f22ec)
+- core/templates: Fixed merge behavior for default application and services options [`926af4c`](https://github.com/kube-core/kube-core/commit/926af4c6457d100942654bdd7b2db9b35dda9b74)
+- core/templates: Added app & services options injection specific to an env [`53e725c`](https://github.com/kube-core/kube-core/commit/53e725c98c432ba113f289bf961a49cd70b9f721)
+- core/templates: Disabled injectIngressHost/Tls,forceNamespaceIngressClass by default for applications & services [`87ccee3`](https://github.com/kube-core/kube-core/commit/87ccee3020403f528e7cfac1c1cb5bbf5d3a4f33)
+
 #### [v0.11.1](https://github.com/kube-core/kube-core/compare/v0.11.0...v0.11.1)
 
+> 19 January 2023
+
+- release: v0.11.1 [`317cc60`](https://github.com/kube-core/kube-core/commit/317cc6000ffbeaebc37a4ed58bcd7df9c382045e)
 - cli/scripts: Added helmfile.concurrency parameter to mitigate concurrent I/O issues [`be67be6`](https://github.com/kube-core/kube-core/commit/be67be6209d6be1099170c5179bc3a5b9d507131)
 
 #### [v0.11.0](https://github.com/kube-core/kube-core/compare/v0.10.0...v0.11.0)
