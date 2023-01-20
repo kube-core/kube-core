@@ -24,3 +24,6 @@
   transformers:
   {{- tpl (readFile "templates/releases/standard/transformers/core.yaml.gotmpl") . }}
   {{- tpl (readFile "templates/releases/standard/transformers/ingress.yaml.gotmpl") . }}
+  {{- if .item.transformers }}
+  {{ toYaml .item.transformers | nindent 2 }}
+  {{- end }}
