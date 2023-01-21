@@ -2,9 +2,20 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.11.3](https://github.com/kube-core/kube-core/compare/v0.11.2...v0.11.3)
+
+- core/templates: Reworked release-variables and optimized values merge on releases [`9ef01e8`](https://github.com/kube-core/kube-core/commit/9ef01e864a075f5ce5de9b9cfe4ab019ab67a2eb)
+- core/templates: Moved naming metadata to release variables [`ec2ffdc`](https://github.com/kube-core/kube-core/commit/ec2ffdcf3633271c7cac359f489d3f5c0564ea75)
+- core/values: Updated velero to use cloud naming [`b1207ae`](https://github.com/kube-core/kube-core/commit/b1207ae2899e0e3da33dad142c1611d89137f44f)
+- core/templates: Reworked release template [`5ea8a13`](https://github.com/kube-core/kube-core/commit/5ea8a13b1d6c58e9b3815f27c3264bf4d9480c0f)
+- core/templates: Fixed transformers not being applied on local-secrets [`2d56b3e`](https://github.com/kube-core/kube-core/commit/2d56b3e44fed557d1e5286d6d1c05112457c9fbf)
+
 #### [v0.11.2](https://github.com/kube-core/kube-core/compare/v0.11.1...v0.11.2)
 
+> 20 January 2023
+
 - core/layers: Changed all patches for applications and services options to false by default [`0e40825`](https://github.com/kube-core/kube-core/commit/0e40825fb5c459d5e59ef546ea66d530e68f22ec)
+- release: v0.11.2 [`04aa351`](https://github.com/kube-core/kube-core/commit/04aa351b3ccb69230d2de5e8d0d149b582ecea9b)
 - core/templates: Fixed merge behavior for default application and services options [`926af4c`](https://github.com/kube-core/kube-core/commit/926af4c6457d100942654bdd7b2db9b35dda9b74)
 - core/templates: Added app & services options injection specific to an env [`53e725c`](https://github.com/kube-core/kube-core/commit/53e725c98c432ba113f289bf961a49cd70b9f721)
 - core/templates: Disabled injectIngressHost/Tls,forceNamespaceIngressClass by default for applications & services [`87ccee3`](https://github.com/kube-core/kube-core/commit/87ccee3020403f528e7cfac1c1cb5bbf5d3a4f33)
