@@ -2,12 +2,19 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.11.4](https://github.com/kube-core/kube-core/compare/v0.11.3...v0.11.4)
+
+- core/values: Fixed serviceAccount adminReference for bucketPolicy in cloud releases [`9e10702`](https://github.com/kube-core/kube-core/commit/9e10702cec4db0df31263b05db72dfb54e6eaf4f)
+
 #### [v0.11.3](https://github.com/kube-core/kube-core/compare/v0.11.2...v0.11.3)
+
+> 21 January 2023
 
 - core/templates: Reworked release-variables and optimized values merge on releases [`9ef01e8`](https://github.com/kube-core/kube-core/commit/9ef01e864a075f5ce5de9b9cfe4ab019ab67a2eb)
 - core/templates: Moved naming metadata to release variables [`ec2ffdc`](https://github.com/kube-core/kube-core/commit/ec2ffdcf3633271c7cac359f489d3f5c0564ea75)
 - core/values: Updated velero to use cloud naming [`b1207ae`](https://github.com/kube-core/kube-core/commit/b1207ae2899e0e3da33dad142c1611d89137f44f)
 - core/templates: Reworked release template [`5ea8a13`](https://github.com/kube-core/kube-core/commit/5ea8a13b1d6c58e9b3815f27c3264bf4d9480c0f)
+- release: v0.11.3 [`fa72fee`](https://github.com/kube-core/kube-core/commit/fa72fee57f0e09950edbd3fba28b891a2956ccaa)
 - core/templates: Fixed transformers not being applied on local-secrets [`2d56b3e`](https://github.com/kube-core/kube-core/commit/2d56b3e44fed557d1e5286d6d1c05112457c9fbf)
 
 #### [v0.11.2](https://github.com/kube-core/kube-core/compare/v0.11.1...v0.11.2)
