@@ -10,99 +10,37 @@
 {{ $releaseCloudEnabled := ($releaseCloud | getOrNil "enabled") }}
 {{ $releaseCloudNamingEnabled := ($releaseCloud | getOrNil "naming" | getOrNil "enabled") }}
 
+{{ $cloudProject := $values.cloud.project }}
+{{ $cloudLocation := $values.cloud.default.location }}
+{{ $clusterName := $values.cluster.config.name }}
+
 cluster: {{ toYaml $values.cluster | nindent 2 }}
 cloud: {{ toYaml $values.cloud | nindent 2 }}
 prefix: {{ $values.cluster.config.name }}
 patch:
   serviceAccountName: patch-operator-admin-{{ $releaseNamespace }}-{{ $mainReleaseName }}
 
+{{ $name := $mainRelease.metadata.namingConfig.templated.name }}
+{{ $shortName := $mainRelease.metadata.namingConfig.templated.shortName }}
+{{ $releaseServiceAccountName := $mainRelease.metadata.namingConfig.templated.releaseServiceAccountName }}
+{{ $releaseServiceAccountKeyName := $mainRelease.metadata.namingConfig.templated.releaseServiceAccountKeyName }}
+{{ $releaseBucketName := $mainRelease.metadata.namingConfig.templated.releaseBucketName }}
+{{ $releaseBucketPolicyName := $mainRelease.metadata.namingConfig.templated.releaseBucketPolicyName }}
+{{ $releaseBackendBucketName := $mainRelease.metadata.namingConfig.templated.releaseBackendBucketName }}
+{{ $releaseIamMemberName := $mainRelease.metadata.namingConfig.templated.releaseIamMemberName }}
+{{ $releaseIamRoleName := $mainRelease.metadata.namingConfig.templated.releaseIamRoleName }}
+{{ $releaseIamRoleExternalName := $mainRelease.metadata.namingConfig.templated.releaseIamRoleExternalName }}
+{{ $releaseGlobalAddressName := $mainRelease.metadata.namingConfig.templated.releaseGlobalAddressName }}
+{{ $releaseGlobalForwardingRuleName := $mainRelease.metadata.namingConfig.templated.releaseGlobalForwardingRuleName }}
+{{ $releaseTargetHttpProxyName := $mainRelease.metadata.namingConfig.templated.releaseTargetHttpProxyName }}
+{{ $releaseTargetHttpsProxyName := $mainRelease.metadata.namingConfig.templated.releaseTargetHttpsProxyName }}
+{{ $releaseUrlMapName := $mainRelease.metadata.namingConfig.templated.releaseUrlMapName }}
+{{ $releaseManagedSslCertificateName := $mainRelease.metadata.namingConfig.templated.releaseManagedSslCertificateName }}
+
 {{ $defaultDeletionPolicy := $values.cloud.crossplane.defaultDeletionPolicy }}
 
-{{ $cloudProject := $values.cloud.project }}
-{{ $cloudLocation := $values.cloud.default.location }}
-{{ $clusterName := $values.cluster.config.name }}
-
-{{ if $releaseCloud | getOrNil "enabled" }}
-{{ $name := $mainReleaseName }}
-{{ $initials := (($name | splitList "-") | join " " | initials) }}
-
-{{ $clusterShortName := $values.cluster.config.shortName }}
-{{ $releaseType := ""}}
-{{ if (eq $mainRelease.type "release") }}
-{{ $releaseType = "kc" }}
-{{ else if (eq $mainRelease.type "application") }}
-{{ $releaseType = "app" }}
-{{ else if (eq $mainRelease.type "service") }}
-{{ $releaseType = "svc" }}
-{{ end }}
-
-{{ $autoShortName := "" }}
-{{ $namespace := ($releaseNamespace | substr 0 3) }}
-{{ $autoShortName = (printf "%s-%s-%s-%s" $clusterShortName $releaseType $namespace $initials) }}
-{{ $shortName := "" }}
-
-{{ $releaseServiceAccountName := "" }}
-{{ $releaseServiceAccountKeyName := "" }}
-{{ $releaseBucketName := "" }}
-{{ $releaseBucketPolicyName := "" }}
-{{ $releaseBackendBucketName := "" }}
-{{ $releaseIamMemberName := "" }}
-{{ $releaseIamRoleName := "" }}
-{{ $releaseIamRoleExternalName := "" }}
-{{ $releaseGlobalAddressName := "" }}
-{{ $releaseGlobalForwardingRuleName := "" }}
-{{ $releaseTargetHttpProxyName := "" }}
-{{ $releaseTargetHttpsProxyName := "" }}
-{{ $releaseUrlMapName := "" }}
-{{ $releaseManagedSslCertificateName := "" }}
-
 {{ if (and $releaseCloudEnabled $cloudNamingConfig.enabled (not (eq $releaseCloudNamingEnabled false))) }}
-{{ $shortName = (index $mainRelease.metadata.namingConfig.nameBases (coalesce ($values.cloud.naming.config.templates | getOrNil "custom" | getOrNil "nameBase" | default "" | camelcase | untitle) ($values.cloud.naming.config.templates.default.nameBase | camelcase | untitle))) }}
 
-{{ $releaseServiceAccountName = (index $mainRelease.metadata.namingConfig.nameBases (coalesce ($values.cloud.naming.config.templates | getOrNil "custom" | getOrNil "serviceAccountName" | default "" | camelcase | untitle) ($values.cloud.naming.config.templates.default.serviceAccountName | camelcase | untitle))) }}
-{{ $releaseServiceAccountKeyName = (index $mainRelease.metadata.namingConfig.nameBases (coalesce ($values.cloud.naming.config.templates | getOrNil "custom" | getOrNil "serviceAccountKeyName" | default "" | camelcase | untitle) ($values.cloud.naming.config.templates.default.serviceAccountKeyName | camelcase | untitle))) }}
-{{ $releaseBucketName = (index $mainRelease.metadata.namingConfig.nameBases (coalesce ($values.cloud.naming.config.templates | getOrNil "custom" | getOrNil "bucketName" | default "" | camelcase | untitle) ($values.cloud.naming.config.templates.default.bucketName | camelcase | untitle))) }}
-{{ $releaseBucketPolicyName = (index $mainRelease.metadata.namingConfig.nameBases (coalesce ($values.cloud.naming.config.templates | getOrNil "custom" | getOrNil "bucketPolicyName" | default "" | camelcase | untitle) ($values.cloud.naming.config.templates.default.bucketPolicyName | camelcase | untitle))) }}
-{{ $releaseBackendBucketName = (index $mainRelease.metadata.namingConfig.nameBases (coalesce ($values.cloud.naming.config.templates | getOrNil "custom" | getOrNil "backendBucketName" | default "" | camelcase | untitle) ($values.cloud.naming.config.templates.default.backendBucketName | camelcase | untitle))) }}
-{{ $releaseIamMemberName = (index $mainRelease.metadata.namingConfig.nameBases (coalesce ($values.cloud.naming.config.templates | getOrNil "custom" | getOrNil "iamMemberName" | default "" | camelcase | untitle) ($values.cloud.naming.config.templates.default.iamMemberName | camelcase | untitle))) }}
-{{ $releaseIamRoleName = (index $mainRelease.metadata.namingConfig.nameBases (coalesce ($values.cloud.naming.config.templates | getOrNil "custom" | getOrNil "iamRoleName" | default "" | camelcase | untitle) ($values.cloud.naming.config.templates.default.iamRoleName | camelcase | untitle))) }}
-{{ $releaseIamRoleExternalName = (index $mainRelease.metadata.namingConfig.nameBases (coalesce ($values.cloud.naming.config.templates | getOrNil "custom" | getOrNil "iamRoleExternalName" | default "" | camelcase | untitle) ($values.cloud.naming.config.templates.default.iamRoleExternalName | camelcase | untitle))) }}
-{{ $releaseGlobalAddressName = (index $mainRelease.metadata.namingConfig.nameBases (coalesce ($values.cloud.naming.config.templates | getOrNil "custom" | getOrNil "globalAddressName" | default "" | camelcase | untitle) ($values.cloud.naming.config.templates.default.globalAddressName | camelcase | untitle))) }}
-{{ $releaseGlobalForwardingRuleName = (index $mainRelease.metadata.namingConfig.nameBases (coalesce ($values.cloud.naming.config.templates | getOrNil "custom" | getOrNil "globalForwardingRuleName" | default "" | camelcase | untitle) ($values.cloud.naming.config.templates.default.globalForwardingRuleName | camelcase | untitle))) }}
-{{ $releaseTargetHttpProxyName = (index $mainRelease.metadata.namingConfig.nameBases (coalesce ($values.cloud.naming.config.templates | getOrNil "custom" | getOrNil "targetHttpProxyName" | default "" | camelcase | untitle) ($values.cloud.naming.config.templates.default.targetHttpProxyName | camelcase | untitle))) }}
-{{ $releaseTargetHttpsProxyName = (index $mainRelease.metadata.namingConfig.nameBases (coalesce ($values.cloud.naming.config.templates | getOrNil "custom" | getOrNil "targetHttpsProxyName" | default "" | camelcase | untitle) ($values.cloud.naming.config.templates.default.targetHttpsProxyName | camelcase | untitle))) }}
-{{ $releaseUrlMapName = (index $mainRelease.metadata.namingConfig.nameBases (coalesce ($values.cloud.naming.config.templates | getOrNil "custom" | getOrNil "urlMapName" | default "" | camelcase | untitle) ($values.cloud.naming.config.templates.default.urlMapName | camelcase | untitle))) }}
-{{ $releaseManagedSslCertificateName = (index $mainRelease.metadata.namingConfig.nameBases (coalesce ($values.cloud.naming.config.templates | getOrNil "custom" | getOrNil "managedSslCertificateName" | default "" | camelcase | untitle) ($values.cloud.naming.config.templates.default.managedSslCertificateName | camelcase | untitle))) }}
-
-{{ else }}
-{{ $shortName = $autoShortName }}
-
-{{ $releaseServiceAccountName = $shortName | substr 0 30 }}
-{{ $releaseServiceAccountKeyName = $shortName | substr 0 30 }}
-{{ $releaseBucketName = $shortName | substr 0 63 }}
-{{ $releaseBucketPolicyName = $shortName | substr 0 63 }}
-{{ $releaseBackendBucketName = $shortName | substr 0 63 }}
-{{ $releaseIamMemberName = $shortName | substr 0 63 }}
-{{ $releaseIamRoleName = $shortName | substr 0 63 }}
-{{ $releaseIamRoleExternalName = ($shortName | kebabcase | replace "-" "." | untitle) }}
-{{ $releaseGlobalAddressName = $shortName | substr 0 63 }}
-{{ $releaseGlobalForwardingRuleName = $shortName | substr 0 63  }}
-{{ $releaseTargetHttpProxyName = $shortName | substr 0 63  }}
-{{ $releaseTargetHttpsProxyName = $shortName | substr 0 63  }}
-{{ $releaseUrlMapName = $shortName | substr 0 63  }}
-{{ $releaseManagedSslCertificateName = $shortName | substr 0 63  }}
-
-{{ end }}
-
-{{ if contains "-" $releaseIamRoleExternalName }}
-{{ $ | getOrNil "INVALID_IAM_ROLE_EXTERNAL_NAME" | required (printf "IAM role can't contain '-', replace with '.' ; Current: %s" $releaseIamRoleExternalName )}}
-{{ end }}
-{{ if (gt ($releaseServiceAccountName | len) 63) }}
-{{ $ | getOrNil "INVALID_SERVICE_ACCOUNT_NAME" | required (printf "Service Account name can't exceed 30 characters ; Current: %s => %s" $releaseServiceAccountName ($releaseServiceAccountName | len | toString) )}}
-{{ end }}
-
-
-{{ $name = $shortName }}
 
 {{ if (not (eq ($releaseCloud | getOrNil "serviceAccounts" | getOrNil "enabled") false)) }}
 serviceAccounts:
