@@ -1,16 +1,17 @@
 {{ $values := .values }}
+{{ $release := .item }}
 {{ $devMode := (or (env "KUBE_CORE_DEV") ($values | getOrNil "devMode")) }}
 {{ $releaseName := .releaseName }}
 
 {{ $releasesDistChartsPath := "../releases/dist/releases/charts" }}
 {{ $releasesLocalChartsPath := "../releases/local" }}
 
-{{ $isRelease := (eq .item.type "release") }}
-{{ $isApplication := (eq .item.type "application") }}
-{{ $isService := (eq .item.type "service") }}
-{{ $isCluster := (eq .item.type "cluster") }}
+{{ $isRelease := (eq $release.type "release") }}
+{{ $isApplication := (eq $release.type "application") }}
+{{ $isService := (eq $release.type "service") }}
+{{ $isCluster := (eq $release.type "cluster") }}
 
-{{ $chartPath := (coalesce .item.chart (printf "kube-core/%s" $releaseName)) }}
+{{ $chartPath := (coalesce $release.chart (printf "kube-core/%s" $releaseName)) }}
 {{ $chartName := ((splitList "/" $chartPath) | last) }}
 {{ $chartRepo := ((splitList "/" $chartPath) | first) }}
 {{ $chartExistsInDist := (isFile (printf "%s/%s/Chart.yaml" $releasesDistChartsPath $chartName)) }}
@@ -23,15 +24,15 @@
 {{ $chartPath = "kube-core/raw"}}
 {{ $chartName = "raw" }}
 {{ $chartRepo = "kube-core" }}
-{{ $_ := set .item "chart" "kube-core/raw" }}
+{{ $_ := set $release "chart" "kube-core/raw" }}
 {{ end }}
 
 {{ $valuesTemplateExistForChart := (isFile (printf "./values/%s.yaml.gotmpl" $chartName)) }}
 
 
 {{ $chartRepoIsCore := (eq $chartRepo "kube-core") }}
-{{ $disableCoreValuesChart := (.item | getOrNil "disableCoreValuesChart") }}
-{{ $disableCoreValuesLayer := (.item | getOrNil "disableCoreValuesLayer") }}
+{{ $disableCoreValuesChart := ($release | getOrNil "disableCoreValuesChart") }}
+{{ $disableCoreValuesLayer := ($release | getOrNil "disableCoreValuesLayer") }}
 
 
 {{- if (and $chartRepoIsCore (not $disableCoreValuesChart)) }}
@@ -57,36 +58,35 @@
 {{- end }}
 
 {{ $valuesPath := (printf "./values/%s.yaml.gotmpl" $valuesName) }}
-
 - name: {{ .releaseName }}
   namespace: {{ .releaseNamespace }}
   chart: {{ $chartPath }}
-  version: {{ .item.chartVersion }}
-  installed: {{ .item.enabled }}
+  version: {{ $release.chartVersion }}
+  installed: {{ $release.enabled }}
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
   labels:
-  {{ if .item.labels }}
-    {{ toYaml .item.labels | nindent 4 }}
+  {{ if $release.labels }}
+    {{ toYaml $release.labels | nindent 4 }}
   {{ end }}
     app: {{ .releaseName }}
-    context: {{ coalesce .item.context (getOrNil "releaseContext" .) $values.cluster.config.context }}
+    context: {{ coalesce $release.context (getOrNil "releaseContext" .) $values.cluster.config.context }}
   values:
   {{/*Inject core values if enabed. Placed here so that core values can be overriden by a release if needed. */}}
   {{/*Be careful about values naming conflicts when activated. */}}
-  {{- if .item.injectCoreValues -}}
+  {{- if $release.injectCoreValues -}}
   - {{ toYaml $values | nindent 4 | trim }}
   {{- end }}
   {{ if $renderValues }}
   - {{ $valuesPath }}
   {{ end }}
-  {{- if .item.extraReleaseValues }} {{/*# Adding extra values (not in .item.release because of toYaml above)*/}}
-  {{- range .item.extraReleaseValues }}
+  {{- if $release.extraReleaseValues }} {{/*# Adding extra values (not in $release.release because of toYaml above)*/}}
+  {{- range $release.extraReleaseValues }}
   - "{{ . }}"
   {{- end }}
   {{- end }}
-  {{- if .item.templatedValues }} {{/*# Allows overriding / accessing values from the original chart !*/}}
-  - {{ (tpl (.item.templatedValues) $values) | nindent 4 | trim }}
+  {{- if $release.templatedValues }} {{/*# Allows overriding / accessing values from the original chart !*/}}
+  - {{ (tpl ($release.templatedValues) (dict "releaseValues" .item "coreValues" $values)) | nindent 4 | trim }}
   {{- end }}
-  {{- if .item.values }} {{/*# Allows overriding / accessing values from the original chart !*/}}
-  - {{ toYaml .item.values | nindent 4 | trim }}
+  {{- if $release.values }} {{/*# Allows overriding / accessing values from the original chart !*/}}
+  - {{ toYaml $release.values | nindent 4 | trim }}
   {{- end }}
