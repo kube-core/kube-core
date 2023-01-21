@@ -1,14 +1,29 @@
+{{ $values := (coalesce (. | getOrNil "values") (. | getOrNil "Values")) }}
+{{ $release := (index $values.releases .Release.Name) }}
+{{ $releaseName := .Release.Name }}
+{{ $releaseNamespace := $release.namespace }}
+{{ $releaseType := $release.type }}
 
+{{ $_ := set $release "name" $releaseName }}
+{{ $_ := set $release "namespace" $releaseNamespace }}
+{{ (tpl (readFile "../templates/releases/standard/variables/release-variables-cloud.yaml.gotmpl") (dict "item" $release "values" $values)) }}
+
+
+{{ $cloudNamingConfig := $values.cloud.naming }}
+
+{{ $releaseCloud := ($release | getOrNil "cloud") }}
+{{ $releaseCloudEnabled := ($releaseCloud | getOrNil "enabled") }}
+{{ $releaseCloudNamingEnabled := ($releaseCloud | getOrNil "naming" | getOrNil "enabled") }}
 # Init containers to add to the Velero deployment's pod spec. At least one plugin provider image is required.
 initContainers:
-  {{ if eq .Values.cloud.provider "aws" }}
+  {{ if eq $values.cloud.provider "aws" }}
   - name: velero-plugin-for-aws
     image: velero/velero-plugin-for-aws:v1.5.0
     imagePullPolicy: IfNotPresent
     volumeMounts:
       - mountPath: /target
         name: plugins
-  {{ else if eq .Values.cloud.provider "gcp" }}
+  {{ else if eq $values.cloud.provider "gcp" }}
   - name: velero-plugin-for-gcp
     image: velero/velero-plugin-for-gcp:v1.5.0
     imagePullPolicy: IfNotPresent
@@ -24,7 +39,7 @@ initContainers:
 ##
 configuration:
   # Cloud provider being used (e.g. aws, azure, gcp).
-  provider: {{ .Values.cloud.provider }}
+  provider: {{ $values.cloud.provider }}
 
   # Parameters for the `default` BackupStorageLocation. See
   # https://velero.io/docs/v1.5/api-types/backupstoragelocation/
@@ -34,10 +49,15 @@ configuration:
     name:
     # provider is the name for the backup storage location provider. If omitted
     # `configuration.provider` will be used instead.
-    provider: {{ .Values.cloud.provider }}
+    provider: {{ $values.cloud.provider }}
     # bucket is the name of the bucket to store backups in. Required.
 
-    bucket: {{ .Values | get "cluster.config.backups.bucket" (printf "%s-velero-backups" .Values.cluster.config.name) }}
+  {{ if (and $releaseCloudEnabled $cloudNamingConfig.enabled (not (eq $releaseCloudNamingEnabled false))) }}
+    bucket: {{ $release.metadata.namingConfig.templated.releaseBucketName }}
+  {{ else }}
+    bucket: {{ $values | get "cluster.config.backups.bucket" (printf "%s-velero-backups" $values.cluster.config.name) }}
+  {{ end }}
+
     # caCert defines a base64 encoded CA bundle to use when verifying TLS connections to the provider.
     caCert:
     # prefix is the directory under which all Velero data should be stored within the bucket. Optional.
@@ -56,7 +76,7 @@ configuration:
     #  publicUrl:
     #  Name of the GCP service account to use for this backup storage location. Specify the
     #  service account here if you want to use workload identity instead of providing the key file.(GCP only)
-      {{ if eq .Values.cloud.provider "gcp" }}
+      {{ if eq $values.cloud.provider "gcp" }}
       serviceAccount: velero
       {{ end }}
 
@@ -102,9 +122,9 @@ configuration:
 
   # additional key/value pairs to be used as environment variables such as "AWS_CLUSTER_NAME: 'yourcluster.domain.tld'"
   extraEnvVars:
-    {{ if eq .Values.cloud.provider "aws" }}
-    AWS_CLUSTER_NAME: {{ .Values.cluster.config.domain }}
-    {{ else if eq .Values.cloud.provider "gcp" }}
+    {{ if eq $values.cloud.provider "aws" }}
+    AWS_CLUSTER_NAME: {{ $values.cluster.config.domain }}
+    {{ else if eq $values.cloud.provider "gcp" }}
     # Now patched in releases via strategicmergepatch, which is still not ideal but better than this.
     # GOOGLE_APPLICATION_CREDENTIALS: /credentials/velero.json
     {{ end }}
@@ -143,8 +163,8 @@ serviceAccount:
     create: true
     name:
     annotations:
-      {{ if eq .Values.cloud.provider "aws" }}
-      eks.amazonaws.com/role-arn: {{ index .Values.cluster.config.backups "config" "role-arn" }}
+      {{ if eq $values.cloud.provider "aws" }}
+      eks.amazonaws.com/role-arn: {{ index $values.cluster.config.backups "config" "role-arn" }}
       {{ end }}
     labels:
 
@@ -155,15 +175,15 @@ credentials:
   # Whether a secret should be used as the source of IAM account
   # credentials. Set to false if, for example, using kube2iam or
   # kiam to provide IAM credentials for the Velero pod.
-  {{ if eq .Values.cloud.provider "gcp" }}
+  {{ if eq $values.cloud.provider "gcp" }}
   useSecret: true
-  # useSecret: {{ (index .Values.releases .Release.Name "secrets" "credentials" "secretRef" "name" ) }}
+  # useSecret: {{ (index $values.releases .Release.Name "secrets" "credentials" "secretRef" "name" ) }}
   # Name of the secret to create if `useSecret` is true and `existingSecret` is empty
   name:
   # Name of a pre-existing secret (if any) in the Velero namespace
   # that should be used to get IAM account credentials. Optional.
   # existingSecret: velero
-  existingSecret: {{ (index .Values.releases .Release.Name "secrets" "credentials" "secretRef" "name" ) }}
+  existingSecret: {{ (index $values.releases .Release.Name "secrets" "credentials" "secretRef" "name" ) }}
   {{ end }}
   # Data to be stored in the Velero secret, if `useSecret` is true and `existingSecret` is empty.
   # As of the current Velero release, Velero only uses one secret key/value at a time.
@@ -173,7 +193,7 @@ credentials:
   # [AWS] https://github.com/vmware-tanzu/velero-plugin-for-aws/blob/main/README.md
   # [GCP] https://github.com/vmware-tanzu/velero-plugin-for-gcp/blob/main/README.md
   # [Azure] https://github.com/vmware-tanzu/velero-plugin-for-microsoft-azure/blob/main/README.md
-  # secretContents: {{ (index .Values.releases .Release.Name "secrets" "credentials" "secretRef" "name" ) }}
+  # secretContents: {{ (index $values.releases .Release.Name "secrets" "credentials" "secretRef" "name" ) }}
   #  cloud: |
   #    [default]
   #    aws_access_key_id=<REDACTED>
@@ -233,9 +253,9 @@ restic:
 schedules:
   full:
     labels:
-      cluster: {{ .Values.cluster.config.name }}
+      cluster: {{ $values.cluster.config.name }}
       type: full
-    schedule: {{ .Values.cluster.config.backups.schedule }}
+    schedule: {{ $values.cluster.config.backups.schedule }}
     template:
       includedNamespaces:
         - "*"
