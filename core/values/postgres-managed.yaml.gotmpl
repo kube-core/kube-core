@@ -63,13 +63,21 @@ cluster:
 
   # -- Add values directly into the spec of the postgresql, to create DB, clone another cluster, etc. (check commented values)
   additionnalSpec:
+    patroni:
+      pg_hba:
+      - local      all          all                      trust
+      - hostssl    all          +zalandos  127.0.0.1/32  pam
+      - hostssl    all          +zalandos  ::1/128       pam
+      - host       all          all        all           md5
+      - local      replication  standby                  trust
+      - hostssl    replication  standby    all           md5
     preparedDatabases:
 {{ range $applicationName, $application := $sqlApplications }}
-      {{ $applicationName }}: {}
+      {{ $applicationName | replace "-" "_" }}: {}
 {{ end }}
     users:
 {{ range $applicationName, $application := $sqlApplications }}
-      {{ $applicationName }}:
+      {{ $applicationName | replace "-" "_" }}:
         - superuser
         - createdb
 {{ end }}
