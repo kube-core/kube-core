@@ -334,6 +334,7 @@ cluster:
         enabled: false
       tekton:
         enabled: false
+        txtLogs: false
       es:
         enabled: false
         config:

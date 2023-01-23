@@ -1,5 +1,29 @@
+## Header - Start
+{{ $values := (coalesce (. | getOrNil "values") (. | getOrNil "Values")) }}
+{{ $release := (index $values.releases "cluster-logging") }}
+{{ $releaseName := "cluster-logging" }}
+{{ $releaseNamespace := $release.namespace }}
+{{ $releaseType := $release.type }}
+
+{{ $_ := set $release "name" $releaseName }}
+{{ $_ := set $release "namespace" $releaseNamespace }}
+{{ (tpl (readFile "../templates/releases/standard/variables/release-variables-cloud.yaml.gotmpl") (dict "item" $release "values" $values)) }}
+
+{{ $cloudNamingConfig := $values.cloud.naming }}
+
+{{ $releaseCloud := ($release | getOrNil "cloud") }}
+{{ $releaseCloudEnabled := ($releaseCloud | getOrNil "enabled") }}
+{{ $releaseCloudNamingEnabled := ($releaseCloud | getOrNil "naming" | getOrNil "enabled") }}
+## Header - END
+
 cluster: {{ toYaml .Values.cluster | nindent 2 }}
 project: {{ .Values.cloud.project }}
-bucket_name: {{ .Values.cloud.projectShortName }}-tekton-logs
-credentials_secret_name: logging-gcs
+{{ if (and $releaseCloudEnabled $cloudNamingConfig.enabled (not (eq $releaseCloudNamingEnabled false))) }}
+bucket_name: {{ $release.metadata.namingConfig.templated.releaseBucketName }}-tekton-logs
+{{ else }}
+bucket_name: tekton-logs
+
+{{ end }}
+
+credentials_secret_name: cluster-logging
 credentials_secret_key: privateKey

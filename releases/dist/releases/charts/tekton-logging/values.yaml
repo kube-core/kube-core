@@ -1,3 +1,9 @@
+clusterflow:
+  enabled: false
+clusteroutput:
+  enabled: false
+deployment:
+  enabled: true
 project: project
 bucket_name: bucket
 credentials_secret_name: secret-name

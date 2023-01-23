@@ -1,3 +1,4 @@
+{{ if .Values.clusterflow.enabled }}
 apiVersion: logging.banzaicloud.io/v1beta1
 kind: ClusterFlow
 metadata:
@@ -7,5 +8,6 @@ spec:
   - tekton-output-gcs
   match:
   - select:
-      namespaces: 
+      namespaces:
       - tekton-pipelines
+{{ end }}
