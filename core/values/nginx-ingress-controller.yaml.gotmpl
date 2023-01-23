@@ -5,7 +5,7 @@ ingressClassResource:
   name: {{ .Values.cluster.common.defaultIngressClass }}
   enabled: true
   default: true
-  controllerClass: kube-core.io/{{ .Values.cluster.common.defaultIngressClass }}
+  controllerClass: {{ .Values.cluster.common.defaultIngressClassPrefix }}/ingress-{{ .Values.cluster.common.defaultIngressClass }}
   parameters: {}
 electionID: {{ .Values.cluster.common.defaultIngressClass }}
 extraArgs:
@@ -17,7 +17,7 @@ ingressClassResource:
   name: {{ .Values.cluster.common.defaultIngressClass }}-{{ .Release.Namespace }}
   enabled: true
   default: false
-  controllerClass: kube-core.io/{{ .Values.cluster.common.defaultIngressClass }}-{{ .Release.Namespace }}
+  controllerClass: {{ .Values.cluster.common.defaultIngressClassPrefix }}/ingress-{{ .Values.cluster.common.defaultIngressClass }}-{{ .Release.Namespace }}
   parameters: {}
 electionID: {{ .Values.cluster.common.defaultIngressClass }}-{{ .Release.Namespace }}
 
