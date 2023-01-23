@@ -266,18 +266,18 @@ recordSets:
     {{ end }}
     {{ end }}
   {{ if has true $isRecordSetManagedByCluster }}
-  {{ printf "%s-a" . | replace "." "-" }}:
+  {{ printf "%s-a" $domain | replace "." "-" }}:
     deletionPolicy: {{ coalesce ($releaseCloud | getOrNil "cdn" | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
     managedZone: {{ $releaseCloud | getOrNil "cdn" | getOrNil "managedZone" }}
-    rootDnsName: {{ printf "%s." . }}
+    rootDnsName: {{ printf "%s." $domain }}
     rrdatas: []
     patch:
       injectIpFromLb: true
       globalAddress: {{ $releaseGlobalAddressName }}
-  {{ printf "%s-txt" . | replace "." "-" }}:
+  {{ printf "%s-txt" $domain | replace "." "-" }}:
     deletionPolicy: {{ coalesce ($releaseCloud | getOrNil "cdn" | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
     managedZone: {{ $releaseCloud | getOrNil "cdn" | getOrNil "managedZone" }}
-    rootDnsName: {{ printf "%s." . }}
+    rootDnsName: {{ printf "%s." $domain }}
     type: "TXT"
     rrdatas:
       - {{ printf "provider=kube-core,crossplane-cloud/owner=%s,releases/namespace=%s/%s" $clusterName $mainReleaseName $releaseNamespace}}
