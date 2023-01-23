@@ -13,6 +13,9 @@
 {{ $cloudProject := $values.cloud.project }}
 {{ $cloudLocation := $values.cloud.default.location }}
 {{ $clusterName := $values.cluster.config.name }}
+{{ $clusterMainDomain := $values.cluster.config.domain }}
+{{ $clusterAdditionnalDomains := $values.cluster.config.additionnalDomains }}
+{{ $clusterListAllDomains := prepend $clusterAdditionnalDomains $clusterMainDomain }}
 
 cluster: {{ toYaml $values.cluster | nindent 2 }}
 cloud: {{ toYaml $values.cloud | nindent 2 }}
@@ -255,7 +258,14 @@ managedSslCertificates:
 
 recordSets:
 {{ range $k,$v := ($releaseCloud | getOrNil "cdn" | getOrNil "paths") }}
-  {{ range .domains }}
+  {{ range $domain := .domains }}
+    {{ $isRecordSetManagedByCluster := list false }}
+    {{ range $clusterDomain := $clusterListAllDomains }}
+    {{ if contains $clusterDomain $domain }}
+    {{ $isRecordSetManagedByCluster = prepend $isRecordSetManagedByCluster true }}
+    {{ end }}
+    {{ end }}
+  {{ if has true $isRecordSetManagedByCluster }}
   {{ printf "%s-a" . | replace "." "-" }}:
     deletionPolicy: {{ coalesce ($releaseCloud | getOrNil "cdn" | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
     managedZone: {{ $releaseCloud | getOrNil "cdn" | getOrNil "managedZone" }}
@@ -271,6 +281,7 @@ recordSets:
     type: "TXT"
     rrdatas:
       - {{ printf "provider=kube-core,crossplane-cloud/owner=%s,releases/namespace=%s/%s" $clusterName $mainReleaseName $releaseNamespace}}
+  {{ end }}
   {{ end }}
 {{ end }}
 
