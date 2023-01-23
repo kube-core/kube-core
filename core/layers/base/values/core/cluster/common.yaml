@@ -2,6 +2,7 @@ cluster:
   common:
     globalLabels: {}
     defaultIngressClass: nginx
+    defaultIngressClassPrefix: k8s.io
     defaultVisitorGroups: self
     defaultIssuerName: "letsencrypt-staging"
     defaultIssuerKind: "ClusterIssuer"
