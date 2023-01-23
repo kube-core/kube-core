@@ -146,12 +146,14 @@ backendBuckets:
 {{ $ | getOrNil "BUCKET_NAME_TOO_LONG" | required (printf "Bucket name must be less than 63 chars. Current: %s => %s" $fullBucketName ($fullBucketName | len | toString) )}}
 {{ end }}
 
-{{ if (not (eq ($bucketConfig | getOrNil "public" ) false)) }}
+{{ if (eq ($bucketConfig | getOrNil "public" ) true) }}
+{{ if (not (eq ($bucketConfig | getOrNil "backendBucket" | getOrNil "enabled") false)) }}
   {{ $fullBucketName }}:
     enabled: true
     bucketName: {{ $fullBucketName }}
     enableCdn: true
     deletionPolicy: {{ coalesce ($bucketConfig | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+{{ end }}
 {{ end }}
 {{ end }}
 
