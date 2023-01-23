@@ -55,6 +55,14 @@ releases:
       injectDefaultIngressClassName: true
       injectReloaderAnnotations: true
       patchIngresses: true
+  goldilocks:
+    options:
+      applyDefaultAnnotationsOnIngress: true
+      applyDefaultLabelsOnIngress: true
+      injectClusterLoggingLabel: true
+      injectDefaultIngressClassName: true
+      injectReloaderAnnotations: true
+      patchIngresses: true
   ingress-access-operator:
     options:
       injectClusterLoggingLabel: true
