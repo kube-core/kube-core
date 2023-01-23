@@ -30,17 +30,17 @@
 
 {{ if (eq .Values.cluster.logging.integrations.gcs.enabled true) }}
 ---
-{{ template "cluster-logging.objectStorageOutputTemplate" (dict "cluster" .Values.cluster "cloud" .Values.cloud "secrets" .Values.secrets "name" "tekton" "objectStorageType" "gcs" "txtLogs" true) }}
+{{ template "cluster-logging.objectStorageOutputTemplate" (dict "cluster" .Values.cluster "cloud" .Values.cloud "secrets" .Values.secrets "name" "tekton" "objectStorageType" "gcs" .Values.cluster.logging.integrations.tekton.txtLogs) }}
 {{ end }}
 
 {{ if (eq .Values.cluster.logging.integrations.minio.enabled true) }}
 ---
-{{ template "cluster-logging.objectStorageOutputTemplate" (dict "cluster" .Values.cluster "cloud" .Values.cloud "secrets" .Values.secrets "name" "tekton" "objectStorageType" "minio" "txtLogs" true) }}
+{{ template "cluster-logging.objectStorageOutputTemplate" (dict "cluster" .Values.cluster "cloud" .Values.cloud "secrets" .Values.secrets "name" "tekton" "objectStorageType" "minio" .Values.cluster.logging.integrations.tekton.txtLogs) }}
 {{ end }}
 
 {{ if (eq .Values.cluster.logging.integrations.s3.enabled true) }}
 ---
-{{ template "cluster-logging.objectStorageOutputTemplate" (dict "cluster" .Values.cluster "cloud" .Values.cloud "secrets" .Values.secrets "name" "tekton" "objectStorageType" "s3" "txtLogs" true) }}
+{{ template "cluster-logging.objectStorageOutputTemplate" (dict "cluster" .Values.cluster "cloud" .Values.cloud "secrets" .Values.secrets "name" "tekton" "objectStorageType" "s3" .Values.cluster.logging.integrations.tekton.txtLogs) }}
 {{ end }}
 
 {{ if (eq .Values.cluster.logging.integrations.es.enabled true) }}

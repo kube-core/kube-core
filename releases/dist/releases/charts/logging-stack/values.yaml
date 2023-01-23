@@ -18,7 +18,7 @@ cluster:
   logging:
     flows: {}
     dashboards:
-      enabled: true
+      enabled: false
       extraObjects:
         enabled: false
         commons:
@@ -27,7 +27,7 @@ cluster:
           name: kibana-objects
           data: {}
       commons:
-        enabled: true
+        enabled: false
       configMap:
         name: kibana-dashboards
         data: {}

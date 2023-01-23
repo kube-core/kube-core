@@ -1,3 +1,4 @@
+{{ if .Values.clusteroutput.enabled }}
 apiVersion: logging.banzaicloud.io/v1beta1
 kind: ClusterOutput
 metadata:
@@ -35,3 +36,4 @@ spec:
         secretKeyRef:
           key: {{ .Values.credentials_secret_key }}
           name: {{ .Values.credentials_secret_name }}
+{{ end }}

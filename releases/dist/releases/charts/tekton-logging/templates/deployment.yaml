@@ -1,8 +1,9 @@
+{{ if .Values.deployment.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: logs-server-gcs
-  labels: 
+  labels:
     app: logs-server-gcs
 spec:
   replicas: 1
@@ -32,3 +33,4 @@ spec:
             value: {{ .Values.bucket_name }}
         ports:
         - containerPort: 3000
+{{ end }}
