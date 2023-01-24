@@ -20,6 +20,7 @@ cluster:
         nginx.org/client-max-body-size: 200m
         forecastle.stakater.com/expose: true
         exposeIngressUrl: globally
+        kubernetes.io/ingress.class: nginx
       ingress.neo9.io/expose-labels: |-
         ingress.neo9.io/access-filtered: true
     defaultServiceLabels:
