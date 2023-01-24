@@ -188,6 +188,13 @@ releases:
   secret-generator:
     options:
       injectClusterLoggingLabel: true
+  sloop:
+    options:
+      patchIngresses: true
+      upgradeIngress: true
+      applyDefaultAnnotationsOnIngress: true
+      applyDefaultLabelsOnIngress: true
+      injectDefaultIngressClassName: true
   sloth:
     options:
       injectClusterLoggingLabel: true
