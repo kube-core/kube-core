@@ -3,28 +3,17 @@
 
 {{- range $releaseName, $release := $releases }}
 {{ $release := (mergeOverwrite (deepCopy $values.templates.release) $release) }}
+
+{{ $_ := set $release "type" "cluster" }}
+{{ $_ := set $release "name" $releaseName }}
+{{ $_ := set $release "namespace" $release.namespace }}
+{{ $_ := (tpl (readFile "templates/releases/standard/release-variables.yaml.gotmpl") (dict "item" $release "values" $values)) }}
+{{ $_ := set $.Values.releases $release.name $release }}
+
 {{- if $release.enabled -}}
-
-{{ $requirementsMet := true -}}
-{{ $lastRequirementMet := false -}}
-
-{{- if $release.needs -}}
-{{- range $currentRequirement := $release.needs -}}
-
-{{- $lastRequirementMet = $releases | get (printf "%s.enabled" $currentRequirement) -}}
-{{ if not $lastRequirementMet }}
-{{ $requirementsMet = false }}
-{{- end -}}
-
-{{- end -}}
-{{- end -}}
-
-{{ $newValues := $release }}
-{{ $_ := set $newValues "enabled" $requirementsMet }}
-{{ $_ := set $newValues "type" "cluster" }}
-{{- tpl (readFile "templates/releases/standard/release.yaml.gotmpl") (dict "item" $newValues "values" $values "releaseName" $releaseName "releaseNamespace" $release.namespace "releaseContext" $values.cluster.config.context) }}
-{{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") (dict "item" $newValues "values" $values "releaseName" $releaseName "releaseNamespace" $release.namespace "releaseContext" $values.cluster.config.context) }}
-{{- tpl (readFile "templates/releases/standard/release-extensions.yaml.gotmpl") (dict "item" $newValues "values" $values "releaseName" $releaseName "releaseNamespace" $release.namespace "releaseContext" $values.cluster.config.context) }}
+{{- tpl (readFile "templates/releases/standard/release.yaml.gotmpl") (dict "item" $release "values" $values "releaseName" $releaseName "releaseNamespace" $release.namespace "releaseContext" $values.cluster.config.context) }}
+{{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") (dict "item" $release "values" $values "releaseName" $releaseName "releaseNamespace" $release.namespace "releaseContext" $values.cluster.config.context) }}
+{{- tpl (readFile "templates/releases/standard/release-extensions.yaml.gotmpl") (dict "item" $release "values" $values "releaseName" $releaseName "releaseNamespace" $release.namespace "releaseContext" $values.cluster.config.context) }}
 
 {{- end -}}
 {{- end -}}
