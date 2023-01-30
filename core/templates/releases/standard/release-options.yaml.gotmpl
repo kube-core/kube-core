@@ -27,3 +27,10 @@
   {{- if .item.transformers }}
   {{ toYaml .item.transformers | nindent 2 }}
   {{- end }}
+
+  {{ if .item | getOrNil "hooks" }}
+  hooks:
+  {{- if .item.hooks }}
+  {{ toYaml .item.hooks | nindent 2 }}
+  {{- end }}
+  {{- end }}
