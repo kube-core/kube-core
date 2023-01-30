@@ -3,7 +3,7 @@ dashboard:
   ingress:
     enabled: true
     ingressClassName: {{ .Values.cluster.common.defaultIngressClass }}
-    annotations: 
+    annotations:
     {{ if .Values.cluster.common.defaultIngressAnnotations }}
       {{ toYaml .Values.cluster.common.defaultIngressAnnotations | nindent 4 }}
     {{- end }}
@@ -16,3 +16,20 @@ dashboard:
     - secretName: {{ (index .Values.releases .Release.Name "config" "dashboard" "ingress" "subdomain") | replace "." "-"}}-tls
       hosts:
       - {{ (index .Values.releases .Release.Name "config" "dashboard" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
+
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 25m
+      memory: 32Mi
+
+controller:
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 25m
+      memory: 32Mi
