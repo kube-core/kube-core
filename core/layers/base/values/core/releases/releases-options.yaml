@@ -11,6 +11,8 @@ releases:
       injectDefaultIngressClassName: true
       injectReloaderAnnotations: true
       patchIngresses: true
+      upgradeIngress: true
+      upgradeIngressPortIsHttp: true
   dex:
     options:
       injectReloaderAnnotations: true
