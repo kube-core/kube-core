@@ -1,33 +1,20 @@
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  annotations:
-  {{ if .Values.cluster.common.defaultIngressAnnotations }}
-    {{ toYaml .Values.cluster.common.defaultIngressAnnotations | nindent 4 }}
-  {{- end }}
-  {{- if (index .Values "tekton" "config" "dashboard" "ingress" "annotations") }}
-    {{ toYaml (index .Values "tekton" "config" "dashboard" "ingress" "annotations") | nindent 4 }}
-  {{- end }}
-  labels:
-    {{- include "tekton.labels" . | nindent 4 }}
-    {{ if .Values.cluster.common.defaultIngressLabels }}
-      {{ toYaml .Values.cluster.common.defaultIngressLabels | nindent 4 }}
-    {{- end }}
-    {{- if (index .Values "tekton" "config" "dashboard" "ingress" "labels") }}
-      {{ toYaml (index .Values "tekton" "config" "dashboard" "ingress" "labels") | nindent 4 }}
-    {{- end }}
   name: dashboard
-  namespace: tekton-pipelines
 spec:
   rules:
-  - host: {{ (index .Values "tekton" "config" "dashboard" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
+  - host: {{ (index .Values.tekton.config "dashboard" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
     http:
       paths:
       - backend:
-          serviceName: tekton-dashboard
-          servicePort: 9097
-        pathType: ImplementationSpecific
+          service:
+            name: tekton-dashboard
+            port:
+              number: 9097
+        path: /
+        pathType: Prefix
   tls:
   - hosts:
-    - {{ (index .Values "tekton" "config" "dashboard" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
-    secretName: {{ (index .Values "tekton" "config" "dashboard" "ingress" "subdomain") | replace "." "-"}}-tls
+    - {{ (index .Values.tekton.config "dashboard" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
+    secretName: {{ (index .Values.tekton.config "dashboard" "ingress" "subdomain") | replace "." "-"}}-tls
