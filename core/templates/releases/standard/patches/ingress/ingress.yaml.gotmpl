@@ -31,6 +31,13 @@
         path: "/spec/rules/0/http/paths/0/backend/serviceName"
       - op: remove
         path: "/spec/rules/0/http/paths/0/backend/servicePort"
+      {{ if .item.options | getOrNil "upgradeIngressPortIsHttp" }}
+      - op: copy
+        from: "/spec/rules/0/http/paths/0/backend/service/port/number"
+        path: "/spec/rules/0/http/paths/0/backend/service/port/name"
+      - op: remove
+        path: "/spec/rules/0/http/paths/0/backend/service/port/number"
+      {{ end }}
   {{ end }}
 
   {{- if .item.options.removeIngressClassName }}
