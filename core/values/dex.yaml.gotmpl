@@ -70,12 +70,12 @@ envVars:
   - name: DEFAULT_STATIC_CLIENT_ID
     valueFrom:
       secretKeyRef:
-        name: {{ (index .Values.releases .Release.Name "dynamicSecrets" "default-oauth2-client" "secretRef" "name" ) }}
+        name: {{ printf "%s-dynamic-secrets-%s" .Release.Name (index .Values.releases .Release.Name "dynamicSecrets" "default-oauth2-client" "secretRef" "name" ) }}
         key: DEFAULT_STATIC_CLIENT_ID
   - name: DEFAULT_STATIC_CLIENT_SECRET
     valueFrom:
       secretKeyRef:
-        name: {{ (index .Values.releases .Release.Name "dynamicSecrets" "default-oauth2-client" "secretRef" "name" ) }}
+        name: {{ printf "%s-dynamic-secrets-%s" .Release.Name (index .Values.releases .Release.Name "dynamicSecrets" "default-oauth2-client" "secretRef" "name" ) }}
         key: DEFAULT_STATIC_CLIENT_SECRET
   - name: DEFAULT_OIDC_CONNECTORS_ID
     valueFrom:
