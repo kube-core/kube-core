@@ -249,7 +249,7 @@ directories:
       - path: nginx-ingress-controller
         helmChart:
           name: nginx-ingress-controller
-          version: 9.3.24
+          version: 9.3.26
           repository:
             url: https://charts.bitnami.com/bitnami
 
