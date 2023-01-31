@@ -2,12 +2,19 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.11.8](https://github.com/kube-core/kube-core/compare/v0.11.7...v0.11.8)
+
+- core/values: Updated secrets references for dex & oauth2-proxy [`4d3eada`](https://github.com/kube-core/kube-core/commit/4d3eada797587dfc40c68cbef99507133d6ae49f)
+
 #### [v0.11.7](https://github.com/kube-core/kube-core/compare/v0.11.6...v0.11.7)
+
+> 30 January 2023
 
 - releases: Rebuilt releases [`e81540e`](https://github.com/kube-core/kube-core/commit/e81540e02ccf6373f567f6f2b9c9224a30615102)
 - releases: Upgraded some tekton resources [`ba7c900`](https://github.com/kube-core/kube-core/commit/ba7c9006dd4ad111fd9116a70414ad6b83790447)
 - core/values: Upgraded external-secrets template to use release metadata [`03aff13`](https://github.com/kube-core/kube-core/commit/03aff138a5a03a5d9bcaa5a0abf819e0814d5e29)
 - core/templates: Reworked clusterReleases to use same template as other release types [`8e6516e`](https://github.com/kube-core/kube-core/commit/8e6516eedae1fe7b138e485686de5a28a498d14b)
+- release: v0.11.7 [`c58234a`](https://github.com/kube-core/kube-core/commit/c58234aaec9e84d6e1d9407655099aadf1317289)
 - core/values: Changed default goldilocks requests/limits [`41ce4f3`](https://github.com/kube-core/kube-core/commit/41ce4f3533ea5a95903b0e29e2855a5c8757e0a3)
 - core/layers: Fixed kps external-secrets [`7bd7ab4`](https://github.com/kube-core/kube-core/commit/7bd7ab45a8e18e5c7e0208ca74724b964e5262ae)
 - core/layers: Fixed dynamicSecrets config for dex & oauth2proxy [`26e122f`](https://github.com/kube-core/kube-core/commit/26e122f0e4a8c99e344613f470236a6a7645bcde)
