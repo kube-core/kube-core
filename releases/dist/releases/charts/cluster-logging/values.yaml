@@ -304,6 +304,7 @@ cluster:
             es: false
       tekton:
         enabled: false
+        path: "logs/${tag}"
       config:
         legacyOutputRefs: false
         forceDefault: false

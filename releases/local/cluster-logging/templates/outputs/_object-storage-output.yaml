@@ -53,10 +53,10 @@ spec:
 {{ end }}
 {{ if (eq .txtLogs true) }}
     store_as: text
-    path: {{ .cluster.logging.outputs.config.txtLogsPath | quote }}
+    path: {{ coalesce .path .cluster.logging.outputs.config.txtLogsPath | quote }}
 {{ else }}
     store_as: json
-    path: {{ .cluster.logging.outputs.config.path | quote }}
+    path: {{ coalesce .path .cluster.logging.outputs.config.path | quote }}
 {{ end }}
     format:
 {{ if (eq .txtLogs true) }}

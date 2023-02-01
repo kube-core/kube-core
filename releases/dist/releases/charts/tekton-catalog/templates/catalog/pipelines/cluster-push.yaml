@@ -218,6 +218,8 @@ spec:
           ENV=ci kube-core scripts exec gitops_ci_kube_core_setup "$(params.git-branch)"
 
           helmfile repos
+          kube-core generate cluster-config
+          kube-core generate local
           kube-core build all
 
     workspaces:
