@@ -2,8 +2,17 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.11.9](https://github.com/kube-core/kube-core/compare/v0.11.8...v0.11.9)
+
+- releases: Fixed cluster-logging, tekton and tekton-logging integration [`eadffe5`](https://github.com/kube-core/kube-core/commit/eadffe5b6319e40adb300bcae621b6116898364d)
+- releases/nginx-ingress-controller: Upgraded chart to v9.3.26 [`540bc30`](https://github.com/kube-core/kube-core/commit/540bc305adbff3eaa20e46f2c4612faf13b52e9f)
+- releases/tekton: Fixed secrets not being injected on SAs [`1ec8743`](https://github.com/kube-core/kube-core/commit/1ec874381900ead72e5f4737f96450c7146322a9)
+
 #### [v0.11.8](https://github.com/kube-core/kube-core/compare/v0.11.7...v0.11.8)
 
+> 31 January 2023
+
+- release: v0.11.8 [`cebb918`](https://github.com/kube-core/kube-core/commit/cebb9180044ab1ffeb726eda74aa34ebcf9a6252)
 - core/values: Updated secrets references for dex & oauth2-proxy [`4d3eada`](https://github.com/kube-core/kube-core/commit/4d3eada797587dfc40c68cbef99507133d6ae49f)
 
 #### [v0.11.7](https://github.com/kube-core/kube-core/compare/v0.11.6...v0.11.7)
