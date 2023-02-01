@@ -26,6 +26,8 @@ cluster:
     {{ end }}
     {{ if (and .Values.cluster.logging.enabled .Values.cluster.logging.defaultConfig.enabled) }}
     flows:
+      default:
+        enabled: true
       flows:
       - name: app
       - name: cluster
