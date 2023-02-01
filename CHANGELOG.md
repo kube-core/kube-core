@@ -2,9 +2,16 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.11.11](https://github.com/kube-core/kube-core/compare/v0.11.10...v0.11.11)
+
+- releases/tekton-catalog: Regenerated release files [`93daa01`](https://github.com/kube-core/kube-core/commit/93daa01a356bdc917f19507712759e2226db2f5f)
+
 #### [v0.11.10](https://github.com/kube-core/kube-core/compare/v0.11.9...v0.11.10)
 
+> 1 February 2023
+
 - releases/tekton-catalog: Upgraded kube-core pipeline [`83d6d6c`](https://github.com/kube-core/kube-core/commit/83d6d6c4a6ae5dcf426b94e978cde1b1985d4cee)
+- release: v0.11.10 [`e52af28`](https://github.com/kube-core/kube-core/commit/e52af28a4e74febaf086b403dcef3e28ecf34a6c)
 
 #### [v0.11.9](https://github.com/kube-core/kube-core/compare/v0.11.8...v0.11.9)
 
