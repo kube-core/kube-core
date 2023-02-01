@@ -2,11 +2,18 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.11.10](https://github.com/kube-core/kube-core/compare/v0.11.9...v0.11.10)
+
+- releases/tekton-catalog: Upgraded kube-core pipeline [`83d6d6c`](https://github.com/kube-core/kube-core/commit/83d6d6c4a6ae5dcf426b94e978cde1b1985d4cee)
+
 #### [v0.11.9](https://github.com/kube-core/kube-core/compare/v0.11.8...v0.11.9)
+
+> 1 February 2023
 
 - releases: Fixed cluster-logging, tekton and tekton-logging integration [`eadffe5`](https://github.com/kube-core/kube-core/commit/eadffe5b6319e40adb300bcae621b6116898364d)
 - releases/nginx-ingress-controller: Upgraded chart to v9.3.26 [`540bc30`](https://github.com/kube-core/kube-core/commit/540bc305adbff3eaa20e46f2c4612faf13b52e9f)
 - releases/tekton: Fixed secrets not being injected on SAs [`1ec8743`](https://github.com/kube-core/kube-core/commit/1ec874381900ead72e5f4737f96450c7146322a9)
+- release: v0.11.9 [`f8606c9`](https://github.com/kube-core/kube-core/commit/f8606c91e41f88a4535446c19b251e092f6e53b9)
 
 #### [v0.11.8](https://github.com/kube-core/kube-core/compare/v0.11.7...v0.11.8)
 
