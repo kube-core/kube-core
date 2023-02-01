@@ -215,9 +215,9 @@ spec:
           #!/usr/bin/env bash
 
           cd $(workspaces.source.path)/$(params.git-project-name)/cluster
+          kube-core generate local
           helmfile repos
           ENV=ci kube-core scripts exec gitops_ci_kube_core_setup "$(params.git-branch)"
-          kube-core generate local
           kube-core generate cluster-config
           kube-core build all
 
@@ -246,8 +246,8 @@ spec:
           #!/usr/bin/env bash
 
           cd $(workspaces.source.path)/$(params.git-project-name)/cluster
-          ENV=ci kube-core scripts exec gitops_ci_kube_core_setup "$(params.git-branch)"
           kube-core generate local
+          ENV=ci kube-core scripts exec gitops_ci_kube_core_setup "$(params.git-branch)"
           kube-core test all
 
     workspaces:
