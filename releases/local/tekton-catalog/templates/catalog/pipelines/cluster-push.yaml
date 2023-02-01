@@ -215,11 +215,10 @@ spec:
           #!/usr/bin/env bash
 
           cd $(workspaces.source.path)/$(params.git-project-name)/cluster
-          ENV=ci kube-core scripts exec gitops_ci_kube_core_setup "$(params.git-branch)"
-
           helmfile repos
-          kube-core generate cluster-config
           kube-core generate local
+          ENV=ci kube-core scripts exec gitops_ci_kube_core_setup "$(params.git-branch)"
+          kube-core generate cluster-config
           kube-core build all
 
     workspaces:
@@ -247,6 +246,7 @@ spec:
           #!/usr/bin/env bash
 
           cd $(workspaces.source.path)/$(params.git-project-name)/cluster
+          kube-core generate local
           ENV=ci kube-core scripts exec gitops_ci_kube_core_setup "$(params.git-branch)"
           kube-core test all
 
@@ -283,6 +283,7 @@ spec:
         value: |
           #!/usr/bin/env bash
           cd $(workspaces.source.path)/$(params.git-project-name)/cluster
+          kube-core generate local
           ENV=ci GIT_ADD_ALL_FILES=$(params.git-add-all-files) PR_AUTO_MERGE=$(params.auto-merge) APPLY=$(params.apply) APPLY_DRY_RUN=$(params.apply-dry-run) kube-core scripts exec gitops_ci_kube_core_setup "$(params.git-branch)" "$(params.git-branch)" "$(params.git-branch)"
           ENV=ci GIT_ADD_ALL_FILES=$(params.git-add-all-files) PR_AUTO_MERGE=$(params.auto-merge) APPLY=$(params.apply) APPLY_DRY_RUN=$(params.apply-dry-run) kube-core scripts exec gitops_ci_auto_pr "$(params.git-branch)" "$(params.git-branch)" "$(params.git-branch)"
 
@@ -319,8 +320,8 @@ spec:
       - name: script
         value: |
           #!/usr/bin/env bash
-
           cd $(workspaces.source.path)/$(params.git-project-name)/cluster
+          kube-core generate local
           ENV=ci GIT_ADD_ALL_FILES=$(params.git-add-all-files) PR_AUTO_MERGE=$(params.auto-merge) APPLY=$(params.apply) APPLY_DRY_RUN=$(params.apply-dry-run) kube-core scripts exec gitops_ci_kube_core_setup "$(params.git-branch)"
           ENV=ci GIT_ADD_ALL_FILES=$(params.git-add-all-files) PR_AUTO_MERGE=$(params.auto-merge) APPLY=$(params.apply) APPLY_DRY_RUN=$(params.apply-dry-run) kube-core scripts exec gitops_ci_auto_pr "$(params.git-branch)"
 
@@ -355,6 +356,7 @@ spec:
           #!/usr/bin/env bash
 
           cd $(workspaces.source.path)/$(params.git-project-name)/cluster
+          kube-core generate local
           ENV=ci kube-core scripts exec gitops_ci_kube_core_setup "$(params.git-branch)"
           echo "TODO: If any modifications in tree, should fail pipeline and suggest to build/debug."
           echo "TODO: If everything is ok, should build an OCI package with cluster manifests, using kbld & imgpkg"
