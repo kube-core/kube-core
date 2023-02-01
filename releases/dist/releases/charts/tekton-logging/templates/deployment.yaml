@@ -21,7 +21,7 @@ spec:
             secretName: {{ .Values.credentials_secret_name }}
       containers:
       - name: node
-        image: ihebchakroun/tekton-logs-server:latest
+        image: ihebchakroun/tekton-logs-server:v0.2.0
         volumeMounts:
           - mountPath: "/credentials"
             name: logging-gcs

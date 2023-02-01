@@ -209,6 +209,14 @@ releases:
       injectDefaultIngressClassName: true
       injectReloaderAnnotations: true
       patchIngresses: true
+  tekton-logging:
+    options:
+      applyDefaultAnnotationsOnIngress: true
+      applyDefaultLabelsOnIngress: true
+      injectClusterLoggingLabel: true
+      injectDefaultIngressClassName: true
+      injectReloaderAnnotations: true
+      patchIngresses: true
   velero:
     options:
       injectClusterLoggingLabel: true
