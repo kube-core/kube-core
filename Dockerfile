@@ -49,7 +49,7 @@ RUN pip install PyYaml
 RUN binenv install helm 3.8.0 && \
 mv ~/.binenv/helm /usr/local/bin/
 
-RUN binenv install helmfile 0.147.0 && \
+RUN binenv install helmfile 0.150.0 && \
 mv ~/.binenv/helmfile /usr/local/bin/
 
 # RUN wget -q https://github.com/roboll/helmfile/releases/download/v0.144.0/helmfile_linux_386 -O helmfile
