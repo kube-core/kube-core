@@ -2,8 +2,15 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.11.12](https://github.com/kube-core/kube-core/compare/v0.11.11...v0.11.12)
+
+- core/layers: Fixed kps secrets [`ec71a86`](https://github.com/kube-core/kube-core/commit/ec71a86aae9aec1ceb14846ea102b092f16bf4d6)
+
 #### [v0.11.11](https://github.com/kube-core/kube-core/compare/v0.11.10...v0.11.11)
 
+> 1 February 2023
+
+- release: v0.11.11 [`dc65ceb`](https://github.com/kube-core/kube-core/commit/dc65ceb391ef8b3bcb0da69dbc11e53c304b6be5)
 - releases/tekton-catalog: Regenerated release files [`93daa01`](https://github.com/kube-core/kube-core/commit/93daa01a356bdc917f19507712759e2226db2f5f)
 
 #### [v0.11.10](https://github.com/kube-core/kube-core/compare/v0.11.9...v0.11.10)
