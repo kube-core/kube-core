@@ -1,5 +1,6 @@
 {{- define "app-extensions.rabbitmq-cluster" -}}
 {{- $name := (coalesce .value.name .key) }}
+{{- $resourceName := (coalesce .value.resourceName .value.name .key) }}
 {{- $namespace := (coalesce .value.namespace "default") }}
 
 apiVersion: rabbitmq.com/v1beta1

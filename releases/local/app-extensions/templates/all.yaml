@@ -3,7 +3,7 @@
 {{- $values := .Values }}
 {{- range $kindName, $kindList := $values.resources }}
 {{- range $key, $value := $kindList }}
-
+{{- if (index $values "resource" $kindName) }}
 {{- $resource := dict "key" $key "value" (mustMerge (deepCopy $value) (deepCopy (index $values "resource" $kindName))) }}
 {{- $globalpick := pick $values "patch" "cloud" "cluster" "release" }}
 {{- $commonvalues := dict "common" $globalpick }}
@@ -12,6 +12,7 @@
 {{- if $resource.value.enabled }}
 ---
 {{- include (printf "app-extensions.%s" ($kindName | kebabcase)) $mergedvalues }}
+{{- end }}
 {{- end }}
 {{- end }}
 {{- end }}

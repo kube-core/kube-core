@@ -1,5 +1,6 @@
 {{- define "app-extensions.rabbitmq-exchange" -}}
 {{- $name := (coalesce .value.name .key) }}
+{{- $resourceName := (coalesce .value.resourceName .value.name .key) }}
 {{ $rabbitmqClusterName := (coalesce .value.rabbitmqClusterName .common.release.name) }}
 {{ $rabbitmqClusterNamespace := (coalesce .value.rabbitmqClusterNamespace .common.release.namespace) }}
 

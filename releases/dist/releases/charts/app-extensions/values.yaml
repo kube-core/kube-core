@@ -8,6 +8,187 @@ cluster:
     name: kube-core
     domain: dev.kube-core.io
 
+resource:
+  gcp-backendbucket:
+    enabled: false
+  gcp-bucket:
+    enabled: false
+  gcp-bucketpolicy:
+    enabled: false
+  gcp-globaladdress:
+    enabled: false
+  gcp-globalforwardingrule:
+    enabled: false
+  gcp-managedsslcertificate:
+    enabled: false
+  gcp-managedzone:
+    enabled: false
+  gcp-projectiamcustomrole:
+    enabled: false
+  gcp-projectiammember:
+    enabled: false
+  gcp-recordset:
+    enabled: false
+  gcp-serviceaccount:
+    enabled: false
+  gcp-serviceaccountiammember:
+    enabled: false
+  gcp-serviceaccountkey:
+    enabled: false
+  gcp-serviceaccountpolicy:
+    enabled: false
+  gcp-targethttpproxy:
+    enabled: false
+  gcp-targethttpsproxy:
+    enabled: false
+  gcp-urlmap:
+    enabled: false
+  keda-scaledobject:
+    enabled: false
+  kube-ingress:
+    enabled: false
+  patch-recordsetinjectipfromlb:
+    enabled: false
+  prometheus-rule:
+    enabled: false
+  rabbitmq-binding:
+    enabled: false
+  rabbitmq-cluster:
+    enabled: false
+  rabbitmq-exchange:
+    enabled: false
+  rabbitmq-permission:
+    enabled: false
+  rabbitmq-policy:
+    enabled: false
+  rabbitmq-queue:
+    enabled: false
+  rabbitmq-user:
+    enabled: false
+  rabbitmq-vhost:
+    enabled: false
+  sloth-prometheusservicelevel:
+    enabled: false
+
+  sloth-prometheusservicelevel:
+    enabled: false
+    slos: []
+    # slos:
+    #   test-slo:
+    #     objective: 99
+    #     description: "SLO: My custom SLO"
+    #     alertDescription: "My SLI is below the thresold!"
+    #     errorQuery: my_error_query
+    #     totalQuery: my_total_query
+    ingress:
+      enabled: false
+      objective: 99
+      description: "SLO: HTTP requests response availability"
+    # service: sloth-servicelevel
+    # type: app
+    # env: default
+  prometheus-rule:
+    enabled: false
+    prometheusEndpoint: http://prometheus-operated.monitoring.svc.cluster.local:9090
+    rules: []
+    # rules:
+    # - expr: rabbitmq_queue_messages{namespace="namespace", queue="my-queue"}
+    #   record: "my_namespace_my_api_rabbitmq_my_queue_queue_messages"
+    rabbitmq:
+      enabled: false
+      queues:
+        default: false # If true, generates rules for queues based on API name
+        scaling: []
+        # scaling:
+        # - name: my-queue
+    cpuAvg:
+      enabled: false
+      window: 1m
+      podQuery: ""
+      # query: my_query
+      # container: elasticsearch
+      # namespace: logging-es-http
+    memoryAvg:
+      enabled: false
+      podQuery: ""
+      # query: my_query
+      # container: elasticsearch
+      # namespace: logging-es-http
+      # name: logging-es-http
+    ingressAccessFreq:
+      enabled: false
+      window: 1m
+      # query: my_query
+      # namespace: logging-es-http
+      # name: logging-es-http
+    serviceAccessFreq:
+      enabled: false
+      window: 1m
+      # query: my_query
+      # namespace: logging
+      # name: logging-es-http
+  keda-scaledobject:
+    enabled: false
+    minReplicaCount: 1
+    maxReplicaCount: 10
+    prometheusEndpoint: http://prometheus-operated.monitoring.svc.cluster.local:9090
+    scaleTargetRef:
+      apiVersion: apps/v1
+      kind: Deployment
+      name: keda-scaledobject
+    extraTriggers: []
+  # extraTriggers:
+  # - type: prometheus
+  #   metricType: Value
+  #   metadata:
+  #     serverAddress: http://prometheus-operated.monitoring.svc.cluster.local:9090
+  #     metricName: "my_metric"
+  #     threshold: "1"
+  #     query: "my_prom_query"
+    rabbitmq:
+      enabled: false
+      default:
+        enabled: false
+        in: 1
+        out: 1
+      queues: []
+      # queues:
+      # - name: my-queue
+      #   value: 1
+    cpuAvg:
+      enabled: false
+      threshold: 0.90
+    memoryAvg:
+      enabled: false
+      threshold: 0.90
+    ingressAccessFreq:
+      enabled: false
+      threshold: 100
+    serviceAccessFreq:
+      enabled: false
+      threshold: 100
+      # query: my_custom_prometheus_query
+      # metricName: my_custom_metric_name
+
+resources: {}
+  # prometheus-rule:
+  #   app-test-1:
+  #     enabled: true
+  #   app-test-2:
+  #     enabled: true
+  # keda-scaledobject:
+  #   app-test-1:
+  #     enabled: true
+  #   app-test-2:
+  #     enabled: true
+  # sloth-servicelevel:
+  #   app-test-1:
+  #     enabled: true
+  #   app-test-2:
+  #     enabled: true
+
+
+
 # patch:
 #   serviceAccountName: my-patch-operator-sa
 

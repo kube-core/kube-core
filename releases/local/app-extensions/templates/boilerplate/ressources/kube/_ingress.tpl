@@ -1,5 +1,6 @@
 {{- define "app-extensions.kube-ingress" -}}
 {{- $name := (coalesce .value.name .key) }}
+{{- $resourceName := (coalesce .value.resourceName .value.name .key) }}
 {{- $namespace := (coalesce .value.namespace "default") }}
 {{- $domain := (coalesce .value.domain .common.cluster.config.domain) }}
 {{- $host := (coalesce .value.host (printf "%s.%s.%s" $name $namespace $domain)) }}
