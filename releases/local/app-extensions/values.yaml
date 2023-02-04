@@ -9,7 +9,68 @@ cluster:
     domain: dev.kube-core.io
 
 resource:
-  sloth-servicelevel:
+  gcp-backendbucket:
+    enabled: false
+  gcp-bucket:
+    enabled: false
+  gcp-bucketpolicy:
+    enabled: false
+  gcp-globaladdress:
+    enabled: false
+  gcp-globalforwardingrule:
+    enabled: false
+  gcp-managedsslcertificate:
+    enabled: false
+  gcp-managedzone:
+    enabled: false
+  gcp-projectiamcustomrole:
+    enabled: false
+  gcp-projectiammember:
+    enabled: false
+  gcp-recordset:
+    enabled: false
+  gcp-serviceaccount:
+    enabled: false
+  gcp-serviceaccountiammember:
+    enabled: false
+  gcp-serviceaccountkey:
+    enabled: false
+  gcp-serviceaccountpolicy:
+    enabled: false
+  gcp-targethttpproxy:
+    enabled: false
+  gcp-targethttpsproxy:
+    enabled: false
+  gcp-urlmap:
+    enabled: false
+  keda-scaledobject:
+    enabled: false
+  kube-ingress:
+    enabled: false
+  patch-recordsetinjectipfromlb:
+    enabled: false
+  prometheus-rule:
+    enabled: false
+  rabbitmq-binding:
+    enabled: false
+  rabbitmq-cluster:
+    enabled: false
+  rabbitmq-exchange:
+    enabled: false
+  rabbitmq-permission:
+    enabled: false
+  rabbitmq-policy:
+    enabled: false
+  rabbitmq-queue:
+    enabled: false
+  rabbitmq-user:
+    enabled: false
+  rabbitmq-vhost:
+    enabled: false
+  sloth-prometheusservicelevel:
+    enabled: false
+
+  sloth-prometheusservicelevel:
     enabled: false
     slos: []
     # slos:
@@ -20,7 +81,7 @@ resource:
     #     errorQuery: my_error_query
     #     totalQuery: my_total_query
     ingress:
-      enabled: true
+      enabled: false
       objective: 99
       description: "SLO: HTTP requests response availability"
     # service: sloth-servicelevel
@@ -61,7 +122,7 @@ resource:
       # namespace: logging-es-http
       # name: logging-es-http
     serviceAccessFreq:
-      enabled: true
+      enabled: false
       window: 1m
       # query: my_query
       # namespace: logging
@@ -104,27 +165,27 @@ resource:
       enabled: false
       threshold: 100
     serviceAccessFreq:
-      enabled: true
+      enabled: false
       threshold: 100
       # query: my_custom_prometheus_query
       # metricName: my_custom_metric_name
 
-resources:
-  prometheus-rule:
-    app-test-1:
-      enabled: true
-    app-test-2:
-      enabled: true
-  keda-scaledobject:
-    app-test-1:
-      enabled: true
-    app-test-2:
-      enabled: true
-  sloth-servicelevel:
-    app-test-1:
-      enabled: true
-    app-test-2:
-      enabled: true
+resources: {}
+  # prometheus-rule:
+  #   app-test-1:
+  #     enabled: true
+  #   app-test-2:
+  #     enabled: true
+  # keda-scaledobject:
+  #   app-test-1:
+  #     enabled: true
+  #   app-test-2:
+  #     enabled: true
+  # sloth-servicelevel:
+  #   app-test-1:
+  #     enabled: true
+  #   app-test-2:
+  #     enabled: true
 
 
 
