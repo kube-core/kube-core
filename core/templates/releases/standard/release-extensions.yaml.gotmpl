@@ -265,3 +265,51 @@
   - {{ (tpl (readFile "values/release-rabbitmq-config.yaml.gotmpl") .) | nindent 4 }}
 
 {{ end }}
+
+{{ $customExtensions := (.item | getOrNil "customExtensions") }}
+{{ $customExtensionsEnabled := ($customExtensions | getOrNil "enabled") }}
+
+{{ if ($customExtensionsEnabled) }}
+{{ $extensionType := "custom-extensions" }}
+{{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
+
+- name: {{ $extensionName }}
+  chart: ../releases/dist/releases/charts/app-extensions
+  kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
+  namespace: {{ .releaseNamespace }}
+  {{ $_ := set . "releaseName" $extensionName }}
+  {{ $_ := set . "extensionType" $extensionType }}
+  {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") . }}
+  {{ $_ := set . "releaseName" .parentReleaseName }}
+  labels:
+    app: {{ $releaseName }}
+    type: "custom-extensions"
+  values:
+  # - "./values/release-cloud.yaml.gotmpl"
+  - {{ (tpl (readFile "values/release-custom-extensions.yaml.gotmpl") .) | nindent 4 }}
+
+{{ end }}
+
+{{ $sreConfig := (.item | getOrNil "sre-config") }}
+{{ $sreConfigEnabled := ($sreConfig | getOrNil "enabled") }}
+
+{{ if ($sreConfigEnabled) }}
+{{ $extensionType := "sre-config" }}
+{{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
+
+- name: {{ $extensionName }}
+  chart: ../releases/dist/releases/charts/app-extensions
+  kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
+  namespace: {{ .releaseNamespace }}
+  {{ $_ := set . "releaseName" $extensionName }}
+  {{ $_ := set . "extensionType" $extensionType }}
+  {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") . }}
+  {{ $_ := set . "releaseName" .parentReleaseName }}
+  labels:
+    app: {{ $releaseName }}
+    type: "sre-config"
+  values:
+  # - "./values/release-cloud.yaml.gotmpl"
+  - {{ (tpl (readFile "values/release-sre-config.yaml.gotmpl") .) | nindent 4 }}
+
+{{ end }}

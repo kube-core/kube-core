@@ -38,35 +38,44 @@
 {{ $defaultVhost = "apps" }}
 {{ end }}
 
+cluster: {{ toYaml $values.cluster | nindent 2 }}
+cloud: {{ toYaml $values.cloud | nindent 2 }}
+
 {{ $ingressClassName := (coalesce $values.applicationsConfig.defaultIngressClass $values.servicesConfig.defaultIngressClass $values.cluster.common.defaultIngressClass) }}
 resources:
 
   {{ if (eq ($rabbitmq | getOrNil "type") "dedicated") }}
   rabbitmq-cluster:
     {{ $mainReleaseName }}:
+      enabled: true
       name: {{ $rabbitmqClusterRef }}
       replicas: {{ (coalesce ($rabbitmq | getOrNil "replicaCount") $defaultReplicaCount) }}
 
   rabbitmq-vhost:
     {{ $mainReleaseName }}-root:
+      enabled: true
       vhost: "/"
       rabbitmqClusterName: {{ $rabbitmqClusterRef }}
       rabbitmqClusterNamespace: {{ $releaseNamespace }}
     {{ $mainReleaseName }}-default:
+      enabled: true
       vhost: "{{ $mainReleaseName }}"
       rabbitmqClusterName: {{ $rabbitmqClusterRef }}
       rabbitmqClusterNamespace: {{ $releaseNamespace }}
     {{ $mainReleaseName }}-apps:
+      enabled: true
       vhost: "apps"
       rabbitmqClusterName: {{ $rabbitmqClusterRef }}
       rabbitmqClusterNamespace: {{ $releaseNamespace }}
   rabbitmq-policy:
     {{ $mainReleaseName }}:
+      enabled: true
       rabbitmqClusterName: {{ $rabbitmqClusterRef }}
       rabbitmqClusterNamespace: {{ $releaseNamespace }}
 
   kube-ingress:
     {{ $mainReleaseName }}-rabbitmq:
+      enabled: true
       ingressClassName: {{ $ingressClassName }}
       annotations:
         forecastle.stakater.com/icon: https://www.rabbitmq.com/img/logo-rabbitmq.svg
@@ -75,6 +84,7 @@ resources:
 
   rabbitmq-user:
     {{ $mainReleaseName }}:
+      enabled: true
       # name: {{ $mainReleaseName }}-{{ $rabbitmqClusterRef }}
       {{ if ($rabbitmq | getOrNil "disableImportCredentialsSecret") }}
       importCredentialsSecret: false
@@ -92,6 +102,7 @@ resources:
 
   rabbitmq-permission:
     {{ $mainReleaseName }}:
+      enabled: true
       rabbitmqClusterName: {{ $rabbitmqClusterRef }}
       rabbitmqClusterNamespace: {{ $releaseNamespace }}
       vhost: {{ coalesce ($rabbitmq | getOrNil "vhost") $defaultVhost }}
@@ -114,9 +125,11 @@ resources:
   rabbitmq-exchange:
   {{ if ($rabbitmq | getOrNil "queues" | getOrNil "default" | getOrNil "enabled") }}
     {{ $mainReleaseName }}-in:
+      enabled: true
       rabbitmqClusterName: {{ $rabbitmqClusterRef }}
       rabbitmqClusterNamespace: {{ $releaseNamespace }}
     {{ $mainReleaseName }}-out:
+      enabled: true
       rabbitmqClusterName: {{ $rabbitmqClusterRef }}
       rabbitmqClusterNamespace: {{ $releaseNamespace }}
   {{ end }}
@@ -124,6 +137,7 @@ resources:
   {{ range ($rabbitmq | getOrNil "queues" | getOrNil "custom" | getOrNil "queues") }}
   {{ $name := .name }}
     {{ $name }}:
+      enabled: true
       rabbitmqClusterName: {{ $rabbitmqClusterRef }}
       rabbitmqClusterNamespace: {{ $releaseNamespace }}
   {{ end }}
@@ -132,9 +146,11 @@ resources:
   rabbitmq-queue:
   {{ if ($rabbitmq | getOrNil "queues" | getOrNil "default" | getOrNil "enabled") }}
     {{ $mainReleaseName }}-in:
+      enabled: true
       rabbitmqClusterName: {{ $rabbitmqClusterRef }}
       rabbitmqClusterNamespace: {{ $releaseNamespace }}
     {{ $mainReleaseName }}-out:
+      enabled: true
       rabbitmqClusterName: {{ $rabbitmqClusterRef }}
       rabbitmqClusterNamespace: {{ $releaseNamespace }}
   {{ end }}
@@ -142,6 +158,7 @@ resources:
   {{ range ($rabbitmq | getOrNil "queues" | getOrNil "custom" | getOrNil "queues") }}
   {{ $name := .name }}
     {{ $name }}:
+      enabled: true
       rabbitmqClusterName: {{ $rabbitmqClusterRef }}
       rabbitmqClusterNamespace: {{ $releaseNamespace }}
   {{ end }}
@@ -150,9 +167,11 @@ resources:
   rabbitmq-binding:
   {{ if ($rabbitmq | getOrNil "queues" | getOrNil "default" | getOrNil "enabled") }}
     {{ $mainReleaseName }}-in:
+      enabled: true
       rabbitmqClusterName: {{ $rabbitmqClusterRef }}
       rabbitmqClusterNamespace: {{ $releaseNamespace }}
     {{ $mainReleaseName }}-out:
+      enabled: true
       rabbitmqClusterName: {{ $rabbitmqClusterRef }}
       rabbitmqClusterNamespace: {{ $releaseNamespace }}
   {{ end }}
@@ -160,6 +179,7 @@ resources:
   {{ range ($rabbitmq | getOrNil "queues" | getOrNil "custom" | getOrNil "queues") }}
   {{ $name := .name }}
     {{ $name }}:
+      enabled: true
       rabbitmqClusterName: {{ $rabbitmqClusterRef }}
       rabbitmqClusterNamespace: {{ $releaseNamespace }}
   {{ end }}
@@ -173,6 +193,7 @@ resources:
 {{ range $resourceName, $resourceConfig := $kindList }}
     {{ $_ := set $resourceConfig "rabbitmqClusterName" (coalesce ($resourceConfig | getOrNil "rabbitmqClusterName") $rabbitmqClusterRef) }}
     {{ $_ := set $resourceConfig "rabbitmqClusterNamespace" (coalesce ($resourceConfig | getOrNil "rabbitmqClusterNamespace") $releaseNamespace) }}
+    {{ $_ := set $resourceConfig "enabled" true }}
     {{ $resourceName }}: {{ toYaml $resourceConfig | nindent 6 }}
 {{ end }}
 {{ end }}
