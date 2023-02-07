@@ -21,6 +21,14 @@ cloud:
     defaultDeletionPolicy: Orphan
   naming:
     enabled: false
+    namespaceShortNames:
+      dev: dev
+      integration: int
+      validation: val
+      staging: stg
+      preproduction: ppd
+      production: prd
+      prod: prd
     config:
       forceCoreNaming: false
       forceReleaseNaming: false

@@ -1,0 +1,23 @@
+{{ $values := .Values }}
+{{ $releases := $values.releases }}
+{{ $releaseNamespace := .Release.Namespace }}
+{{ $releaseName := .Release.Name }}
+{{ $release := ($releases | getOrNil $releaseName) }}
+
+# -- url to prometheus instance with metrics
+prometheusUrl: {{ $values.cluster.monitoring.prometheusEndpoint }}
+prometheusExternalUrl: https://prometheus.{{ $values.cluster.config.domain }}
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 100Mi
+  requests:
+    cpu: 100m
+    memory: 100Mi
+
+ingress:
+  enabled: true
+
+serviceMonitor:
+  enabled: true

@@ -1,0 +1,48 @@
+releases:
+  nginx-ingress-controller:
+    slos:
+      enabled: true
+      custom:
+        errors:
+          enabled: true
+          errorQuery: nginx_ingress_controller_requests{controller_class="k8s.io/ingress-nginx", namespace="nginx-ingress", status=~"(5..|429)"}
+          totalQuery: nginx_ingress_controller_requests{controller_class="k8s.io/ingress-nginx", namespace="nginx-ingress"}
+        latency:
+          enabled: true
+          indicatorType: latency
+          successQuery: nginx_ingress_controller_request_duration_seconds_bucket{controller_class="k8s.io/ingress-nginx", namespace="nginx-ingress", status=~"(5..|429)", le="1"}
+          totalQuery: nginx_ingress_controller_request_duration_seconds_count{controller_class="k8s.io/ingress-nginx", namespace="nginx-ingress"}
+  kps:
+    slos:
+      enabled: true
+      custom:
+        prometheus-http-errors:
+          enabled: true
+          errorQuery: prometheus_http_requests_total{namespace="monitoring", job="kps-prometheus",code=~"(5..|429)"}
+          totalQuery: prometheus_http_requests_total{namespace="monitoring", job="kps-prometheus"}
+        prometheus-api-errors:
+          enabled: true
+          errorQuery: prometheus_http_requests_total{namespace="monitoring", job="kps-prometheus", handler=~"/api.*", code=~"(5..|429)"}
+          totalQuery: prometheus_http_requests_total{namespace="monitoring", job="kps-prometheus", handler=~"/api.*"}
+        prometheus-operator-errors:
+          enabled: true
+          errorQuery: prometheus_operator_kubernetes_client_http_requests_total{status_code=~"(5..|429)"}
+          totalQuery: prometheus_operator_kubernetes_client_http_requests_total
+        kube-apiserver-read-latency:
+          enabled: true
+          indicatorType: latency
+          successQuery: apiserver_request_duration_seconds_bucket{job="apiserver",scope=~"resource|",verb=~"LIST|GET",le="1"}
+          totalQuery: apiserver_request_duration_seconds_count{job="apiserver",scope=~"resource|",verb=~"LIST|GET"}
+        kube-apiserver-write-latency:
+          enabled: true
+          indicatorType: latency
+          successQuery: apiserver_request_duration_seconds_bucket{job="apiserver",scope=~"resource|",verb=~"POST|PUT|PATCH|DELETE",le="1"}
+          totalQuery: apiserver_request_duration_seconds_count{job="apiserver",scope=~"resource|",verb=~"POST|PUT|PATCH|DELETE"}
+        kube-apiserver-read-errors:
+          enabled: true
+          errorQuery: apiserver_request_total{job="apiserver",verb=~"LIST|GET",code=~"(5..|429)"}
+          totalQuery: apiserver_request_total{job="apiserver",verb=~"LIST|GET"}
+        kube-apiserver-write-errors:
+          enabled: true
+          errorQuery: apiserver_request_total{job="apiserver",verb=~"POST|PUT|PATCH|DELETE",code=~"(5..|429)"}
+          totalQuery: apiserver_request_total{job="apiserver",verb=~"POST|PUT|PATCH|DELETE"}

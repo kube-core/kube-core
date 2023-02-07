@@ -15,7 +15,7 @@
 {{ $releaseCloudNamingEnabled := ($releaseCloud | getOrNil "naming" | getOrNil "enabled") }}
 
 {{ $appOrPlatformDict := (dict "type" (dict "release" "platform" "application" "application" "service" "application") "short" (dict "type" (dict "release" "p" "application" "a" "service" "a" )))}}
-{{ $namespaceShortNameDict := dict "dev" "dev" "integration" "int" "validation" "val" "staging" "stg" "preproduction" "ppd" "production" "prd" }}
+{{ $namespaceShortNameDict := $cloudNamingConfig.namespaceShortNames }}
 
 {{ $coreNamingConfig := (dict "cloud" (dict "full" (dict) "short" (dict)) "release" (dict "full" dict "short" dict)) }}
 {{ $releaseNamingConfig := (dict "cloud" (dict "full" (dict) "short" (dict)) "release" (dict "full" dict "short" dict)) }}

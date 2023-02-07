@@ -1,0 +1,22 @@
+{{ $values := (coalesce (. | getOrNil "values") (. | getOrNil "Values")) }}
+{{ $cloudNamingConfig := $values.cloud.naming }}
+
+{{ $release := .item }}
+{{ $releaseName := $release.name }}
+{{ $releaseNamespace := $release.namespace }}
+{{ $releaseType := $release.type }}
+
+{{ if (not ($release | getOrNil "metadata")) }}
+{{ $_ := set $release "metadata" (dict "empty" (dict)) }}
+{{ end }}
+{{ $releaseMetadata := $release.metadata }}
+{{ $_ := set $release.metadata "config" (dict) }}
+{{ $releaseConfig := $release.metadata.config }}
+
+{{ $clusterDomain := $values.cluster.config.domain }}
+{{ $releaseNamespaceDomain := (printf "%s.%s" $releaseNamespace $clusterDomain) }}
+{{ $releaseDomain := (printf "%s.%s" $releaseName $releaseNamespaceDomain) }}
+
+{{ $_ := set $releaseConfig "clusterDomain" $clusterDomain }}
+{{ $_ := set $releaseConfig "namespaceDomain" $releaseNamespaceDomain }}
+{{ $_ := set $releaseConfig "domain" $releaseDomain }}

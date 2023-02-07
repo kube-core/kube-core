@@ -64,37 +64,37 @@ logging:
 ingress:
   enabled: true
 
-monitoring:
-  rules:
-    enabled: true
-    cpuAvg:
-      enabled: false
-      window: 1m
-    memoryAvg:
-      enabled: false
-      window: 1m
-    ingressAccessFreq:
-      enabled: true
-      window: 1m
-    serviceAccessFreq:
-      enabled: true
-      window: 1m
-scaling:
-  enabled: true
-  minReplicaCount: 1
-  maxReplicaCount: 10
-  cpuAvg:
-    enabled: false
-    threshold: 0.90
-  memoryAvg:
-    enabled: false
-    threshold: 0.90
-  serviceAccessFreq:
-    enabled: true
-    threshold: 10
-  ingressAccessFreq:
-    enabled: true
-    threshold: 10
+# monitoring:
+#   rules:
+#     enabled: false
+#     cpuAvg:
+#       enabled: false
+#       window: 1m
+#     memoryAvg:
+#       enabled: false
+#       window: 1m
+#     ingressAccessFreq:
+#       enabled: false
+#       window: 1m
+#     serviceAccessFreq:
+#       enabled: false
+#       window: 1m
+# scaling:
+#   enabled: false
+#   minReplicaCount: 1
+#   maxReplicaCount: 10
+#   cpuAvg:
+#     enabled: false
+#     threshold: 0.90
+#   memoryAvg:
+#     enabled: false
+#     threshold: 0.90
+#   serviceAccessFreq:
+#     enabled: false
+#     threshold: 10
+#   ingressAccessFreq:
+#     enabled: false
+#     threshold: 10
 pdb:
   minAvailable: 2
 pod:
@@ -268,9 +268,9 @@ ingress:
           pathType: ImplementationSpecific
 
 metrics:
-  enabled: true
+  enabled: false
   serviceMonitor:
-    enabled: true
+    enabled: false
     interval: 2s
 
 flux:

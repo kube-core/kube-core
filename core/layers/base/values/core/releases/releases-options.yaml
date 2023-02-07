@@ -168,6 +168,15 @@ releases:
       injectDefaultIngressClassName: true
       injectReloaderAnnotations: true
       patchIngresses: true
+  pyrra:
+    options:
+      applyDefaultAnnotationsOnIngress: true
+      applyDefaultLabelsOnIngress: true
+      injectDefaultIngressClassName: true
+      injectReloaderAnnotations: true
+      patchIngresses: true
+      injectIngressHost: true
+      injectIngressTls: true
   rabbitmq-managed:
     options:
       applyDefaultAnnotationsOnIngress: true

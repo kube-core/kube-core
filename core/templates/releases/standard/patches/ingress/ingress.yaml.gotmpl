@@ -62,15 +62,20 @@
         value: {{ (coalesce (index $values.cluster.common.defaultIngressClass) "nginx") }}-{{ $releaseNamespace }}
   {{- end }}
 
+  {{ $releaseHostNameBase :=  (printf "%s.%s" $releaseName $releaseNamespace) }}
+  {{ if (eq $releaseName $releaseNamespace) }}
+  {{ $releaseHostNameBase = $releaseName }}
+  {{ end }}
+  {{ $releaseHostName :=  (printf "%s.%s" $releaseHostNameBase $values.cluster.config.domain) }}
   {{- if .item.options.injectIngressHost }}
       - op: replace
         path: "/spec/rules/0/host"
-        value: {{ $releaseName }}.{{ $releaseNamespace }}.{{ $values.cluster.config.domain }}
+        value: {{ $releaseHostName }}
   {{- end }}
 
   {{- if .item.options.injectIngressTls }}
       - op: add
         path: "/spec/tls"
-        value: [{"hosts": ["{{ $releaseName }}.{{ $releaseNamespace }}.{{ $values.cluster.config.domain }}"], "secretName": "{{ $releaseName }}.{{ $releaseNamespace }}.{{ $values.cluster.config.domain | replace "." "-"}}-tls"}]
+        value: [{"hosts": ["{{ $releaseHostName }}"], "secretName": "{{ $releaseHostName | replace "." "-" }}-tls"}]
   {{- end }}
 {{- end }}

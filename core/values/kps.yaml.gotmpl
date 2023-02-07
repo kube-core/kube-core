@@ -296,6 +296,16 @@ kps:
             orgId: 1
             type: file
           {{- end }}
+          {{- if index $.Values.releases "pyrra" "enabled" }}
+          - disableDeletion: true
+            editable: false
+            folder: Pyrra
+            name: pyrra
+            options:
+              path: /var/lib/grafana/dashboards/pyrra
+            orgId: 1
+            type: file
+          {{- end }}
           {{- if ( .Values | get (printf "releases.%s.config.grafana.dashboardProviders" .Release.Name ) false) }}
           {{ toYaml (index .Values.releases .Release.Name "config" "grafana" "dashboardProviders") | nindent 10 }}
           {{- end }}
@@ -402,6 +412,15 @@ kps:
         slo-detailed:
           datasource: Thanos
           url: https://raw.githubusercontent.com/neo9/grafana-dashboards/master/sloth/slo-detailed.json
+      {{- end }}
+      {{- if index $.Values.releases "pyrra" "enabled" }}
+      pyrra:
+        pyrra-details:
+          datasource: Thanos
+          url: https://raw.githubusercontent.com/pyrra-dev/pyrra/main/examples/grafana/detail.json
+        pyrra-list:
+          datasource: Thanos
+          url: https://raw.githubusercontent.com/pyrra-dev/pyrra/main/examples/grafana/list.json
       {{- end }}
       kube-core:
       {{- if index $.Values.releases "kyverno" "enabled" }}
