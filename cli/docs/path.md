@@ -20,4 +20,4 @@ EXAMPLES
   $ kube-core path
 ```
 
-_See code: [dist/commands/path.ts](https://github.com/kube-core/cli/blob/v0.11.12/dist/commands/path.ts)_
+_See code: [dist/commands/path.ts](https://github.com/kube-core/cli/blob/v0.11.13/dist/commands/path.ts)_

@@ -2,9 +2,20 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.11.13](https://github.com/kube-core/kube-core/compare/v0.11.12...v0.11.13)
+
+- core/templates: Added release integrations for scaling, monitoring, chaos, and slos [`270292c`](https://github.com/kube-core/kube-core/commit/270292c0aa238083ab0183cc9ea4a41e35bd97e5)
+- releases: Removed oauth2-proxy from local releases [`45b6949`](https://github.com/kube-core/kube-core/commit/45b69491c3cd71f76c5eae0ac3e1c42e1206f69c)
+- releases/app-extensions: Improved main template loop and reworked resources [`fdf029c`](https://github.com/kube-core/kube-core/commit/fdf029cca5a826187998e42e0ff211fa8d47b98e)
+- releases: Added scaling & SRE resources to app-extensions [`0df84f2`](https://github.com/kube-core/kube-core/commit/0df84f2104e7adab17e34ec247eb22d272be4cf0)
+- core/templates: Added more integrations with app-extensions [`ce46b06`](https://github.com/kube-core/kube-core/commit/ce46b06c4aa0db72ad78930635c1fc19b94fa4cf)
+
 #### [v0.11.12](https://github.com/kube-core/kube-core/compare/v0.11.11...v0.11.12)
 
+> 2 February 2023
+
 - core/layers: Fixed kps secrets [`ec71a86`](https://github.com/kube-core/kube-core/commit/ec71a86aae9aec1ceb14846ea102b092f16bf4d6)
+- release: v0.11.12 [`64b657f`](https://github.com/kube-core/kube-core/commit/64b657f991a93d78ba0751f14d4cee0654d1ace5)
 
 #### [v0.11.11](https://github.com/kube-core/kube-core/compare/v0.11.10...v0.11.11)
 
