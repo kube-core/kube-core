@@ -1,1 +1,48 @@
-scaling: {{ toYaml (index .Values.releases (.Release.Name | replace "-scaling" "") "scaling") | nindent 2 }}
+{{ $values := .values }}
+{{ $releases := (merge $values.releases $values.applications $values.services )}}
+{{ $releaseNamespace := .releaseNamespace }}
+
+{{ $cloudProject := $values.cloud.project }}
+{{ $cloudLocation := $values.cloud.default.location }}
+{{ $clusterName := $values.cluster.config.name }}
+
+{{ $mainReleaseName := (.releaseName | replace "-scaling" "") }}
+{{ $mainRelease := ($releases | getOrNil $mainReleaseName) }}
+{{ $currentRelease := ($releases | getOrNil .releaseName) }}
+
+{{ $scalingConfig := ($mainRelease | getOrNil "scaling") }}
+
+{{ if (eq ($scalingConfig | getOrNil "type") "app-extensions") }}
+resources:
+  keda-scaledobject:
+    {{ $mainReleaseName }}: {{ toYaml $scalingConfig | nindent 6 }}
+      targetName: {{ $mainReleaseName }}
+      namespace: {{ $releaseNamespace }}
+      scaleTargetRef:
+        {{ if $scalingConfig | getOrNil "scaleTargetRef" | getOrNil "apiVersion" }}
+        apiVersion: {{ $scalingConfig.scaleTargetRef.apiVersion }}
+        {{ end }}
+        {{ if $scalingConfig | getOrNil "scaleTargetRef" | getOrNil "kind" }}
+        kind: {{ $scalingConfig.scaleTargetRef.kind }}
+        {{ end }}
+        {{ if $scalingConfig | getOrNil "scaleTargetRef" | getOrNil "name" }}
+        name: {{ $scalingConfig.scaleTargetRef.name }}
+        {{ else }}
+        name: {{ $mainReleaseName }}
+        {{ end }}
+{{ else }}
+scaling: {{ toYaml (index $values.releases $mainReleaseName "scaling") | nindent 2 }}
+{{ end }}
+
+#   {{ if ($scalingConfig | getOrNil "custom") }}
+#   {{ range $resourceName, $resourceConfig := ($scalingConfig | getOrNil "custom") }}
+#   {{ $sloType := (coalesce ($resourceConfig | getOrNil "type") "pyrra") }}
+#   {{ if (eq $sloType "pyrra") }}
+#     {{ $mainReleaseName }}-{{ $resourceName }}: {{ toYaml $resourceConfig | nindent 6 }}
+#       namespace: {{ $releaseNamespace }}
+#       {{ if (not $resourceConfig | getOrNil "targetName") }}
+#       targetName: {{ $mainReleaseName }}
+#       {{ end }}
+#   {{ end }}
+#   {{ end }}
+#   {{ end }}

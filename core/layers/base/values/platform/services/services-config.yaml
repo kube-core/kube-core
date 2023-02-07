@@ -1,3 +1,31 @@
 services:
-  # nginx-ingress-controller: {}
+  nginx-ingress-controller: {}
+    # TODO: Implement values templating in these resources
+    # scaling:
+    #   enabled: true
+    #   type: app-extensions
+    #   minReplicaCount: 1
+    #   maxReplicaCount: 20
+    #   cpuAvg:
+    #     enabled: true
+    #   memoryAvg:
+    #     enabled: true
+    #   ingressAccessFreq:
+    #     enabled: true
+    #     threshold: 10
+    #   serviceAccessFreq:
+    #     enabled: true
+    # monitoring:
+    #   enabled: true
+    #   cpuAvg:
+    #     enabled: true
+    #     container: controller
+    #   memoryAvg:
+    #     enabled: true
+    #     container: controller
+    #   ingressAccessFreq:
+    #     enabled: true
+    #     threshold: 10
+    #   serviceAccessFreq:
+    #     enabled: true
   flux-repository: {}

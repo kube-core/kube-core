@@ -45,7 +45,10 @@ templates:
       enabled: false
       patches: {}
     release: {}
+    slos: {}
+    monitoring: {}
     scaling: {}
+    chaos: {}
     secrets: {}
     rules: {}
     extensions:
@@ -113,10 +116,12 @@ templates:
       enabled: false
       patches: {}
     release: {}
+    slos: {}
+    monitoring: {}
     scaling: {}
+    chaos: {}
     secrets: {}
     customExtensions: {}
-    sre-config: {}
     extensions:
       customExtensionsEnabled: true
       replicatedSecretsEnabled: true
@@ -183,10 +188,12 @@ templates:
       enabled: false
       patches: {}
     release: {}
+    slos: {}
+    monitoring: {}
     scaling: {}
+    chaos: {}
     secrets: {}
     customExtensions: {}
-    sre-config: {}
     extensions:
       replicatedSecretsEnabled: true
       dynamicSecretsEnabled: true
@@ -252,11 +259,13 @@ templates:
       enabled: false
       patches: {}
     release: {}
+    slos: {}
+    monitoring: {}
     scaling: {}
+    chaos: {}
     external-secrets: {}
     secrets: {}
     customExtensions: {}
-    sre-config: {}
     extensions:
       replicatedSecretsEnabled: true
       dynamicSecretsEnabled: true
@@ -321,11 +330,13 @@ templates:
       enabled: false
       patches: {}
     release: {}
+    slos: {}
+    monitoring: {}
     scaling: {}
+    chaos: {}
     external-secrets:
     secrets: {}
     customExtensions: {}
-    sre-config: {}
     extensions:
       replicatedSecretsEnabled: true
       dynamicSecretsEnabled: true
@@ -467,3 +478,4 @@ releases:
   goldilocks: *release
   opencost: *release
   env-config: *release
+  pyrra: *release

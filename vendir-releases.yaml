@@ -79,7 +79,7 @@ directories:
       - path: chaos-mesh
         helmChart:
           name: chaos-mesh
-          version: 2.3.1
+          version: 2.5.1
           repository:
             url: https://charts.chaos-mesh.org
       - path: sloth
@@ -88,6 +88,12 @@ directories:
           version: 0.5.2
           repository:
             url: https://slok.github.io/sloth
+      - path: pyrra
+        helmChart:
+          name: pyrra
+          version: 0.4.1
+          repository:
+            url: https://rlex.github.io/helm-charts
       - path: prometheus-adapter
         helmChart:
           name: prometheus-adapter

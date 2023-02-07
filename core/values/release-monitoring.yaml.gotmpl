@@ -1,0 +1,18 @@
+{{ $values := .values }}
+{{ $releases := (merge $values.releases $values.applications $values.services )}}
+{{ $releaseNamespace := .releaseNamespace }}
+
+{{ $cloudProject := $values.cloud.project }}
+{{ $cloudLocation := $values.cloud.default.location }}
+{{ $clusterName := $values.cluster.config.name }}
+
+{{ $mainReleaseName := (.releaseName | replace "-monitoring" "") }}
+{{ $mainRelease := ($releases | getOrNil $mainReleaseName) }}
+{{ $currentRelease := ($releases | getOrNil .releaseName) }}
+
+{{ $monitoringConfig := ($mainRelease | getOrNil "monitoring") }}
+
+resources:
+  prometheus-rule:
+    {{ $mainReleaseName }}: {{ toYaml $monitoringConfig | nindent 6 }}
+      namespace: {{ $releaseNamespace }}

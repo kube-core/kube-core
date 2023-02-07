@@ -1,0 +1,35 @@
+{{- define "app-extensions.chaos-schedule" -}}
+{{- $name := (coalesce .value.name .key) }}
+{{- $resourceName := (coalesce .value.resourceName .value.name .key) }}
+{{- $namespace := (coalesce .value.namespace "default") }}
+{{- $resource := .value -}}
+{{- $nameBase := (printf "%s-%s" $namespace $name) | kebabcase | replace ":" "-" }}
+
+{{ if $resource.enabled }}
+kind: Schedule
+apiVersion: chaos-mesh.org/v1alpha1
+metadata:
+  name: {{ $resourceName }}
+  namespace: {{ $namespace }}
+  {{ if (eq $resource.pause true) }}
+  annotations:
+    experiment.chaos-mesh.org/pause: "true"
+  {{ end }}
+spec:
+  schedule: {{ $resource.schedule | quote }}
+  startingDeadlineSeconds: {{ $resource.startingDeadlineSeconds }}
+  concurrencyPolicy: {{ $resource.concurrencyPolicy }}
+  historyLimit: {{ $resource.historyLimit }}
+  type: {{ $resource.type }}
+  podChaos:
+    selector:
+      namespaces:
+        - {{ $namespace }}
+      labelSelectors:
+        app.kubernetes.io/instance: {{ $name }}
+    mode: {{ $resource.podChaos.mode }}
+    value: {{ $resource.podChaos.value | quote }}
+    action: {{ $resource.podChaos.action }}
+    duration: {{ $resource.podChaos.duration }}
+{{- end -}}
+{{- end -}}

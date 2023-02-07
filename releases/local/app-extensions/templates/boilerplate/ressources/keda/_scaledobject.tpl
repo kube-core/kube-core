@@ -17,8 +17,8 @@ spec:
     apiVersion: {{ $resource.scaleTargetRef.apiVersion }}
     kind: {{ $resource.scaleTargetRef.kind }}
     name: {{ $resource.scaleTargetRef.name }}
-  minReplicaCount: {{ $resource.minReplicaCount | quote }}
-  maxReplicaCount: {{ $resource.maxReplicaCount | quote }}
+  minReplicaCount: {{ $resource.minReplicaCount }}
+  maxReplicaCount: {{ $resource.maxReplicaCount }}
   triggers:
   {{- range $resource.extraTriggers }}
   - {{- toYaml . | nindent 4 }}

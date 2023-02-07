@@ -7,15 +7,16 @@
 {{ $cloudNamingConfig := $values.cloud.naming }}
 
 {{ $releaseCloud := (index $releases $mainReleaseName "cloud" )}}
+{{ $currentRelease := $releaseCloud }}
 {{ $releaseCloudEnabled := ($releaseCloud | getOrNil "enabled") }}
 {{ $releaseCloudNamingEnabled := ($releaseCloud | getOrNil "naming" | getOrNil "enabled") }}
-
 {{ $cloudProject := $values.cloud.project }}
 {{ $cloudLocation := $values.cloud.default.location }}
 {{ $clusterName := $values.cluster.config.name }}
 {{ $clusterMainDomain := $values.cluster.config.domain }}
 {{ $clusterAdditionnalDomains := $values.cluster.config.additionnalDomains }}
 {{ $clusterListAllDomains := prepend $clusterAdditionnalDomains $clusterMainDomain }}
+{{ $templateValues := (dict "coreValues" $values "releaseValues" $currentRelease "parentReleaseValues" $mainRelease "releaseNamespace" $releaseNamespace "releaseName" $mainReleaseName) }}
 
 cluster: {{ toYaml $values.cluster | nindent 2 }}
 cloud: {{ toYaml $values.cloud | nindent 2 }}
@@ -240,12 +241,22 @@ urlMaps:
         {{ end }}
         pathMatcher: {{ .pathMatcherName }}
     {{ end }}
+    {{ range $k,$v := ($releaseCloud | getOrNil "cdn" | getOrNil "templatedPaths") }}
+      - hosts:
+        {{ range .domains }}
+        - {{ tpl . $templateValues }}
+        {{ end }}
+        pathMatcher: {{ tpl .pathMatcherName $templateValues }}
+    {{ end }}
     pathMatcher:
     {{ range $k,$v := ($releaseCloud | getOrNil "cdn" | getOrNil "paths") }}
       - defaultService: {{ .backendBucket }}
         name: {{ .pathMatcherName }}
     {{ end }}
-
+    {{ range $k,$v := ($releaseCloud | getOrNil "cdn" | getOrNil "templatedPaths") }}
+      - defaultService: {{ tpl .backendBucket $templateValues }}
+        name: {{ tpl .pathMatcherName $templateValues  }}
+    {{ end }}
 managedSslCertificates:
   {{ $releaseManagedSslCertificateName }}:
     deletionPolicy: {{ coalesce ($releaseCloud | getOrNil "cdn" | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
@@ -253,6 +264,11 @@ managedSslCertificates:
     {{ range $k,$v := ($releaseCloud | getOrNil "cdn" | getOrNil "paths") }}
       {{ range .domains }}
       - {{ . }}
+      {{ end }}
+    {{ end }}
+    {{ range $k,$v := ($releaseCloud | getOrNil "cdn" | getOrNil "templatedPaths") }}
+      {{ range .domains }}
+      - {{ tpl . $templateValues }}
       {{ end }}
     {{ end }}
 
@@ -268,15 +284,44 @@ recordSets:
   {{ if has true $isRecordSetManagedByCluster }}
   {{ printf "%s-a" $domain | replace "." "-" }}:
     deletionPolicy: {{ coalesce ($releaseCloud | getOrNil "cdn" | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
-    managedZone: {{ $releaseCloud | getOrNil "cdn" | getOrNil "managedZone" }}
+    managedZone: {{ (coalesce ($releaseCloud | getOrNil "cdn" | getOrNil "managedZone") (($mainRelease | getOrNil "metadata" | getOrNil "config" | getOrNil "clusterDomain") | replace "." "-")) }}
     rootDnsName: {{ printf "%s." $domain }}
     rrdatas: []
+    type: "A"
     patch:
       injectIpFromLb: true
       globalAddress: {{ $releaseGlobalAddressName }}
   {{ printf "%s-txt" $domain | replace "." "-" }}:
     deletionPolicy: {{ coalesce ($releaseCloud | getOrNil "cdn" | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
-    managedZone: {{ $releaseCloud | getOrNil "cdn" | getOrNil "managedZone" }}
+    managedZone: {{ (coalesce ($releaseCloud | getOrNil "cdn" | getOrNil "managedZone") (($mainRelease | getOrNil "metadata" | getOrNil "config" | getOrNil "clusterDomain") | replace "." "-")) }}
+    rootDnsName: {{ printf "%s." $domain }}
+    type: "TXT"
+    rrdatas:
+      - {{ printf "provider=kube-core,crossplane-cloud/owner=%s,releases/namespace=%s/%s" $clusterName $mainReleaseName $releaseNamespace}}
+  {{ end }}
+  {{ end }}
+{{ end }}
+
+{{ range $k,$v := ($releaseCloud | getOrNil "cdn" | getOrNil "templatedPaths") }}
+  {{ range $domain := .domains }}
+    {{ $domain = tpl $domain $templateValues }}
+    {{ $isRecordSetManagedByCluster := list false }}
+    {{ range $clusterDomain := $clusterListAllDomains }}
+    {{ if contains $clusterDomain $domain }}
+    {{ $isRecordSetManagedByCluster = prepend $isRecordSetManagedByCluster true }}
+    {{ end }}
+    {{ end }}
+  {{ if has true $isRecordSetManagedByCluster }}
+  {{ printf "%s-a" $domain | replace "." "-" }}:
+    deletionPolicy: {{ coalesce ($releaseCloud | getOrNil "cdn" | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+    managedZone: {{ (coalesce ($releaseCloud | getOrNil "cdn" | getOrNil "managedZone") (($mainRelease | getOrNil "metadata" | getOrNil "config" | getOrNil "clusterDomain") | replace "." "-")) }}
+    rootDnsName: {{ printf "%s." $domain }}
+    patch:
+      injectIpFromLb: true
+      globalAddress: {{ $releaseGlobalAddressName }}
+  {{ printf "%s-txt" $domain | replace "." "-" }}:
+    deletionPolicy: {{ coalesce ($releaseCloud | getOrNil "cdn" | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+    managedZone: {{ (coalesce ($releaseCloud | getOrNil "cdn" | getOrNil "managedZone") (($mainRelease | getOrNil "metadata" | getOrNil "config" | getOrNil "clusterDomain") | replace "." "-")) }}
     rootDnsName: {{ printf "%s." $domain }}
     type: "TXT"
     rrdatas:

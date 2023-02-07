@@ -6,24 +6,17 @@
 {{ $cloudLocation := $values.cloud.default.location }}
 {{ $clusterName := $values.cluster.config.name }}
 
-{{ $mainReleaseName := (.releaseName | replace "-sre-config" "") }}
+{{ $mainReleaseName := (.releaseName | replace "-chaos-config" "") }}
 {{ $mainRelease := ($releases | getOrNil $mainReleaseName) }}
 {{ $currentRelease := ($releases | getOrNil .releaseName) }}
 
-{{ $sreConfig := ($mainRelease | getOrNil "sre-config") }}
+{{ $chaosConfig := ($mainRelease | getOrNil "chaos") }}
 
 
 cluster: {{ toYaml $values.cluster | nindent 2 }}
 cloud: {{ toYaml $values.cloud | nindent 2 }}
 
 resources:
-  sloth-prometheusservicelevel:
-    {{ $mainReleaseName }}: {{ toYaml $sreConfig | nindent 6 }}
+  chaos-schedule:
+    {{ $mainReleaseName }}: {{ toYaml $chaosConfig | nindent 6 }}
       namespace: {{ $releaseNamespace }}
-      {{ if ($sreConfig | getOrNil "ingress") }}
-      ingress: {{ toYaml $sreConfig.ingress | nindent 8 }}
-      {{ else }}
-      ingress:
-        enabled: true
-        description: "{{ $releaseNamespace }}/{{ $mainReleaseName }}: HTTP Req/Res Availability"
-      {{ end }}
