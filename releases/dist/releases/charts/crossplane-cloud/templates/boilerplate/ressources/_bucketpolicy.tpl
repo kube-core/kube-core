@@ -19,7 +19,7 @@ spec:
         - allUsers
       {{ end }}
       {{- if (not (eq .value.admin false)) }}
-      - role: roles/storage.objectAdmin
+      - role: roles/storage.admin
         serviceAccountMemberRefs:
         - name: {{ coalesce .value.adminRef $name }}
       {{ end }}
