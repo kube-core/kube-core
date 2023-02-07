@@ -9,6 +9,22 @@ cluster:
     domain: dev.kube-core.io
 
 resource:
+  prometheus-servicemonitor:
+    enabled: false
+  chaos-schedule:
+    enabled: false
+    pause: false
+    schedule: "* * * * *"
+    startingDeadlineSeconds: 604800
+    concurrencyPolicy: Forbid
+    historyLimit: 1
+    type: PodChaos
+    podChaos:
+      mode: fixed-percent
+      value: "50"
+      action: pod-kill
+      duration: 10s
+
   gcp-backendbucket:
     enabled: false
   gcp-bucket:
@@ -69,7 +85,17 @@ resource:
     enabled: false
   sloth-prometheusservicelevel:
     enabled: false
-
+  pyrra-servicelevelobjective:
+    enabled: false
+    target: "99"
+    window: "30d"
+    indicatorType: "ratio" # Can also be "latency"
+    description: Pyrra's API requests and response errors over time grouped by route.
+    # grouping:
+    # - path
+    # targetType: "custom" # Can be "ingress" or "service"
+    # errorQuery: my_error_query
+    # totalQuery: my_total_query
   sloth-prometheusservicelevel:
     enabled: false
     slos: []
@@ -171,6 +197,9 @@ resource:
       # metricName: my_custom_metric_name
 
 resources: {}
+  # pyrra-servicelevelobjective:
+  #   test-12-a:
+  #     enabled: true
   # prometheus-rule:
   #   app-test-1:
   #     enabled: true

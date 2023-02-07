@@ -20,12 +20,12 @@
 {{ if (eq ($coreRelease | getOrNil "enabled") true) }}
 {{ $newValues := $namespaceRelease }}
 {{ $_ := set $newValues "type" "namespace" }}
-{{ $_ := set $newValues "chart" "../releases/local/namespace" }}
+{{ $_ := set $newValues "chart" "../releases/dist/releases/charts/namespace" }}
 {{ $_ := set $newValues "needs" "" }}
 
 - name: ns-{{ $namespaceReleaseName }}
   installed: {{ $newValues.enabled }}
-  chart: ../releases/local/namespace
+  chart: ../releases/dist/releases/charts/namespace
   namespace: {{ $namespaceReleaseName }}
   # namespace: kube-core
   {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") (dict "values" $values "releaseName" $namespaceReleaseName "item" $newValues "releaseNamespace" $namespaceReleaseName ) }}

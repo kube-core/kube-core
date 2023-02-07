@@ -6,10 +6,10 @@
 
 - name: {{ $key }}
   installed: {{ $release.enabled }}
-  chart: ../releases/local/raw
+  chart: ../releases/dist/releases/charts/raw
   namespace: {{ $release.namespace }}
 
-  {{ $_ := set $release "chart" "../releases/local/raw" }}
+  {{ $_ := set $release "chart" "../releases/dist/releases/charts/raw" }}
   {{ $_ := set $release "type" "raw" }}
   {{ $_ := set $release "needs" "" }}
 
