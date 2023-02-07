@@ -6,7 +6,7 @@
 {{ $extensionType := "manifests" }}
 {{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 - name: {{ $extensionName }}
-  chart: ../releases/local/raw
+  chart: ../releases/dist/releases/charts/raw
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
   namespace: {{ .releaseNamespace }}
   {{ $_ := set . "releaseName" $extensionName }}
@@ -26,7 +26,7 @@
 {{ $extensionType := "configmaps" }}
 {{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 - name: {{ $extensionName }}
-  chart: ../releases/local/raw
+  chart: ../releases/dist/releases/charts/raw
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
   namespace: {{ .releaseNamespace }}
   {{ $_ := set . "releaseName" $extensionName }}
@@ -45,7 +45,7 @@
 {{ $extensionType := "extra-manifests" }}
 {{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 - name: {{ $extensionName }}
-  chart: ../releases/local/raw
+  chart: ../releases/dist/releases/charts/raw
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
   namespace: {{ .releaseNamespace }}
   {{ $_ := set . "releaseName" $extensionName }}
@@ -65,7 +65,7 @@
 {{ $extensionType := "raw-manifests" }}
 {{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 - name: {{ $extensionName }}
-  chart: ../releases/local/raw
+  chart: ../releases/dist/releases/charts/raw
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
   namespace: {{ .releaseNamespace }}
   {{ $_ := set . "releaseName" $extensionName }}
@@ -95,7 +95,7 @@
 {{ $extensionType := "secrets" }}
 {{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 - name: {{ $extensionName }}
-  chart: ../releases/local/raw
+  chart: ../releases/dist/releases/charts/raw
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
   namespace: {{ .releaseNamespace }}
   {{ $_ := set . "releaseName" $extensionName }}
@@ -124,7 +124,7 @@
 {{ $extensionType := "dynamic-secrets" }}
 {{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 - name: {{ $extensionName }}
-  chart: ../releases/local/raw
+  chart: ../releases/dist/releases/charts/raw
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
   namespace: {{ .releaseNamespace }}
   {{ $_ := set . "releaseName" $extensionName }}
@@ -151,7 +151,7 @@
 {{ $extensionType := "external-secrets" }}
 {{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 - name: {{ $extensionName }}
-  chart: ../releases/local/raw
+  chart: ../releases/dist/releases/charts/raw
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
   namespace: {{ .releaseNamespace }}
   {{ $_ := set . "releaseName" $extensionName }}
@@ -171,7 +171,7 @@
 {{ $extensionType := "patches" }}
 {{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 - name: {{ $extensionName }}
-  chart: ../releases/local/raw
+  chart: ../releases/dist/releases/charts/raw
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
   namespace: {{ .releaseNamespace }}
   {{ $_ := set . "releaseName" $extensionName }}
@@ -191,9 +191,9 @@
 {{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 - name: {{ $extensionName }}
 {{ if (eq (.item | getOrNil "scaling" | getOrNil "type") "app-extensions") }}
-  chart: ../releases/local/app-extensions
+  chart: ../releases/dist/releases/charts/app-extensions
 {{ else }}
-  chart: ../releases/local/app-scaling
+  chart: ../releases/dist/releases/charts/app-scaling
 {{ end }}
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
   namespace: {{ .releaseNamespace }}
@@ -213,7 +213,7 @@
 {{ $extensionType := "gitops" }}
 {{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 - name: {{ $extensionName }}
-  chart: ../releases/local/raw
+  chart: ../releases/dist/releases/charts/raw
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
   namespace: {{ .releaseNamespace }}
   {{ $_ := set . "releaseName" $extensionName }}
@@ -231,7 +231,7 @@
 {{ $extensionType := "cloud" }}
 {{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 - name: {{ $extensionName }}
-  chart: ../releases/local/crossplane-cloud
+  chart: ../releases/dist/releases/charts/crossplane-cloud
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
   namespace: {{ .releaseNamespace }}
   {{ $_ := set . "releaseName" $extensionName }}
@@ -255,7 +255,7 @@
 {{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 
 - name: {{ $extensionName }}
-  chart: ../releases/local/app-extensions
+  chart: ../releases/dist/releases/charts/app-extensions
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
   namespace: {{ .releaseNamespace }}
   {{ $_ := set . "releaseName" $extensionName }}
@@ -279,7 +279,7 @@
 {{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 
 - name: {{ $extensionName }}
-  chart: ../releases/local/app-extensions
+  chart: ../releases/dist/releases/charts/app-extensions
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
   namespace: {{ .releaseNamespace }}
   {{ $_ := set . "releaseName" $extensionName }}
@@ -303,7 +303,7 @@
 {{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 
 - name: {{ $extensionName }}
-  chart: ../releases/local/app-extensions
+  chart: ../releases/dist/releases/charts/app-extensions
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
   namespace: {{ .releaseNamespace }}
   {{ $_ := set . "releaseName" $extensionName }}
@@ -327,7 +327,7 @@
 {{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 
 - name: {{ $extensionName }}
-  chart: ../releases/local/app-extensions
+  chart: ../releases/dist/releases/charts/app-extensions
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
   namespace: {{ .releaseNamespace }}
   {{ $_ := set . "releaseName" $extensionName }}
@@ -351,7 +351,7 @@
 {{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 
 - name: {{ $extensionName }}
-  chart: ../releases/local/app-extensions
+  chart: ../releases/dist/releases/charts/app-extensions
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
   namespace: {{ .releaseNamespace }}
   {{ $_ := set . "releaseName" $extensionName }}
