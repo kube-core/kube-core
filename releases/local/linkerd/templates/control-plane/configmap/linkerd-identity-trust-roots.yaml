@@ -1,0 +1,24 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: linkerd-identity-trust-roots
+  namespace: linkerd
+  labels:
+    linkerd.io/control-plane-component: identity
+    linkerd.io/control-plane-ns: linkerd
+  annotations:
+    linkerd.io/created-by: linkerd/cli stable-2.12.3
+data:
+  ca-bundle.crt: |
+    -----BEGIN CERTIFICATE-----
+    MIIBiDCCAS6gAwIBAgIBATAKBggqhkjOPQQDAjAcMRowGAYDVQQDExFpZGVudGl0
+    eS5saW5rZXJkLjAeFw0yMzAyMDgyMzA2MTRaFw0yNDAyMDgyMzA2MzRaMBwxGjAY
+    BgNVBAMTEWlkZW50aXR5LmxpbmtlcmQuMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcD
+    QgAE5E6T3at73xfMnZneWqGKFGHKgZ+ojk5zncuHfylSR0ZDz9v87S0uNC4q+1/6
+    kPNTIMBbfQiHBaKV8Pfph1XHCaNhMF8wDgYDVR0PAQH/BAQDAgEGMB0GA1UdJQQW
+    MBQGCCsGAQUFBwMBBggrBgEFBQcDAjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQW
+    BBQLNTu4fvlJafmK5aYcMj6kFJBhQDAKBggqhkjOPQQDAgNIADBFAiBW8Zplezkz
+    rJ4YMqizIYixg+fB8y60fjSaCfUFQ3jPAwIhALDhJu9dWL06M9bYoy3vnf294mhi
+    4COak9c3qLWpcXh9
+    -----END CERTIFICATE-----
+

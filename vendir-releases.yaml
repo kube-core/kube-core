@@ -387,6 +387,10 @@ directories:
             url: https://oauth2-proxy.github.io/manifests
 
       # Local Releases
+      - path: linkerd
+        directory:
+          path: ../../../releases/local/linkerd
+
       - path: env-config
         directory:
           path: ../../../releases/local/env-config

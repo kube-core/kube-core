@@ -1,0 +1,22 @@
+apiVersion: linkerd.io/v1alpha2
+kind: ServiceProfile
+metadata:
+  name: prometheus.linkerd-viz.svc.cluster.local
+  namespace: linkerd-viz
+  labels:
+    linkerd.io/extension: viz
+spec:
+  routes:
+    - name: POST /api/v1/query
+      condition:
+        method: POST
+        pathRegex: /api/v1/query
+    - name: GET /api/v1/query_range
+      condition:
+        method: GET
+        pathRegex: /api/v1/query_range
+    - name: GET /api/v1/series
+      condition:
+        method: GET
+        pathRegex: /api/v1/series
+
