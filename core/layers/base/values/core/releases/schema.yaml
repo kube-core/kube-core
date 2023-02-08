@@ -479,3 +479,4 @@ releases:
   opencost: *release
   env-config: *release
   pyrra: *release
+  linkerd: *release

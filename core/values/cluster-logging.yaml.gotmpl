@@ -7,13 +7,8 @@
 
 {{ $_ := set $release "name" $releaseName }}
 {{ $_ := set $release "namespace" $releaseNamespace }}
+{{ (tpl (readFile "../templates/releases/standard/variables/release-variables-config.yaml.gotmpl") (dict "item" $release "values" $values)) }}
 {{ (tpl (readFile "../templates/releases/standard/variables/release-variables-cloud.yaml.gotmpl") (dict "item" $release "values" $values)) }}
-
-{{ $cloudNamingConfig := $values.cloud.naming }}
-
-{{ $releaseCloud := ($release | getOrNil "cloud") }}
-{{ $releaseCloudEnabled := ($releaseCloud | getOrNil "enabled") }}
-{{ $releaseCloudNamingEnabled := ($releaseCloud | getOrNil "naming" | getOrNil "enabled") }}
 ## Header - END
 
 cluster:
@@ -21,7 +16,7 @@ cluster:
   config: {{ toYaml .Values.cluster.config | nindent 4 }}
   logging:
     config:
-    {{ if (and $releaseCloudEnabled $cloudNamingConfig.enabled (not (eq $releaseCloudNamingEnabled false))) }}
+    {{ if $release.metadata.config.cloudEnabled }}
       bucketPrefixOverride: {{ $release.metadata.namingConfig.templated.releaseBucketName }}
     {{ end }}
     {{ if (and .Values.cluster.logging.enabled .Values.cluster.logging.defaultConfig.enabled) }}
@@ -40,7 +35,7 @@ cluster:
         txtLogs: false
       gcs:
         enabled: {{ (and (index .Values.releases .Release.Name "cloud" "enabled") (eq .Values.cloud.provider "gcp")) }}
-    {{ if (and $releaseCloudEnabled $cloudNamingConfig.enabled (not (eq $releaseCloudNamingEnabled false))) }}
+    {{ if $release.metadata.config.cloudEnabled }}
         bucketPrefixOverride: {{ $release.metadata.namingConfig.templated.releaseBucketName }}
         config:
           credentials:

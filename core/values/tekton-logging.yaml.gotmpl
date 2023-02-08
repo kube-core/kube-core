@@ -8,17 +8,11 @@
 {{ $_ := set $release "name" $releaseName }}
 {{ $_ := set $release "namespace" $releaseNamespace }}
 {{ (tpl (readFile "../templates/releases/standard/variables/release-variables-cloud.yaml.gotmpl") (dict "item" $release "values" $values)) }}
-
-{{ $cloudNamingConfig := $values.cloud.naming }}
-
-{{ $releaseCloud := ($release | getOrNil "cloud") }}
-{{ $releaseCloudEnabled := ($releaseCloud | getOrNil "enabled") }}
-{{ $releaseCloudNamingEnabled := ($releaseCloud | getOrNil "naming" | getOrNil "enabled") }}
 ## Header - END
 
 cluster: {{ toYaml .Values.cluster | nindent 2 }}
 project: {{ .Values.cloud.project }}
-{{ if (and $releaseCloudEnabled $cloudNamingConfig.enabled (not (eq $releaseCloudNamingEnabled false))) }}
+{{ if $release.metadata.config.cloudEnabled }}
 bucket_name: {{ $release.metadata.namingConfig.templated.releaseBucketName }}-tekton-logs
 {{ else }}
 bucket_name: tekton-logs

@@ -1,84 +1,88 @@
-{{ $values := .values }}
+{{/* Extensions Header - Start */}}
+
+{{/* Common Variables */}}
+{{ $values := (coalesce (. | getOrNil "values") (. | getOrNil "Values")) }}
 {{ $releases := (merge $values.releases $values.applications $values.services )}}
 
-{{ $releaseNamespace := .releaseNamespace }}
-{{ $mainReleaseName := (.releaseName | replace "-cloud" "") }}
-{{ $mainRelease := .item }}
-{{ $cloudNamingConfig := $values.cloud.naming }}
+{{/* Release Variables */}}
+{{ $release := .item }}
+{{ $releaseName := $release.name }}
+{{ $releaseNamespace := $release.namespace }}
+{{ $releaseType := $release.type }}
+{{ $extension := (coalesce (index $release .extensionType) (index $release (.extensionType | camelcase | untitle)) ) }}
+{{ $extensionEnabled := ($extension | getOrNil "enabled") }}
 
-{{ $releaseCloud := (index $releases $mainReleaseName "cloud" )}}
-{{ $currentRelease := $releaseCloud }}
-{{ $releaseCloudEnabled := ($releaseCloud | getOrNil "enabled") }}
-{{ $releaseCloudNamingEnabled := ($releaseCloud | getOrNil "naming" | getOrNil "enabled") }}
+{{ $templateValues := (dict "coreValues" $values "releaseValues" $extension "parentReleaseValues" $release "releaseNamespace" $releaseNamespace "releaseName" $releaseName) }}
+
+{{/* Extensions Header - End */}}
+
+{{/* Cloud Naming Header - Start */}}
+
+{{ $name := $release.metadata.namingConfig.templated.name }}
+{{ $shortName := $release.metadata.namingConfig.templated.shortName }}
+{{ $releaseServiceAccountName := $release.metadata.namingConfig.templated.releaseServiceAccountName }}
+{{ $releaseServiceAccountKeyName := $release.metadata.namingConfig.templated.releaseServiceAccountKeyName }}
+{{ $releaseBucketName := $release.metadata.namingConfig.templated.releaseBucketName }}
+{{ $releaseBucketPolicyName := $release.metadata.namingConfig.templated.releaseBucketPolicyName }}
+{{ $releaseBackendBucketName := $release.metadata.namingConfig.templated.releaseBackendBucketName }}
+{{ $releaseIamMemberName := $release.metadata.namingConfig.templated.releaseIamMemberName }}
+{{ $releaseIamRoleName := $release.metadata.namingConfig.templated.releaseIamRoleName }}
+{{ $releaseIamRoleExternalName := $release.metadata.namingConfig.templated.releaseIamRoleExternalName }}
+{{ $releaseGlobalAddressName := $release.metadata.namingConfig.templated.releaseGlobalAddressName }}
+{{ $releaseGlobalForwardingRuleName := $release.metadata.namingConfig.templated.releaseGlobalForwardingRuleName }}
+{{ $releaseTargetHttpProxyName := $release.metadata.namingConfig.templated.releaseTargetHttpProxyName }}
+{{ $releaseTargetHttpsProxyName := $release.metadata.namingConfig.templated.releaseTargetHttpsProxyName }}
+{{ $releaseUrlMapName := $release.metadata.namingConfig.templated.releaseUrlMapName }}
+{{ $releaseManagedSslCertificateName := $release.metadata.namingConfig.templated.releaseManagedSslCertificateName }}
+
+{{/* Cloud Naming Header - End */}}
+
 {{ $cloudProject := $values.cloud.project }}
-{{ $cloudLocation := $values.cloud.default.location }}
 {{ $clusterName := $values.cluster.config.name }}
 {{ $clusterMainDomain := $values.cluster.config.domain }}
 {{ $clusterAdditionnalDomains := $values.cluster.config.additionnalDomains }}
 {{ $clusterListAllDomains := prepend $clusterAdditionnalDomains $clusterMainDomain }}
-{{ $templateValues := (dict "coreValues" $values "releaseValues" $currentRelease "parentReleaseValues" $mainRelease "releaseNamespace" $releaseNamespace "releaseName" $mainReleaseName) }}
 
 cluster: {{ toYaml $values.cluster | nindent 2 }}
 cloud: {{ toYaml $values.cloud | nindent 2 }}
 prefix: {{ $values.cluster.config.name }}
 patch:
-  serviceAccountName: patch-operator-admin-{{ $releaseNamespace }}-{{ $mainReleaseName }}
-
-{{ $name := $mainRelease.metadata.namingConfig.templated.name }}
-{{ $shortName := $mainRelease.metadata.namingConfig.templated.shortName }}
-{{ $releaseServiceAccountName := $mainRelease.metadata.namingConfig.templated.releaseServiceAccountName }}
-{{ $releaseServiceAccountKeyName := $mainRelease.metadata.namingConfig.templated.releaseServiceAccountKeyName }}
-{{ $releaseBucketName := $mainRelease.metadata.namingConfig.templated.releaseBucketName }}
-{{ $releaseBucketPolicyName := $mainRelease.metadata.namingConfig.templated.releaseBucketPolicyName }}
-{{ $releaseBackendBucketName := $mainRelease.metadata.namingConfig.templated.releaseBackendBucketName }}
-{{ $releaseIamMemberName := $mainRelease.metadata.namingConfig.templated.releaseIamMemberName }}
-{{ $releaseIamRoleName := $mainRelease.metadata.namingConfig.templated.releaseIamRoleName }}
-{{ $releaseIamRoleExternalName := $mainRelease.metadata.namingConfig.templated.releaseIamRoleExternalName }}
-{{ $releaseGlobalAddressName := $mainRelease.metadata.namingConfig.templated.releaseGlobalAddressName }}
-{{ $releaseGlobalForwardingRuleName := $mainRelease.metadata.namingConfig.templated.releaseGlobalForwardingRuleName }}
-{{ $releaseTargetHttpProxyName := $mainRelease.metadata.namingConfig.templated.releaseTargetHttpProxyName }}
-{{ $releaseTargetHttpsProxyName := $mainRelease.metadata.namingConfig.templated.releaseTargetHttpsProxyName }}
-{{ $releaseUrlMapName := $mainRelease.metadata.namingConfig.templated.releaseUrlMapName }}
-{{ $releaseManagedSslCertificateName := $mainRelease.metadata.namingConfig.templated.releaseManagedSslCertificateName }}
-
+  serviceAccountName: patch-operator-admin-{{ $releaseNamespace }}-{{ $releaseName }}
 {{ $defaultDeletionPolicy := $values.cloud.crossplane.defaultDeletionPolicy }}
 
-{{ if (and $releaseCloudEnabled $cloudNamingConfig.enabled (not (eq $releaseCloudNamingEnabled false))) }}
-
-
-{{ if (not (eq ($releaseCloud | getOrNil "serviceAccounts" | getOrNil "enabled") false)) }}
+{{ if (not (eq ($extension | getOrNil "serviceAccounts" | getOrNil "enabled") false)) }}
 serviceAccounts:
   {{ $releaseServiceAccountName }}:
     enabled: true
-    deletionPolicy: {{ coalesce ($releaseCloud | getOrNil "serviceAccounts" | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+    deletionPolicy: {{ coalesce ($extension | getOrNil "serviceAccounts" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
 {{ end }}
 
-{{ if (not (eq ($releaseCloud | getOrNil "serviceAccountKeys" | getOrNil "enabled") false)) }}
+{{ if (not (eq ($extension | getOrNil "serviceAccountKeys" | getOrNil "enabled") false)) }}
 serviceAccountKeys:
   {{ $releaseServiceAccountKeyName }}:
     enabled: true
     serviceAccountName: {{ $releaseServiceAccountName }}
-    deletionPolicy: {{ coalesce ($releaseCloud | getOrNil "serviceAccountKeys" | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+    deletionPolicy: {{ coalesce ($extension | getOrNil "serviceAccountKeys" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
 {{ end }}
 
-{{ if (not (eq ($releaseCloud | getOrNil "buckets" | getOrNil "enabled") false)) }}
+{{ if (not (eq ($extension | getOrNil "buckets" | getOrNil "enabled") false)) }}
 
 buckets:
-{{ if ($releaseCloud | getOrNil "bucket" | getOrNil "enabled") }}
+{{ if ($extension | getOrNil "bucket" | getOrNil "enabled") }}
   {{ $releaseBucketName }}:
     enabled: true
-    {{ if (eq ($releaseCloud | getOrNil "bucket" | getOrNil "public") true) }}
+    {{ if (eq ($extension | getOrNil "bucket" | getOrNil "public") true) }}
     public: true
     {{ end }}
-    deletionPolicy: {{ coalesce ($releaseCloud | getOrNil "bucket" | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
-    {{ if $releaseCloud | getOrNil "bucket" | getOrNil "location" }}
-    location: {{ $releaseCloud.bucket.location }}
+    deletionPolicy: {{ coalesce ($extension | getOrNil "bucket" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+    {{ if $extension | getOrNil "bucket" | getOrNil "location" }}
+    location: {{ $extension.bucket.location }}
     {{ end }}
 {{ end }}
 
-{{ if ($releaseCloud | getOrNil "buckets") }}
+{{ if ($extension | getOrNil "buckets") }}
 
-{{ range $bucketName, $bucketConfig := ($releaseCloud | getOrNil "buckets") }}
+{{ range $bucketName, $bucketConfig := ($extension | getOrNil "buckets") }}
 {{ $fullBucketName := (printf "%s-%s" $releaseBucketName $bucketName) }}
 {{ if (gt ($fullBucketName | len) 63) }}
 {{ $ | getOrNil "BUCKET_NAME_TOO_LONG" | required (printf "Bucket name must be less than 63 chars. Current: %s => %s" $fullBucketName ($fullBucketName | len | toString) )}}
@@ -89,7 +93,7 @@ buckets:
     {{ if (eq ($bucketConfig | getOrNil "public") true) }}
     public: true
     {{ end }}
-    deletionPolicy: {{ coalesce ($bucketConfig | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+    deletionPolicy: {{ coalesce ($bucketConfig | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
     {{ if $bucketConfig | getOrNil "location" }}
     location: {{ $bucketConfig.location }}
     {{ end }}
@@ -97,23 +101,23 @@ buckets:
 {{ end }}
 
 bucketPolicies:
-{{ if (not (eq ($releaseCloud | getOrNil "buckets" | getOrNil "enabled") false)) }}
-{{ if (not (eq ($releaseCloud | getOrNil "bucketPolicies" | getOrNil "enabled") false)) }}
-{{ if ($releaseCloud | getOrNil "bucket" | getOrNil "enabled") }}
+{{ if (not (eq ($extension | getOrNil "buckets" | getOrNil "enabled") false)) }}
+{{ if (not (eq ($extension | getOrNil "bucketPolicies" | getOrNil "enabled") false)) }}
+{{ if ($extension | getOrNil "bucket" | getOrNil "enabled") }}
 
   {{ $releaseBucketPolicyName }}:
     enabled: true
-    {{ if (eq ($releaseCloud | getOrNil "bucket" | getOrNil "public") true) }}
+    {{ if (eq ($extension | getOrNil "bucket" | getOrNil "public") true) }}
     public: true
     {{ end }}
-    adminRef: {{ coalesce ($releaseCloud | getOrNil "policy" | getOrNil "adminRef") $releaseServiceAccountName }}
-    deletionPolicy: {{ coalesce ($releaseCloud | getOrNil "bucketPolicies" | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "bucket" | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+    adminRef: {{ coalesce ($extension | getOrNil "policy" | getOrNil "adminRef") $releaseServiceAccountName }}
+    deletionPolicy: {{ coalesce ($extension | getOrNil "bucketPolicies" | getOrNil "deletionPolicy") ($extension | getOrNil "bucket" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
 {{ end }}
 {{ end }}
 {{ end }}
 
-{{ if ($releaseCloud | getOrNil "buckets") }}
-{{ range $bucketName, $bucketConfig := ($releaseCloud | getOrNil "buckets") }}
+{{ if ($extension | getOrNil "buckets") }}
+{{ range $bucketName, $bucketConfig := ($extension | getOrNil "buckets") }}
 {{ $fullBucketName := (printf "%s-%s" $releaseBucketName $bucketName) }}
 {{ if (gt ($fullBucketName | len) 63) }}
 {{ $ | getOrNil "BUCKET_NAME_TOO_LONG" | required (printf "Bucket name must be less than 63 chars. Current: %s => %s" $fullBucketName ($fullBucketName | len | toString) )}}
@@ -126,25 +130,25 @@ bucketPolicies:
     public: true
     {{ end }}
     adminRef: {{ coalesce ($bucketConfig | getOrNil "policy" | getOrNil "adminRef") $releaseServiceAccountName }}
-    deletionPolicy: {{ coalesce ($bucketConfig | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+    deletionPolicy: {{ coalesce ($bucketConfig | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
 {{ end }}
 {{ end }}
 
 {{ end }}
 
 backendBuckets:
-{{ if (eq ($releaseCloud | getOrNil "bucket" | getOrNil "public") true) }}
-{{ if (not (eq ($releaseCloud | getOrNil "backendBucket" | getOrNil "enabled") false)) }}
+{{ if (eq ($extension | getOrNil "bucket" | getOrNil "public") true) }}
+{{ if (not (eq ($extension | getOrNil "backendBucket" | getOrNil "enabled") false)) }}
   {{ $releaseBackendBucketName }}:
     enabled: true
     bucketName: {{ $releaseBucketName }}
     enableCdn: true
-    deletionPolicy: {{ coalesce ($releaseCloud | getOrNil "bucket" | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+    deletionPolicy: {{ coalesce ($extension | getOrNil "bucket" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
 {{ end }}
 {{ end }}
 
-{{ if ($releaseCloud | getOrNil "buckets") }}
-{{ range $bucketName, $bucketConfig := ($releaseCloud | getOrNil "buckets") }}
+{{ if ($extension | getOrNil "buckets") }}
+{{ range $bucketName, $bucketConfig := ($extension | getOrNil "buckets") }}
 {{ $fullBucketName := (printf "%s-%s" $releaseBucketName $bucketName) }}
 {{ if (gt ($fullBucketName | len) 63) }}
 {{ $ | getOrNil "BUCKET_NAME_TOO_LONG" | required (printf "Bucket name must be less than 63 chars. Current: %s => %s" $fullBucketName ($fullBucketName | len | toString) )}}
@@ -156,7 +160,7 @@ backendBuckets:
     enabled: true
     bucketName: {{ $fullBucketName }}
     enableCdn: true
-    deletionPolicy: {{ coalesce ($bucketConfig | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+    deletionPolicy: {{ coalesce ($bucketConfig | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
 {{ end }}
 {{ end }}
 {{ end }}
@@ -164,56 +168,56 @@ backendBuckets:
 {{ end }}
 {{ end }}
 
-{{ if (not (eq ($releaseCloud | getOrNil "projectIAMCustomRoles" | getOrNil "enabled") false)) }}
+{{ if (not (eq ($extension | getOrNil "projectIAMCustomRoles" | getOrNil "enabled") false)) }}
 projectIAMCustomRoles:
   {{ $releaseIamRoleName }}:
     enabled: true
-    deletionPolicy: {{ coalesce ($releaseCloud | getOrNil "projectIAMCustomRoles" | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+    deletionPolicy: {{ coalesce ($extension | getOrNil "projectIAMCustomRoles" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
     externalName: {{ $releaseIamRoleExternalName }}
-    {{ if $releaseCloud | getOrNil "permissions" }}
-    permissions: {{ toYaml $releaseCloud.permissions | nindent 4 }}
+    {{ if $extension | getOrNil "permissions" }}
+    permissions: {{ toYaml $extension.permissions | nindent 4 }}
     {{ else }}
     permissions:
     - container.pods.list # TODO: variabilisation to remove this
     {{ end }}
 {{ end }}
 
-{{ if (not (eq ($releaseCloud | getOrNil "projectIAMMembers" | getOrNil "enabled") false)) }}
+{{ if (not (eq ($extension | getOrNil "projectIAMMembers" | getOrNil "enabled") false)) }}
 projectIAMMembers:
   {{ $releaseIamMemberName }}-default:
     enabled: true
-    deletionPolicy: {{ coalesce ($releaseCloud | getOrNil "projectIAMMembers" | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+    deletionPolicy: {{ coalesce ($extension | getOrNil "projectIAMMembers" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
     member: {{ $releaseServiceAccountName }}
     role: projects/{{ $cloudProject }}/roles/{{ $releaseIamRoleExternalName }}
-  {{ if $releaseCloud | getOrNil "roles" }}
-  {{ range $key, $value := ($releaseCloud | getOrNil "roles") }}
+  {{ if $extension | getOrNil "roles" }}
+  {{ range $key, $value := ($extension | getOrNil "roles") }}
   {{ $roleTitle := ( . | title | replace "Roles/" "" | replace "." "" | untitle | kebabcase ) }}
   {{ $hash := $roleTitle }}
   {{ $releaseIamMemberName }}-extra-{{ $hash }}:
     enabled: true
-    deletionPolicy: {{ coalesce ($releaseCloud | getOrNil "projectIAMMembers" | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+    deletionPolicy: {{ coalesce ($extension | getOrNil "projectIAMMembers" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
     member: {{ $releaseServiceAccountName }}
     role: {{ . }}
   {{ end }}
   {{ end }}
 {{ end }}
 
-{{ if (eq ($releaseCloud | getOrNil "cdn" | getOrNil "enabled") true) }}
+{{ if (eq ($extension | getOrNil "cdn" | getOrNil "enabled") true) }}
 globalAdresses:
   {{ $releaseGlobalAddressName }}:
-    deletionPolicy: {{ coalesce ($releaseCloud | getOrNil "cdn" | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+    deletionPolicy: {{ coalesce ($extension | getOrNil "cdn" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
     addressType: "EXTERNAL"
     ipVersion: "IPV4"
 globalForwardingRules:
   {{ $releaseGlobalForwardingRuleName }}-http:
-    deletionPolicy: {{ coalesce ($releaseCloud | getOrNil "cdn" | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+    deletionPolicy: {{ coalesce ($extension | getOrNil "cdn" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
     loadBalancingScheme: "EXTERNAL"
     target:
       type: targetHttpProxies
       name: {{ $releaseTargetHttpProxyName }}
     ipAddress: {{ $releaseGlobalAddressName }}
   {{ $releaseGlobalForwardingRuleName }}-https:
-    deletionPolicy: {{ coalesce ($releaseCloud | getOrNil "cdn" | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+    deletionPolicy: {{ coalesce ($extension | getOrNil "cdn" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
     loadBalancingScheme: "EXTERNAL"
     target:
       type: targetHttpsProxies
@@ -221,27 +225,27 @@ globalForwardingRules:
     ipAddress: {{ $releaseGlobalAddressName }}
 targetHttpProxies:
   {{ $releaseTargetHttpProxyName }}:
-    deletionPolicy: {{ coalesce ($releaseCloud | getOrNil "cdn" | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+    deletionPolicy: {{ coalesce ($extension | getOrNil "cdn" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
     urlMap: {{ $releaseUrlMapName }}
 targetHttpsProxies:
   {{ $releaseTargetHttpsProxyName }}:
-    deletionPolicy: {{ coalesce ($releaseCloud | getOrNil "cdn" | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+    deletionPolicy: {{ coalesce ($extension | getOrNil "cdn" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
     urlMap: {{ $releaseUrlMapName }}
     managedSslCertificates:
     - {{ $releaseManagedSslCertificateName }}
 
 urlMaps:
   {{ $releaseUrlMapName }}:
-    deletionPolicy: {{ coalesce ($releaseCloud | getOrNil "cdn" | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+    deletionPolicy: {{ coalesce ($extension | getOrNil "cdn" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
     hostRule:
-    {{ range $k,$v := ($releaseCloud | getOrNil "cdn" | getOrNil "paths") }}
+    {{ range $k,$v := ($extension | getOrNil "cdn" | getOrNil "paths") }}
       - hosts:
         {{ range .domains }}
         - {{ . }}
         {{ end }}
         pathMatcher: {{ .pathMatcherName }}
     {{ end }}
-    {{ range $k,$v := ($releaseCloud | getOrNil "cdn" | getOrNil "templatedPaths") }}
+    {{ range $k,$v := ($extension | getOrNil "cdn" | getOrNil "templatedPaths") }}
       - hosts:
         {{ range .domains }}
         - {{ tpl . $templateValues }}
@@ -249,31 +253,31 @@ urlMaps:
         pathMatcher: {{ tpl .pathMatcherName $templateValues }}
     {{ end }}
     pathMatcher:
-    {{ range $k,$v := ($releaseCloud | getOrNil "cdn" | getOrNil "paths") }}
+    {{ range $k,$v := ($extension | getOrNil "cdn" | getOrNil "paths") }}
       - defaultService: {{ .backendBucket }}
         name: {{ .pathMatcherName }}
     {{ end }}
-    {{ range $k,$v := ($releaseCloud | getOrNil "cdn" | getOrNil "templatedPaths") }}
+    {{ range $k,$v := ($extension | getOrNil "cdn" | getOrNil "templatedPaths") }}
       - defaultService: {{ tpl .backendBucket $templateValues }}
         name: {{ tpl .pathMatcherName $templateValues  }}
     {{ end }}
 managedSslCertificates:
   {{ $releaseManagedSslCertificateName }}:
-    deletionPolicy: {{ coalesce ($releaseCloud | getOrNil "cdn" | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+    deletionPolicy: {{ coalesce ($extension | getOrNil "cdn" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
     domains:
-    {{ range $k,$v := ($releaseCloud | getOrNil "cdn" | getOrNil "paths") }}
+    {{ range $k,$v := ($extension | getOrNil "cdn" | getOrNil "paths") }}
       {{ range .domains }}
       - {{ . }}
       {{ end }}
     {{ end }}
-    {{ range $k,$v := ($releaseCloud | getOrNil "cdn" | getOrNil "templatedPaths") }}
+    {{ range $k,$v := ($extension | getOrNil "cdn" | getOrNil "templatedPaths") }}
       {{ range .domains }}
       - {{ tpl . $templateValues }}
       {{ end }}
     {{ end }}
 
 recordSets:
-{{ range $k,$v := ($releaseCloud | getOrNil "cdn" | getOrNil "paths") }}
+{{ range $k,$v := ($extension | getOrNil "cdn" | getOrNil "paths") }}
   {{ range $domain := .domains }}
     {{ $isRecordSetManagedByCluster := list false }}
     {{ range $clusterDomain := $clusterListAllDomains }}
@@ -283,8 +287,8 @@ recordSets:
     {{ end }}
   {{ if has true $isRecordSetManagedByCluster }}
   {{ printf "%s-a" $domain | replace "." "-" }}:
-    deletionPolicy: {{ coalesce ($releaseCloud | getOrNil "cdn" | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
-    managedZone: {{ (coalesce ($releaseCloud | getOrNil "cdn" | getOrNil "managedZone") (($mainRelease | getOrNil "metadata" | getOrNil "config" | getOrNil "clusterDomain") | replace "." "-")) }}
+    deletionPolicy: {{ coalesce ($extension | getOrNil "cdn" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+    managedZone: {{ (coalesce ($extension | getOrNil "cdn" | getOrNil "managedZone") (($release | getOrNil "metadata" | getOrNil "config" | getOrNil "clusterDomain") | replace "." "-")) }}
     rootDnsName: {{ printf "%s." $domain }}
     rrdatas: []
     type: "A"
@@ -292,17 +296,17 @@ recordSets:
       injectIpFromLb: true
       globalAddress: {{ $releaseGlobalAddressName }}
   {{ printf "%s-txt" $domain | replace "." "-" }}:
-    deletionPolicy: {{ coalesce ($releaseCloud | getOrNil "cdn" | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
-    managedZone: {{ (coalesce ($releaseCloud | getOrNil "cdn" | getOrNil "managedZone") (($mainRelease | getOrNil "metadata" | getOrNil "config" | getOrNil "clusterDomain") | replace "." "-")) }}
+    deletionPolicy: {{ coalesce ($extension | getOrNil "cdn" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+    managedZone: {{ (coalesce ($extension | getOrNil "cdn" | getOrNil "managedZone") (($release | getOrNil "metadata" | getOrNil "config" | getOrNil "clusterDomain") | replace "." "-")) }}
     rootDnsName: {{ printf "%s." $domain }}
     type: "TXT"
     rrdatas:
-      - {{ printf "provider=kube-core,crossplane-cloud/owner=%s,releases/namespace=%s/%s" $clusterName $mainReleaseName $releaseNamespace}}
+      - {{ printf "provider=kube-core,crossplane-cloud/owner=%s,releases/namespace=%s/%s" $clusterName $releaseName $releaseNamespace}}
   {{ end }}
   {{ end }}
 {{ end }}
 
-{{ range $k,$v := ($releaseCloud | getOrNil "cdn" | getOrNil "templatedPaths") }}
+{{ range $k,$v := ($extension | getOrNil "cdn" | getOrNil "templatedPaths") }}
   {{ range $domain := .domains }}
     {{ $domain = tpl $domain $templateValues }}
     {{ $isRecordSetManagedByCluster := list false }}
@@ -313,22 +317,21 @@ recordSets:
     {{ end }}
   {{ if has true $isRecordSetManagedByCluster }}
   {{ printf "%s-a" $domain | replace "." "-" }}:
-    deletionPolicy: {{ coalesce ($releaseCloud | getOrNil "cdn" | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
-    managedZone: {{ (coalesce ($releaseCloud | getOrNil "cdn" | getOrNil "managedZone") (($mainRelease | getOrNil "metadata" | getOrNil "config" | getOrNil "clusterDomain") | replace "." "-")) }}
+    deletionPolicy: {{ coalesce ($extension | getOrNil "cdn" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+    managedZone: {{ (coalesce ($extension | getOrNil "cdn" | getOrNil "managedZone") (($release | getOrNil "metadata" | getOrNil "config" | getOrNil "clusterDomain") | replace "." "-")) }}
     rootDnsName: {{ printf "%s." $domain }}
     patch:
       injectIpFromLb: true
       globalAddress: {{ $releaseGlobalAddressName }}
   {{ printf "%s-txt" $domain | replace "." "-" }}:
-    deletionPolicy: {{ coalesce ($releaseCloud | getOrNil "cdn" | getOrNil "deletionPolicy") ($releaseCloud | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
-    managedZone: {{ (coalesce ($releaseCloud | getOrNil "cdn" | getOrNil "managedZone") (($mainRelease | getOrNil "metadata" | getOrNil "config" | getOrNil "clusterDomain") | replace "." "-")) }}
+    deletionPolicy: {{ coalesce ($extension | getOrNil "cdn" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+    managedZone: {{ (coalesce ($extension | getOrNil "cdn" | getOrNil "managedZone") (($release | getOrNil "metadata" | getOrNil "config" | getOrNil "clusterDomain") | replace "." "-")) }}
     rootDnsName: {{ printf "%s." $domain }}
     type: "TXT"
     rrdatas:
-      - {{ printf "provider=kube-core,crossplane-cloud/owner=%s,releases/namespace=%s/%s" $clusterName $mainReleaseName $releaseNamespace}}
+      - {{ printf "provider=kube-core,crossplane-cloud/owner=%s,releases/namespace=%s/%s" $clusterName $releaseName $releaseNamespace}}
   {{ end }}
   {{ end }}
 {{ end }}
 
-{{ end }}
 {{ end }}
