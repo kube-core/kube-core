@@ -6,14 +6,16 @@
 
 {{ $_ := set $release "name" $releaseName }}
 {{ $_ := set $release "namespace" $releaseNamespace }}
+{{ (tpl (readFile "../templates/releases/standard/variables/release-variables-config.yaml.gotmpl") (dict "item" $release "values" $values)) }}
 {{ (tpl (readFile "../templates/releases/standard/variables/release-variables-cloud.yaml.gotmpl") (dict "item" $release "values" $values)) }}
 
+{{ $bucketName := "velero-backups" }}
+{{ if $release.metadata.config.cloudEnabled }}
+{{ $bucketName = $release.metadata.namingConfig.templated.releaseBucketName }}
+{{ else }}
+{{ $bucketName = ($values | get "cluster.config.backups.bucket" (printf "%s-velero-backups" $values.cluster.config.name)) }}
+{{ end }}
 
-{{ $cloudNamingConfig := $values.cloud.naming }}
-
-{{ $releaseCloud := ($release | getOrNil "cloud") }}
-{{ $releaseCloudEnabled := ($releaseCloud | getOrNil "enabled") }}
-{{ $releaseCloudNamingEnabled := ($releaseCloud | getOrNil "naming" | getOrNil "enabled") }}
 # Init containers to add to the Velero deployment's pod spec. At least one plugin provider image is required.
 initContainers:
   {{ if eq $values.cloud.provider "aws" }}
@@ -51,12 +53,7 @@ configuration:
     # `configuration.provider` will be used instead.
     provider: {{ $values.cloud.provider }}
     # bucket is the name of the bucket to store backups in. Required.
-
-  {{ if (and $releaseCloudEnabled $cloudNamingConfig.enabled (not (eq $releaseCloudNamingEnabled false))) }}
-    bucket: {{ $release.metadata.namingConfig.templated.releaseBucketName }}
-  {{ else }}
-    bucket: {{ $values | get "cluster.config.backups.bucket" (printf "%s-velero-backups" $values.cluster.config.name) }}
-  {{ end }}
+    bucket: {{ $bucketName }}
 
     # caCert defines a base64 encoded CA bundle to use when verifying TLS connections to the provider.
     caCert:

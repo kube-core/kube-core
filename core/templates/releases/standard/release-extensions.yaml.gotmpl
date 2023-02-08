@@ -1,8 +1,9 @@
 {{ $values := .values }}
 {{ $releaseName := .releaseName }}
 {{ $_ := set . "parentReleaseName" $releaseName }}
+{{ $release := .item }}
 
-{{ if .item.manifests }}
+{{ if $release.manifests }}
 {{ $extensionType := "manifests" }}
 {{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 - name: {{ $extensionName }}
@@ -22,7 +23,7 @@
   - "./values/release-manifests.yaml.gotmpl"
 {{ end }}
 
-{{ if (and .item.configmaps (not (eq .item.extensions.configmapsEnabled false))) }}
+{{ if (and $release.configmaps (not (eq $release.extensions.configmapsEnabled false))) }}
 {{ $extensionType := "configmaps" }}
 {{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 - name: {{ $extensionName }}
@@ -41,7 +42,7 @@
   - {{ (tpl (readFile "values/release-configmaps.yaml.gotmpl") .) | nindent 4 }}
 {{ end }}
 
-{{ if (and .item.extraManifests (not (eq .item.extensions.extraManifestsEnabled false))) }}
+{{ if (and $release.extraManifests (not (eq $release.extensions.extraManifestsEnabled false))) }}
 {{ $extensionType := "extra-manifests" }}
 {{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 - name: {{ $extensionName }}
@@ -61,7 +62,7 @@
   - {{ (tpl (readFile "values/release-extra-manifests.yaml.gotmpl") .) | nindent 4 }}
 {{ end }}
 
-{{ if (and .item.rawManifests (not (eq .item.extensions.rawManifestsEnabled false))) }}
+{{ if (and $release.rawManifests (not (eq $release.extensions.rawManifestsEnabled false))) }}
 {{ $extensionType := "raw-manifests" }}
 {{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 - name: {{ $extensionName }}
@@ -82,14 +83,14 @@
 {{ end }}
 
 
-{{ if .item.extensions.replicatedSecretsEnabled }}
+{{ if $release.extensions.replicatedSecretsEnabled }}
 {{ $hasEnabledSecrets := false }}
-{{ range $key, $value := .item.secrets }}
+{{ range $key, $value := $release.secrets }}
 {{ if ($value | getOrNil "enabled") }}
 {{ $hasEnabledSecrets = true }}
 {{ end }}
 {{ end }}
-{{ if (and (index .item "secrets") $hasEnabledSecrets) }}
+{{ if (and (index $release "secrets") $hasEnabledSecrets) }}
 
 
 {{ $extensionType := "secrets" }}
@@ -111,16 +112,16 @@
 {{ end }}
 {{ end }}
 
-{{ if .item.extensions.dynamicSecretsEnabled }}
-{{ $generateRabbitmqSecret := (and (.item | getOrNil "rabbitmq") (.item | getOrNil "external-secrets" | getOrNil "rabbitmq" | getOrNil "enabled") (not (.item | getOrNil "rabbitmq" | getOrNil "secretRef"))) }}
+{{ if $release.extensions.dynamicSecretsEnabled }}
+{{ $generateRabbitmqSecret := (and ($release | getOrNil "rabbitmq") ($release | getOrNil "external-secrets" | getOrNil "rabbitmq" | getOrNil "enabled") (not ($release | getOrNil "rabbitmq" | getOrNil "secretRef"))) }}
 
 {{ $hasEnabledSecrets := false }}
-{{ range $key, $value := .item.dynamicSecrets }}
+{{ range $key, $value := $release.dynamicSecrets }}
 {{ if ($value | getOrNil "enabled") }}
 {{ $hasEnabledSecrets = true }}
 {{ end }}
 {{ end }}
-{{ if (or (and $hasEnabledSecrets (index .item "dynamicSecrets")) $generateRabbitmqSecret) }}
+{{ if (or (and $hasEnabledSecrets (index $release "dynamicSecrets")) $generateRabbitmqSecret) }}
 {{ $extensionType := "dynamic-secrets" }}
 {{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 - name: {{ $extensionName }}
@@ -140,14 +141,14 @@
 {{ end }}
 {{ end }}
 
-{{ if .item.extensions.externalSecretsEnabled }}
+{{ if $release.extensions.externalSecretsEnabled }}
 {{ $hasEnabledSecrets := false }}
-{{ range $key, $value := (.item | getOrNil "external-secrets" | getOrNil "generated" | getOrNil "secrets") }}
-{{ if ($value | getOrNil "enabled") }}
+{{ range $key, $value := ($release | getOrNil "external-secrets" | getOrNil "generated" | getOrNil "secrets") }}
+{{ if or (and ($value | getOrNil "enabled") ($value | getOrNil "crossplaneGenerated")  $release.metadata.config.cloudEnabled) (and ($value | getOrNil "enabled") (not ($value | getOrNil "crossplaneGenerated")))  }}
 {{ $hasEnabledSecrets = true }}
 {{ end }}
 {{ end }}
-{{ if (and (index .item "external-secrets") (or (and $hasEnabledSecrets (.item | getOrNil "external-secrets" | getOrNil "generated" | getOrNil "enabled")))) }}
+{{ if (and (index $release "external-secrets") (or (and $hasEnabledSecrets ($release | getOrNil "external-secrets" | getOrNil "generated" | getOrNil "enabled")))) }}
 {{ $extensionType := "external-secrets" }}
 {{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 - name: {{ $extensionName }}
@@ -167,7 +168,7 @@
 {{ end }}
 {{ end }}
 
-{{ if (or .item.patches.enabled (.item | getOrNil "cloud" | getOrNil "cdn" | getOrNil "enabled")) }}
+{{ if (or $release.patches.enabled ($release | getOrNil "cloud" | getOrNil "cdn" | getOrNil "enabled")) }}
 {{ $extensionType := "patches" }}
 {{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 - name: {{ $extensionName }}
@@ -186,11 +187,11 @@
   - {{ (tpl (readFile "values/release-patches.yaml.gotmpl") .) | nindent 4 }}
 {{ end }}
 
-{{ if .item.scaling }}
+{{ if $release.scaling }}
 {{ $extensionType := "scaling" }}
 {{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 - name: {{ $extensionName }}
-{{ if (eq (.item | getOrNil "scaling" | getOrNil "type") "app-extensions") }}
+{{ if (eq ($release | getOrNil "scaling" | getOrNil "type") "app-extensions") }}
   chart: ../releases/dist/releases/charts/app-extensions
 {{ else }}
   chart: ../releases/dist/releases/charts/app-scaling
@@ -209,7 +210,7 @@
   - {{ (tpl (readFile "values/release-scaling.yaml.gotmpl") .) | nindent 4 }}
 {{ end }}
 
-{{ if .item.gitops.enabled }}
+{{ if $release.gitops.enabled }}
 {{ $extensionType := "gitops" }}
 {{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 - name: {{ $extensionName }}
@@ -227,7 +228,7 @@
   - "./values/release-gitops.yaml.gotmpl"
 {{ end }}
 
-{{ if .item | getOrNil "cloud" | getOrNil "enabled" }}
+{{ if (and $values.cloud.enabled ($release | getOrNil "cloud" | getOrNil "enabled")) }}
 {{ $extensionType := "cloud" }}
 {{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 - name: {{ $extensionName }}
@@ -247,7 +248,7 @@
 {{ end }}
 
 
-{{ $rabbitmq := (.item | getOrNil "rabbitmq") }}
+{{ $rabbitmq := ($release | getOrNil "rabbitmq") }}
 {{ $rabbitmqEnabled := ($rabbitmq | getOrNil "enabled") }}
 
 {{ if ($rabbitmqEnabled) }}
@@ -271,7 +272,7 @@
 
 {{ end }}
 
-{{ $customExtensions := (.item | getOrNil "customExtensions") }}
+{{ $customExtensions := ($release | getOrNil "customExtensions") }}
 {{ $customExtensionsEnabled := ($customExtensions | getOrNil "enabled") }}
 
 {{ if ($customExtensionsEnabled) }}
@@ -295,7 +296,7 @@
 
 {{ end }}
 
-{{ $slos := (.item | getOrNil "slos") }}
+{{ $slos := ($release | getOrNil "slos") }}
 {{ $slosEnabled := ($slos | getOrNil "enabled") }}
 
 {{ if ($slosEnabled) }}
@@ -319,7 +320,7 @@
 
 {{ end }}
 
-{{ $monitoring := (.item | getOrNil "monitoring") }}
+{{ $monitoring := ($release | getOrNil "monitoring") }}
 {{ $monitoringEnabled := ($monitoring | getOrNil "enabled") }}
 
 {{ if ($monitoringEnabled) }}
@@ -343,7 +344,7 @@
 
 {{ end }}
 
-{{ $chaosConfig := (.item | getOrNil "chaos") }}
+{{ $chaosConfig := ($release | getOrNil "chaos") }}
 {{ $chaosConfigEnabled := ($chaosConfig | getOrNil "enabled") }}
 
 {{ if ($chaosConfigEnabled) }}

@@ -1,22 +1,47 @@
+{{/* Variables Header - Start */}}
+{{/* Common Variables */}}
 {{ $values := (coalesce (. | getOrNil "values") (. | getOrNil "Values")) }}
-{{ $cloudNamingConfig := $values.cloud.naming }}
 
+{{/* Release Variables */}}
 {{ $release := .item }}
 {{ $releaseName := $release.name }}
 {{ $releaseNamespace := $release.namespace }}
 {{ $releaseType := $release.type }}
 
+{{/* Cloud Variables */}}
+{{ $cloudEnabled := $values.cloud.enabled }}
+{{ $cloudNaming := $values.cloud.naming }}
+
+{{/* Release Cloud Variables */}}
+{{ $releaseCloud := ($release | getOrNil "cloud") }}
+{{ $releaseCloudEnabled := ($releaseCloud | getOrNil "enabled") }}
+
+{{/* Release Metadata support if included from another location than release-variables */}}
 {{ if (not ($release | getOrNil "metadata")) }}
 {{ $_ := set $release "metadata" (dict "empty" (dict)) }}
 {{ end }}
+{{/* Variables Header - End */}}
+
+
+
 {{ $releaseMetadata := $release.metadata }}
 {{ $_ := set $release.metadata "config" (dict) }}
 {{ $releaseConfig := $release.metadata.config }}
 
+
+{{/* Domain Variables */}}
 {{ $clusterDomain := $values.cluster.config.domain }}
 {{ $releaseNamespaceDomain := (printf "%s.%s" $releaseNamespace $clusterDomain) }}
 {{ $releaseDomain := (printf "%s.%s" $releaseName $releaseNamespaceDomain) }}
 
+
+{{/* Cloud Variables */}}
+{{ $cloudEnabled := (and $cloudEnabled $releaseCloud $releaseCloudEnabled) }}
+{{ $releaseNamespaceDomain := (printf "%s.%s" $releaseNamespace $clusterDomain) }}
+{{ $releaseDomain := (printf "%s.%s" $releaseName $releaseNamespaceDomain) }}
+
+
 {{ $_ := set $releaseConfig "clusterDomain" $clusterDomain }}
 {{ $_ := set $releaseConfig "namespaceDomain" $releaseNamespaceDomain }}
 {{ $_ := set $releaseConfig "domain" $releaseDomain }}
+{{ $_ := set $releaseConfig "cloudEnabled" $cloudEnabled  }}

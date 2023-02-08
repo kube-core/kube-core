@@ -1,0 +1,5 @@
+{{ $values := .Values }}
+{{ $releases := $values.releases }}
+{{ $releaseNamespace := .Release.Namespace }}
+{{ $releaseName := .Release.Name }}
+{{ $release := ($releases | getOrNil $releaseName) }}

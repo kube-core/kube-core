@@ -509,3 +509,8 @@ releases:
     namespace: pyrra
     namespaceShortName: pyr
     chart: ../releases/dist/releases/charts/pyrra
+  linkerd:
+    shortName: pyr
+    namespace: linkerd
+    namespaceShortName: pyr
+    chart: ../releases/dist/releases/charts/linkerd

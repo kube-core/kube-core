@@ -1,27 +1,36 @@
+{{/* Variables Header - Start */}}
+{{/* Common Variables */}}
 {{ $values := (coalesce (. | getOrNil "values") (. | getOrNil "Values")) }}
-{{ $cloudNamingConfig := $values.cloud.naming }}
 
+{{/* Release Variables */}}
 {{ $release := .item }}
 {{ $releaseName := $release.name }}
 {{ $releaseNamespace := $release.namespace }}
 {{ $releaseType := $release.type }}
 
+{{/* Cloud Variables */}}
+{{ $cloudEnabled := $values.cloud.enabled }}
+{{ $cloudNaming := $values.cloud.naming }}
+
+{{/* Release Cloud Variables */}}
+{{ $releaseCloud := ($release | getOrNil "cloud") }}
+{{ $releaseCloudEnabled := ($releaseCloud | getOrNil "enabled") }}
+
+{{/* Release Metadata support if included from another location than release-variables */}}
 {{ if (not ($release | getOrNil "metadata")) }}
 {{ $_ := set $release "metadata" (dict "empty" (dict)) }}
 {{ end }}
+{{/* Variables Header - End */}}
 
-{{ $releaseCloud := ($release | getOrNil "cloud") }}
-{{ $releaseCloudEnabled := ($releaseCloud | getOrNil "enabled") }}
-{{ $releaseCloudNamingEnabled := ($releaseCloud | getOrNil "naming" | getOrNil "enabled") }}
 
+{{/* Release Naming Variables */}}
 {{ $appOrPlatformDict := (dict "type" (dict "release" "platform" "application" "application" "service" "application") "short" (dict "type" (dict "release" "p" "application" "a" "service" "a" )))}}
-{{ $namespaceShortNameDict := $cloudNamingConfig.namespaceShortNames }}
+{{ $namespaceShortNameDict := $cloudNaming.namespaceShortNames }}
 
 {{ $coreNamingConfig := (dict "cloud" (dict "full" (dict) "short" (dict)) "release" (dict "full" dict "short" dict)) }}
 {{ $releaseNamingConfig := (dict "cloud" (dict "full" (dict) "short" (dict)) "release" (dict "full" dict "short" dict)) }}
 {{ $namingConfig := (dict "cloud" (dict "full" (dict) "short" (dict)) "release" (dict "full" dict "short" dict)) }}
 
-{{ if (and $releaseCloudEnabled $cloudNamingConfig.enabled) }}
 
 {{ $_ := set $coreNamingConfig.cloud.full "orgName" ($values | getOrNil "org" | getOrNil "name") }}
 {{ $_ := set $coreNamingConfig.cloud.full "platformName" ($values | getOrNil "platform" | getOrNil "name") }}
@@ -75,11 +84,11 @@
 {{ $_ := set $releaseNamingConfig.cloud.short "clusterName" ($releaseCloud | getOrNil "config" | getOrNil "overrides" | getOrNil "clusterName") }}
 {{ $_ := set $releaseNamingConfig.cloud.short "appOrPlatform" ($releaseCloud | getOrNil "config" | getOrNil "overrides" | getOrNil "appOrPlatform") }}
 
-{{ if $cloudNamingConfig.config.forceCoreNaming }}
+{{ if $cloudNaming.config.forceCoreNaming }}
 {{ $namingConfig = $coreNamingConfig }}
-{{ else if $cloudNamingConfig.config.forceReleaseNaming }}
+{{ else if $cloudNaming.config.forceReleaseNaming }}
 {{ $namingConfig = $releaseNamingConfig }}
-{{ else if $cloudNamingConfig.config.forceAutoMergeNaming }}
+{{ else if $cloudNaming.config.forceAutoMergeNaming }}
 {{ $namingConfig = (mergeOverwrite $coreNamingConfig $releaseNamingConfig) }}
 {{ else }}
 
@@ -126,14 +135,12 @@
 {{ $templatedNameBaseDict := dict }}
 {{ $templated := dict }}
 
-{{ if $cloudNamingConfig.config.templatesEnabled }}
-
-{{ range $key, $value := $cloudNamingConfig.prefixTemplates }}
+{{ range $key, $value := $cloudNaming.prefixTemplates }}
 {{ $_ := set $templatedPrefixesDict ($key | camelcase | untitle) (tpl $value $namingConfig) }}
 {{ end }}
 {{ $_ := set $namingConfig "prefixes" $templatedPrefixesDict }}
 
-{{ range $key, $value := $cloudNamingConfig.resourceTemplates }}
+{{ range $key, $value := $cloudNaming.resourceTemplates }}
 {{ $_ := set $templatedNameBaseDict ($key | camelcase | untitle) (tpl $value $namingConfig) }}
 {{ end }}
 
@@ -175,7 +182,6 @@
 {{ $releaseUrlMapName := "" }}
 {{ $releaseManagedSslCertificateName := "" }}
 
-{{ if (and $releaseCloudEnabled $cloudNamingConfig.enabled (not (eq $releaseCloudNamingEnabled false))) }}
 {{ $shortName = (index $release.metadata.namingConfig.nameBases (coalesce ($values.cloud.naming.config.templates | getOrNil "custom" | getOrNil "nameBase" | default "" | camelcase | untitle) ($values.cloud.naming.config.templates.default.nameBase | camelcase | untitle))) }}
 
 {{ $releaseServiceAccountName = (index $release.metadata.namingConfig.nameBases (coalesce ($values.cloud.naming.config.templates | getOrNil "custom" | getOrNil "serviceAccountName" | default "" | camelcase | untitle) ($values.cloud.naming.config.templates.default.serviceAccountName | camelcase | untitle))) }}
@@ -192,26 +198,6 @@
 {{ $releaseTargetHttpsProxyName = (index $release.metadata.namingConfig.nameBases (coalesce ($values.cloud.naming.config.templates | getOrNil "custom" | getOrNil "targetHttpsProxyName" | default "" | camelcase | untitle) ($values.cloud.naming.config.templates.default.targetHttpsProxyName | camelcase | untitle))) }}
 {{ $releaseUrlMapName = (index $release.metadata.namingConfig.nameBases (coalesce ($values.cloud.naming.config.templates | getOrNil "custom" | getOrNil "urlMapName" | default "" | camelcase | untitle) ($values.cloud.naming.config.templates.default.urlMapName | camelcase | untitle))) }}
 {{ $releaseManagedSslCertificateName = (index $release.metadata.namingConfig.nameBases (coalesce ($values.cloud.naming.config.templates | getOrNil "custom" | getOrNil "managedSslCertificateName" | default "" | camelcase | untitle) ($values.cloud.naming.config.templates.default.managedSslCertificateName | camelcase | untitle))) }}
-
-{{ else }}
-{{ $shortName = $autoShortName }}
-
-{{ $releaseServiceAccountName = $shortName | substr 0 30 }}
-{{ $releaseServiceAccountKeyName = $shortName | substr 0 30 }}
-{{ $releaseBucketName = $shortName | substr 0 63 }}
-{{ $releaseBucketPolicyName = $shortName | substr 0 63 }}
-{{ $releaseBackendBucketName = $shortName | substr 0 63 }}
-{{ $releaseIamMemberName = $shortName | substr 0 63 }}
-{{ $releaseIamRoleName = $shortName | substr 0 63 }}
-{{ $releaseIamRoleExternalName = ($shortName | kebabcase | replace "-" "." | untitle) }}
-{{ $releaseGlobalAddressName = $shortName | substr 0 63 }}
-{{ $releaseGlobalForwardingRuleName = $shortName | substr 0 63  }}
-{{ $releaseTargetHttpProxyName = $shortName | substr 0 63  }}
-{{ $releaseTargetHttpsProxyName = $shortName | substr 0 63  }}
-{{ $releaseUrlMapName = $shortName | substr 0 63  }}
-{{ $releaseManagedSslCertificateName = $shortName | substr 0 63  }}
-
-{{ end }}
 
 {{ if contains "-" $releaseIamRoleExternalName }}
 {{ $ | getOrNil "INVALID_IAM_ROLE_EXTERNAL_NAME" | required (printf "IAM role can't contain '-', replace with '.' ; Current: %s" $releaseIamRoleExternalName )}}
@@ -243,8 +229,3 @@
 
 
 {{ $_ := set $namingConfig "templated" $templated }}
-{{ end }}
-
-
-
-{{ end }}
