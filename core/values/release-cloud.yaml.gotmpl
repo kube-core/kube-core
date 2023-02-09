@@ -110,8 +110,8 @@ bucketPolicies:
     {{ if (eq ($extension | getOrNil "bucket" | getOrNil "public") true) }}
     public: true
     {{ end }}
-    adminRef: {{ coalesce ($extension | getOrNil "policy" | getOrNil "adminRef") $releaseServiceAccountName }}
-    deletionPolicy: {{ coalesce ($extension | getOrNil "bucketPolicies" | getOrNil "deletionPolicy") ($extension | getOrNil "bucket" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+    adminRef: {{ coalesce ($extension | getOrNil "bucket" | getOrNil "policy" | getOrNil "adminRef") $releaseServiceAccountName }}
+    deletionPolicy: {{ coalesce ($extension | getOrNil "bucket" | getOrNil "deletionPolicy") ($extension | getOrNil "bucketPolicies" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
 {{ end }}
 {{ end }}
 {{ end }}
