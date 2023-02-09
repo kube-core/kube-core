@@ -226,6 +226,14 @@ releases:
       injectDefaultIngressClassName: true
       injectReloaderAnnotations: true
       patchIngresses: true
+  opencost:
+    options:
+      applyDefaultAnnotationsOnIngress: true
+      applyDefaultLabelsOnIngress: true
+      injectClusterLoggingLabel: true
+      injectDefaultIngressClassName: true
+      injectReloaderAnnotations: true
+      patchIngresses: true
   velero:
     options:
       injectClusterLoggingLabel: true

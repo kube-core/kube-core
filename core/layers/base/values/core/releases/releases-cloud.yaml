@@ -39,6 +39,12 @@ releases:
   cluster-logging:
     cloud:
       enabled: true
+      buckets:
+        default-logs: {}
+        app-logs: {}
+        cluster-logs: {}
+        events-logs: {}
+        tekton-logs: {}
       roles:
       - roles/storage.objectAdmin
       - roles/storage.admin
