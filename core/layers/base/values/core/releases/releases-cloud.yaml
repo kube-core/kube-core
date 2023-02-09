@@ -24,8 +24,6 @@ releases:
       enabled: true
       bucket:
         enabled: true
-      roles:
-      - roles/storage.objectAdmin
   tekton:
     cloud:
       enabled: true
@@ -53,8 +51,6 @@ releases:
       enabled: true
       bucket:
         enabled: true
-      roles:
-      - roles/storage.objectAdmin
       permissions:
       - compute.disks.get
       - compute.disks.create
