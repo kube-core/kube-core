@@ -1,3 +1,16 @@
+{{/* Release Values Templates Header - START */}}
+{{ $values := (coalesce (. | getOrNil "values") (. | getOrNil "Values")) }}
+{{ $release := (index $values.releases .Release.Name) }}
+{{ $releaseName := .Release.Name }}
+{{ $releaseNamespace := .Release.Namespace }}
+{{ $releaseType := $release.type }}
+
+{{ $_ := set $release "name" $releaseName }}
+{{ $_ := set $release "namespace" $releaseNamespace }}
+{{ (tpl (readFile "../templates/releases/standard/variables/release-variables-config.yaml.gotmpl") (dict "item" $release "values" $values)) }}
+{{ (tpl (readFile "../templates/releases/standard/variables/release-variables-cloud.yaml.gotmpl") (dict "item" $release "values" $values)) }}
+{{/* Release Values Templates Header - END */}}
+
 kps:
   enabled: true
 
@@ -31,7 +44,7 @@ kps:
           rules:
             - record: mongodb_rs_members_state
               expr: mongodb_mongod_replset_member_state
-  {{- if index $.Values.releases "eck-operator" "enabled" }}
+  {{- if index $values.releases "eck-operator" "enabled" }}
     # https://grafana.com/oss/prometheus/exporters/elasticsearch-exporter/?tab=recording-rules#step-3-configure-recording-rules
     elasticsearch:
       groups:
@@ -56,9 +69,9 @@ kps:
   {{- end }}
 
   prometheusOperator:
-    tolerations: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "tolerations") | nindent 6 }}
-    nodeSelector: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "nodeSelector") | nindent 6 }}
-    affinity: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "affinity") | nindent 6 }}
+    tolerations: {{ toYaml (index $release "scheduling" "all" "tolerations") | nindent 6 }}
+    nodeSelector: {{ toYaml (index $release "scheduling" "all" "nodeSelector") | nindent 6 }}
+    affinity: {{ toYaml (index $release "scheduling" "all" "affinity") | nindent 6 }}
 
   prometheus:
     prometheusSpec:
@@ -66,36 +79,36 @@ kps:
       serviceMonitorSelectorNilUsesHelmValues: false
       podMonitorSelectorNilUsesHelmValues: false
       probeSelectorNilUsesHelmValues: false
-      replicas: {{ index .Values.releases .Release.Name "config" "prometheus" "replicaCount" }}
-      {{ if (index .Values.releases .Release.Name "scheduling" "prometheus" "tolerations") }}
-      tolerations: {{ toYaml (index .Values.releases .Release.Name "scheduling" "prometheus" "tolerations") | nindent 8 }}
+      replicas: {{ index $release "config" "prometheus" "replicaCount" }}
+      {{ if (index $release "scheduling" "prometheus" "tolerations") }}
+      tolerations: {{ toYaml (index $release "scheduling" "prometheus" "tolerations") | nindent 8 }}
       {{ else }}
-      tolerations: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "tolerations") | nindent 8 }}
+      tolerations: {{ toYaml (index $release "scheduling" "all" "tolerations") | nindent 8 }}
       {{ end }}
-      {{ if (index .Values.releases .Release.Name "scheduling" "prometheus" "nodeSelector") }}
-      nodeSelector: {{ toYaml (index .Values.releases .Release.Name "scheduling" "prometheus" "nodeSelector") | nindent 8 }}
+      {{ if (index $release "scheduling" "prometheus" "nodeSelector") }}
+      nodeSelector: {{ toYaml (index $release "scheduling" "prometheus" "nodeSelector") | nindent 8 }}
       {{ else }}
-      nodeSelector: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "nodeSelector") | nindent 8 }}
+      nodeSelector: {{ toYaml (index $release "scheduling" "all" "nodeSelector") | nindent 8 }}
       {{ end }}
-      {{ if (index .Values.releases .Release.Name "scheduling" "prometheus" "affinity") }}
-      affinity: {{ toYaml (index .Values.releases .Release.Name "scheduling" "prometheus" "affinity") | nindent 8 }}
+      {{ if (index $release "scheduling" "prometheus" "affinity") }}
+      affinity: {{ toYaml (index $release "scheduling" "prometheus" "affinity") | nindent 8 }}
       {{ else }}
-      affinity: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "affinity") | nindent 8 }}
+      affinity: {{ toYaml (index $release "scheduling" "all" "affinity") | nindent 8 }}
       {{ end }}
       retention: 72h
       thanos:
         image: quay.io/thanos/thanos:v0.26.0
         version: v0.26.0
         objectStorageConfig:
-          {{- if (index .Values.releases .Release.Name "config" "thanos" "externalObjectStorageBackend" "enabled") }}
-          name: {{ index .Values.releases .Release.Name "secrets" "objstore" "secretRef" "name" }}
-          key: {{ index .Values.releases .Release.Name "secrets" "objstore" "secretRef" "key" }}
+          {{- if (or $release.metadata.config.cloudEnabled (index $release "config" "thanos" "externalObjectStorageBackend" "enabled")) }}
+          name: {{ index $release "secrets" "objstore" "secretRef" "name" }}
+          key: {{ index $release "secrets" "objstore" "secretRef" "key" }}
           {{- else }}
           name: kps-thanos-objstore-secret
           key: objstore.yml
           {{- end }}
       externalLabels:
-        cluster: {{ .Values.cluster.config.name }}
+        cluster: {{ $values.cluster.config.name }}
     thanosService:
       enabled: true
     additionalServiceMonitors:
@@ -110,7 +123,7 @@ kps:
         selector:
           matchLabels:
             app.kubernetes.io/name: kps-thanos
-      {{- if index $.Values.releases "rabbitmq-operators" "enabled" }}
+      {{- if index $values.releases "rabbitmq-operators" "enabled" }}
       - name: rabbitmq-cluster
         endpoints:
           - port: prometheus
@@ -123,37 +136,37 @@ kps:
         namespaceSelector:
           any: true
       {{- end }}
-      {{- if ( .Values | get (printf "releases.%s.config.prometheus.serviceMonitors" .Release.Name ) false) }}
-      {{ toYaml (index .Values.releases .Release.Name "config" "prometheus" "serviceMonitors") | nindent 6 }}
+      {{- if ( $values | get (printf "releases.%s.config.prometheus.serviceMonitors" .Release.Name ) false) }}
+      {{ toYaml (index $release "config" "prometheus" "serviceMonitors") | nindent 6 }}
       {{- end }}
     ingress:
       enabled: true
       annotations:
         forecastle.stakater.com/icon: https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Prometheus_software_logo.svg/2066px-Prometheus_software_logo.svg.png
-      {{- if .Values.cluster.common.defaultIngressAnnotations }}
-        {{ toYaml .Values.cluster.common.defaultIngressAnnotations | nindent 8 }}
+      {{- if $values.cluster.common.defaultIngressAnnotations }}
+        {{ toYaml $values.cluster.common.defaultIngressAnnotations | nindent 8 }}
       {{- end }}
-      {{- if index .Values.releases .Release.Name "config" "prometheus" "ingress" "annotations" }}
-        {{ toYaml (index .Values.releases .Release.Name "config" "prometheus" "ingress" "annotations") | nindent 8 }}
+      {{- if index $release "config" "prometheus" "ingress" "annotations" }}
+        {{ toYaml (index $release "config" "prometheus" "ingress" "annotations") | nindent 8 }}
       {{- end }}
       labels:
-      {{- if .Values.cluster.common.defaultIngressLabels }}
-        {{ toYaml .Values.cluster.common.defaultIngressLabels | nindent 8 }}
+      {{- if $values.cluster.common.defaultIngressLabels }}
+        {{ toYaml $values.cluster.common.defaultIngressLabels | nindent 8 }}
       {{- end }}
-      {{- if index .Values.releases .Release.Name "config" "prometheus" "ingress" "labels" }}
-        {{ toYaml (index .Values.releases .Release.Name "config" "prometheus" "ingress" "labels") | nindent 8 }}
+      {{- if index $release "config" "prometheus" "ingress" "labels" }}
+        {{ toYaml (index $release "config" "prometheus" "ingress" "labels") | nindent 8 }}
       {{- end }}
       tls:
-        - secretName: {{ index .Values.releases .Release.Name "config" "prometheus" "ingress" "subdomain" | replace "." "-"}}-tls
+        - secretName: {{ index $release "config" "prometheus" "ingress" "subdomain" | replace "." "-"}}-tls
           hosts:
-          - {{ index .Values.releases .Release.Name "config" "prometheus" "ingress" "subdomain" }}.{{ .Values.cluster.config.domain }}
+          - {{ index $release "config" "prometheus" "ingress" "subdomain" }}.{{ $values.cluster.config.domain }}
       hosts:
-        - {{ index .Values.releases .Release.Name "config" "prometheus" "ingress" "subdomain" }}.{{ .Values.cluster.config.domain }}
+        - {{ index $release "config" "prometheus" "ingress" "subdomain" }}.{{ $values.cluster.config.domain }}
   grafana:
     replicas: 1
-    tolerations: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "tolerations") | nindent 6 }}
-    nodeSelector: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "nodeSelector") | nindent 6 }}
-    affinity: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "affinity") | nindent 6 }}
+    tolerations: {{ toYaml (index $release "scheduling" "all" "tolerations") | nindent 6 }}
+    nodeSelector: {{ toYaml (index $release "scheduling" "all" "nodeSelector") | nindent 6 }}
+    affinity: {{ toYaml (index $release "scheduling" "all" "affinity") | nindent 6 }}
     defaultDashboardsTimezone: Europe/Paris
     sidecar:
       datasources:
@@ -161,19 +174,19 @@ kps:
       dashboards:
         provider:
           folder: "Kps"
-    {{- if index .Values.releases .Release.Name "config" "grafana" "accessibility" "anonymous" }}
+    {{- if index $release "config" "grafana" "accessibility" "anonymous" }}
     grafana.ini:
       auth.anonymous:
         enabled: true
         org_name: Main Org.
-        org_role: {{ index .Values.releases .Release.Name "config" "grafana" "accessibility" "anonRole" }}
+        org_role: {{ index $release "config" "grafana" "accessibility" "anonRole" }}
     {{- end }}
     adminPassword: admin
     plugins:
       - grafana-piechart-panel
       - flant-statusmap-panel
-      {{- if ( .Values | get (printf "releases.%s.config.grafana.plugins" .Release.Name ) false) }}
-      {{ toYaml (index .Values.releases .Release.Name "config" "grafana" "plugins") | nindent 6 }}
+      {{- if ( $values | get (printf "releases.%s.config.grafana.plugins" .Release.Name ) false) }}
+      {{ toYaml (index $release "config" "grafana" "plugins") | nindent 6 }}
       {{- end }}
     datasources:
       datasources.yaml:
@@ -184,14 +197,14 @@ kps:
           - name: Prometheus
             orgId: 1
         datasources:
-          {{- if index .Values.releases .Release.Name "config" "grafana" "datasources" "thanos" }}
+          {{- if index $release "config" "grafana" "datasources" "thanos" }}
           - name: Thanos
             type: prometheus
             url: http://kps-thanos-query.monitoring.svc:9090
             access: proxy
             editable: false
           {{- end }}
-          {{- if index .Values.releases .Release.Name "config" "grafana" "datasources" "prometheus" }}
+          {{- if index $release "config" "grafana" "datasources" "prometheus" }}
           - name: Prometheus
             type: prometheus
             url: http://kps-prometheus.monitoring.svc:9090
@@ -226,7 +239,6 @@ kps:
               path: /var/lib/grafana/dashboards/others
             orgId: 1
             type: file
-          {{- if or (index $.Values.releases "nginx-ingress-controller" "config" "metrics" "serviceMonitor" "enabled") (index $.Values.releases "nginx-istio-ingress-controller" "config" "metrics" "serviceMonitor" "enabled") }}
           - disableDeletion: true
             editable: false
             folder: Nginx
@@ -235,8 +247,7 @@ kps:
               path: /var/lib/grafana/dashboards/nginx
             orgId: 1
             type: file
-          {{- end }}
-          {{- if index $.Values.releases "rabbitmq-operators" "enabled" }}
+          {{- if index $values.releases "rabbitmq-operators" "enabled" }}
           - disableDeletion: true
             editable: false
             folder: Rabbitmq
@@ -246,7 +257,7 @@ kps:
             orgId: 1
             type: file
           {{- end }}
-          {{- if index $.Values.releases "eck-operator" "enabled" }}
+          {{- if index $values.releases "eck-operator" "enabled" }}
           - disableDeletion: true
             editable: false
             folder: Elasticsearch
@@ -256,7 +267,7 @@ kps:
             orgId: 1
             type: file
           {{- end }}
-          {{- if index $.Values.releases "logging-stack" "enabled" }}
+          {{- if index $values.releases "logging-stack" "enabled" }}
           - disableDeletion: true
             editable: false
             folder: Logging
@@ -266,7 +277,7 @@ kps:
             orgId: 1
             type: file
           {{- end }}
-          {{- if index $.Values.releases "flux" "enabled" }}
+          {{- if index $values.releases "flux" "enabled" }}
           - disableDeletion: true
             editable: false
             folder: Flux
@@ -276,7 +287,7 @@ kps:
             orgId: 1
             type: file
           {{- end }}
-          {{- if index $.Values.releases "mongodb-operator" "enabled" }}
+          {{- if index $values.releases "mongodb-operator" "enabled" }}
           - disableDeletion: true
             editable: false
             folder: Mongo
@@ -286,7 +297,7 @@ kps:
             orgId: 1
             type: file
           {{- end }}
-          {{- if index $.Values.releases "sloth" "enabled" }}
+          {{- if index $values.releases "sloth" "enabled" }}
           - disableDeletion: true
             editable: false
             folder: Sloth
@@ -296,7 +307,7 @@ kps:
             orgId: 1
             type: file
           {{- end }}
-          {{- if index $.Values.releases "pyrra" "enabled" }}
+          {{- if index $values.releases "pyrra" "enabled" }}
           - disableDeletion: true
             editable: false
             folder: Pyrra
@@ -306,8 +317,8 @@ kps:
             orgId: 1
             type: file
           {{- end }}
-          {{- if ( .Values | get (printf "releases.%s.config.grafana.dashboardProviders" .Release.Name ) false) }}
-          {{ toYaml (index .Values.releases .Release.Name "config" "grafana" "dashboardProviders") | nindent 10 }}
+          {{- if ( $values | get (printf "releases.%s.config.grafana.dashboardProviders" .Release.Name ) false) }}
+          {{ toYaml (index $release "config" "grafana" "dashboardProviders") | nindent 10 }}
           {{- end }}
     dashboards:
       thanos:
@@ -323,7 +334,6 @@ kps:
         thanos-store:
           datasource: Thanos
           url: https://raw.githubusercontent.com/neo9/grafana-dashboards/master/kubernetes/thanos-store.json
-      {{- if or (index $.Values.releases "nginx-ingress-controller" "config" "metrics" "serviceMonitor" "enabled") (index $.Values.releases "nginx-istio-ingress-controller" "config" "metrics" "serviceMonitor" "enabled") }}
       nginx:
         ingress-controller-overview:
           datasource: Thanos
@@ -337,8 +347,7 @@ kps:
           datasource: Thanos
           gnetId: 12680
           revision: 1
-      {{- end }}
-      {{- if index $.Values.releases "logging-stack" "enabled" }}
+      {{- if index $values.releases "logging-stack" "enabled" }}
       logging:
         logging-operator:
           datasource: Thanos
@@ -349,7 +358,7 @@ kps:
           revision: 2
           gnetId: 13042
       {{- end }}
-      {{- if index $.Values.releases "flux" "enabled" }}
+      {{- if index $values.releases "flux" "enabled" }}
       flux:
         cluster:
           datasource: Thanos
@@ -358,7 +367,7 @@ kps:
           datasource: Thanos
           url: https://raw.githubusercontent.com/fluxcd/flux2/main/manifests/monitoring/monitoring-config/dashboards/control-plane.json
       {{- end }}
-      {{- if index $.Values.releases "rabbitmq-operators" "enabled" }}
+      {{- if index $values.releases "rabbitmq-operators" "enabled" }}
       rabbitmq:
       # https://github.com/rabbitmq/cluster-operator/tree/main/observability/grafana/dashboards
         rabbitmq-overview-dashboard:
@@ -390,20 +399,20 @@ kps:
           gnetId: 6566
           revision: 9
       {{- end }}
-      {{- if index $.Values.releases "eck-operator" "enabled" }}
+      {{- if index $values.releases "eck-operator" "enabled" }}
       elastic-search:
         elastic-exporter-dashboard:
           datasource: Thanos
           gnetId: 14191
           revision: 1
       {{- end }}
-      {{- if index $.Values.releases "mongodb-operator" "enabled" }}
+      {{- if index $values.releases "mongodb-operator" "enabled" }}
       mongodb:
         mongodb-dashboard:
           datasource: Thanos
           url: https://raw.githubusercontent.com/neo9/grafana-dashboards/master/databases/mongodb_percona.json
       {{- end }}
-      {{- if index $.Values.releases "sloth" "enabled" }}
+      {{- if index $values.releases "sloth" "enabled" }}
       sloth:
         sloth-overview:
           datasource: Thanos
@@ -413,7 +422,7 @@ kps:
           datasource: Thanos
           url: https://raw.githubusercontent.com/neo9/grafana-dashboards/master/sloth/slo-detailed.json
       {{- end }}
-      {{- if index $.Values.releases "pyrra" "enabled" }}
+      {{- if index $values.releases "pyrra" "enabled" }}
       pyrra:
         pyrra-details:
           datasource: Thanos
@@ -423,7 +432,7 @@ kps:
           url: https://raw.githubusercontent.com/pyrra-dev/pyrra/main/examples/grafana/list.json
       {{- end }}
       kube-core:
-      {{- if index $.Values.releases "kyverno" "enabled" }}
+      {{- if index $values.releases "kyverno" "enabled" }}
         kyverno:
           datasource: Thanos
           url: https://raw.githubusercontent.com/kyverno/grafana-dashboard/master/grafana/dashboard.json
@@ -453,60 +462,60 @@ kps:
         #   datasource: Thanos
         #   url: https://raw.githubusercontent.com/jenkins-x-charts/grafana-dashboard/master/charts/grafana-dashboard/dashboards/tekton.json
       others:
-      {{- if index $.Values.releases "cert-manager" "enabled" }}
+      {{- if index $values.releases "cert-manager" "enabled" }}
         cert-manager:
           datasource: Thanos
           url: https://raw.githubusercontent.com/monitoring-mixins/website/master/assets/cert-manager/dashboards/cert-manager.json
       {{- end }}
-      {{- if index $.Values.releases "sealed-secrets" "enabled" }}
+      {{- if index $values.releases "sealed-secrets" "enabled" }}
         sealed-secrets:
           datasource: Thanos
           url: https://raw.githubusercontent.com/monitoring-mixins/website/master/assets/sealed-secrets/dashboards/sealed-secrets-controller.json
       {{- end }}
-      {{- if index $.Values.releases "external-dns" "enabled" }}
+      {{- if index $values.releases "external-dns" "enabled" }}
         external-dns:
           datasource: Thanos
           gnetId: 15038
           revision: 1
       {{- end }}
-      {{- if index $.Values.releases "external-secrets" "enabled" }}
+      {{- if index $values.releases "external-secrets" "enabled" }}
         external-secrets:
           datasource: Thanos
           url: https://raw.githubusercontent.com/neo9/grafana-dashboards/master/external-secrets/dashboard.json
       {{- end }}
 
-      {{- if ( .Values | get (printf "releases.%s.config.grafana.dashboards" .Release.Name ) false) }}
-      {{- toYaml (index .Values.releases .Release.Name "config" "grafana" "dashboards") | nindent 6 }}
+      {{- if ( $values | get (printf "releases.%s.config.grafana.dashboards" .Release.Name ) false) }}
+      {{- toYaml (index $release "config" "grafana" "dashboards") | nindent 6 }}
       {{- end }}
     ingress:
       enabled: true
       annotations:
         forecastle.stakater.com/icon: https://upload.wikimedia.org/wikipedia/en/thumb/a/a1/Grafana_logo.svg/1200px-Grafana_logo.svg.png
-      {{- if .Values.cluster.common.defaultIngressAnnotations }}
-        {{ toYaml .Values.cluster.common.defaultIngressAnnotations | nindent 8 }}
+      {{- if $values.cluster.common.defaultIngressAnnotations }}
+        {{ toYaml $values.cluster.common.defaultIngressAnnotations | nindent 8 }}
       {{- end }}
-      {{- if index .Values.releases .Release.Name "config" "grafana" "ingress" "annotations" }}
-        {{ toYaml (index .Values.releases .Release.Name "config" "grafana" "ingress" "annotations") | nindent 8 }}
+      {{- if index $release "config" "grafana" "ingress" "annotations" }}
+        {{ toYaml (index $release "config" "grafana" "ingress" "annotations") | nindent 8 }}
       {{- end }}
       labels:
-      {{- if .Values.cluster.common.defaultIngressLabels }}
-        {{ toYaml .Values.cluster.common.defaultIngressLabels | nindent 8 }}
+      {{- if $values.cluster.common.defaultIngressLabels }}
+        {{ toYaml $values.cluster.common.defaultIngressLabels | nindent 8 }}
       {{- end }}
-      {{- if index .Values.releases .Release.Name "config" "grafana" "ingress" "labels" }}
-        {{ toYaml (index .Values.releases .Release.Name "config" "grafana" "ingress" "labels") | nindent 8 }}
+      {{- if index $release "config" "grafana" "ingress" "labels" }}
+        {{ toYaml (index $release "config" "grafana" "ingress" "labels") | nindent 8 }}
       {{- end }}
       tls:
-        - secretName: {{ index .Values.releases .Release.Name "config" "grafana" "ingress" "subdomain" | replace "." "-"}}-tls
+        - secretName: {{ index $release "config" "grafana" "ingress" "subdomain" | replace "." "-"}}-tls
           hosts:
-          - {{ index .Values.releases .Release.Name "config" "grafana" "ingress" "subdomain" }}.{{ .Values.cluster.config.domain }}
+          - {{ index $release "config" "grafana" "ingress" "subdomain" }}.{{ $values.cluster.config.domain }}
       hosts:
-        - {{ index .Values.releases .Release.Name "config" "grafana" "ingress" "subdomain" }}.{{ .Values.cluster.config.domain }}
+        - {{ index $release "config" "grafana" "ingress" "subdomain" }}.{{ $values.cluster.config.domain }}
   alertmanager:
     alertmanagerSpec:
       retention: 120h
-      tolerations: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "tolerations") | nindent 8 }}
-      nodeSelector: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "nodeSelector") | nindent 8 }}
-      affinity: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "affinity") | nindent 8 }}
+      tolerations: {{ toYaml (index $release "scheduling" "all" "tolerations") | nindent 8 }}
+      nodeSelector: {{ toYaml (index $release "scheduling" "all" "nodeSelector") | nindent 8 }}
+      affinity: {{ toYaml (index $release "scheduling" "all" "affinity") | nindent 8 }}
     config:
       global:
         resolve_timeout: 5m
@@ -524,7 +533,7 @@ kps:
             - container="estafette-k8s-node-compactor"
         - target_matchers:
             - alertname="KubeCPUOvercommit"
-            - cluster="{{ $.Values.cluster.config.name }}"
+            - cluster="{{ $values.cluster.config.name }}"
       route:
         ## https://www.robustperception.io/whats-the-difference-between-group_interval-group_wait-and-repeat_interval
         group_by: ['alertname','job','namespace']
@@ -551,39 +560,39 @@ kps:
           #     - container_name="rules-configmap-reloader"
           #     - namespace="monitoring"
           #   receiver: 'null'
-        {{- if index .Values.releases .Release.Name "config" "opsgenie" "heartbeat" "enabled" }}
+        {{- if index $release "config" "opsgenie" "heartbeat" "enabled" }}
           - matchers:
               - alertname="Watchdog"
             repeat_interval: 2m
             group_interval: 2m
             receiver: 'heartbeat'
         {{- end }}
-        {{- if ( .Values | get (printf "releases.%s.config.alertmanager.additionalRoutes" .Release.Name ) false) }}
-        {{ toYaml (index .Values.releases .Release.Name "config" "alertmanager" "additionalRoutes") | nindent 10 }}
+        {{- if ( $values | get (printf "releases.%s.config.alertmanager.additionalRoutes" .Release.Name ) false) }}
+        {{ toYaml (index $release "config" "alertmanager" "additionalRoutes") | nindent 10 }}
         {{- end }}
       receivers:
         - name: 'null'
-        {{- if index .Values.releases .Release.Name "config" "opsgenie" "heartbeat" "enabled" }}
+        {{- if index $release "config" "opsgenie" "heartbeat" "enabled" }}
         - name: 'heartbeat'
           webhook_configs:
-            - url: {{ index .Values.releases .Release.Name "config" "opsgenie" "heartbeat" "endpoint" }}
+            - url: {{ index $release "config" "opsgenie" "heartbeat" "endpoint" }}
               send_resolved: true
               http_config:
                 basic_auth:
-                  password: {{ index .Values.releases .Release.Name "config" "opsgenie" "heartbeat" "apiKey" }}
+                  password: {{ index $release "config" "opsgenie" "heartbeat" "apiKey" }}
         {{- end }}
         - name: 'default'
-          {{- if index .Values.releases .Release.Name "config" "robusta" "enabled" }}
+          {{- if index $release "config" "robusta" "enabled" }}
           webhook_configs:
             - url: 'http://kps-runner.monitoring.svc.cluster.local/api/alerts'
               send_resolved: true
               max_alerts: 1
           {{- end }}
-          {{- if index .Values.releases .Release.Name "config" "opsgenie" "alerts" "enabled" }}
+          {{- if index $release "config" "opsgenie" "alerts" "enabled" }}
           opsgenie_configs:
-            - api_key: {{ index .Values.releases .Release.Name "config" "opsgenie" "alerts" "apiKey" }}
+            - api_key: {{ index $release "config" "opsgenie" "alerts" "apiKey" }}
               send_resolved: true
-              tags: {{ $.Values.cluster.config.name }}
+              tags: {{ $values.cluster.config.name }}
               message: |-
                 {{`{{ if .CommonAnnotations.message }}
                   {{ .CommonAnnotations.message }}
@@ -596,33 +605,33 @@ kps:
                 {{ end }}`}}
               priority: {{`'{{if or (eq .CommonLabels.severity "P1") (eq .CommonLabels.severity "P2") (eq .CommonLabels.severity "P3") (eq .CommonLabels.severity "P4") (eq .CommonLabels.severity "P5")}}{{ .CommonLabels.severity }}{{else}}P4{{end}}'`}}
           {{- end }}
-        {{- if ( .Values | get (printf "releases.%s.config.alertmanager.additionalReceivers" .Release.Name ) false) }}
-        {{ toYaml (index .Values.releases .Release.Name "config" "alertmanager" "additionalReceivers") | nindent 8 }}
+        {{- if ( $values | get (printf "releases.%s.config.alertmanager.additionalReceivers" .Release.Name ) false) }}
+        {{ toYaml (index $release "config" "alertmanager" "additionalReceivers") | nindent 8 }}
         {{- end }}
       templates: []
     ingress:
       enabled: true
       annotations:
         forecastle.stakater.com/icon: https://camo.githubusercontent.com/13ff7fc7ea6d8a6d98d856da8e3220501b9e6a89620f017d1db039007138e062/687474703a2f2f6465766f70792e696f2f77702d636f6e74656e742f75706c6f6164732f323031392f30322f7a616c2d3230302e706e67
-      {{- if .Values.cluster.common.defaultIngressAnnotations }}
-        {{ toYaml .Values.cluster.common.defaultIngressAnnotations | nindent 8 }}
+      {{- if $values.cluster.common.defaultIngressAnnotations }}
+        {{ toYaml $values.cluster.common.defaultIngressAnnotations | nindent 8 }}
       {{- end }}
-      {{- if index .Values.releases .Release.Name "config" "alertmanager" "ingress" "annotations" }}
-        {{ toYaml (index .Values.releases .Release.Name "config" "alertmanager" "ingress" "annotations") | nindent 8 }}
+      {{- if index $release "config" "alertmanager" "ingress" "annotations" }}
+        {{ toYaml (index $release "config" "alertmanager" "ingress" "annotations") | nindent 8 }}
       {{- end }}
       labels:
-      {{- if .Values.cluster.common.defaultIngressLabels }}
-        {{ toYaml .Values.cluster.common.defaultIngressLabels | nindent 8 }}
+      {{- if $values.cluster.common.defaultIngressLabels }}
+        {{ toYaml $values.cluster.common.defaultIngressLabels | nindent 8 }}
       {{- end }}
-      {{- if index .Values.releases .Release.Name "config" "alertmanager" "ingress" "labels" }}
-        {{ toYaml (index .Values.releases .Release.Name "config" "alertmanager" "ingress" "labels") | nindent 8 }}
+      {{- if index $release "config" "alertmanager" "ingress" "labels" }}
+        {{ toYaml (index $release "config" "alertmanager" "ingress" "labels") | nindent 8 }}
       {{- end }}
       tls:
-        - secretName: {{ index .Values.releases .Release.Name "config" "alertmanager" "ingress" "subdomain" | replace "." "-"}}-tls
+        - secretName: {{ index $release "config" "alertmanager" "ingress" "subdomain" | replace "." "-"}}-tls
           hosts:
-          - {{ index .Values.releases .Release.Name "config" "alertmanager" "ingress" "subdomain" }}.{{ .Values.cluster.config.domain }}
+          - {{ index $release "config" "alertmanager" "ingress" "subdomain" }}.{{ $values.cluster.config.domain }}
       hosts:
-        - {{ index .Values.releases .Release.Name "config" "alertmanager" "ingress" "subdomain" }}.{{ .Values.cluster.config.domain }}
+        - {{ index $release "config" "alertmanager" "ingress" "subdomain" }}.{{ $values.cluster.config.domain }}
 
 kps-thanos:
   enabled: true
@@ -635,37 +644,37 @@ kps-thanos:
       access_key: minio
       secret_key: minio123
       insecure: true
-  {{ if (index .Values.releases .Release.Name "config" "thanos" "externalObjectStorageBackend" "enabled") }}
-  existingObjstoreSecret: {{ index .Values.releases .Release.Name "secrets" "objstore" "secretRef" "name" }}
+  {{ if (or $release.metadata.config.cloudEnabled (index $release "config" "thanos" "externalObjectStorageBackend" "enabled")) }}
+  existingObjstoreSecret: {{ index $release "secrets" "objstore" "secretRef" "name" }}
   existingObjstoreSecretItems:
-    - key: {{ index .Values.releases .Release.Name "secrets" "objstore" "secretRef" "key" }}
-      path: {{ index .Values.releases .Release.Name "secrets" "objstore" "secretRef" "key" }}
+    - key: {{ index $release "secrets" "objstore" "secretRef" "key" }}
+      path: {{ index $release "secrets" "objstore" "secretRef" "key" }}
   {{ end }}
   bucketweb:
     enabled: true
-    tolerations: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "tolerations") | nindent 6 }}
-    nodeSelector: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "nodeSelector") | nindent 6 }}
-    affinity: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "affinity") | nindent 6 }}
+    tolerations: {{ toYaml (index $release "scheduling" "all" "tolerations") | nindent 6 }}
+    nodeSelector: {{ toYaml (index $release "scheduling" "all" "nodeSelector") | nindent 6 }}
+    affinity: {{ toYaml (index $release "scheduling" "all" "affinity") | nindent 6 }}
   compactor:
     enabled: true
     persistence:
       size: 20Gi
-    tolerations: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "tolerations") | nindent 6 }}
-    nodeSelector: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "nodeSelector") | nindent 6 }}
-    affinity: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "affinity") | nindent 6 }}
-    retentionResolutionRaw: {{ index .Values.releases .Release.Name "config"  "thanos" "compactor" "retentionResolutionRaw" }}
-    retentionResolution5m: {{ index .Values.releases .Release.Name "config"  "thanos" "compactor" "retentionResolution5m" }}
-    retentionResolution1h: {{ index .Values.releases .Release.Name "config"  "thanos" "compactor" "retentionResolution1h" }}
+    tolerations: {{ toYaml (index $release "scheduling" "all" "tolerations") | nindent 6 }}
+    nodeSelector: {{ toYaml (index $release "scheduling" "all" "nodeSelector") | nindent 6 }}
+    affinity: {{ toYaml (index $release "scheduling" "all" "affinity") | nindent 6 }}
+    retentionResolutionRaw: {{ index $release "config"  "thanos" "compactor" "retentionResolutionRaw" }}
+    retentionResolution5m: {{ index $release "config"  "thanos" "compactor" "retentionResolution5m" }}
+    retentionResolution1h: {{ index $release "config"  "thanos" "compactor" "retentionResolution1h" }}
   storegateway:
     enabled: true
-    tolerations: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "tolerations") | nindent 6 }}
-    nodeSelector: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "nodeSelector") | nindent 6 }}
-    affinity: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "affinity") | nindent 6 }}
+    tolerations: {{ toYaml (index $release "scheduling" "all" "tolerations") | nindent 6 }}
+    nodeSelector: {{ toYaml (index $release "scheduling" "all" "nodeSelector") | nindent 6 }}
+    affinity: {{ toYaml (index $release "scheduling" "all" "affinity") | nindent 6 }}
   ruler:
     enabled: false
-    tolerations: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "tolerations") | nindent 6 }}
-    nodeSelector: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "nodeSelector") | nindent 6 }}
-    affinity: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "affinity") | nindent 6 }}
+    tolerations: {{ toYaml (index $release "scheduling" "all" "tolerations") | nindent 6 }}
+    nodeSelector: {{ toYaml (index $release "scheduling" "all" "nodeSelector") | nindent 6 }}
+    affinity: {{ toYaml (index $release "scheduling" "all" "affinity") | nindent 6 }}
     alertmanagers:
       - http://kps-kube-prometheus-stack-alertmanager.monitoring.svc.cluster.local:9093
     config: |-
@@ -676,14 +685,14 @@ kps-thanos:
               expr: absent(up{container="prometheus"})
   query:
     enabled: true
-    tolerations: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "tolerations") | nindent 6 }}
-    nodeSelector: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "nodeSelector") | nindent 6 }}
-    affinity: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "affinity") | nindent 6 }}
+    tolerations: {{ toYaml (index $release "scheduling" "all" "tolerations") | nindent 6 }}
+    nodeSelector: {{ toYaml (index $release "scheduling" "all" "nodeSelector") | nindent 6 }}
+    affinity: {{ toYaml (index $release "scheduling" "all" "affinity") | nindent 6 }}
     replicaLabel: [prometheus_replica]
   queryFrontend:
-    tolerations: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "tolerations") | nindent 6 }}
-    nodeSelector: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "nodeSelector") | nindent 6 }}
-    affinity: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "affinity") | nindent 6 }}
+    tolerations: {{ toYaml (index $release "scheduling" "all" "tolerations") | nindent 6 }}
+    nodeSelector: {{ toYaml (index $release "scheduling" "all" "nodeSelector") | nindent 6 }}
+    affinity: {{ toYaml (index $release "scheduling" "all" "affinity") | nindent 6 }}
   metrics:
     enabled: true
     serviceMonitor:
@@ -692,23 +701,23 @@ kps-thanos:
     enabled: false
 
 kps-minio:
-  enabled: {{ not (index .Values.releases .Release.Name "config" "thanos" "externalObjectStorageBackend" "enabled") }}
+  enabled: {{ not (or $release.metadata.config.cloudEnabled (index $release "config" "thanos" "externalObjectStorageBackend" "enabled")) }}
   DeploymentUpdate:
     type: Recreate
-  {{ if (index .Values.releases .Release.Name "scheduling" "minio" "tolerations") }}
-  tolerations: {{ toYaml (index .Values.releases .Release.Name "scheduling" "minio" "tolerations") | nindent 4 }}
+  {{ if (index $release "scheduling" "minio" "tolerations") }}
+  tolerations: {{ toYaml (index $release "scheduling" "minio" "tolerations") | nindent 4 }}
   {{ else }}
-  tolerations: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "tolerations") | nindent 4 }}
+  tolerations: {{ toYaml (index $release "scheduling" "all" "tolerations") | nindent 4 }}
   {{ end }}
-  {{ if (index .Values.releases .Release.Name "scheduling" "minio" "nodeSelector") }}
-  nodeSelector: {{ toYaml (index .Values.releases .Release.Name "scheduling" "minio" "nodeSelector") | nindent 4 }}
+  {{ if (index $release "scheduling" "minio" "nodeSelector") }}
+  nodeSelector: {{ toYaml (index $release "scheduling" "minio" "nodeSelector") | nindent 4 }}
   {{ else }}
-  nodeSelector: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "nodeSelector") | nindent 4 }}
+  nodeSelector: {{ toYaml (index $release "scheduling" "all" "nodeSelector") | nindent 4 }}
   {{ end }}
-  {{ if (index .Values.releases .Release.Name "scheduling" "minio" "affinity") }}
-  affinity: {{ toYaml (index .Values.releases .Release.Name "scheduling" "minio" "affinity") | nindent 4 }}
+  {{ if (index $release "scheduling" "minio" "affinity") }}
+  affinity: {{ toYaml (index $release "scheduling" "minio" "affinity") | nindent 4 }}
   {{ else }}
-  affinity: {{ toYaml (index .Values.releases .Release.Name "scheduling" "all" "affinity") | nindent 4 }}
+  affinity: {{ toYaml (index $release "scheduling" "all" "affinity") | nindent 4 }}
   {{ end }}
   fullnameOverride: kps-minio
   accessKey: "minio"
@@ -738,21 +747,21 @@ kps-minio:
     #   policy: none
     #   purge: false
   persistence:
-    {{ toYaml (index .Values.releases .Release.Name "config" "kpsminio" "persistence") | nindent 4 }}
+    {{ toYaml (index $release "config" "kpsminio" "persistence") | nindent 4 }}
 
 kps-robusta:
-  enabled: {{ index .Values.releases .Release.Name "config" "robusta" "mainSlack" "channel" }}
+  enabled: {{ index $release "config" "robusta" "mainSlack" "channel" }}
   enablePrometheusStack: false
   enableServiceMonitors: false
   disableCloudRouting: true
   enablePlatformPlaybooks: false
-  clusterName: {{ $.Values.cluster.config.name }}
+  clusterName: {{ $values.cluster.config.name }}
   sinksConfig:
     - slack_sink:
         name: main_slack_sink
         default: true
-        slack_channel: {{ index .Values.releases .Release.Name "config" "robusta" "mainSlack" "channel" }}
-        api_key: {{ index .Values.releases .Release.Name "config" "robusta" "mainSlack" "apiKey" }}
-  {{- if index .Values.releases .Release.Name "config" "robusta" "additionalSinks" }}
-    {{ toYaml (index .Values.releases .Release.Name "config" "robusta" "additionalSinks") | nindent 4 }}
+        slack_channel: {{ index $release "config" "robusta" "mainSlack" "channel" }}
+        api_key: {{ index $release "config" "robusta" "mainSlack" "apiKey" }}
+  {{- if index $release "config" "robusta" "additionalSinks" }}
+    {{ toYaml (index $release "config" "robusta" "additionalSinks") | nindent 4 }}
   {{- end }}
