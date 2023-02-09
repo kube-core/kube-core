@@ -36,20 +36,20 @@ cloud:
       templates:
         default:
           nameBase: default-pretty
-          serviceAccountName: default-pretty
-          serviceAccountKeyName: default-pretty
-          bucketName: default-pretty
-          bucketPolicyName: default-pretty
-          backendBucketName: default-pretty
-          iamMemberName: default-pretty
-          iamRoleName: default-pretty
-          iamRoleExternalName: default-iamRoleExternal
-          globalAddressName: default-pretty
-          globalForwardingRuleName: default-pretty
-          targetHttpProxyName: default-pretty
-          targetHttpsProxyName: default-pretty
-          urlMapName: default-pretty
-          managedSslCertificateName: default-pretty
+          serviceAccountName: kube-core-serviceAccount
+          serviceAccountKeyName: kube-core-serviceAccount
+          bucketName: kube-core-default-localized
+          bucketPolicyName: kube-core-default-localized
+          backendBucketName: kube-core-default-localized
+          iamMemberName: kube-core-default
+          iamRoleName: kube-core-default
+          iamRoleExternalName: kube-core-iamRoleExternal
+          globalAddressName: kube-core-default-localized
+          globalForwardingRuleName: kube-core-default-localized
+          targetHttpProxyName: kube-core-default-localized
+          targetHttpsProxyName: kube-core-default-localized
+          urlMapName: kube-core-default-localized
+          managedSslCertificateName: kube-core-default
         # custom:
         #   nameBase: default-short
         #   cloudResourcePrefixTemplate: cloud-resource-prefix-full
@@ -59,8 +59,19 @@ cloud:
       default-pretty: "{{with .prefixes}}{{.cloudResourcePrefixCompact }}-{{ .clusterResourcePrefixShort }}{{end}}"
       default-full: "{{with .prefixes}}{{.cloudResourcePrefixFull }}-{{ .clusterResourcePrefixFull }}{{end}}"
       default-short: "{{with .prefixes}}{{.cloudResourcePrefixShort }}-{{ .clusterResourcePrefixShort }}{{end}}"
-      default-iamRoleExternal: |-
-        {{with .prefixes}}{{ printf "%s.%s" .cloudResourcePrefixCompact .clusterResourcePrefixShort | replace "-" "."}}{{end}}
+
+      kube-core-default: "{{with .prefixes}}{{.kubeCoreCloudPrefixShort }}-{{.kubeCoreClusterReleaseShort }}-{{ .kubeCoreClusterResourceIdShort }}{{end}}"
+      kube-core-default-localized: "{{with .prefixes}}{{.kubeCoreCloudPrefixShort }}-{{.kubeCoreClusterReleaseShort }}-{{ .kubeCoreClusterResourceIdShort }}-{{.kubeCoreCloudLocationCompact}}{{end}}"
+      kube-core-serviceAccount: "{{with .prefixes}}{{.kubeCoreClusterReleaseShort }}-{{ .kubeCoreClusterResourceIdShort }}{{end}}"
+      kube-core-iamRoleExternal: |-
+        {{with .prefixes}}{{ printf "%s.%s.%s" .kubeCoreCloudPrefixShort .kubeCoreClusterReleaseShort .kubeCoreClusterResourceIdShort | replace "-" "."}}{{end}}
+
+    prefixTemplates:
+      kube-core-cloud-prefix-short: "{{with .cloud.short}}{{.orgName}}-{{.cloudProject}}{{end}}"
+      kube-core-cloud-location-compact: "{{with .cloud.short}}{{.cloudRegion}}{{.cloudZone}}{{.cloudZoneId}}{{end}}"
+      kube-core-cluster-release-short: |-
+        {{.release.short.appOrPlatform}}-{{if eq .release.short.appOrPlatform "p"}}{{.cloud.short.clusterName}}-{{end}}{{.release.short.namespace}}
+      kube-core-cluster-resource-id-short: "{{with .release.short}}{{.name}}{{end}}"
 
       # default-serviceAccount: ""
       # default-serviceAccountKey: ""
@@ -75,8 +86,6 @@ cloud:
       # default-targetHttpsProxy: ""
       # default-urlMap: ""
       # default-managedSslCertificate: ""
-
-    prefixTemplates:
       cloud-resource-prefix-full: "{{with .cloud.full}}{{.orgName}}-{{.platformName}}-{{.cloudProvider}}-{{.cloudRegion}}-{{.cloudZone}}-{{.cloudZoneId}}{{end}}"
       cloud-resource-prefix-short: "{{with .cloud.short}}{{.orgName}}-{{.platformName}}-{{.cloudProvider}}-{{.cloudRegion}}-{{.cloudZone}}-{{.cloudZoneId}}{{end}}"
       cloud-resource-prefix-compact: "{{with .cloud.short}}{{.orgName}}{{.platformName}}{{.cloudProvider}}{{.cloudRegion}}{{.cloudZone}}{{.cloudZoneId}}{{end}}"
