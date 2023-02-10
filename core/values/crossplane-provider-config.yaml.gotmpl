@@ -42,4 +42,25 @@ manifests:
           namespace: {{ .Release.Namespace }}
           name: {{ index .Values.releases "crossplane" "secrets" "credentials" "secretRef" "name" }}
           key: {{ index .Values.releases "crossplane" "secrets" "credentials" "secretRef" "key" }}
+
+{{ else if $aws }}
+  - apiVersion: gcp.upbound.io/v1beta1
+    kind: ProviderConfig
+    metadata:
+      name: upbound-{{ $provider }}
+    spec:
+      credentials:
+        source: Secret
+        secretRef:
+          namespace: {{ .Release.Namespace }}
+          name: {{ index .Values.releases "crossplane" "secrets" "credentials" "secretRef" "name" }}
+          key: {{ index .Values.releases "crossplane" "secrets" "credentials" "secretRef" "key" }}
+{{ else }}
+  - kind: ConfigMap
+    apiVersion: v1
+    metadata:
+      name: crossplane-provider-config
+    data:
+      crossplane-provider-config.yaml: |
+        warning: crossplane-provider-config only works with .Values.cloud.provider equal to aws or gcp.
 {{ end }}

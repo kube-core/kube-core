@@ -1,5 +1,6 @@
 ## Header - Start
 {{ $values := (coalesce (. | getOrNil "values") (. | getOrNil "Values")) }}
+{{/* Using the config from cluster-logging to have the correct bucket */}}
 {{ $release := (index $values.releases "cluster-logging") }}
 {{ $releaseName := "cluster-logging" }}
 {{ $releaseNamespace := $release.namespace }}
@@ -12,12 +13,7 @@
 
 cluster: {{ toYaml .Values.cluster | nindent 2 }}
 project: {{ .Values.cloud.project }}
-{{ if $release.metadata.config.cloudEnabled }}
 bucket_name: {{ $release.metadata.namingConfig.templated.releaseBucketName }}-tekton-logs
-{{ else }}
-bucket_name: tekton-logs
-
-{{ end }}
 
 credentials_secret_name: cluster-logging
 credentials_secret_key: privateKey

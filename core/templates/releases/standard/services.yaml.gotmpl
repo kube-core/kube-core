@@ -2,6 +2,7 @@
 {{- $releases := .Values.services }}
 
 {{- range $releaseName, $release := $releases }}
+{{- if $release.enabled -}}
 {{ $release := (mergeOverwrite (deepCopy $values.templates.service) $release) }}
 
 {{ $_ := set $release "type" "service" }}
@@ -10,7 +11,6 @@
 {{ $_ := (tpl (readFile "templates/releases/standard/release-variables.yaml.gotmpl") (dict "item" $release "values" $values)) }}
 {{ $_ := set $.Values.releases $release.name $release }}
 
-{{- if $release.enabled -}}
 {{- tpl (readFile "templates/releases/standard/release.yaml.gotmpl") (dict "item" $release "values" $values "releaseName" $releaseName "releaseNamespace" $values.servicesConfig.namespace "releaseContext" $values.servicesConfig.context) }}
 {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") (dict "item" $release "values" $values "releaseName" $releaseName "releaseNamespace" $values.servicesConfig.namespace "releaseContext" $values.servicesConfig.context) }}
 {{- tpl (readFile "templates/releases/standard/release-extensions.yaml.gotmpl") (dict "item" $release "values" $values "releaseName" $releaseName "releaseNamespace" $values.servicesConfig.namespace "releaseContext" $values.servicesConfig.context) }}

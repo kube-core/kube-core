@@ -11,8 +11,8 @@
 {{ end }}
 
 {{- range $namespaceReleaseName, $namespaceRelease := $namespacesList }}
-{{ $namespaceRelease := (merge $namespaceRelease $values.templates.namespace) }}
 {{- if not (eq ($namespaceRelease | getOrNil "enabled") false ) -}}
+{{ $namespaceRelease := (merge $namespaceRelease $values.templates.namespace) }}
 {{ $seen := false }}
 {{ range $coreReleaseName, $coreRelease := $releasesList }}
 {{ if (not $seen) }}
