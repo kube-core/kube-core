@@ -2,20 +2,25 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
-#### [v0.11.14](https://github.com/kube-core/kube-core/compare/v0.11.14...v0.11.14)
+#### [v0.11.15](https://github.com/kube-core/kube-core/compare/v0.11.14...v0.11.15)
 
-- releases: Rebuilt releases [`6f015c9`](https://github.com/kube-core/kube-core/commit/6f015c975a1e2c2b00db0ab556fc116ea51724b0)
-- release: v0.11.14 [`cab8fb1`](https://github.com/kube-core/kube-core/commit/cab8fb12a76c645b973696cf3413214106f7e310)
-- releases/crds: Fixed namespaces in CRDs to default [`783c790`](https://github.com/kube-core/kube-core/commit/783c7909111a92480bfe914ff80d904eec928cc7)
-- core/releases: Updated default admin roles for crossplane-cloud bucketpolicy [`b101891`](https://github.com/kube-core/kube-core/commit/b101891eab4d1898c82611234ed04ed887029b2a)
+- releases: Added linkerd2 [`c9f4556`](https://github.com/kube-core/kube-core/commit/c9f45566ca78e5c0e2f500d4e8993dd7efa8c280)
+- core/templates: Refactored release variables [`2b0a0a4`](https://github.com/kube-core/kube-core/commit/2b0a0a40d31a55ca3ed529c5404c761fa6f27aff)
+- core/values: Refactored some templates [`dcd5721`](https://github.com/kube-core/kube-core/commit/dcd572188b9419f3cfeab68c22fe0952a9e70cfe)
+- core/layers: Improved default configuration for cloud releases [`c275423`](https://github.com/kube-core/kube-core/commit/c2754235335150b116de9ae94a92cb8c2e1f5672)
+- core/values: Added replicator annotations on external-secrets [`c6c3349`](https://github.com/kube-core/kube-core/commit/c6c334984a231ea117689a09ec9ae3f0df6a3e65)
+- core/releases: Restrained default roles for kps & velero cloud service accounts [`96f042f`](https://github.com/kube-core/kube-core/commit/96f042f2373e620f47bcb3ac5dc125071fcc7bf8)
+- core/releases: Remapped bucket adminRef for releases cloud [`39fdec4`](https://github.com/kube-core/kube-core/commit/39fdec488c752f861be6c4ab5c0566c4c5b7b72d)
 
 #### [v0.11.14](https://github.com/kube-core/kube-core/compare/v0.11.13...v0.11.14)
 
 > 7 February 2023
 
-- releases: Rebuilt releases [`64740bc`](https://github.com/kube-core/kube-core/commit/64740bc6a0d9e9d62873366ce7fbca8200138618)
-- release: v0.11.14 [`9b0fece`](https://github.com/kube-core/kube-core/commit/9b0fece4082fff6c4bce111c8a3cf57901deb4fb)
-- releases/crds: Fixed namespaces in CRDs to default [`2e56c62`](https://github.com/kube-core/kube-core/commit/2e56c626a80a86b1237cae25eae55020e86a76cb)
+- releases: Rebuilt releases [`6f015c9`](https://github.com/kube-core/kube-core/commit/6f015c975a1e2c2b00db0ab556fc116ea51724b0)
+- release: v0.11.14 [`cab8fb1`](https://github.com/kube-core/kube-core/commit/cab8fb12a76c645b973696cf3413214106f7e310)
+- releases/crds: Fixed namespaces in CRDs to default [`783c790`](https://github.com/kube-core/kube-core/commit/783c7909111a92480bfe914ff80d904eec928cc7)
+- release: v0.11.14 [`6cdb8e3`](https://github.com/kube-core/kube-core/commit/6cdb8e34e34f4f984aa0723aaf51e0c4ed490edd)
+- core/releases: Updated default admin roles for crossplane-cloud bucketpolicy [`b101891`](https://github.com/kube-core/kube-core/commit/b101891eab4d1898c82611234ed04ed887029b2a)
 
 #### [v0.11.13](https://github.com/kube-core/kube-core/compare/v0.11.12...v0.11.13)
 
