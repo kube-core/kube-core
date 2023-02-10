@@ -69,4 +69,20 @@ manifests:
       controllerConfigRef:
         name: jet-gcp
   {{ end }}
+  {{ if $aws }}
+  - apiVersion: pkg.crossplane.io/v1
+    kind: Provider
+    metadata:
+      name: upbound-{{ $provider }}
+    spec:
+      package: xpkg.upbound.io/upbound/provider-aws:v0.29.0
+  {{ end }}
+  {{ else }}
+  - kind: ConfigMap
+    apiVersion: v1
+    metadata:
+      name: crossplane-provider
+    data:
+      crossplane-provider.yaml: |
+        warning: crossplane-provider only works with .Values.cloud.provider equal to aws or gcp.
   {{ end }}

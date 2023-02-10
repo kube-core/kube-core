@@ -38,6 +38,6 @@ helmfiles:
   - core:
       helmfileName: {{ $helmfileName }}
       namespacesEnabled: false
-  - servicesList: {{ toYaml $values.services | nindent 6 }}
-  - applicationsList: {{ toYaml $values.applications | nindent 6 }}
-  - environmentsList: {{ toYaml $values.environments | nindent 6 }}
+  - servicesList: {{ toYaml ($values | getOrNil "services") | nindent 6 }}
+  - applicationsList: {{ toYaml ($values | getOrNil "applications") | nindent 6 }}
+  - environmentsList: {{ toYaml ($values | getOrNil "environments") | nindent 6 }}

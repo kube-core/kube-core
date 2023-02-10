@@ -13,6 +13,7 @@
 - ./layers/base/values/core/cluster/logging.yaml
 - ./layers/base/values/core/cluster/common.yaml
 - ./layers/base/values/core/cluster/config.yaml
+- ./layers/base/values/core/cluster/rbac.yaml
 ####################
 
 ####################
@@ -70,20 +71,6 @@
 
 # Toggle releases easily
 - ./layers/packages/base.yaml
-
-# If test enabled, only use test
-# Used to validate that a fresh cluster works as expected
-{{ if (.Values | get "core.packages.test.enabled" false) }}
-- ./layers/packages/test.yaml
-
-# Else if all enabled, only use all
-# Used for integration test of all releases
-{{ else if (.Values | get "core.packages.all.enabled" false) }}
-- ./layers/packages/all.yaml
-
-# Else, use user defined packages
-# This is the normal behavior, and what consumers should use
-{{ else }}
 
 
 # Essentials
@@ -146,8 +133,6 @@
 
 {{ if (.Values | get "core.packages.kyverno.enabled" false) }}
 - ./layers/packages/kyverno.yaml
-{{ end }}
-
 {{ end }}
 
 ####################

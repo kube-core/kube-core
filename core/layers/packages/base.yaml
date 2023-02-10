@@ -23,8 +23,6 @@ releases:
     enabled: false
   eck-operator:
     enabled: false
-  eck-operator-crds:
-    enabled: false
   efk:
     enabled: false
   estafette-gke-node-pool-shifter:
