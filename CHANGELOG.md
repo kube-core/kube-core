@@ -2,12 +2,19 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.11.16](https://github.com/kube-core/kube-core/compare/v0.11.15...v0.11.16)
+
+- core/templates: Improved stability of some releases with default core values [`a158659`](https://github.com/kube-core/kube-core/commit/a158659a4dd8628cf4080e3a521cd97918c664b9)
+
 #### [v0.11.15](https://github.com/kube-core/kube-core/compare/v0.11.14...v0.11.15)
+
+> 10 February 2023
 
 - releases: Added linkerd2 [`c9f4556`](https://github.com/kube-core/kube-core/commit/c9f45566ca78e5c0e2f500d4e8993dd7efa8c280)
 - core/templates: Refactored release variables [`2b0a0a4`](https://github.com/kube-core/kube-core/commit/2b0a0a40d31a55ca3ed529c5404c761fa6f27aff)
 - core/values: Refactored some templates [`dcd5721`](https://github.com/kube-core/kube-core/commit/dcd572188b9419f3cfeab68c22fe0952a9e70cfe)
 - core/layers: Improved default configuration for cloud releases [`c275423`](https://github.com/kube-core/kube-core/commit/c2754235335150b116de9ae94a92cb8c2e1f5672)
+- release: v0.11.15 [`b9ead95`](https://github.com/kube-core/kube-core/commit/b9ead95335252b0afc4f490ed09da97708afc4bb)
 - core/values: Added replicator annotations on external-secrets [`c6c3349`](https://github.com/kube-core/kube-core/commit/c6c334984a231ea117689a09ec9ae3f0df6a3e65)
 - core/releases: Restrained default roles for kps & velero cloud service accounts [`96f042f`](https://github.com/kube-core/kube-core/commit/96f042f2373e620f47bcb3ac5dc125071fcc7bf8)
 - core/releases: Remapped bucket adminRef for releases cloud [`39fdec4`](https://github.com/kube-core/kube-core/commit/39fdec488c752f861be6c4ab5c0566c4c5b7b72d)
