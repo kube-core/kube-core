@@ -42,296 +42,311 @@
 {{ $clusterMainDomain := $values.cluster.config.domain }}
 {{ $clusterAdditionnalDomains := $values.cluster.config.additionnalDomains }}
 {{ $clusterListAllDomains := prepend $clusterAdditionnalDomains $clusterMainDomain }}
+{{ $defaultDeletionPolicy := $values.cloud.crossplane.defaultDeletionPolicy }}
 
 cluster: {{ toYaml $values.cluster | nindent 2 }}
 cloud: {{ toYaml $values.cloud | nindent 2 }}
 prefix: {{ $values.cluster.config.name }}
+
 patch:
   serviceAccountName: patch-operator-admin-{{ $releaseNamespace }}-{{ $releaseName }}
-{{ $defaultDeletionPolicy := $values.cloud.crossplane.defaultDeletionPolicy }}
 
-{{ if (not (eq ($extension | getOrNil "serviceAccounts" | getOrNil "enabled") false)) }}
-serviceAccounts:
-  {{ $releaseServiceAccountName }}:
-    enabled: true
-    deletionPolicy: {{ coalesce ($extension | getOrNil "serviceAccounts" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
-{{ end }}
 
-{{ if (not (eq ($extension | getOrNil "serviceAccountKeys" | getOrNil "enabled") false)) }}
-serviceAccountKeys:
-  {{ $releaseServiceAccountKeyName }}:
-    enabled: true
-    serviceAccountName: {{ $releaseServiceAccountName }}
-    deletionPolicy: {{ coalesce ($extension | getOrNil "serviceAccountKeys" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
-{{ end }}
+resources:
 
-{{ if (not (eq ($extension | getOrNil "buckets" | getOrNil "enabled") false)) }}
+  {{ if (not (eq ($extension | getOrNil "serviceAccounts" | getOrNil "enabled") false)) }}
+  gcp-serviceaccount:
+    {{ $releaseServiceAccountName }}:
+      enabled: true
+      deletionPolicy: {{ coalesce ($extension | getOrNil "serviceAccounts" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+  {{ end }}
 
-buckets:
-{{ if ($extension | getOrNil "bucket" | getOrNil "enabled") }}
-  {{ $releaseBucketName }}:
-    enabled: true
-    {{ if (eq ($extension | getOrNil "bucket" | getOrNil "public") true) }}
-    public: true
-    {{ end }}
-    deletionPolicy: {{ coalesce ($extension | getOrNil "bucket" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
-    {{ if $extension | getOrNil "bucket" | getOrNil "location" }}
-    location: {{ $extension.bucket.location }}
-    {{ end }}
-{{ end }}
+  {{ if (not (eq ($extension | getOrNil "serviceAccountKeys" | getOrNil "enabled") false)) }}
+  gcp-serviceaccountkey:
+    {{ $releaseServiceAccountKeyName }}:
+      enabled: true
+      serviceAccountName: {{ $releaseServiceAccountName }}
+      deletionPolicy: {{ coalesce ($extension | getOrNil "serviceAccountKeys" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+  {{ end }}
 
-{{ if ($extension | getOrNil "buckets") }}
+  {{ if (not (eq ($extension | getOrNil "buckets" | getOrNil "enabled") false)) }}
 
-{{ range $bucketName, $bucketConfig := ($extension | getOrNil "buckets") }}
-{{ $fullBucketName := (printf "%s-%s" $releaseBucketName $bucketName) }}
-{{ if (gt ($fullBucketName | len) 63) }}
-{{ $ | getOrNil "BUCKET_NAME_TOO_LONG" | required (printf "Bucket name must be less than 63 chars. Current: %s => %s" $fullBucketName ($fullBucketName | len | toString) )}}
-{{ end }}
+  gcp-bucket:
+  {{ if ($extension | getOrNil "bucket" | getOrNil "enabled") }}
+    {{ $releaseBucketName }}:
+      enabled: true
+      {{ if (eq ($extension | getOrNil "bucket" | getOrNil "public") true) }}
+      public: true
+      {{ end }}
+      deletionPolicy: {{ coalesce ($extension | getOrNil "bucket" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+      {{ if $extension | getOrNil "bucket" | getOrNil "location" }}
+      location: {{ $extension.bucket.location }}
+      {{ end }}
+  {{ end }}
 
-  {{ $fullBucketName }}:
-    enabled: true
-    {{ if (eq ($bucketConfig | getOrNil "public") true) }}
-    public: true
-    {{ end }}
-    deletionPolicy: {{ coalesce ($bucketConfig | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
-    {{ if $bucketConfig | getOrNil "location" }}
-    location: {{ $bucketConfig.location }}
-    {{ end }}
-{{ end }}
-{{ end }}
+  {{ if ($extension | getOrNil "buckets") }}
 
-bucketPolicies:
-{{ if (not (eq ($extension | getOrNil "buckets" | getOrNil "enabled") false)) }}
-{{ if (not (eq ($extension | getOrNil "bucketPolicies" | getOrNil "enabled") false)) }}
-{{ if ($extension | getOrNil "bucket" | getOrNil "enabled") }}
+  {{ range $bucketName, $bucketConfig := ($extension | getOrNil "buckets") }}
+  {{ $fullBucketName := (printf "%s-%s" $releaseBucketName $bucketName) }}
+  {{ if (gt ($fullBucketName | len) 63) }}
+  {{ $ | getOrNil "BUCKET_NAME_TOO_LONG" | required (printf "Bucket name must be less than 63 chars. Current: %s => %s" $fullBucketName ($fullBucketName | len | toString) )}}
+  {{ end }}
 
-  {{ $releaseBucketPolicyName }}:
-    enabled: true
-    {{ if (eq ($extension | getOrNil "bucket" | getOrNil "public") true) }}
-    public: true
-    {{ end }}
-    adminRef: {{ coalesce ($extension | getOrNil "bucket" | getOrNil "policy" | getOrNil "adminRef") $releaseServiceAccountName }}
-    deletionPolicy: {{ coalesce ($extension | getOrNil "bucket" | getOrNil "deletionPolicy") ($extension | getOrNil "bucketPolicies" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
-{{ end }}
-{{ end }}
-{{ end }}
-
-{{ if ($extension | getOrNil "buckets") }}
-{{ range $bucketName, $bucketConfig := ($extension | getOrNil "buckets") }}
-{{ $fullBucketName := (printf "%s-%s" $releaseBucketName $bucketName) }}
-{{ if (gt ($fullBucketName | len) 63) }}
-{{ $ | getOrNil "BUCKET_NAME_TOO_LONG" | required (printf "Bucket name must be less than 63 chars. Current: %s => %s" $fullBucketName ($fullBucketName | len | toString) )}}
-{{ end }}
-
-{{ if (not (eq ($bucketConfig | getOrNil "policy" | getOrNil "enabled") false)) }}
-  {{ $fullBucketName }}:
-    enabled: true
-    {{ if (eq ($bucketConfig | getOrNil "public") true) }}
-    public: true
-    {{ end }}
-    adminRef: {{ coalesce ($bucketConfig | getOrNil "policy" | getOrNil "adminRef") $releaseServiceAccountName }}
-    deletionPolicy: {{ coalesce ($bucketConfig | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
-{{ end }}
-{{ end }}
-
-{{ end }}
-
-backendBuckets:
-{{ if (eq ($extension | getOrNil "bucket" | getOrNil "public") true) }}
-{{ if (not (eq ($extension | getOrNil "backendBucket" | getOrNil "enabled") false)) }}
-  {{ $releaseBackendBucketName }}:
-    enabled: true
-    bucketName: {{ $releaseBucketName }}
-    enableCdn: true
-    deletionPolicy: {{ coalesce ($extension | getOrNil "bucket" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
-{{ end }}
-{{ end }}
-
-{{ if ($extension | getOrNil "buckets") }}
-{{ range $bucketName, $bucketConfig := ($extension | getOrNil "buckets") }}
-{{ $fullBucketName := (printf "%s-%s" $releaseBucketName $bucketName) }}
-{{ if (gt ($fullBucketName | len) 63) }}
-{{ $ | getOrNil "BUCKET_NAME_TOO_LONG" | required (printf "Bucket name must be less than 63 chars. Current: %s => %s" $fullBucketName ($fullBucketName | len | toString) )}}
-{{ end }}
-
-{{ if (eq ($bucketConfig | getOrNil "public" ) true) }}
-{{ if (not (eq ($bucketConfig | getOrNil "backendBucket" | getOrNil "enabled") false)) }}
-  {{ $fullBucketName }}:
-    enabled: true
-    bucketName: {{ $fullBucketName }}
-    enableCdn: true
-    deletionPolicy: {{ coalesce ($bucketConfig | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
-{{ end }}
-{{ end }}
-{{ end }}
-
-{{ end }}
-{{ end }}
-
-{{ if (not (eq ($extension | getOrNil "projectIAMCustomRoles" | getOrNil "enabled") false)) }}
-projectIAMCustomRoles:
-  {{ $releaseIamRoleName }}:
-    enabled: true
-    deletionPolicy: {{ coalesce ($extension | getOrNil "projectIAMCustomRoles" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
-    externalName: {{ $releaseIamRoleExternalName }}
-    {{ if $extension | getOrNil "permissions" }}
-    permissions: {{ toYaml $extension.permissions | nindent 4 }}
-    {{ else }}
-    permissions:
-    - container.pods.list # TODO: variabilisation to remove this
-    {{ end }}
-{{ end }}
-
-{{ if (not (eq ($extension | getOrNil "projectIAMMembers" | getOrNil "enabled") false)) }}
-projectIAMMembers:
-  {{ $releaseIamMemberName }}-default:
-    enabled: true
-    deletionPolicy: {{ coalesce ($extension | getOrNil "projectIAMMembers" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
-    member: {{ $releaseServiceAccountName }}
-    role: projects/{{ $cloudProject }}/roles/{{ $releaseIamRoleExternalName }}
-  {{ if $extension | getOrNil "roles" }}
-  {{ range $key, $value := ($extension | getOrNil "roles") }}
-  {{ $roleTitle := ( . | title | replace "Roles/" "" | replace "." "" | untitle | kebabcase ) }}
-  {{ $hash := $roleTitle }}
-  {{ $releaseIamMemberName }}-extra-{{ $hash }}:
-    enabled: true
-    deletionPolicy: {{ coalesce ($extension | getOrNil "projectIAMMembers" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
-    member: {{ $releaseServiceAccountName }}
-    role: {{ . }}
+    {{ $fullBucketName }}:
+      enabled: true
+      {{ if (eq ($bucketConfig | getOrNil "public") true) }}
+      public: true
+      {{ end }}
+      deletionPolicy: {{ coalesce ($bucketConfig | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+      {{ if $bucketConfig | getOrNil "location" }}
+      location: {{ $bucketConfig.location }}
+      {{ end }}
   {{ end }}
   {{ end }}
-{{ end }}
 
-{{ if (eq ($extension | getOrNil "cdn" | getOrNil "enabled") true) }}
-globalAdresses:
-  {{ $releaseGlobalAddressName }}:
-    deletionPolicy: {{ coalesce ($extension | getOrNil "cdn" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
-    addressType: "EXTERNAL"
-    ipVersion: "IPV4"
-globalForwardingRules:
-  {{ $releaseGlobalForwardingRuleName }}-http:
-    deletionPolicy: {{ coalesce ($extension | getOrNil "cdn" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
-    loadBalancingScheme: "EXTERNAL"
-    target:
-      type: targetHttpProxies
-      name: {{ $releaseTargetHttpProxyName }}
-    ipAddress: {{ $releaseGlobalAddressName }}
-  {{ $releaseGlobalForwardingRuleName }}-https:
-    deletionPolicy: {{ coalesce ($extension | getOrNil "cdn" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
-    loadBalancingScheme: "EXTERNAL"
-    target:
-      type: targetHttpsProxies
-      name: {{ $releaseTargetHttpsProxyName }}
-    ipAddress: {{ $releaseGlobalAddressName }}
-targetHttpProxies:
-  {{ $releaseTargetHttpProxyName }}:
-    deletionPolicy: {{ coalesce ($extension | getOrNil "cdn" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
-    urlMap: {{ $releaseUrlMapName }}
-targetHttpsProxies:
-  {{ $releaseTargetHttpsProxyName }}:
-    deletionPolicy: {{ coalesce ($extension | getOrNil "cdn" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
-    urlMap: {{ $releaseUrlMapName }}
-    managedSslCertificates:
-    - {{ $releaseManagedSslCertificateName }}
+  gcp-bucketpolicy:
+  {{ if (not (eq ($extension | getOrNil "buckets" | getOrNil "enabled") false)) }}
+  {{ if (not (eq ($extension | getOrNil "bucketPolicies" | getOrNil "enabled") false)) }}
+  {{ if ($extension | getOrNil "bucket" | getOrNil "enabled") }}
 
-urlMaps:
-  {{ $releaseUrlMapName }}:
-    deletionPolicy: {{ coalesce ($extension | getOrNil "cdn" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
-    hostRule:
-    {{ range $k,$v := ($extension | getOrNil "cdn" | getOrNil "paths") }}
-      - hosts:
+    {{ $releaseBucketPolicyName }}:
+      enabled: true
+      {{ if (eq ($extension | getOrNil "bucket" | getOrNil "public") true) }}
+      public: true
+      {{ end }}
+      adminRef: {{ coalesce ($extension | getOrNil "bucket" | getOrNil "policy" | getOrNil "adminRef") $releaseServiceAccountName }}
+      deletionPolicy: {{ coalesce ($extension | getOrNil "bucket" | getOrNil "deletionPolicy") ($extension | getOrNil "bucketPolicies" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+  {{ end }}
+  {{ end }}
+  {{ end }}
+
+  {{ if ($extension | getOrNil "buckets") }}
+  {{ range $bucketName, $bucketConfig := ($extension | getOrNil "buckets") }}
+  {{ $fullBucketName := (printf "%s-%s" $releaseBucketName $bucketName) }}
+  {{ if (gt ($fullBucketName | len) 63) }}
+  {{ $ | getOrNil "BUCKET_NAME_TOO_LONG" | required (printf "Bucket name must be less than 63 chars. Current: %s => %s" $fullBucketName ($fullBucketName | len | toString) )}}
+  {{ end }}
+
+  {{ if (not (eq ($bucketConfig | getOrNil "policy" | getOrNil "enabled") false)) }}
+    {{ $fullBucketName }}:
+      enabled: true
+      {{ if (eq ($bucketConfig | getOrNil "public") true) }}
+      public: true
+      {{ end }}
+      adminRef: {{ coalesce ($bucketConfig | getOrNil "policy" | getOrNil "adminRef") $releaseServiceAccountName }}
+      deletionPolicy: {{ coalesce ($bucketConfig | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+  {{ end }}
+  {{ end }}
+
+  {{ end }}
+
+  gcp-backendbucket:
+  {{ if (eq ($extension | getOrNil "bucket" | getOrNil "public") true) }}
+  {{ if (not (eq ($extension | getOrNil "backendBucket" | getOrNil "enabled") false)) }}
+    {{ $releaseBackendBucketName }}:
+      enabled: true
+      bucketName: {{ $releaseBucketName }}
+      enableCdn: true
+      deletionPolicy: {{ coalesce ($extension | getOrNil "bucket" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+  {{ end }}
+  {{ end }}
+
+  {{ if ($extension | getOrNil "buckets") }}
+  {{ range $bucketName, $bucketConfig := ($extension | getOrNil "buckets") }}
+  {{ $fullBucketName := (printf "%s-%s" $releaseBucketName $bucketName) }}
+  {{ if (gt ($fullBucketName | len) 63) }}
+  {{ $ | getOrNil "BUCKET_NAME_TOO_LONG" | required (printf "Bucket name must be less than 63 chars. Current: %s => %s" $fullBucketName ($fullBucketName | len | toString) )}}
+  {{ end }}
+
+  {{ if (eq ($bucketConfig | getOrNil "public" ) true) }}
+  {{ if (not (eq ($bucketConfig | getOrNil "backendBucket" | getOrNil "enabled") false)) }}
+    {{ $fullBucketName }}:
+      enabled: true
+      bucketName: {{ $fullBucketName }}
+      enableCdn: true
+      deletionPolicy: {{ coalesce ($bucketConfig | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+  {{ end }}
+  {{ end }}
+  {{ end }}
+
+  {{ end }}
+  {{ end }}
+
+  {{ if (not (eq ($extension | getOrNil "projectIAMCustomRoles" | getOrNil "enabled") false)) }}
+  gcp-projectiamcustomrole:
+    {{ $releaseIamRoleName }}:
+      enabled: true
+      deletionPolicy: {{ coalesce ($extension | getOrNil "projectIAMCustomRoles" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+      externalName: {{ $releaseIamRoleExternalName }}
+      {{ if $extension | getOrNil "permissions" }}
+      permissions: {{ toYaml $extension.permissions | nindent 6 }}
+      {{ else }}
+      permissions:
+      - container.pods.list # TODO: variabilisation to remove this
+      {{ end }}
+  {{ end }}
+
+  {{ if (not (eq ($extension | getOrNil "projectIAMMembers" | getOrNil "enabled") false)) }}
+  gcp-projectiammember:
+    {{ $releaseIamMemberName }}-default:
+      enabled: true
+      deletionPolicy: {{ coalesce ($extension | getOrNil "projectIAMMembers" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+      member: {{ $releaseServiceAccountName }}
+      role: projects/{{ $cloudProject }}/roles/{{ $releaseIamRoleExternalName }}
+    {{ if $extension | getOrNil "roles" }}
+    {{ range $key, $value := ($extension | getOrNil "roles") }}
+    {{ $roleTitle := ( . | title | replace "Roles/" "" | replace "." "" | untitle | kebabcase ) }}
+    {{ $hash := $roleTitle }}
+    {{ $releaseIamMemberName }}-extra-{{ $hash }}:
+      enabled: true
+      deletionPolicy: {{ coalesce ($extension | getOrNil "projectIAMMembers" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+      member: {{ $releaseServiceAccountName }}
+      role: {{ . }}
+    {{ end }}
+    {{ end }}
+  {{ end }}
+
+  {{ if (eq ($extension | getOrNil "cdn" | getOrNil "enabled") true) }}
+  gcp-globaladdress:
+    {{ $releaseGlobalAddressName }}:
+      enabled: true
+      deletionPolicy: {{ coalesce ($extension | getOrNil "cdn" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+      addressType: "EXTERNAL"
+      ipVersion: "IPV4"
+  gcp-globalforwardingrule:
+    {{ $releaseGlobalForwardingRuleName }}-http:
+      enabled: true
+      deletionPolicy: {{ coalesce ($extension | getOrNil "cdn" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+      loadBalancingScheme: "EXTERNAL"
+      target:
+        type: targetHttpProxies
+        name: {{ $releaseTargetHttpProxyName }}
+      ipAddress: {{ $releaseGlobalAddressName }}
+    {{ $releaseGlobalForwardingRuleName }}-https:
+      enabled: true
+      deletionPolicy: {{ coalesce ($extension | getOrNil "cdn" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+      loadBalancingScheme: "EXTERNAL"
+      target:
+        type: targetHttpsProxies
+        name: {{ $releaseTargetHttpsProxyName }}
+      ipAddress: {{ $releaseGlobalAddressName }}
+  gcp-targethttpproxy:
+    {{ $releaseTargetHttpProxyName }}:
+      enabled: true
+      deletionPolicy: {{ coalesce ($extension | getOrNil "cdn" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+      urlMap: {{ $releaseUrlMapName }}
+  gcp-targethttpsproxy:
+    {{ $releaseTargetHttpsProxyName }}:
+      enabled: true
+      deletionPolicy: {{ coalesce ($extension | getOrNil "cdn" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+      urlMap: {{ $releaseUrlMapName }}
+      managedSslCertificates:
+      - {{ $releaseManagedSslCertificateName }}
+
+  gcp-urlmap:
+    {{ $releaseUrlMapName }}:
+      enabled: true
+      deletionPolicy: {{ coalesce ($extension | getOrNil "cdn" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+      hostRule:
+      {{ range $k,$v := ($extension | getOrNil "cdn" | getOrNil "paths") }}
+        - hosts:
+          {{ range .domains }}
+          - {{ . }}
+          {{ end }}
+          pathMatcher: {{ .pathMatcherName }}
+      {{ end }}
+      {{ range $k,$v := ($extension | getOrNil "cdn" | getOrNil "templatedPaths") }}
+        - hosts:
+          {{ range .domains }}
+          - {{ tpl . $templateValues }}
+          {{ end }}
+          pathMatcher: {{ tpl .pathMatcherName $templateValues }}
+      {{ end }}
+      pathMatcher:
+      {{ range $k,$v := ($extension | getOrNil "cdn" | getOrNil "paths") }}
+        - defaultService: {{ .backendBucket }}
+          name: {{ .pathMatcherName }}
+      {{ end }}
+      {{ range $k,$v := ($extension | getOrNil "cdn" | getOrNil "templatedPaths") }}
+        - defaultService: {{ tpl .backendBucket $templateValues }}
+          name: {{ tpl .pathMatcherName $templateValues  }}
+      {{ end }}
+  gcp-managedsslcertificate:
+    {{ $releaseManagedSslCertificateName }}:
+      enabled: true
+      deletionPolicy: {{ coalesce ($extension | getOrNil "cdn" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+      domains:
+      {{ range $k,$v := ($extension | getOrNil "cdn" | getOrNil "paths") }}
         {{ range .domains }}
         - {{ . }}
         {{ end }}
-        pathMatcher: {{ .pathMatcherName }}
-    {{ end }}
-    {{ range $k,$v := ($extension | getOrNil "cdn" | getOrNil "templatedPaths") }}
-      - hosts:
+      {{ end }}
+      {{ range $k,$v := ($extension | getOrNil "cdn" | getOrNil "templatedPaths") }}
         {{ range .domains }}
         - {{ tpl . $templateValues }}
         {{ end }}
-        pathMatcher: {{ tpl .pathMatcherName $templateValues }}
-    {{ end }}
-    pathMatcher:
-    {{ range $k,$v := ($extension | getOrNil "cdn" | getOrNil "paths") }}
-      - defaultService: {{ .backendBucket }}
-        name: {{ .pathMatcherName }}
-    {{ end }}
-    {{ range $k,$v := ($extension | getOrNil "cdn" | getOrNil "templatedPaths") }}
-      - defaultService: {{ tpl .backendBucket $templateValues }}
-        name: {{ tpl .pathMatcherName $templateValues  }}
-    {{ end }}
-managedSslCertificates:
-  {{ $releaseManagedSslCertificateName }}:
-    deletionPolicy: {{ coalesce ($extension | getOrNil "cdn" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
-    domains:
-    {{ range $k,$v := ($extension | getOrNil "cdn" | getOrNil "paths") }}
-      {{ range .domains }}
-      - {{ . }}
       {{ end }}
-    {{ end }}
-    {{ range $k,$v := ($extension | getOrNil "cdn" | getOrNil "templatedPaths") }}
-      {{ range .domains }}
-      - {{ tpl . $templateValues }}
+
+  gcp-recordset:
+  {{ range $k,$v := ($extension | getOrNil "cdn" | getOrNil "paths") }}
+    {{ range $domain := .domains }}
+      {{ $isRecordSetManagedByCluster := list false }}
+      {{ range $clusterDomain := $clusterListAllDomains }}
+      {{ if contains $clusterDomain $domain }}
+      {{ $isRecordSetManagedByCluster = prepend $isRecordSetManagedByCluster true }}
       {{ end }}
+      {{ end }}
+    {{ if has true $isRecordSetManagedByCluster }}
+    {{ printf "%s-a" $domain | replace "." "-" }}:
+      enabled: true
+      deletionPolicy: {{ coalesce ($extension | getOrNil "cdn" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+      managedZone: {{ (coalesce ($extension | getOrNil "cdn" | getOrNil "managedZone") (($release | getOrNil "metadata" | getOrNil "config" | getOrNil "clusterDomain") | replace "." "-")) }}
+      rootDnsName: {{ printf "%s." $domain }}
+      rrdatas: []
+      type: "A"
+      patch:
+        injectIpFromLb: true
+        globalAddress: {{ $releaseGlobalAddressName }}
+    {{ printf "%s-txt" $domain | replace "." "-" }}:
+      enabled: true
+      deletionPolicy: {{ coalesce ($extension | getOrNil "cdn" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+      managedZone: {{ (coalesce ($extension | getOrNil "cdn" | getOrNil "managedZone") (($release | getOrNil "metadata" | getOrNil "config" | getOrNil "clusterDomain") | replace "." "-")) }}
+      rootDnsName: {{ printf "%s." $domain }}
+      type: "TXT"
+      rrdatas:
+        - {{ printf "provider=kube-core,crossplane-cloud/owner=%s,releases/namespace=%s/%s" $clusterName $releaseName $releaseNamespace}}
     {{ end }}
+    {{ end }}
+  {{ end }}
 
-recordSets:
-{{ range $k,$v := ($extension | getOrNil "cdn" | getOrNil "paths") }}
-  {{ range $domain := .domains }}
-    {{ $isRecordSetManagedByCluster := list false }}
-    {{ range $clusterDomain := $clusterListAllDomains }}
-    {{ if contains $clusterDomain $domain }}
-    {{ $isRecordSetManagedByCluster = prepend $isRecordSetManagedByCluster true }}
+  {{ range $k,$v := ($extension | getOrNil "cdn" | getOrNil "templatedPaths") }}
+    {{ range $domain := .domains }}
+      {{ $domain = tpl $domain $templateValues }}
+      {{ $isRecordSetManagedByCluster := list false }}
+      {{ range $clusterDomain := $clusterListAllDomains }}
+      {{ if contains $clusterDomain $domain }}
+      {{ $isRecordSetManagedByCluster = prepend $isRecordSetManagedByCluster true }}
+      {{ end }}
+      {{ end }}
+    {{ if has true $isRecordSetManagedByCluster }}
+    {{ printf "%s-a" $domain | replace "." "-" }}:
+      enabled: true
+      deletionPolicy: {{ coalesce ($extension | getOrNil "cdn" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+      managedZone: {{ (coalesce ($extension | getOrNil "cdn" | getOrNil "managedZone") (($release | getOrNil "metadata" | getOrNil "config" | getOrNil "clusterDomain") | replace "." "-")) }}
+      rootDnsName: {{ printf "%s." $domain }}
+      patch:
+        injectIpFromLb: true
+        globalAddress: {{ $releaseGlobalAddressName }}
+    {{ printf "%s-txt" $domain | replace "." "-" }}:
+      enabled: true
+      deletionPolicy: {{ coalesce ($extension | getOrNil "cdn" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
+      managedZone: {{ (coalesce ($extension | getOrNil "cdn" | getOrNil "managedZone") (($release | getOrNil "metadata" | getOrNil "config" | getOrNil "clusterDomain") | replace "." "-")) }}
+      rootDnsName: {{ printf "%s." $domain }}
+      type: "TXT"
+      rrdatas:
+        - {{ printf "provider=kube-core,crossplane-cloud/owner=%s,releases/namespace=%s/%s" $clusterName $releaseName $releaseNamespace}}
     {{ end }}
     {{ end }}
-  {{ if has true $isRecordSetManagedByCluster }}
-  {{ printf "%s-a" $domain | replace "." "-" }}:
-    deletionPolicy: {{ coalesce ($extension | getOrNil "cdn" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
-    managedZone: {{ (coalesce ($extension | getOrNil "cdn" | getOrNil "managedZone") (($release | getOrNil "metadata" | getOrNil "config" | getOrNil "clusterDomain") | replace "." "-")) }}
-    rootDnsName: {{ printf "%s." $domain }}
-    rrdatas: []
-    type: "A"
-    patch:
-      injectIpFromLb: true
-      globalAddress: {{ $releaseGlobalAddressName }}
-  {{ printf "%s-txt" $domain | replace "." "-" }}:
-    deletionPolicy: {{ coalesce ($extension | getOrNil "cdn" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
-    managedZone: {{ (coalesce ($extension | getOrNil "cdn" | getOrNil "managedZone") (($release | getOrNil "metadata" | getOrNil "config" | getOrNil "clusterDomain") | replace "." "-")) }}
-    rootDnsName: {{ printf "%s." $domain }}
-    type: "TXT"
-    rrdatas:
-      - {{ printf "provider=kube-core,crossplane-cloud/owner=%s,releases/namespace=%s/%s" $clusterName $releaseName $releaseNamespace}}
   {{ end }}
-  {{ end }}
-{{ end }}
 
-{{ range $k,$v := ($extension | getOrNil "cdn" | getOrNil "templatedPaths") }}
-  {{ range $domain := .domains }}
-    {{ $domain = tpl $domain $templateValues }}
-    {{ $isRecordSetManagedByCluster := list false }}
-    {{ range $clusterDomain := $clusterListAllDomains }}
-    {{ if contains $clusterDomain $domain }}
-    {{ $isRecordSetManagedByCluster = prepend $isRecordSetManagedByCluster true }}
-    {{ end }}
-    {{ end }}
-  {{ if has true $isRecordSetManagedByCluster }}
-  {{ printf "%s-a" $domain | replace "." "-" }}:
-    deletionPolicy: {{ coalesce ($extension | getOrNil "cdn" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
-    managedZone: {{ (coalesce ($extension | getOrNil "cdn" | getOrNil "managedZone") (($release | getOrNil "metadata" | getOrNil "config" | getOrNil "clusterDomain") | replace "." "-")) }}
-    rootDnsName: {{ printf "%s." $domain }}
-    patch:
-      injectIpFromLb: true
-      globalAddress: {{ $releaseGlobalAddressName }}
-  {{ printf "%s-txt" $domain | replace "." "-" }}:
-    deletionPolicy: {{ coalesce ($extension | getOrNil "cdn" | getOrNil "deletionPolicy") ($extension | getOrNil "deletionPolicy") $defaultDeletionPolicy }}
-    managedZone: {{ (coalesce ($extension | getOrNil "cdn" | getOrNil "managedZone") (($release | getOrNil "metadata" | getOrNil "config" | getOrNil "clusterDomain") | replace "." "-")) }}
-    rootDnsName: {{ printf "%s." $domain }}
-    type: "TXT"
-    rrdatas:
-      - {{ printf "provider=kube-core,crossplane-cloud/owner=%s,releases/namespace=%s/%s" $clusterName $releaseName $releaseNamespace}}
   {{ end }}
-  {{ end }}
-{{ end }}
-
-{{ end }}

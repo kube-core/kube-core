@@ -4,7 +4,7 @@
 apiVersion: cloudplatform.gcp.upbound.io/v1beta1
 kind: ProjectIAMMember
 metadata:
-  name: {{ $name }}
+  name: {{ $resourceName }}
   annotations:
     crossplane.io/external-name: {{ coalesce .value.externalName $name }}
 spec:

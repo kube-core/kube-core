@@ -4,7 +4,7 @@
 apiVersion: dns.gcp.upbound.io/v1beta1
 kind: ManagedZone
 metadata:
-  name: {{ $name }}
+  name: {{ $resourceName }}
 spec:
   deletionPolicy: {{ coalesce .value.deletionPolicy "Orphan" }}
   forProvider:

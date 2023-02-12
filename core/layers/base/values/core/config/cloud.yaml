@@ -2,6 +2,7 @@
 cloud:
   enabled: false
   provider: KUBE_CORE_CLOUD_PROVIDER
+  profile: KUBE_CORE_CLOUD_PROFILE
   providerShortName: KUBE_CORE_CLOUD_PROVIDER_SHORT_NAME
   project: KUBE_CORE_CLOUD_PROJECT
   projectShortName: KUBE_CORE_CLOUD_PROJECT_SHORT_NAME

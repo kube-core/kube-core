@@ -1,7 +1,9 @@
-{{- include "crossplane-cloud.add-release-metadata-to-values" . -}}
+{{- include "app-extensions.add-release-metadata-to-values" . }}
 
-{{ if .Values.recordSets }}
-{{ range $key, $value := .Values.recordSets }}
+{{- $values := .Values }}
+{{ $recordSets := (index $values.resources "gcp-recordset") }}
+{{ if $recordSets }}
+{{ range $key, $value := $recordSets }}
 
 {{ $ressource := dict "key" $key "value" $value }}
 {{ $globalpick := pick $.Values "patch" "cloud" "cluster" "release" }}
@@ -11,7 +13,7 @@
 {{ if .patch }}
 {{ if .patch.injectIpFromLb }}
 ---
-{{ include "crossplane-cloud.recordset-injectipfromlb" $mergedvalues }}
+{{ include "app-extensions.patch-recordsetinjectipfromlb" $mergedvalues }}
 {{ end }}
 {{ end }}
 

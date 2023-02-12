@@ -4,7 +4,7 @@
 apiVersion: storage.gcp.crossplane.io/v1alpha1
 kind: BucketPolicy
 metadata:
-  name: {{ $name }}
+  name: {{ $resourceName }}
   annotations:
     crossplane.io/external-name: {{ coalesce .value.externalName $name }}
 spec:
@@ -20,7 +20,7 @@ spec:
         - allUsers
       {{ end }}
       {{- if (not (eq .value.admin false)) }}
-      - role: roles/storage.objectAdmin
+      - role: roles/storage.admin
         serviceAccountMemberRefs:
         - name: {{ coalesce .value.adminRef $name }}
       {{ end }}

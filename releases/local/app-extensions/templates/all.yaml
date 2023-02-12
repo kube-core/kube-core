@@ -2,6 +2,7 @@
 
 {{- $values := .Values }}
 {{- range $kindName, $kindList := $values.resources }}
+{{- $kindName = ($kindName | lower) }}
 {{- range $key, $value := $kindList }}
 {{- if (index $values "resource" $kindName) }}
 {{- $resource := dict "key" $key "value" (mustMerge (deepCopy $value) (deepCopy (index $values "resource" $kindName))) }}

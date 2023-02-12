@@ -8,24 +8,37 @@
 {{ $releasePatches := (index $releases $mainReleaseName "patches" )}}
 {{ $releasePatchesEnabled := ($releasePatches | getOrNil "enabled") }}
 
+{{ $serviceAccountName := (printf "patch-operator-admin-%s-%s" $releaseNamespace $mainReleaseName )}}
+
 manifests:
 {{ if (not (eq $releaseNamespace "patch-operator")) }}
 - apiVersion: v1
   kind: ServiceAccount
   metadata:
-    name: patch-operator-admin-{{ $releaseNamespace }}-{{ $mainReleaseName }}
+    name: {{ $serviceAccountName }}
+  secrets:
+  - name: {{ $serviceAccountName }}
+- apiVersion: v1
+  kind: Secret
+  metadata:
+    name: {{ $serviceAccountName }}
+    annotations:
+      kubernetes.io/service-account.name: {{ $serviceAccountName }}
+  type: kubernetes.io/service-account-token
+  data: {}
+
 
 - apiVersion: rbac.authorization.k8s.io/v1
   kind: ClusterRoleBinding
   metadata:
-    name: patch-operator-admin-{{ $releaseNamespace }}-{{ $mainReleaseName }}
+    name: {{ $serviceAccountName }}
   roleRef:
     apiGroup: rbac.authorization.k8s.io
     kind: ClusterRole
     name: cluster-admin
   subjects:
   - kind: ServiceAccount
-    name: patch-operator-admin-{{ $releaseNamespace }}-{{ $mainReleaseName }}
+    name: {{ $serviceAccountName }}
     namespace: {{ $releaseNamespace }}
 {{ end }}
 
@@ -36,7 +49,7 @@ manifests:
     name: {{ $mainReleaseName }}
   spec:
     serviceAccountRef:
-      name: patch-operator-admin-{{ $releaseNamespace }}-{{ $mainReleaseName }}
+      name: {{ $serviceAccountName }}
     patches:
     {{ range $key, $patch := $releasePatches.patches }}
       {{ $patch.name }}:

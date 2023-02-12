@@ -4,7 +4,7 @@
 apiVersion: iam.gcp.crossplane.io/v1alpha1
 kind: ServiceAccount
 metadata:
-  name: {{ $name }}
+  name: {{ $resourceName }}
   annotations:
     crossplane.io/external-name: {{ coalesce .value.externalName $name }}
 spec:

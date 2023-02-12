@@ -17,7 +17,7 @@ spec:
         annotationSelector:
           matchLabels:
             crossplane.io/external-name: {{ coalesce .value.externalName $name }}
-            release.app-extensions.dns/record-type: "A"
+            release.app-extensions.gcp-dns/record-type: "A"
       patchTemplate: |
         spec:
           forProvider:
