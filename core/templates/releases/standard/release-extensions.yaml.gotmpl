@@ -232,7 +232,7 @@
 {{ $extensionType := "cloud" }}
 {{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 - name: {{ $extensionName }}
-  chart: ../releases/dist/releases/charts/crossplane-cloud
+  chart: ../releases/dist/releases/charts/app-extensions
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
   namespace: {{ .releaseNamespace }}
   {{ $_ := set . "releaseName" $extensionName }}

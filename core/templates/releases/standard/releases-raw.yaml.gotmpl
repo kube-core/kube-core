@@ -1,8 +1,8 @@
 {{ $raw := .Values.releasesRaw }}
 {{ $values := .Values }}
 {{- range $key, $value := $raw }}
-{{ if $value.enabled }}
 {{ $release := (merge $value $values.templates.raw) }}
+{{ if $release.enabled }}
 
 - name: {{ $key }}
   installed: {{ $release.enabled }}
