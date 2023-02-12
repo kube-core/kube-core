@@ -1,0 +1,21 @@
+{{- include "app-extensions.add-release-metadata-to-values" . }}
+
+{{- $values := .Values }}
+{{ $recordSets := (index $values.resources "gcp-recordset") }}
+{{ if $recordSets }}
+{{ range $key, $value := $recordSets }}
+
+{{ $ressource := dict "key" $key "value" $value }}
+{{ $globalpick := pick $.Values "patch" "cloud" "cluster" "release" }}
+{{ $commonvalues := dict "common" $globalpick }}
+{{ $mergedvalues := deepCopy $commonvalues | mustMerge $ressource }}
+
+{{ if .patch }}
+{{ if .patch.injectIpFromLb }}
+---
+{{ include "app-extensions.patch-recordsetinjectipfromlb" $mergedvalues }}
+{{ end }}
+{{ end }}
+
+{{ end }}
+{{ end }}

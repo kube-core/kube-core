@@ -263,7 +263,7 @@ directories:
       - path: patch-operator
         helmChart:
           name: patch-operator
-          version: v0.1.7
+          version: v0.1.9
           repository:
             url: https://redhat-cop.github.io/patch-operator
 
@@ -394,11 +394,6 @@ directories:
       - path: env-config
         directory:
           path: ../../../releases/local/env-config
-
-
-      - path: crossplane-cloud
-        directory:
-          path: ../../../releases/local/crossplane-cloud
 
       - path: namespace
         directory:
