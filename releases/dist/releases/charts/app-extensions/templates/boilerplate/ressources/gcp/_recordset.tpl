@@ -4,7 +4,7 @@
 apiVersion: dns.gcp.upbound.io/v1beta1
 kind: RecordSet
 metadata:
-  name: {{ $name }}
+  name: {{ $resourceName }}
   annotations:
     crossplane.io/external-name: {{ coalesce .value.externalName $name }}
     release.app-extensions.gcp-dns/record-type: "A"

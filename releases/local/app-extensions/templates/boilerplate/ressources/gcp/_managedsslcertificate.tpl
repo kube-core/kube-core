@@ -4,7 +4,7 @@
 apiVersion: compute.gcp.upbound.io/v1beta1
 kind: ManagedSSLCertificate
 metadata:
-  name: {{ $name }}
+  name: {{ $resourceName }}
   annotations:
     crossplane.io/external-name: {{ coalesce .value.externalName $name }}
 spec:

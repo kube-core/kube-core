@@ -4,14 +4,14 @@
 apiVersion: iam.gcp.crossplane.io/v1alpha1
 kind: ServiceAccountKey
 metadata:
-  name: {{ $name }}
+  name: {{ $resourceName }}
   # annotations:
   #   crossplane.io/external-name: {{ coalesce .value.externalName $name }}
 spec:
   deletionPolicy: {{ coalesce .value.deletionPolicy "Orphan" }}
   forProvider:
     serviceAccountRef:
-      name: {{ coalesce .value.externalName $name }}
+      name: {{ coalesce .value.serviceAccountName .value.externalName $name }}
   publishConnectionDetailsTo:
     name: {{ coalesce .value.externalName $name }}
     {{- if .value.metadata }}

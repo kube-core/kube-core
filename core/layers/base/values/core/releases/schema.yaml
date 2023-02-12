@@ -286,7 +286,7 @@ templates:
     templatedValues: {}
   service:
     config: {}
-    chart: "kube-core/n9-api"
+    chart: "kube-core/raw"
     chartVersion: "latest"
     enabled: false
     context: ""

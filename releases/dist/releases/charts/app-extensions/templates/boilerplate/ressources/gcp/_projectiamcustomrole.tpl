@@ -4,7 +4,7 @@
 apiVersion: cloudplatform.gcp.jet.crossplane.io/v1alpha1
 kind: ProjectIAMCustomRole
 metadata:
-  name: {{ $name }}
+  name: {{ $resourceName }}
   annotations:
     crossplane.io/external-name: projects/{{.common.cloud.project}}/roles/{{ coalesce .value.externalName $name }}
 spec:

@@ -4,7 +4,7 @@
 apiVersion: compute.gcp.upbound.io/v1beta1
 kind: GlobalAddress
 metadata:
-  name: {{ $name }}
+  name: {{ $resourceName }}
   annotations:
     crossplane.io/external-name: {{ coalesce .value.externalName $name }}
 spec:

@@ -53,7 +53,7 @@ releases:
     shortName: xpln-clo
     namespace: crossplane-system
     namespaceShortName: xpln-sys
-    chart: ../releases/dist/releases/charts/crossplane-cloud
+    chart: ../releases/dist/releases/charts/app-extensions
   crossplane-provider:
     shortName: xpln-prv
     namespace: crossplane-system
