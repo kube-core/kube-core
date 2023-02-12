@@ -76,6 +76,7 @@ if [[ "${coreOverlaysList}" != "" ]]; then
     while read overlay; do
         log_debug "Applying overlay: ${overlay}"
         if [[ "$LOG_LEVEL" == "DEBUG" || "$LOG_LEVEL" == "INSANE" ]]; then
+            echo "ytt --ignore-unknown-comments --output-files ${configPath}-f ${configPath}-f ${overlay}"
             ytt --ignore-unknown-comments \
                 --output-files ${configPath} \
                 -f ${configPath} \

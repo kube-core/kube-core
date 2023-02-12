@@ -115,7 +115,7 @@ do
 
     # Generating CRDs
     # TODO: Fix robusta default values
-    helm template --include-crds ${releasePath} --set crd.create=true --set installCRDs=true --set kps-robusta.clusterName="default" --set kps-robusta.enableServiceMonitors=true > ${templateOutput}
+    helm template -n default --include-crds ${releasePath} --set crd.create=true --set installCRDs=true --set kps-robusta.clusterName="default" --set kps-robusta.enableServiceMonitors=true > ${templateOutput}
     kubectl slice --template '{{.kind|lower}}/{{.metadata.name|dottodash|replace ":" "-"}}.yaml' --output-dir ${crdsTmpFolder}/generated -f ${templateOutput} &> /dev/null
 
     # Packing the chart properly

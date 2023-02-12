@@ -34,6 +34,46 @@ scripts:
     name: apps_sentry_sentry_get_dsns
     description: 'Generates Sentry DSNs for proejct. '
     args: projectName appName apiKey
+  cloud_aws_setup_destroy:
+    path: ./src/cloud/aws/setup/destroy.sh
+    name: cloud_aws_setup_destroy
+    description: Destroys Cloud Provider IAM/Secrets. GCP only for now.
+    args: ""
+  cloud_aws_setup_kubeconfig_create_no_gcloud:
+    path: ./src/cloud/aws/setup/kubeconfig/create-no-gcloud.sh
+    name: cloud_aws_setup_kubeconfig_create_no_gcloud
+    description: Generates a kubeconfig for a GKE cluster (without gcloud cli auth proxy)
+    args: ""
+  cloud_aws_setup_kubeconfig_create:
+    path: ./src/cloud/aws/setup/kubeconfig/create.sh
+    name: cloud_aws_setup_kubeconfig_create
+    description: Generates a kubeconfig for a GKE cluster, and sets up local access to this cluster
+    args: ""
+  cloud_aws_setup_kubeconfig_destroy:
+    path: ./src/cloud/aws/setup/kubeconfig/destroy.sh
+    name: cloud_aws_setup_kubeconfig_destroy
+    description: Removes current cluster context from kubeconfig
+    args: ""
+  cloud_aws_setup_kubeconfig_get_context:
+    path: ./src/cloud/aws/setup/kubeconfig/get-context.sh
+    name: cloud_aws_setup_kubeconfig_get_context
+    description: Sets up local access to the current GKE cluster
+    args: ""
+  cloud_aws_setup_setup:
+    path: ./src/cloud/aws/setup/setup.sh
+    name: cloud_aws_setup_setup
+    description: Sets up Cloud Provider IAM/Secrets. AWS only.
+    args: ""
+  cloud_aws_setup_tekton_git:
+    path: ./src/cloud/aws/setup/tekton/git.sh
+    name: cloud_aws_setup_tekton_git
+    description: Generates secrets for Tekton/Git features
+    args: ""
+  cloud_aws_setup_tekton_sf:
+    path: ./src/cloud/aws/setup/tekton/sf.sh
+    name: cloud_aws_setup_tekton_sf
+    description: Generates secrets for Tekton/SF features
+    args: ""
   cloud_gcp_setup_destroy:
     path: ./src/cloud/gcp/setup/destroy.sh
     name: cloud_gcp_setup_destroy
@@ -184,11 +224,6 @@ scripts:
     name: gitops_configmaps
     description: Builds local configmaps to gitops config
     args: ""
-  gitops_gitops:
-    path: ./src/gitops/gitops.sh
-    name: gitops_gitops
-    description: Builds all local config to gitops config
-    args: ""
   gitops_helmfile_template:
     path: ./src/gitops/helmfile-template.sh
     name: gitops_helmfile_template
@@ -207,17 +242,12 @@ scripts:
   gitops_overlays_apply:
     path: ./src/gitops/overlays/apply.sh
     name: gitops_overlays_apply
-    description: DEPRECATED. Applies common overlays on the config
+    description: Applies Core and Cluster Overlays on the config
     args: ""
   gitops_patch:
     path: ./src/gitops/patch.sh
     name: gitops_patch
     description: Builds local patches into gitops config
-    args: ""
-  gitops_process:
-    path: ./src/gitops/process.sh
-    name: gitops_process
-    description: Filters/transforms files generated during gitops build
     args: ""
   gitops_restore_secrets:
     path: ./src/gitops/restore-secrets.sh
@@ -370,7 +400,7 @@ scripts:
     description: Legacy python parser for bash scripts. To replace with CLI.
     args: ""
   utils_generate_scripts_config:
-    path: ../cli/scripts/src/utils/generate-scripts-config.sh
+    path: ./src/utils/generate-scripts-config.sh
     name: utils_generate_scripts_config
     description: Generates scripts-config.yaml
     args: ""
@@ -452,6 +482,11 @@ scripts:
   dev_releases_add_chart:
     path: ./commands/dev/releases/add-chart.sh
     name: dev_releases_add_chart
+    description: 'For kube-core releases development. Adds a chart to kube-core. '
+    args: chartRepository chartName chartVersion
+  dev_releases_add_local_chart:
+    path: ./commands/dev/releases/add-local-chart.sh
+    name: dev_releases_add_local_chart
     description: 'For kube-core releases development. Adds a chart to kube-core. '
     args: chartRepository chartName chartVersion
   dev_releases_add_release:

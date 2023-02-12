@@ -94,7 +94,7 @@ if [[ ! -z "${list}" ]] ; then
 # Looping through releases
 echo "${list}" | while read releasePath;
 do
-    helm lint ${releasePath} --set crd.create=true --set installCRDs=true --set kps-robusta.clusterName="default" --set kps-robusta.enableServiceMonitors=true
+    helm -n default lint ${releasePath} --set crd.create=true --set installCRDs=true --set kps-robusta.clusterName="default" --set kps-robusta.enableServiceMonitors=true
 done
 fi
 echo "Done linting !"
