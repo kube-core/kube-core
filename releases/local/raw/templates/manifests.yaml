@@ -1,5 +1,13 @@
 {{- $template := fromYaml (include "raw.metadata" .) -}}
+{{- if .Values.manifests }}
 {{- range .Values.manifests }}
 ---
 {{ toYaml (merge . $template) }}
 {{- end }}
+{{ else }}
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}
+data: {}
+{{ end }}
