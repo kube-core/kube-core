@@ -2,9 +2,18 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.11.17](https://github.com/kube-core/kube-core/compare/v0.11.16...v0.11.17)
+
+- releases: Migrated crossplane-cloud to app-extensions [`535288a`](https://github.com/kube-core/kube-core/commit/535288a5634922ea69850b776b80e38a3f843d7a)
+- releases: Rebuilt releases [`9ae661b`](https://github.com/kube-core/kube-core/commit/9ae661bf2e6834ec75debc942349f4713bd4ae04)
+- core/templates: Fixed wrong .release.enabled conditions [`9c94b34`](https://github.com/kube-core/kube-core/commit/9c94b34d6b6df2942294460bbc8f8f7ebac9e03c)
+
 #### [v0.11.16](https://github.com/kube-core/kube-core/compare/v0.11.15...v0.11.16)
 
+> 10 February 2023
+
 - core/templates: Improved stability of some releases with default core values [`a158659`](https://github.com/kube-core/kube-core/commit/a158659a4dd8628cf4080e3a521cd97918c664b9)
+- release: v0.11.16 [`2317e26`](https://github.com/kube-core/kube-core/commit/2317e26c5ed0de3cba8f49b083e4e713661ccf9c)
 
 #### [v0.11.15](https://github.com/kube-core/kube-core/compare/v0.11.14...v0.11.15)
 
