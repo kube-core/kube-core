@@ -655,6 +655,8 @@ kps-thanos:
     tolerations: {{ toYaml (index $release "scheduling" "all" "tolerations") | nindent 6 }}
     nodeSelector: {{ toYaml (index $release "scheduling" "all" "nodeSelector") | nindent 6 }}
     affinity: {{ toYaml (index $release "scheduling" "all" "affinity") | nindent 6 }}
+    ingress:
+      enabled: true
   compactor:
     enabled: true
     persistence:
@@ -665,11 +667,15 @@ kps-thanos:
     retentionResolutionRaw: {{ index $release "config"  "thanos" "compactor" "retentionResolutionRaw" }}
     retentionResolution5m: {{ index $release "config"  "thanos" "compactor" "retentionResolution5m" }}
     retentionResolution1h: {{ index $release "config"  "thanos" "compactor" "retentionResolution1h" }}
+    ingress:
+      enabled: true
   storegateway:
     enabled: true
     tolerations: {{ toYaml (index $release "scheduling" "all" "tolerations") | nindent 6 }}
     nodeSelector: {{ toYaml (index $release "scheduling" "all" "nodeSelector") | nindent 6 }}
     affinity: {{ toYaml (index $release "scheduling" "all" "affinity") | nindent 6 }}
+    ingress:
+      enabled: true
   ruler:
     enabled: false
     tolerations: {{ toYaml (index $release "scheduling" "all" "tolerations") | nindent 6 }}
@@ -683,16 +689,22 @@ kps-thanos:
           rules:
             - alert: "PrometheusDown"
               expr: absent(up{container="prometheus"})
+    ingress:
+      enabled: true
   query:
     enabled: true
     tolerations: {{ toYaml (index $release "scheduling" "all" "tolerations") | nindent 6 }}
     nodeSelector: {{ toYaml (index $release "scheduling" "all" "nodeSelector") | nindent 6 }}
     affinity: {{ toYaml (index $release "scheduling" "all" "affinity") | nindent 6 }}
     replicaLabel: [prometheus_replica]
+    ingress:
+      enabled: true
   queryFrontend:
     tolerations: {{ toYaml (index $release "scheduling" "all" "tolerations") | nindent 6 }}
     nodeSelector: {{ toYaml (index $release "scheduling" "all" "nodeSelector") | nindent 6 }}
     affinity: {{ toYaml (index $release "scheduling" "all" "affinity") | nindent 6 }}
+    ingress:
+      enabled: true
   metrics:
     enabled: true
     serviceMonitor:
