@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}-forwarder
+  namespace: {{ .Release.Namespace }}
 spec:
   selector:
     matchLabels:
@@ -9,6 +10,8 @@ spec:
   replicas: 1
   template:
     metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/kubewatch-configmap.yaml") . | sha256sum }}
       labels:
         app: {{ .Release.Name }}-forwarder
       {{- if .Values.kubewatch.annotations }}
@@ -16,6 +19,7 @@ spec:
       {{- end }}
     spec:
       serviceAccountName: {{ .Release.Name }}-forwarder-service-account
+      automountServiceAccountToken: {{ .Values.automountServiceAccountToken }}
       containers:
       - name: kubewatch
         # this is a custom version of kubewatch built from https://github.com/aantn/kubewatch
@@ -29,12 +33,18 @@ spec:
         volumeMounts:
           - name: robusta-kubewatch-config
             mountPath: /config
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities: {}
+          privileged: false
+          readOnlyRootFilesystem: false
+          runAsUser: 1000    
         resources:
           requests:
             cpu: {{ .Values.kubewatch.resources.requests.cpu }}
-            memory: {{ .Values.kubewatch.resources.requests.memory | quote }}
+            memory: {{ if .Values.isSmallCluster }}"64Mi"{{ else }}{{ .Values.kubewatch.resources.requests.memory | quote }}{{ end }}
           limits:
-            memory: {{ .Values.kubewatch.resources.requests.memory | quote }}
+            memory: {{ if .Values.isSmallCluster }}"64Mi"{{ else }}{{ .Values.kubewatch.resources.requests.memory | quote }}{{ end }}
             {{ if .Values.kubewatch.resources.limits.cpu }}cpu: {{ .Values.kubewatch.resources.limits.cpu | quote }}{{ end }}
       volumes:
         - name:  robusta-kubewatch-config
