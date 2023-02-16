@@ -387,6 +387,10 @@ directories:
             url: https://oauth2-proxy.github.io/manifests
 
       # Local Releases
+      - path: slack-operator
+        directory:
+          path: ../../../releases/local/slack-operator
+
       - path: linkerd
         directory:
           path: ../../../releases/local/linkerd

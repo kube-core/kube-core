@@ -367,3 +367,27 @@
   - {{ (tpl (readFile "values/release-chaos.yaml.gotmpl") .) | nindent 4 }}
 
 {{ end }}
+
+{{ $slack := ($release | getOrNil "slack") }}
+{{ $slackEnabled := ($slack | getOrNil "enabled") }}
+
+{{ if ($slackEnabled) }}
+{{ $extensionType := "slack" }}
+{{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
+
+- name: {{ $extensionName }}
+  chart: ../releases/dist/releases/charts/app-extensions
+  kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
+  namespace: {{ .releaseNamespace }}
+  {{ $_ := set . "releaseName" $extensionName }}
+  {{ $_ := set . "extensionType" $extensionType }}
+  {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") . }}
+  {{ $_ := set . "releaseName" .parentReleaseName }}
+  labels:
+    app: {{ $releaseName }}
+    type: "slack"
+  values:
+  # - "./values/release-cloud.yaml.gotmpl"
+  - {{ (tpl (readFile "values/release-slack.yaml.gotmpl") .) | nindent 4 }}
+
+{{ end }}

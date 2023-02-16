@@ -480,3 +480,4 @@ releases:
   env-config: *release
   pyrra: *release
   linkerd: *release
+  slack-operator: *release

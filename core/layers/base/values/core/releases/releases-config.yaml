@@ -543,3 +543,10 @@ releases:
           annotations: {}
           labels: {}
           subdomain: opencost
+  slack-operator:
+    slack:
+      enabled: true
+      channels:
+        default:
+          enabled: true
+          channelName: default
