@@ -2,9 +2,20 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.11.18](https://github.com/kube-core/kube-core/compare/v0.11.17...v0.11.18)
+
+- releases/kps: Upgraded to v1.1.0 [`c345273`](https://github.com/kube-core/kube-core/commit/c3452735eebb636550c16d361924812c222ed9aa)
+- releases: Added slack-operator [`785c9d9`](https://github.com/kube-core/kube-core/commit/785c9d981a1952faa46309a1ddc446858cd618ab)
+- core/layers: Improved default monitoring configuration [`91e1177`](https://github.com/kube-core/kube-core/commit/91e11770aec3ad50a73938f5fb18e5dd3ed74e29)
+- core/templates: Reworked robusta and slack-operator integration [`6d1fb49`](https://github.com/kube-core/kube-core/commit/6d1fb49e1b6dc294bdee6d14279152bf9d238d79)
+- core/layers: Changed pyrra endpoint to thanos-query by default [`b92ff5b`](https://github.com/kube-core/kube-core/commit/b92ff5b084f1a3f125dac467c1ddc9220f30c7d1)
+
 #### [v0.11.17](https://github.com/kube-core/kube-core/compare/v0.11.16...v0.11.17)
 
+> 12 February 2023
+
 - releases: Migrated crossplane-cloud to app-extensions [`535288a`](https://github.com/kube-core/kube-core/commit/535288a5634922ea69850b776b80e38a3f843d7a)
+- release: v0.11.17 [`944058c`](https://github.com/kube-core/kube-core/commit/944058c57fb9f45180886a15f948f53796d564cd)
 - releases: Rebuilt releases [`9ae661b`](https://github.com/kube-core/kube-core/commit/9ae661bf2e6834ec75debc942349f4713bd4ae04)
 - core/templates: Fixed wrong .release.enabled conditions [`9c94b34`](https://github.com/kube-core/kube-core/commit/9c94b34d6b6df2942294460bbc8f8f7ebac9e03c)
 
