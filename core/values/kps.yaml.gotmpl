@@ -95,10 +95,10 @@ kps:
       {{ else }}
       affinity: {{ toYaml (index $release "scheduling" "all" "affinity") | nindent 8 }}
       {{ end }}
-      retention: 72h
+      retention: {{ index $release "config" "prometheus" "retention" }}
       thanos:
-        image: quay.io/thanos/thanos:v0.26.0
-        version: v0.26.0
+        # image: quay.io/thanos/thanos:v0.26.0
+        # version: v0.26.0
         objectStorageConfig:
           {{- if (or $release.metadata.config.cloudEnabled (index $release "config" "thanos" "externalObjectStorageBackend" "enabled")) }}
           name: {{ index $release "secrets" "objstore" "secretRef" "name" }}
@@ -511,8 +511,10 @@ kps:
       hosts:
         - {{ index $release "config" "grafana" "ingress" "subdomain" }}.{{ $values.cluster.config.domain }}
   alertmanager:
+    replicaCount: {{ (index $release "config" "alertmanager" "replicaCount") }}
     alertmanagerSpec:
-      retention: 120h
+      replicas: {{ (index $release "config" "alertmanager" "replicaCount") }}
+      retention: {{ (index $release "config" "alertmanager" "retention") }}
       tolerations: {{ toYaml (index $release "scheduling" "all" "tolerations") | nindent 8 }}
       nodeSelector: {{ toYaml (index $release "scheduling" "all" "nodeSelector") | nindent 8 }}
       affinity: {{ toYaml (index $release "scheduling" "all" "affinity") | nindent 8 }}
@@ -520,20 +522,9 @@ kps:
       global:
         resolve_timeout: 5m
       inhibit_rules:
-        ## As gke won't let us edit resources for it
-        - target_matchers:
-            - alertname="CPUThrottlingHigh"
-            - container="metrics-server-nanny"
-        ## Need some global fix to become unnecessary
-        - target_matchers:
-            - alertname="CPUThrottlingHigh"
-            - container="kube-downscaler"
-        - target_matchers:
-            - alertname="CPUThrottlingHigh"
-            - container="estafette-k8s-node-compactor"
-        - target_matchers:
-            - alertname="KubeCPUOvercommit"
-            - cluster="{{ $values.cluster.config.name }}"
+      {{ range (index $release "config" "alertmanager" "inhibitRules") }}
+      - {{ toYaml . | nindent 8 }}
+      {{ end }}
       route:
         ## https://www.robustperception.io/whats-the-difference-between-group_interval-group_wait-and-repeat_interval
         group_by: ['alertname','job','namespace']
@@ -542,24 +533,12 @@ kps:
         repeat_interval: 1h
         receiver: 'default'
         routes:
-          - matchers:
-              - alertname="InfoInhibitor"
-            receiver: 'null'
-          # - matchers:
-          #     - alertname="CPUThrottlingHigh"
-          #     - container_name="config-reloader"
-          #     - namespace="monitoring"
-          #   receiver: 'null'
-          # - matchers:
-          #     - alertname="CPUThrottlingHigh"
-          #     - container_name="prometheus-config-reloader"
-          #     - namespace="monitoring"
-          #   receiver: 'null'
-          # - matchers:
-          #     - alertname="CPUThrottlingHigh"
-          #     - container_name="rules-configmap-reloader"
-          #     - namespace="monitoring"
-          #   receiver: 'null'
+        - matchers:
+          - alertname="InfoInhibitor"
+          receiver: 'null'
+        {{ range (index $release "config" "alertmanager" "routes") }}
+        - {{.}}: {{ toYaml (index $release "config" "alertmanager" "routes" | nindent 6) }}
+        {{ end }}
         {{- if index $release "config" "opsgenie" "heartbeat" "enabled" }}
           - matchers:
               - alertname="Watchdog"
@@ -657,6 +636,22 @@ kps-thanos:
     affinity: {{ toYaml (index $release "scheduling" "all" "affinity") | nindent 6 }}
     ingress:
       enabled: true
+      annotations:
+      {{- if $values.cluster.common.defaultIngressAnnotations }}
+        {{ toYaml $values.cluster.common.defaultIngressAnnotations | nindent 8 }}
+      {{- end }}
+      {{- if index $release "config" "thanos" "bucketweb" "ingress" "annotations" }}
+        {{ toYaml (index $release "config" "thanos" "bucketweb" "ingress" "annotations") | nindent 8 }}
+      {{- end }}
+      labels:
+      {{- if $values.cluster.common.defaultIngressLabels }}
+        {{ toYaml $values.cluster.common.defaultIngressLabels | nindent 8 }}
+      {{- end }}
+      {{- if index $release "config" "thanos" "bucketweb" "ingress" "labels" }}
+        {{ toYaml (index $release "config" "thanos" "bucketweb" "ingress" "labels") | nindent 8 }}
+      {{- end }}
+      tls: true
+      hostname: {{ index $release "config" "thanos" "bucketweb" "ingress" "subdomain" }}.{{ $values.cluster.config.domain }}
   compactor:
     enabled: true
     persistence:
@@ -669,13 +664,46 @@ kps-thanos:
     retentionResolution1h: {{ index $release "config"  "thanos" "compactor" "retentionResolution1h" }}
     ingress:
       enabled: true
+      annotations:
+      {{- if $values.cluster.common.defaultIngressAnnotations }}
+        {{ toYaml $values.cluster.common.defaultIngressAnnotations | nindent 8 }}
+      {{- end }}
+      {{- if index $release "config" "thanos" "compactor" "ingress" "annotations" }}
+        {{ toYaml (index $release "config" "thanos" "compactor" "ingress" "annotations") | nindent 8 }}
+      {{- end }}
+      labels:
+      {{- if $values.cluster.common.defaultIngressLabels }}
+        {{ toYaml $values.cluster.common.defaultIngressLabels | nindent 8 }}
+      {{- end }}
+      {{- if index $release "config" "thanos" "compactor" "ingress" "labels" }}
+        {{ toYaml (index $release "config" "thanos" "compactor" "ingress" "labels") | nindent 8 }}
+      {{- end }}
+      tls: true
+      hostname: {{ index $release "config" "thanos" "compactor" "ingress" "subdomain" }}.{{ $values.cluster.config.domain }}
   storegateway:
     enabled: true
+    replicaCount: {{ (index $release "config" "thanos" "storegateway" "replicaCount") }}
     tolerations: {{ toYaml (index $release "scheduling" "all" "tolerations") | nindent 6 }}
     nodeSelector: {{ toYaml (index $release "scheduling" "all" "nodeSelector") | nindent 6 }}
     affinity: {{ toYaml (index $release "scheduling" "all" "affinity") | nindent 6 }}
     ingress:
       enabled: true
+      annotations:
+      {{- if $values.cluster.common.defaultIngressAnnotations }}
+        {{ toYaml $values.cluster.common.defaultIngressAnnotations | nindent 8 }}
+      {{- end }}
+      {{- if index $release "config" "thanos" "storegateway" "ingress" "annotations" }}
+        {{ toYaml (index $release "config" "thanos" "storegateway" "ingress" "annotations") | nindent 8 }}
+      {{- end }}
+      labels:
+      {{- if $values.cluster.common.defaultIngressLabels }}
+        {{ toYaml $values.cluster.common.defaultIngressLabels | nindent 8 }}
+      {{- end }}
+      {{- if index $release "config" "thanos" "storegateway" "ingress" "labels" }}
+        {{ toYaml (index $release "config" "thanos" "storegateway" "ingress" "labels") | nindent 8 }}
+      {{- end }}
+      tls: true
+      hostname: {{ index $release "config" "thanos" "storegateway" "ingress" "subdomain" }}.{{ $values.cluster.config.domain }}
   ruler:
     enabled: false
     tolerations: {{ toYaml (index $release "scheduling" "all" "tolerations") | nindent 6 }}
@@ -691,6 +719,22 @@ kps-thanos:
               expr: absent(up{container="prometheus"})
     ingress:
       enabled: true
+      annotations:
+      {{- if $values.cluster.common.defaultIngressAnnotations }}
+        {{ toYaml $values.cluster.common.defaultIngressAnnotations | nindent 8 }}
+      {{- end }}
+      {{- if index $release "config" "thanos" "ruler" "ingress" "annotations" }}
+        {{ toYaml (index $release "config" "thanos" "ruler" "ingress" "annotations") | nindent 8 }}
+      {{- end }}
+      labels:
+      {{- if $values.cluster.common.defaultIngressLabels }}
+        {{ toYaml $values.cluster.common.defaultIngressLabels | nindent 8 }}
+      {{- end }}
+      {{- if index $release "config" "thanos" "ruler" "ingress" "labels" }}
+        {{ toYaml (index $release "config" "thanos" "ruler" "ingress" "labels") | nindent 8 }}
+      {{- end }}
+      tls: true
+      hostname: {{ index $release "config" "thanos" "ruler" "ingress" "subdomain" }}.{{ $values.cluster.config.domain }}
   query:
     enabled: true
     tolerations: {{ toYaml (index $release "scheduling" "all" "tolerations") | nindent 6 }}
@@ -699,12 +743,44 @@ kps-thanos:
     replicaLabel: [prometheus_replica]
     ingress:
       enabled: true
+      annotations:
+      {{- if $values.cluster.common.defaultIngressAnnotations }}
+        {{ toYaml $values.cluster.common.defaultIngressAnnotations | nindent 8 }}
+      {{- end }}
+      {{- if index $release "config" "thanos" "query" "ingress" "annotations" }}
+        {{ toYaml (index $release "config" "thanos" "query" "ingress" "annotations") | nindent 8 }}
+      {{- end }}
+      labels:
+      {{- if $values.cluster.common.defaultIngressLabels }}
+        {{ toYaml $values.cluster.common.defaultIngressLabels | nindent 8 }}
+      {{- end }}
+      {{- if index $release "config" "thanos" "query" "ingress" "labels" }}
+        {{ toYaml (index $release "config" "thanos" "query" "ingress" "labels") | nindent 8 }}
+      {{- end }}
+      tls: true
+      hostname: {{ index $release "config" "thanos" "query" "ingress" "subdomain" }}.{{ $values.cluster.config.domain }}
   queryFrontend:
     tolerations: {{ toYaml (index $release "scheduling" "all" "tolerations") | nindent 6 }}
     nodeSelector: {{ toYaml (index $release "scheduling" "all" "nodeSelector") | nindent 6 }}
     affinity: {{ toYaml (index $release "scheduling" "all" "affinity") | nindent 6 }}
     ingress:
       enabled: true
+      annotations:
+      {{- if $values.cluster.common.defaultIngressAnnotations }}
+        {{ toYaml $values.cluster.common.defaultIngressAnnotations | nindent 8 }}
+      {{- end }}
+      {{- if index $release "config" "thanos" "queryFrontend" "ingress" "annotations" }}
+        {{ toYaml (index $release "config" "thanos" "queryFrontend" "ingress" "annotations") | nindent 8 }}
+      {{- end }}
+      labels:
+      {{- if $values.cluster.common.defaultIngressLabels }}
+        {{ toYaml $values.cluster.common.defaultIngressLabels | nindent 8 }}
+      {{- end }}
+      {{- if index $release "config" "thanos" "queryFrontend" "ingress" "labels" }}
+        {{ toYaml (index $release "config" "thanos" "queryFrontend" "ingress" "labels") | nindent 8 }}
+      {{- end }}
+      tls: true
+      hostname: {{ index $release "config" "thanos" "queryFrontend" "ingress" "subdomain" }}.{{ $values.cluster.config.domain }}
   metrics:
     enabled: true
     serviceMonitor:
@@ -762,18 +838,31 @@ kps-minio:
     {{ toYaml (index $release "config" "kpsminio" "persistence") | nindent 4 }}
 
 kps-robusta:
-  enabled: {{ index $release "config" "robusta" "mainSlack" "channel" }}
+  enabled: {{ (index $release "config" "robusta" "enabled") }}
+  globalConfig:
+    grafana_url: {{ $values.cluster.monitoring.grafanaEndpoint }}
+    grafana_api_key: ""
+    grafana_dashboard_uid: ""
+    prometheus_url: {{ $values.cluster.monitoring.prometheusEndpoint }}
+    account_id: {{ (index $release "config" "robusta" "global" "signingKey") }}
+    signing_key: {{ (index $release "config" "robusta" "global" "accountID") }}
   enablePrometheusStack: false
   enableServiceMonitors: false
   disableCloudRouting: true
   enablePlatformPlaybooks: false
   clusterName: {{ $values.cluster.config.name }}
   sinksConfig:
-    - slack_sink:
-        name: main_slack_sink
-        default: true
-        slack_channel: {{ index $release "config" "robusta" "mainSlack" "channel" }}
-        api_key: {{ index $release "config" "robusta" "mainSlack" "apiKey" }}
-  {{- if index $release "config" "robusta" "additionalSinks" }}
-    {{ toYaml (index $release "config" "robusta" "additionalSinks") | nindent 4 }}
+  {{ range $sinkName, $sinkConfig := (index $release "config" "robusta" "slackSinks") }}
+  {{ $name := (coalesce ($sinkConfig | getOrNil "nameOverride") (printf "slack-%s-%s" $values.cluster.config.name $sinkName)) }}
+  {{ $channel := (coalesce ($sinkConfig | getOrNil "channel") (printf "app-robusta-%s" $sinkName)) }}
+  {{ $apiKey := (coalesce ($sinkConfig | getOrNil "apiKey") (index $release "config" "robusta" "slack" "apiKey"))  }}
+  {{ $isDefault := (coalesce (.| getOrNil "default") false) }}
+  - slack_sink:
+      name: {{ $name }}
+      default: {{ $isDefault }}
+      slack_channel: {{ $channel }}
+      api_key: {{ $apiKey }}
+  {{ end }}
+  {{- if (index $release "config" "robusta" "additionalSinks") }}
+  {{ toYaml (index $release "config" "robusta" "additionalSinks") | nindent 2 }}
   {{- end }}

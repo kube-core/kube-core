@@ -3,3 +3,4 @@ cluster:
     enabled: true
     prometheusEndpoint: http://prometheus-operated.monitoring.svc.cluster.local:9090
     thanosEndpoint: http://kps-thanos-query.monitoring.svc.cluster.local:9090
+    grafanaEndpoint: http://kps-grafana:80

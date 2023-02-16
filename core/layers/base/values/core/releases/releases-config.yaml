@@ -275,6 +275,13 @@ releases:
             effect: "NoExecute"
     config:
       alertmanager:
+        routes: []
+        inhibitRules:
+        - target_matchers:
+          - alertname="CPUThrottlingHigh"
+          - container="metrics-server-nanny"
+        retention: 72h
+        replicaCount: 3
         additionalReceivers: []
         additionalRoutes: []
         ingress:
@@ -310,6 +317,7 @@ releases:
           enabled: false
           endpoint: {}
       prometheus:
+        retention: 72h
         ingress:
           annotations: {}
           labels: {}
@@ -317,13 +325,56 @@ releases:
         replicaCount: 3
         serviceMonitors: []
       robusta:
+        enabled: true
+        global:
+          signingKey: "ROBUSTA_GLOBAL_SINGING_KEY"
+          accountID: "ROBUSTA_GLOBAL_ACCOUNT_ID"
+        slackSinks:
+          default:
+            default: true
+
+
         additionalSinks: []
-        enabled: false
-        mainSlack:
-          apiKey: {}
-          channel: {}
+        # additionalSinks:
+        # - slack_sink:
+        #     name: my_sink
+        #     default: false
+        #     slack_channel: "slack_channel"
+        #     api_key: "api_key"
+        slack:
+          apiKey: "ROBUSTA_SLACK_API_KEY"
       thanos:
+        bucketweb:
+          ingress:
+            annotations: {}
+            labels: {}
+            subdomain: bucketweb
+        ruler:
+          ingress:
+            annotations: {}
+            labels: {}
+            subdomain: ruler
+        query:
+          ingress:
+            annotations: {}
+            labels: {}
+            subdomain: query
+        queryFrontend:
+          ingress:
+            annotations: {}
+            labels: {}
+            subdomain: query-frontend
+        storegateway:
+          replicaCount: 3
+          ingress:
+            annotations: {}
+            labels: {}
+            subdomain: storegateway
         compactor:
+          ingress:
+            annotations: {}
+            labels: {}
+            subdomain: compactor
           retentionResolution1h: 1y
           retentionResolution5m: 90d
           retentionResolutionRaw: 20d
