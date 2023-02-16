@@ -1,0 +1,32 @@
+{{/* Extensions Header - Start */}}
+
+{{/* Common Variables */}}
+{{ $values := (coalesce (. | getOrNil "values") (. | getOrNil "Values")) }}
+{{ $releases := (merge $values.releases $values.applications $values.services )}}
+
+{{/* Release Variables */}}
+{{ $release := .item }}
+{{ $releaseName := $release.name }}
+{{ $releaseNamespace := $release.namespace }}
+{{ $releaseType := $release.type }}
+{{ $extension := (coalesce (index $release .extensionType) (index $release (.extensionType | camelcase | untitle)) ) }}
+{{ $extensionEnabled := ($extension | getOrNil "enabled") }}
+
+{{ $templateValues := (dict "coreValues" $values "releaseValues" $extension "parentReleaseValues" $release "releaseNamespace" $releaseNamespace "releaseName" $releaseName) }}
+
+{{/* Extensions Header - End */}}
+
+cluster: {{ toYaml $values.cluster | nindent 2 }}
+cloud: {{ toYaml $values.cloud | nindent 2 }}
+
+resources:
+  slack-channel:
+  {{ range $resourceName, $resourceConfig := ($extension | getOrNil "channels") }}
+    {{ $releaseName }}-{{ $resourceName }}: {{ toYaml $resourceConfig | nindent 6 }}
+      {{ if (not ($resourceConfig | getOrNil "users")) }}
+      {{ if ($values.cluster.users | getOrNil "cluster-admin")  }}
+      users: {{ toYaml ($values.cluster.users | getOrNil "cluster-admin") | nindent 8 }}
+      {{ end }}
+      {{ end }}
+      namespace: {{ $releaseNamespace }}
+    {{ end }}

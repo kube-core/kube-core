@@ -12,6 +12,14 @@ patch:
   serviceAccountName: my-patch-operator-sa
 
 resource:
+  slack-channel:
+    enabled: false
+    # channelName: "my-channel-with-prefix"
+    # channelNameOverride: "my-channel-without-prefix"
+    # topic: "default"
+    # description: "Default slack channel"
+    # users:
+    # - user@domain.tld
   prometheus-servicemonitor:
     enabled: false
   chaos-schedule:

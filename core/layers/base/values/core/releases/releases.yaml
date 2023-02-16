@@ -514,3 +514,8 @@ releases:
     namespace: linkerd
     namespaceShortName: pyr
     chart: ../releases/dist/releases/charts/linkerd
+  slack-operator:
+    shortName: slk-ope
+    namespace: slack-operator
+    namespaceShortName: slk-ope
+    chart: ../releases/dist/releases/charts/slack-operator
