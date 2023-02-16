@@ -11,3 +11,12 @@ gitops:
   refresh: 1m0s #KUBE_CORE_GITOPS_REFRESH
   ssh_key: ./keys/.flux-ssh-key
   autocommit: false #KUBE_CORE_GITOPS_AUTOCOMMIT
+  config:
+    build:
+      template: default
+      templates:
+        default: "'{{(.metadata.labels | index \"release.kube-core.io/namespace\")}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace \":\" \"-\"}}.yaml'"
+        defaultCluster: "'{{(.metadata.labels | index \"cluster.kube-core.io/name\")}}/{{(.metadata.labels | index \"release.kube-core.io/namespace\")}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace \":\" \"-\"}}.yaml'"
+        defaultClusterRelease: "'{{(.metadata.labels | index \"cluster.kube-core.io/name\")}}/{{(.metadata.labels | index \"release.kube-core.io/namespace\")}}/{{(.metadata.labels | index \"release.kube-core.io/name\")}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace \":\" \"-\"}}.yaml'"
+        defaultClusterReleaseGroup: "'{{(.metadata.labels | index \"cluster.kube-core.io/name\")}}/{{(.metadata.labels | index \"release.kube-core.io/namespace\")}}/{{(.metadata.labels | index \"release.kube-core.io/group\")}}/{{(.metadata.labels | index \"release.kube-core.io/name\")}}/{{.kind|lower}}/{{.metadata.name|dottodash|replace \":\" \"-\"}}.yaml'"
+        defaultClusterReleaseGroupApiVersion: "'{{(.metadata.labels | index \"cluster.kube-core.io/name\")}}/{{(.metadata.labels | index \"release.kube-core.io/namespace\")}}/{{(.metadata.labels | index \"release.kube-core.io/group\")}}/{{(.metadata.labels | index \"release.kube-core.io/name\")}}/{{.apiVersion | lower }}/{{.kind|lower}}/{{.metadata.name|dottodash|replace \":\" \"-\"}}.yaml'"

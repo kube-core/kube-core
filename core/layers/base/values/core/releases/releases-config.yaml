@@ -548,3 +548,9 @@ releases:
       # channels:
       #   test:
       #     enabled: true
+  pyrra:
+    config:
+      backend: thanos # Can also be prometheus
+    # values:
+    #   prometheusUrl: my-prom
+    #   prometheusExternalUrl: my-prom-ui

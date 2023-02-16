@@ -5,8 +5,13 @@
 {{ $release := ($releases | getOrNil $releaseName) }}
 
 # -- url to prometheus instance with metrics
+{{ if eq $release.config.backend "thanos" }}
+prometheusUrl: {{ $values.cluster.monitoring.thanosEndpoint }}
+prometheusExternalUrl: https://query.{{ $values.cluster.config.domain }}
+{{ else }}
 prometheusUrl: {{ $values.cluster.monitoring.prometheusEndpoint }}
 prometheusExternalUrl: https://prometheus.{{ $values.cluster.config.domain }}
+{{ end }}
 
 resources:
   limits:
