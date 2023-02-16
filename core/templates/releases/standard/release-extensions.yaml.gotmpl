@@ -1,5 +1,6 @@
 {{ $values := .values }}
 {{ $releaseName := .releaseName }}
+{{ $releaseNamespace := .releaseNamespace }}
 {{ $_ := set . "parentReleaseName" $releaseName }}
 {{ $release := .item }}
 
@@ -9,7 +10,7 @@
 - name: {{ $extensionName }}
   chart: ../releases/dist/releases/charts/raw
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
-  namespace: {{ .releaseNamespace }}
+  namespace: {{ $releaseNamespace }}
   {{ $_ := set . "releaseName" $extensionName }}
   {{ $_ := set . "extensionType" $extensionType }}
   {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") . }}
@@ -29,7 +30,7 @@
 - name: {{ $extensionName }}
   chart: ../releases/dist/releases/charts/raw
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
-  namespace: {{ .releaseNamespace }}
+  namespace: {{ $releaseNamespace }}
   {{ $_ := set . "releaseName" $extensionName }}
   {{ $_ := set . "extensionType" $extensionType }}
   {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") . }}
@@ -48,7 +49,7 @@
 - name: {{ $extensionName }}
   chart: ../releases/dist/releases/charts/raw
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
-  namespace: {{ .releaseNamespace }}
+  namespace: {{ $releaseNamespace }}
   {{ $_ := set . "releaseName" $extensionName }}
   {{ $_ := set . "extensionType" $extensionType }}
   {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") . }}
@@ -68,7 +69,7 @@
 - name: {{ $extensionName }}
   chart: ../releases/dist/releases/charts/raw
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
-  namespace: {{ .releaseNamespace }}
+  namespace: {{ $releaseNamespace }}
   {{ $_ := set . "releaseName" $extensionName }}
   {{ $_ := set . "extensionType" $extensionType }}
   {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") . }}
@@ -98,7 +99,7 @@
 - name: {{ $extensionName }}
   chart: ../releases/dist/releases/charts/raw
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
-  namespace: {{ .releaseNamespace }}
+  namespace: {{ $releaseNamespace }}
   {{ $_ := set . "releaseName" $extensionName }}
   {{ $_ := set . "extensionType" $extensionType }}
   {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") . }}
@@ -127,7 +128,7 @@
 - name: {{ $extensionName }}
   chart: ../releases/dist/releases/charts/raw
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
-  namespace: {{ .releaseNamespace }}
+  namespace: {{ $releaseNamespace }}
   {{ $_ := set . "releaseName" $extensionName }}
   {{ $_ := set . "extensionType" $extensionType }}
   {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") . }}
@@ -154,7 +155,7 @@
 - name: {{ $extensionName }}
   chart: ../releases/dist/releases/charts/raw
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
-  namespace: {{ .releaseNamespace }}
+  namespace: {{ $releaseNamespace }}
   {{ $_ := set . "releaseName" $extensionName }}
   {{ $_ := set . "extensionType" $extensionType }}
   {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") . }}
@@ -174,7 +175,7 @@
 - name: {{ $extensionName }}
   chart: ../releases/dist/releases/charts/raw
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
-  namespace: {{ .releaseNamespace }}
+  namespace: {{ $releaseNamespace }}
   {{ $_ := set . "releaseName" $extensionName }}
   {{ $_ := set . "extensionType" $extensionType }}
   {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") . }}
@@ -197,7 +198,7 @@
   chart: ../releases/dist/releases/charts/app-scaling
 {{ end }}
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
-  namespace: {{ .releaseNamespace }}
+  namespace: {{ $releaseNamespace }}
   {{ $_ := set . "releaseName" $extensionName }}
   {{ $_ := set . "extensionType" $extensionType }}
   {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") . }}
@@ -216,7 +217,7 @@
 - name: {{ $extensionName }}
   chart: ../releases/dist/releases/charts/raw
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
-  namespace: {{ .releaseNamespace }}
+  namespace: {{ $releaseNamespace }}
   {{ $_ := set . "releaseName" $extensionName }}
   {{ $_ := set . "extensionType" $extensionType }}
   {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") . }}
@@ -234,7 +235,7 @@
 - name: {{ $extensionName }}
   chart: ../releases/dist/releases/charts/app-extensions
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
-  namespace: {{ .releaseNamespace }}
+  namespace: {{ $releaseNamespace }}
   {{ $_ := set . "releaseName" $extensionName }}
   {{ $_ := set . "extensionType" $extensionType }}
   {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") . }}
@@ -258,7 +259,7 @@
 - name: {{ $extensionName }}
   chart: ../releases/dist/releases/charts/app-extensions
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
-  namespace: {{ .releaseNamespace }}
+  namespace: {{ $releaseNamespace }}
   {{ $_ := set . "releaseName" $extensionName }}
   {{ $_ := set . "extensionType" $extensionType }}
   {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") . }}
@@ -282,7 +283,7 @@
 - name: {{ $extensionName }}
   chart: ../releases/dist/releases/charts/app-extensions
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
-  namespace: {{ .releaseNamespace }}
+  namespace: {{ $releaseNamespace }}
   {{ $_ := set . "releaseName" $extensionName }}
   {{ $_ := set . "extensionType" $extensionType }}
   {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") . }}
@@ -306,7 +307,7 @@
 - name: {{ $extensionName }}
   chart: ../releases/dist/releases/charts/app-extensions
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
-  namespace: {{ .releaseNamespace }}
+  namespace: {{ $releaseNamespace }}
   {{ $_ := set . "releaseName" $extensionName }}
   {{ $_ := set . "extensionType" $extensionType }}
   {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") . }}
@@ -330,7 +331,7 @@
 - name: {{ $extensionName }}
   chart: ../releases/dist/releases/charts/app-extensions
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
-  namespace: {{ .releaseNamespace }}
+  namespace: {{ $releaseNamespace }}
   {{ $_ := set . "releaseName" $extensionName }}
   {{ $_ := set . "extensionType" $extensionType }}
   {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") . }}
@@ -354,7 +355,7 @@
 - name: {{ $extensionName }}
   chart: ../releases/dist/releases/charts/app-extensions
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
-  namespace: {{ .releaseNamespace }}
+  namespace: {{ $releaseNamespace }}
   {{ $_ := set . "releaseName" $extensionName }}
   {{ $_ := set . "extensionType" $extensionType }}
   {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") . }}
@@ -368,17 +369,32 @@
 
 {{ end }}
 
+{{ $hasEnabledSlackChannels := false }}
+{{ range $key, $value := $release | getOrNil "slack" | getOrNil "channels" }}
+{{ if ($value | getOrNil "enabled") }}
+{{ $hasEnabledSlackChannels = true }}
+{{ end }}
+{{ end }}
+{{ if (and (eq $releaseName "slack-operator") (eq $releaseNamespace "slack-operator") $values.releases.kps.enabled $values.releases.kps.config.robusta.enabled ) }}
+{{ range $sinkName, $sinkConfig := $values.releases.kps.config.robusta.slackSinks }}
+{{ if ($sinkConfig | getOrNil "enabled") }}
+{{ $hasEnabledSlackChannels = true }}
+{{ end }}
+{{ end }}
+{{ end }}
+
+
 {{ $slack := ($release | getOrNil "slack") }}
 {{ $slackEnabled := ($slack | getOrNil "enabled") }}
 
-{{ if ($slackEnabled) }}
+{{ if (and $slackEnabled $hasEnabledSlackChannels) }}
 {{ $extensionType := "slack" }}
 {{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 
 - name: {{ $extensionName }}
   chart: ../releases/dist/releases/charts/app-extensions
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
-  namespace: {{ .releaseNamespace }}
+  namespace: {{ $releaseNamespace }}
   {{ $_ := set . "releaseName" $extensionName }}
   {{ $_ := set . "extensionType" $extensionType }}
   {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") . }}

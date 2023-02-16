@@ -854,14 +854,22 @@ kps-robusta:
   sinksConfig:
   {{ range $sinkName, $sinkConfig := (index $release "config" "robusta" "slackSinks") }}
   {{ $name := (coalesce ($sinkConfig | getOrNil "nameOverride") (printf "slack-%s-%s" $values.cluster.config.name $sinkName)) }}
-  {{ $channel := (coalesce ($sinkConfig | getOrNil "channel") (printf "app-robusta-%s" $sinkName)) }}
+  {{ $channel := (coalesce ($sinkConfig | getOrNil "channel") (printf "k8s-%s-%s-robusta" $values.cluster.config.name $sinkName)) }}
   {{ $apiKey := (coalesce ($sinkConfig | getOrNil "apiKey") (index $release "config" "robusta" "slack" "apiKey"))  }}
-  {{ $isDefault := (coalesce (.| getOrNil "default") false) }}
+  {{ $isDefault := (. | getOrNil "default") }}
+  {{ $namespace := (.| getOrNil "namespace")  }}
   - slack_sink:
       name: {{ $name }}
-      default: {{ $isDefault }}
+      {{ if $isDefault }}
+      default: true
+      {{ end }}
       slack_channel: {{ $channel }}
       api_key: {{ $apiKey }}
+      {{ if $namespace }}
+      match:
+        namespace: ^{{ $namespace }}$
+      {{ end }}
+
   {{ end }}
   {{- if (index $release "config" "robusta" "additionalSinks") }}
   {{ toYaml (index $release "config" "robusta" "additionalSinks") | nindent 2 }}

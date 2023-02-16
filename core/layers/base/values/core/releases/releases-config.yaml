@@ -331,9 +331,8 @@ releases:
           accountID: "ROBUSTA_GLOBAL_ACCOUNT_ID"
         slackSinks:
           default:
+            enabled: true
             default: true
-
-
         additionalSinks: []
         # additionalSinks:
         # - slack_sink:
@@ -546,7 +545,6 @@ releases:
   slack-operator:
     slack:
       enabled: true
-      channels:
-        default:
-          enabled: true
-          channelName: default
+      # channels:
+      #   test:
+      #     enabled: true
