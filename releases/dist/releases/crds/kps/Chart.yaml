@@ -5,4 +5,4 @@ icon: https://neo9.fr/assets/images/neo9-logo-baseline.svg
 kubeVersion: '>=1.22.0-0'
 name: kps
 type: application
-version: 1.1.0
+version: 1.1.1

@@ -5,7 +5,7 @@ dependencies:
   condition: kps.enabled
   name: kube-prometheus-stack
   repository: https://prometheus-community.github.io/helm-charts
-  version: 45.0.0
+  version: 45.1.1
 - alias: kps-thanos
   condition: kps-thanos.enabled
   name: thanos
@@ -26,4 +26,4 @@ icon: https://neo9.fr/assets/images/neo9-logo-baseline.svg
 kubeVersion: '>=1.22.0-0'
 name: kps
 type: application
-version: 1.1.0
+version: 1.1.1
