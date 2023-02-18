@@ -1,14 +1,14 @@
 releases:
   nginx-ingress-controller:
     slos:
-      enabled: true
+      enabled: false
       custom:
         errors:
-          enabled: true
+          enabled: false
           errorQuery: nginx_ingress_controller_requests{controller_class="k8s.io/ingress-nginx", namespace="nginx-ingress", status=~"(5..|429)"}
           totalQuery: nginx_ingress_controller_requests{controller_class="k8s.io/ingress-nginx", namespace="nginx-ingress"}
         latency:
-          enabled: true
+          enabled: false
           indicatorType: latency
           successQuery: nginx_ingress_controller_request_duration_seconds_bucket{controller_class="k8s.io/ingress-nginx", namespace="nginx-ingress", status=~"(5..|429)", le="1"}
           totalQuery: nginx_ingress_controller_request_duration_seconds_count{controller_class="k8s.io/ingress-nginx", namespace="nginx-ingress"}
