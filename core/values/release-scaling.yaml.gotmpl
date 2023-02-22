@@ -1,47 +1,52 @@
-{{ $values := .values }}
+{{/* Extensions Header - Start */}}
+
+{{/* Common Variables */}}
+{{ $values := (coalesce (. | getOrNil "values") (. | getOrNil "Values")) }}
 {{ $releases := (merge $values.releases $values.applications $values.services )}}
-{{ $releaseNamespace := .releaseNamespace }}
 
-{{ $cloudProject := $values.cloud.project }}
-{{ $cloudLocation := $values.cloud.default.location }}
-{{ $clusterName := $values.cluster.config.name }}
+{{/* Release Variables */}}
+{{ $release := .item }}
+{{ $releaseName := $release.name }}
+{{ $releaseNamespace := $release.namespace }}
+{{ $releaseType := $release.type }}
+{{ $extension := (coalesce (index $release .extensionType) (index $release (.extensionType | camelcase | untitle)) ) }}
+{{ $extensionEnabled := ($extension | getOrNil "enabled") }}
 
-{{ $mainReleaseName := (.releaseName | replace "-scaling" "") }}
-{{ $mainRelease := ($releases | getOrNil $mainReleaseName) }}
-{{ $currentRelease := ($releases | getOrNil .releaseName) }}
+{{ $templateValues := (dict "coreValues" $values "releaseValues" $extension "parentReleaseValues" $release "releaseNamespace" $releaseNamespace "releaseName" $releaseName) }}
 
-{{ $scalingConfig := ($mainRelease | getOrNil "scaling") }}
+{{/* Extensions Header - End */}}
 
-{{ if (eq ($scalingConfig | getOrNil "type") "app-extensions") }}
+{{ if (eq ($extension | getOrNil "type") "app-extensions") }}
 resources:
   keda-scaledobject:
-    {{ $mainReleaseName }}: {{ toYaml $scalingConfig | nindent 6 }}
-      targetName: {{ $mainReleaseName }}
+    {{ $releaseName }}: {{ toYaml $extension | nindent 6 }}
+      targetName: {{ $releaseName }}
       namespace: {{ $releaseNamespace }}
+      prometheusEndpoint: {{ $release.metadata.config.monitoring.metricsEndpoint }}
       scaleTargetRef:
-        {{ if $scalingConfig | getOrNil "scaleTargetRef" | getOrNil "apiVersion" }}
-        apiVersion: {{ $scalingConfig.scaleTargetRef.apiVersion }}
+        {{ if $extension | getOrNil "scaleTargetRef" | getOrNil "apiVersion" }}
+        apiVersion: {{ $extension.scaleTargetRef.apiVersion }}
         {{ end }}
-        {{ if $scalingConfig | getOrNil "scaleTargetRef" | getOrNil "kind" }}
-        kind: {{ $scalingConfig.scaleTargetRef.kind }}
+        {{ if $extension | getOrNil "scaleTargetRef" | getOrNil "kind" }}
+        kind: {{ $extension.scaleTargetRef.kind }}
         {{ end }}
-        {{ if $scalingConfig | getOrNil "scaleTargetRef" | getOrNil "name" }}
-        name: {{ $scalingConfig.scaleTargetRef.name }}
+        {{ if $extension | getOrNil "scaleTargetRef" | getOrNil "name" }}
+        name: {{ $extension.scaleTargetRef.name }}
         {{ else }}
-        name: {{ $mainReleaseName }}
+        name: {{ $releaseName }}
         {{ end }}
 {{ else }}
-scaling: {{ toYaml (index $values.releases $mainReleaseName "scaling") | nindent 2 }}
+scaling: {{ toYaml (index $values.releases $releaseName "scaling") | nindent 2 }}
 {{ end }}
 
-#   {{ if ($scalingConfig | getOrNil "custom") }}
-#   {{ range $resourceName, $resourceConfig := ($scalingConfig | getOrNil "custom") }}
+#   {{ if ($extension | getOrNil "custom") }}
+#   {{ range $resourceName, $resourceConfig := ($extension | getOrNil "custom") }}
 #   {{ $sloType := (coalesce ($resourceConfig | getOrNil "type") "pyrra") }}
 #   {{ if (eq $sloType "pyrra") }}
-#     {{ $mainReleaseName }}-{{ $resourceName }}: {{ toYaml $resourceConfig | nindent 6 }}
+#     {{ $releaseName }}-{{ $resourceName }}: {{ toYaml $resourceConfig | nindent 6 }}
 #       namespace: {{ $releaseNamespace }}
 #       {{ if (not $resourceConfig | getOrNil "targetName") }}
-#       targetName: {{ $mainReleaseName }}
+#       targetName: {{ $releaseName }}
 #       {{ end }}
 #   {{ end }}
 #   {{ end }}
