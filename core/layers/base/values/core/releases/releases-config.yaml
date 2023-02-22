@@ -343,37 +343,44 @@ releases:
         slack:
           apiKey: "ROBUSTA_SLACK_API_KEY"
       thanos:
+        enabled: true
         bucketweb:
+          enabled: true
           ingress:
             annotations: {}
             labels: {}
-            subdomain: bucketweb
+            subdomain: bucketweb.thanos
         ruler:
+          enabled: true
           ingress:
             annotations: {}
             labels: {}
-            subdomain: ruler
+            subdomain: ruler.thanos
         query:
+          enabled: true
           ingress:
             annotations: {}
             labels: {}
-            subdomain: query
+            subdomain: query.thanos
         queryFrontend:
+          enabled: true
           ingress:
             annotations: {}
             labels: {}
-            subdomain: query-frontend
+            subdomain: query-frontend.thanos
         storegateway:
           replicaCount: 3
+          enabled: true
           ingress:
             annotations: {}
             labels: {}
-            subdomain: storegateway
+            subdomain: storegateway.thanos
         compactor:
+          enabled: true
           ingress:
             annotations: {}
             labels: {}
-            subdomain: compactor
+            subdomain: compactor.thanos
           retentionResolution1h: 1y
           retentionResolution5m: 90d
           retentionResolutionRaw: 20d
