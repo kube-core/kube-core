@@ -37,12 +37,11 @@
 
 {{/* Cloud Variables */}}
 {{ $cloudEnabled := (and $cloudEnabled $releaseCloud $releaseCloudEnabled) }}
-{{ $releaseNamespaceDomain := (printf "%s.%s" $releaseNamespace $clusterDomain) }}
-{{ $releaseDomain := (printf "%s.%s" $releaseName $releaseNamespaceDomain) }}
 
 {{/* Monitoring Variables */}}
 {{ $monitoringEnabled := ($release.monitoring | getOrNil "enabled") }}
 {{ $metricsEndpoint := "" }}
+{{ $metricsIngress := "" }}
 
 {{ $clusterPrometheusEnabled := $values.releases.kps.enabled }}
 {{ $clusterThanosEnabled := $values.releases.kps.config.thanos.enabled }}
@@ -77,15 +76,19 @@
 
 {{ if ($thanosQueryFrontendEnabled) }}
 {{ $metricsEndpoint = $thanosQueryFrontendEndpoint }}
+{{ $metricsIngress = (printf "https://%s.%s" $values.releases.kps.config.thanos.queryFrontend.ingress.subdomain $clusterDomain) }}
 {{ else if (and (not $thanosQueryFrontendEnabled) ($thanosEnabled)) }}
 {{ $metricsEndpoint = $thanosQueryEndpoint }}
+{{ $metricsIngress = (printf "https://%s.%s" $values.releases.kps.config.thanos.query.ingress.subdomain $clusterDomain) }}
 {{ else if (and (not $thanosQueryFrontendEnabled) (not $thanosEnabled) ($prometheusEnabled)) }}
 {{ $metricsEndpoint = $prometheusEndpoint }}
+{{ $metricsIngress = (printf "https://%s.%s" $values.releases.kps.config.prometheus.ingress.subdomain $clusterDomain) }}
 {{ else }}
 {{ $metricsEndpoint = "" }}
+{{ $metricsIngress = "" }}
 {{ end }}
 
-{{ $monitoringConfig := (dict "metricsEndpoint" $metricsEndpoint) }}
+{{ $monitoringConfig := (dict "metricsEndpoint" $metricsEndpoint "metricsIngress" $metricsIngress) }}
 {{ $_ := set $releaseConfig "monitoring" $monitoringConfig }}
 {{ $_ := set $releaseConfig "clusterDomain" $clusterDomain }}
 {{ $_ := set $releaseConfig "namespaceDomain" $releaseNamespaceDomain }}

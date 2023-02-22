@@ -844,7 +844,7 @@ kps-robusta:
     grafana_url: {{ $values.cluster.monitoring.grafanaEndpoint }}
     grafana_api_key: ""
     grafana_dashboard_uid: ""
-    prometheus_url: {{ $values.cluster.monitoring.prometheusEndpoint }}
+    prometheus_url: {{ $release.metadata.config.monitoring.metricsEndpoint }}
     account_id: {{ (index $release "config" "robusta" "global" "signingKey") }}
     signing_key: {{ (index $release "config" "robusta" "global" "accountID") }}
   enablePrometheusStack: false
