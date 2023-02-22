@@ -760,6 +760,7 @@ kps-thanos:
       tls: true
       hostname: {{ index $release "config" "thanos" "query" "ingress" "subdomain" }}.{{ $values.cluster.config.domain }}
   queryFrontend:
+    enabled: true
     tolerations: {{ toYaml (index $release "scheduling" "all" "tolerations") | nindent 6 }}
     nodeSelector: {{ toYaml (index $release "scheduling" "all" "nodeSelector") | nindent 6 }}
     affinity: {{ toYaml (index $release "scheduling" "all" "affinity") | nindent 6 }}
