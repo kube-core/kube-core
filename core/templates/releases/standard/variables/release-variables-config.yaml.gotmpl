@@ -40,7 +40,53 @@
 {{ $releaseNamespaceDomain := (printf "%s.%s" $releaseNamespace $clusterDomain) }}
 {{ $releaseDomain := (printf "%s.%s" $releaseName $releaseNamespaceDomain) }}
 
+{{/* Monitoring Variables */}}
+{{ $monitoringEnabled := ($release.monitoring | getOrNil "enabled") }}
+{{ $metricsEndpoint := "" }}
 
+{{ $clusterPrometheusEnabled := $values.releases.kps.enabled }}
+{{ $clusterThanosEnabled := $values.releases.kps.config.thanos.enabled }}
+{{ $clusterThanosQueryFrontendEnabled := $values.releases.kps.config.thanos.enabled }}
+{{ $clusterPrometheusEndpoint := $values.cluster.monitoring.prometheusEndpoint }}
+{{ $clusterThanosQueryEndpoint := $values.cluster.monitoring.thanosQueryEndpoint }}
+{{ $clusterThanosQueryFrontendEndpoint := $values.cluster.monitoring.thanosQueryFrontendEndpoint }}
+
+
+{{ $envThanosEnabled := false }}
+{{ $envThanosQueryFrontendEnabled := false }}
+{{ $envPrometheusEnabled := false }}
+{{ $envPrometheusEndpoint := "" }}
+{{ $envThanosQueryEndpoint := "" }}
+{{ $envThanosQueryFrontendEndpoint := "" }}
+
+{{ $releaseThanosEnabled := false }}
+{{ $releaseThanosQueryFrontendEnabled := false }}
+{{ $releasePrometheusEnabled := false }}
+{{ $releasePrometheusEndpoint := ($release | getOrNil "monitoring" | getOrNil "prometheusEndpoint") }}
+{{ $releaseThanosQueryEndpoint := ($release | getOrNil "monitoring" | getOrNil "thanosQueryEndpoint") }}
+{{ $releaseThanosQueryFrontendEndpoint := ($release | getOrNil "monitoring" | getOrNil "thanosQueryFrontendEndpoint") }}
+
+{{ $prometheusEndpoint := (coalesce $releasePrometheusEndpoint $envPrometheusEndpoint $clusterPrometheusEndpoint) }}
+{{ $thanosQueryEndpoint := (coalesce $releaseThanosQueryEndpoint $envThanosQueryEndpoint $clusterThanosQueryEndpoint) }}
+{{ $thanosQueryFrontendEndpoint := (coalesce $releaseThanosQueryFrontendEndpoint $envThanosQueryFrontendEndpoint $clusterThanosQueryFrontendEndpoint) }}
+
+{{ $thanosEndpoint := $thanosQueryFrontendEndpoint }}
+{{ $thanosQueryFrontendEnabled := (coalesce $releaseThanosQueryFrontendEnabled $envThanosQueryFrontendEnabled $clusterThanosQueryFrontendEnabled) }}
+{{ $thanosEnabled := (coalesce $releaseThanosEnabled $envThanosEnabled $clusterThanosEnabled) }}
+{{ $prometheusEnabled := (coalesce $releasePrometheusEnabled $envPrometheusEnabled $clusterPrometheusEnabled) }}
+
+{{ if ($thanosQueryFrontendEnabled) }}
+{{ $metricsEndpoint = $thanosQueryFrontendEndpoint }}
+{{ else if (and (not $thanosQueryFrontendEnabled) ($thanosEnabled)) }}
+{{ $metricsEndpoint = $thanosQueryEndpoint }}
+{{ else if (and (not $thanosQueryFrontendEnabled) (not $thanosEnabled) ($prometheusEnabled)) }}
+{{ $metricsEndpoint = $prometheusEndpoint }}
+{{ else }}
+{{ $metricsEndpoint = "" }}
+{{ end }}
+
+{{ $monitoringConfig := (dict "metricsEndpoint" $metricsEndpoint) }}
+{{ $_ := set $releaseConfig "monitoring" $monitoringConfig }}
 {{ $_ := set $releaseConfig "clusterDomain" $clusterDomain }}
 {{ $_ := set $releaseConfig "namespaceDomain" $releaseNamespaceDomain }}
 {{ $_ := set $releaseConfig "domain" $releaseDomain }}
