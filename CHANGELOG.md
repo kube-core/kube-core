@@ -2,12 +2,27 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.11.19](https://github.com/kube-core/kube-core/compare/v0.11.18...v0.11.19)
+
+- releases/kps: Upgraded to v1.1.1 [`93705e8`](https://github.com/kube-core/kube-core/commit/93705e8ea7b17d2dcdc842fee894da01f259b41d)
+- core/templates: Added metricsIngress and implemented it in values templates [`0cd0423`](https://github.com/kube-core/kube-core/commit/0cd042326f9c6b172ac3a45026dbedc460c1f858)
+- core/values: Upgraded release-scaling to use dynamic metricsEndpoint [`f49e8e4`](https://github.com/kube-core/kube-core/commit/f49e8e437aaf2fb4fccd3b0474e9bc04ef966d10)
+- core/templates: Added monitoring.metricsEndpoint in release.metadata.config [`4cec5a3`](https://github.com/kube-core/kube-core/commit/4cec5a319c3af4dca45ee9e9b303a5e1eabe0b8e)
+- core/layers: Changed thanos ingresses subdomain [`a7639b6`](https://github.com/kube-core/kube-core/commit/a7639b6ed901924c70e00002630f3ebe3f921499)
+- core/layers: Disabled default SLOs on nginx-ingress-controller [`922feb3`](https://github.com/kube-core/kube-core/commit/922feb3c7bf6b373bbbb3a628f7a921daf04d0fa)
+- core/values: Added support for ContainerStatusUnknown cleanup in system-jobs [`6dad518`](https://github.com/kube-core/kube-core/commit/6dad51817e2e01d4297fb696ff197a3be2c6d89b)
+- core/layers: Added thanosQueryEndpoint and thanosQueryFrontendEndpoint in cluster.monitoring [`662b190`](https://github.com/kube-core/kube-core/commit/662b190d0673bbc10b7e44fba8e1c2001b186ac8)
+- core/values: Made sure queryFrontend is enabled by default on kps [`04a92d4`](https://github.com/kube-core/kube-core/commit/04a92d4f4636e2d1466c6fcff0f7d353fd1f4bb6)
+
 #### [v0.11.18](https://github.com/kube-core/kube-core/compare/v0.11.17...v0.11.18)
+
+> 16 February 2023
 
 - releases/kps: Upgraded to v1.1.0 [`c345273`](https://github.com/kube-core/kube-core/commit/c3452735eebb636550c16d361924812c222ed9aa)
 - releases: Added slack-operator [`785c9d9`](https://github.com/kube-core/kube-core/commit/785c9d981a1952faa46309a1ddc446858cd618ab)
 - core/layers: Improved default monitoring configuration [`91e1177`](https://github.com/kube-core/kube-core/commit/91e11770aec3ad50a73938f5fb18e5dd3ed74e29)
 - core/templates: Reworked robusta and slack-operator integration [`6d1fb49`](https://github.com/kube-core/kube-core/commit/6d1fb49e1b6dc294bdee6d14279152bf9d238d79)
+- release: v0.11.18 [`c1f2a94`](https://github.com/kube-core/kube-core/commit/c1f2a94c4e13e940acbcb5610e9c147a1683519c)
 - core/layers: Changed pyrra endpoint to thanos-query by default [`b92ff5b`](https://github.com/kube-core/kube-core/commit/b92ff5b084f1a3f125dac467c1ddc9220f30c7d1)
 
 #### [v0.11.17](https://github.com/kube-core/kube-core/compare/v0.11.16...v0.11.17)
