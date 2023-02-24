@@ -1,7 +1,9 @@
 environments:
   default:
     values:
-    {{ tpl (readFile "./lib/printfiles.functions.yaml.gotmpl") (dict "path" "../values/platform") | nindent 4 }}
+    {{ tpl (readFile "./lib/platform.remote-values.yaml.gotmpl" ) . | nindent 4 }}
+    {{ tpl (readFile "./lib/platform.local-values.yaml.gotmpl" ) . | nindent 4 }}
+    {{ tpl (readFile "./lib/platform.override-values.yaml.gotmpl" ) . | nindent 4 }}
 ---
 {{ tpl (readFile "./commons.yaml.gotmpl" ) . }}
 {{ $values := .Values }}

@@ -27,13 +27,9 @@ helmfiles:
 - path: {{ $helmfilePath }}
   values:
   # Core Values
-  {{ if $values | getOrNil "org" | getOrNil "core" | getOrNil "values" }}
-  {{ range $values.org.core.values }}
-  - {{ . }}
-  {{ end }}
-  {{ end }}
-  {{ tpl (readFile "./lib/printfiles.functions.yaml.gotmpl") (dict "path" "../values/core") | nindent 2 }}
-
+  {{ tpl (readFile "./lib/core.remote-values.yaml.gotmpl") . | nindent 2 }}
+  {{ tpl (readFile "./lib/core.local-values.yaml.gotmpl") . | nindent 2 }}
+  {{ tpl (readFile "./lib/core.override-values.yaml.gotmpl") . | nindent 2 }}
 
   # Injecting cluster core config
   - core:
