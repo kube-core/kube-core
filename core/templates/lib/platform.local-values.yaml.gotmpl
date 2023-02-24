@@ -1,0 +1,13 @@
+{{- $platformValuesFolders := (coalesce (env "KUBE_CORE_PLATFORM_LOCAL_VALUES_FOLDERS") "../values/platform") }}
+{{- if $platformValuesFolders }}
+{{- range ($platformValuesFolders | splitList ",") }}
+{{ tpl (readFile "./lib/printfiles.functions.yaml.gotmpl") (dict "path" .) }}
+{{- end }}
+{{- end }}
+
+{{- $platformValuesPaths := (coalesce (env "KUBE_CORE_PLATFORM_LOCAL_VALUES_PATHS") "") }}
+{{ if $platformValuesPaths }}
+{{- range ($platformValuesPaths | splitList ",") }}
+- {{ . }}
+{{- end }}
+{{- end }}

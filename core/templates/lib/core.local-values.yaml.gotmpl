@@ -1,0 +1,15 @@
+{{ $defaultCoreValuesFolder := "../values/core" }}
+
+{{- $coreValuesFolders := (coalesce (env "KUBE_CORE_CORE_LOCAL_VALUES_FOLDERS") $defaultCoreValuesFolder) }}
+{{- if $coreValuesFolders }}
+{{- range ($coreValuesFolders | splitList ",") }}
+{{ tpl (readFile "./lib/printfiles.functions.yaml.gotmpl") (dict "path" .) }}
+{{- end }}
+{{- end }}
+
+{{- $coreValuesPaths := (coalesce (env "KUBE_CORE_CORE_LOCAL_VALUES_PATHS") "") }}
+{{ if $coreValuesPaths }}
+{{- range ($coreValuesPaths | splitList ",") }}
+- {{ . }}
+{{- end }}
+{{- end }}

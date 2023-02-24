@@ -1,0 +1,6 @@
+{{- $platformValuesPaths := (coalesce (env "KUBE_CORE_PLATFORM_REMOTE_VALUES_PATHS") "") }}
+{{ if $platformValuesPaths }}
+{{- range ($platformValuesPaths | splitList ",") }}
+- {{ . }}
+{{- end }}
+{{- end }}
