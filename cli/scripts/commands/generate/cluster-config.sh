@@ -80,3 +80,4 @@ cat ${allValuesFile} | yq e '.git | { "git": . }' - >> ${clusterConfigPath}
 cat ${allValuesFile} | yq e '.gitops | { "gitops": . }' - >> ${clusterConfigPath}
 cat ${allValuesFile} | yq e '.cloud | { "cloud": . }' - >> ${clusterConfigPath}
 cat ${allValuesFile} | yq e '.cluster | { "cluster": . }' - >> ${clusterConfigPath}
+cat ${allValuesFile} | yq e '.helmfile | { "helmfile": . }' - >> ${clusterConfigPath}
