@@ -316,7 +316,8 @@ cluster:
           keys: "tag,cluster,log_type,kubernetes,stream,time,parsed_log"
         dedot: false
         parser:
-          key_name: log
+          # key_name: log
+          key_name: message
           remove_key_name_field: false
           reserve_data: true
           reserve_time: true
