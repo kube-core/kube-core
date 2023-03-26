@@ -241,10 +241,6 @@ cluster:
           flush_at_shutdown: true # This specifies whether to flush/write all buffer chunks on shutdown or not
           disable_chunk_backup: true # Instead of storing unrecoverable chunks in the backup directory, just discard them. This option is new in Fluentd v1.2.6.
 
-
-          retry_type: exponential_backoff
-          retry_max_interval: "30"
-
           # Buffer at most 128 buffer chunks. Make sure you have enough disk space
           # to store buffer_chunk_limit * buffer_queue_limit bytes.
           # 32MB * 128 = 4096MB.
@@ -302,9 +298,6 @@ cluster:
           dynamic:
             enabled: false
             es: false
-      tekton:
-        enabled: false
-        path: "logs/${tag}"
       config:
         legacyOutputRefs: false
         forceDefault: false
@@ -337,6 +330,7 @@ cluster:
       tekton:
         enabled: false
         txtLogs: false
+        path: "logs/${tag}"
       es:
         enabled: false
         config:
