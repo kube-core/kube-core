@@ -4,11 +4,13 @@ releases:
       enabled: true
       roles:
       - roles/compute.admin
+      - roles/container.admin
   estafette-gke-preemptible-killer:
     cloud:
       enabled: true
       roles:
       - roles/compute.admin
+      - roles/container.admin
   cluster-issuers:
     cloud:
       enabled: true
