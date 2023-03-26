@@ -2,12 +2,23 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.11.20](https://github.com/kube-core/kube-core/compare/v0.11.19...v0.11.20)
+
+- core/templates: Reworked values injection to allow remote sources [`c25c03c`](https://github.com/kube-core/kube-core/commit/c25c03c0707e73c2acfaf274954e7861a064817d)
+- releases/logging-stack: Fixed some wrong default values [`3be154c`](https://github.com/kube-core/kube-core/commit/3be154c1bedfa0eb32a59fb948d7530aae686b60)
+- releases/cluster-logging: Changed default log key to message for containerd runtime [`9143a72`](https://github.com/kube-core/kube-core/commit/9143a72f76198185af5566b6a74541950108fbef)
+- core/values: Fixed GCP permissions for estafette releases [`824ff90`](https://github.com/kube-core/kube-core/commit/824ff90d0dedbcc38ffe57bf3fbd01480f6545b0)
+- cli/scripts: Added helmfile key to kube-core generate cluster-config [`9424cf1`](https://github.com/kube-core/kube-core/commit/9424cf1e84f30c013440f15f7b5f568fa09c09a8)
+
 #### [v0.11.19](https://github.com/kube-core/kube-core/compare/v0.11.18...v0.11.19)
+
+> 22 February 2023
 
 - releases/kps: Upgraded to v1.1.1 [`93705e8`](https://github.com/kube-core/kube-core/commit/93705e8ea7b17d2dcdc842fee894da01f259b41d)
 - core/templates: Added metricsIngress and implemented it in values templates [`0cd0423`](https://github.com/kube-core/kube-core/commit/0cd042326f9c6b172ac3a45026dbedc460c1f858)
 - core/values: Upgraded release-scaling to use dynamic metricsEndpoint [`f49e8e4`](https://github.com/kube-core/kube-core/commit/f49e8e437aaf2fb4fccd3b0474e9bc04ef966d10)
 - core/templates: Added monitoring.metricsEndpoint in release.metadata.config [`4cec5a3`](https://github.com/kube-core/kube-core/commit/4cec5a319c3af4dca45ee9e9b303a5e1eabe0b8e)
+- release: v0.11.19 [`72d9e95`](https://github.com/kube-core/kube-core/commit/72d9e95d431dfddd16efb965bb43ec3583859d5f)
 - core/layers: Changed thanos ingresses subdomain [`a7639b6`](https://github.com/kube-core/kube-core/commit/a7639b6ed901924c70e00002630f3ebe3f921499)
 - core/layers: Disabled default SLOs on nginx-ingress-controller [`922feb3`](https://github.com/kube-core/kube-core/commit/922feb3c7bf6b373bbbb3a628f7a921daf04d0fa)
 - core/values: Added support for ContainerStatusUnknown cleanup in system-jobs [`6dad518`](https://github.com/kube-core/kube-core/commit/6dad51817e2e01d4297fb696ff197a3be2c6d89b)
