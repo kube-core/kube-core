@@ -2,9 +2,16 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.11.21](https://github.com/kube-core/kube-core/compare/v0.11.20...v0.11.21)
+
+- releases/nginx-ingress-controller: Upgraded chart to v9.5.1 [`76a8e62`](https://github.com/kube-core/kube-core/commit/76a8e6295f5d7bc40a9e2f5eb30b48d835c88541)
+
 #### [v0.11.20](https://github.com/kube-core/kube-core/compare/v0.11.19...v0.11.20)
 
+> 27 March 2023
+
 - core/templates: Reworked values injection to allow remote sources [`c25c03c`](https://github.com/kube-core/kube-core/commit/c25c03c0707e73c2acfaf274954e7861a064817d)
+- release: v0.11.20 [`1eb4ff2`](https://github.com/kube-core/kube-core/commit/1eb4ff2f178a8b604fa713e3d69dc280c132783e)
 - releases/logging-stack: Fixed some wrong default values [`3be154c`](https://github.com/kube-core/kube-core/commit/3be154c1bedfa0eb32a59fb948d7530aae686b60)
 - releases/cluster-logging: Changed default log key to message for containerd runtime [`9143a72`](https://github.com/kube-core/kube-core/commit/9143a72f76198185af5566b6a74541950108fbef)
 - core/values: Fixed GCP permissions for estafette releases [`824ff90`](https://github.com/kube-core/kube-core/commit/824ff90d0dedbcc38ffe57bf3fbd01480f6545b0)
