@@ -164,7 +164,8 @@ service:
   ## loadBalancerIP (optional, cloud specific)
   ## ref: http://kubernetes.io/docs/user-guide/services/#type-loadbalancer
   ##
-  # loadBalancerIP:
+  loadBalancerIP: {{ index $release "config" "loadBalancerIP" }}
+
   ## Load Balancer sources
   ## https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/#restrict-access-for-loadbalancer-service
   ##
@@ -211,3 +212,8 @@ rbac:
         - "*"
       verbs:
         - "*"
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 250Mi

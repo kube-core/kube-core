@@ -428,6 +428,7 @@ releases:
       publishServiceEnabled: true
       replicaCount: 2
       serviceType: LoadBalancer
+      loadBalancerIP: ""
       tolerations: []
   nginx-istio-ingress-controller:
     config:
@@ -452,6 +453,7 @@ releases:
       serviceType: LoadBalancer
       sidecarHosts:
         - istio-system/*
+      loadBalancerIP: ""
       tolerations: []
   polaris:
     config:
