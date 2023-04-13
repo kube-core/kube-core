@@ -24,6 +24,19 @@ spec:
   - {{- toYaml . | nindent 4 }}
   {{- end }}
 
+  {{ range $triggerName, $triggerConfig := $resource.extraPrometheusTriggers }}
+  {{ if $triggerConfig.enabled }}
+  {{ $metricName := (printf "%s_%s" $nameBase ((coalesce $triggerConfig.name $triggerName) | snakecase)) }}
+  - type: prometheus
+    metricType: {{ coalesce $triggerConfig.metricType "Value" }}
+    metadata:
+      serverAddress: {{ $resource.prometheusEndpoint }}
+      metricName: {{ $metricName }}
+      threshold: {{ coalesce $triggerConfig.threshold 1 | quote }}
+      query: {{ (coalesce $triggerConfig.query $metricName) | quote }}
+  {{ end }}
+  {{ end }}
+
   {{- if $resource.rabbitmq.enabled }}
 
   {{- range $key, $value := $resource.rabbitmq.queues }}
