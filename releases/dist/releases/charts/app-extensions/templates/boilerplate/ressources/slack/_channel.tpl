@@ -6,7 +6,6 @@
 {{- $nameBase := (printf "%s-%s" $namespace $name) | kebabcase | replace ":" "-" }}
 
 {{ if $resource.enabled }}
-{{ $prefix := (coalesce .value.prefix "k8s") }}
 {{ $channelName := (coalesce .value.channelName $name) }}
 apiVersion: slack.stakater.com/v1alpha1
 kind: Channel
