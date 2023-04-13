@@ -16,6 +16,9 @@ services:
   nginx-ingress-controller:
     enabled: false
     chart: kube-core/nginx-ingress-controller
+  nginx-istio-ingress-controller:
+    enabled: false
+    chart: kube-core/nginx-ingress-controller
   flux-repository:
     chart: kube-core/flux-repository
     enabled: false

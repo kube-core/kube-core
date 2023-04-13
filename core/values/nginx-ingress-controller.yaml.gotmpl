@@ -11,9 +11,7 @@
 {{ (tpl (readFile "../templates/releases/standard/variables/release-variables-cloud.yaml.gotmpl") (dict "item" $release "values" $values)) }}
 {{/* Release Values Templates Header - END */}}
 
-{{ if (or (and (eq $releaseName "nginx-ingress-controller") (eq $releaseNamespace "nginx-ingress")) (and (eq $releaseName "nginx-istio-ingress-controller") (eq $releaseNamespace "nginx-istio-ingress"))) }}
-## Name of the ingress class to route through this controller
-##
+{{ if (and (eq $releaseName "nginx-ingress-controller") (eq $releaseNamespace "nginx-ingress")) }}
 ingressClassResource:
   name: {{ $values.cluster.common.defaultIngressClass }}
   enabled: true
@@ -23,9 +21,30 @@ ingressClassResource:
 electionID: {{ $values.cluster.common.defaultIngressClass }}
 extraArgs:
   ingress-class: {{ $values.cluster.common.defaultIngressClass }}
+fullnameOverride: nginx-ingress-controller
+{{ else if (and (eq $releaseName "nginx-istio-ingress-controller") (eq $releaseNamespace "nginx-istio-ingress")) }}
+ingressClassResource:
+  name: {{ $values.cluster.common.defaultIngressClass }}-istio
+  enabled: true
+  default: false
+  controllerClass: {{ $values.cluster.common.defaultIngressClassPrefix }}/ingress-{{ $values.cluster.common.defaultIngressClass }}-istio
+  parameters: {}
+electionID: {{ $values.cluster.common.defaultIngressClass }}-istio
+extraArgs:
+  ingress-class: {{ $values.cluster.common.defaultIngressClass }}-istio
+fullnameOverride: nginx-istio-ingress-controller
+{{ else if (and (eq $releaseName "nginx-istio-ingress-controller") (not (eq $releaseNamespace "nginx-istio-ingress"))) }}
+ingressClassResource:
+  name: {{ $values.cluster.common.defaultIngressClass }}-istio-{{ $releaseNamespace }}
+  enabled: true
+  default: false
+  controllerClass: {{ $values.cluster.common.defaultIngressClassPrefix }}/ingress-{{ $values.cluster.common.defaultIngressClass }}-istio-{{ $releaseNamespace }}
+  parameters: {}
+electionID: {{ $values.cluster.common.defaultIngressClass }}-istio-{{ $releaseNamespace }}
+extraArgs:
+  ingress-class: {{ $values.cluster.common.defaultIngressClass }}-{{ $releaseNamespace }}
+fullnameOverride: nginx-istio-ingress-controller-{{ $releaseNamespace }}
 {{ else }}
-fullnameOverride: nginx-ingress-controller-{{ $releaseNamespace }}
-# If not core ingress-controller, scope it (e.g for services)
 ingressClassResource:
   name: {{ $values.cluster.common.defaultIngressClass }}-{{ $releaseNamespace }}
   enabled: true
@@ -33,9 +52,9 @@ ingressClassResource:
   controllerClass: {{ $values.cluster.common.defaultIngressClassPrefix }}/ingress-{{ $values.cluster.common.defaultIngressClass }}-{{ $releaseNamespace }}
   parameters: {}
 electionID: {{ $values.cluster.common.defaultIngressClass }}-{{ $releaseNamespace }}
-
 extraArgs:
   ingress-class: {{ $values.cluster.common.defaultIngressClass }}-{{ $releaseNamespace }}
+fullnameOverride: nginx-ingress-controller-{{ $releaseNamespace }}
 {{ end }}
 
 

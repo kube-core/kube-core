@@ -433,7 +433,7 @@ releases:
     config:
       affinity: {}
       autoscaling: {}
-      clusterIP: ""
+      clusterIP: "0.0.0.0"
       dnsPolicy: ClusterFirst
       externalTrafficPolicy: Local
       hostNetwork: false

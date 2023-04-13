@@ -1,4 +1,25 @@
 releases:
+  nginx-istio-ingress-controller:
+    patches:
+      enabled: true
+      patches:
+        patch-nginx-istio-ingress-clusterip:
+          name: patch-nginx-istio-ingress-clusterip
+          targetObjectRef:
+            apiVersion: apps/v1
+            kind: Deployment
+            name: nginx-istio-ingress-controller
+          patchTemplate:
+            spec:
+              template:
+                metadata:
+                  annotations:
+                    traffic.sidecar.istio.io/excludeOutboundIPRanges: "{{ (index . 1).spec.clusterIP }}"
+          sourceObjectRefs:
+            - apiVersion: v1
+              kind: Service
+              name: kubernetes
+              namespace: default
   kyverno:
     manifests:
     - apiVersion: rbac.authorization.k8s.io/v1
