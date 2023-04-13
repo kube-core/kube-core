@@ -1,7 +1,7 @@
 scripts:
-  apps_istio_configure_istio_injection:
-    path: ./src/apps/istio/configure-istio-injection.sh
-    name: apps_istio_configure_istio_injection
+  apps_istio_configure_injection:
+    path: ./src/apps/istio/configure-injection.sh
+    name: apps_istio_configure_injection
     description: 'Injects istio in all namespaces. '
     args: enabled|disabled
   apps_istio_verify_istio_access:
@@ -9,6 +9,16 @@ scripts:
     name: apps_istio_verify_istio_access
     description: 'Checks if istio is working as expected. '
     args: namespace container valuesFile targetHost
+  apps_label_all_namespaces:
+    path: ./src/apps/label-all-namespaces.sh
+    name: apps_label_all_namespaces
+    description: 'Injects istio in all namespaces. '
+    args: enabled|disabled
+  apps_label_namespace:
+    path: ./src/apps/label-namespace.sh
+    name: apps_label_namespace
+    description: 'Injects istio in all namespaces. '
+    args: enabled|disabled
   apps_minio_configure_minio:
     path: ./src/apps/minio/configure-minio.sh
     name: apps_minio_configure_minio
@@ -24,6 +34,21 @@ scripts:
     name: apps_minio_minio_push_file
     description: 'Pushes a file to a minio bucket. '
     args: bucekt file s3_key s3_secret
+  apps_patch_all_ingress_class:
+    path: ./src/apps/patch-all-ingress-class.sh
+    name: apps_patch_all_ingress_class
+    description: 'Injects istio in all namespaces. '
+    args: enabled|disabled
+  apps_patch_ns_ingress_class:
+    path: ./src/apps/patch-ns-ingress-class.sh
+    name: apps_patch_ns_ingress_class
+    description: 'Injects istio in all namespaces. '
+    args: enabled|disabled
+  apps_rollout_namespace:
+    path: ./src/apps/rollout-namespace.sh
+    name: apps_rollout_namespace
+    description: 'Injects istio in all namespaces. '
+    args: enabled|disabled
   apps_sentry_sentry_create_projects:
     path: ./src/apps/sentry/sentry-create-projects.sh
     name: apps_sentry_sentry_create_projects
@@ -34,46 +59,6 @@ scripts:
     name: apps_sentry_sentry_get_dsns
     description: 'Generates Sentry DSNs for proejct. '
     args: projectName appName apiKey
-  cloud_aws_setup_destroy:
-    path: ./src/cloud/aws/setup/destroy.sh
-    name: cloud_aws_setup_destroy
-    description: Destroys Cloud Provider IAM/Secrets. GCP only for now.
-    args: ""
-  cloud_aws_setup_kubeconfig_create_no_gcloud:
-    path: ./src/cloud/aws/setup/kubeconfig/create-no-gcloud.sh
-    name: cloud_aws_setup_kubeconfig_create_no_gcloud
-    description: Generates a kubeconfig for a GKE cluster (without gcloud cli auth proxy)
-    args: ""
-  cloud_aws_setup_kubeconfig_create:
-    path: ./src/cloud/aws/setup/kubeconfig/create.sh
-    name: cloud_aws_setup_kubeconfig_create
-    description: Generates a kubeconfig for a GKE cluster, and sets up local access to this cluster
-    args: ""
-  cloud_aws_setup_kubeconfig_destroy:
-    path: ./src/cloud/aws/setup/kubeconfig/destroy.sh
-    name: cloud_aws_setup_kubeconfig_destroy
-    description: Removes current cluster context from kubeconfig
-    args: ""
-  cloud_aws_setup_kubeconfig_get_context:
-    path: ./src/cloud/aws/setup/kubeconfig/get-context.sh
-    name: cloud_aws_setup_kubeconfig_get_context
-    description: Sets up local access to the current GKE cluster
-    args: ""
-  cloud_aws_setup_setup:
-    path: ./src/cloud/aws/setup/setup.sh
-    name: cloud_aws_setup_setup
-    description: Sets up Cloud Provider IAM/Secrets. AWS only.
-    args: ""
-  cloud_aws_setup_tekton_git:
-    path: ./src/cloud/aws/setup/tekton/git.sh
-    name: cloud_aws_setup_tekton_git
-    description: Generates secrets for Tekton/Git features
-    args: ""
-  cloud_aws_setup_tekton_sf:
-    path: ./src/cloud/aws/setup/tekton/sf.sh
-    name: cloud_aws_setup_tekton_sf
-    description: Generates secrets for Tekton/SF features
-    args: ""
   cloud_gcp_setup_destroy:
     path: ./src/cloud/gcp/setup/destroy.sh
     name: cloud_gcp_setup_destroy
@@ -400,7 +385,7 @@ scripts:
     description: Legacy python parser for bash scripts. To replace with CLI.
     args: ""
   utils_generate_scripts_config:
-    path: ./src/utils/generate-scripts-config.sh
+    path: ../cli/scripts/src/utils/generate-scripts-config.sh
     name: utils_generate_scripts_config
     description: Generates scripts-config.yaml
     args: ""
