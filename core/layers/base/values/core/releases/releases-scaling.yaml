@@ -1,49 +1,60 @@
 releases:
   logging-stack:
     scaling:
-      logging-es:
-        rules:
+      enabled: true
+      list:
+        es:
+          enabled: false
+          extraPrometheusTriggers:
+            disk-usage-ratio:
+              enabled: true
+              threshold: 0.80
+              query: avg(elasticsearch_filesystem_data_used_percent)
           cpuAvg:
+            enabled: true
             container: elasticsearch
-          esDiskUsage:
-            threshold: 0.80
           ingressAccessFreq:
+            enabled: true
             ingressName: logging-es-http
           memoryAvg:
+            enabled: true
             container: elasticsearch
-      logging-fluentd:
-        autoscaling:
+        fluentd:
+          enabled: true
+          scaleTargetRefApiVersion: apps/v1
+          scaleTargetRefkind: StatefulSet
+          scaleTargetRefName: logging-fluentd
           maxReplicaCount: 6
           minReplicaCount: 3
-          scaleTargetRef:
-            apiVersion: apps/v1
-            kind: StatefulSet
-            name: logging-fluentd
-        rules:
+          extraPrometheusTriggers:
+            disk-usage-ratio:
+              enabled: true
+              threshold: 0.80
+              query: avg((node_filesystem_size_bytes{namespace="logging", container="buffer-metrics-sidecar",mountpoint="/buffers"}-node_filesystem_free_bytes{namespace="logging", container="buffer-metrics-sidecar",mountpoint="/buffers"})/node_filesystem_size_bytes{namespace="logging", container="buffer-metrics-sidecar",mountpoint="/buffers"})
           cpuAvg:
+            enabled: true
             container: fluentd
             threshold: 0.80
-          fluentdDiskUsage:
-            threshold: 0.80
           memoryAvg:
+            enabled: true
             container: fluentd
             threshold: 0.80
   nginx-ingress-controller:
     scaling:
-      nginx-ingress-controller:
-        autoscaling:
-          maxReplicaCount: 6
-          minReplicaCount: 3
-          scaleTargetRef:
-            apiVersion: apps/v1
-            kind: Deployment
-            name: nginx-ingress-controller
-        rules:
-          cpuAvg:
-            container: controller
-          memoryAvg:
-            container: controller
-        serviceLevel:
-          errorQuery: sum(rate(nginx_ingress_controller_request_duration_seconds_count{status=~"(5..|429)"}[{{.window}}]))
-          objective: 99.5
-          totalQuery: sum(rate(nginx_ingress_controller_request_duration_seconds_count{}[{{.window}}]))
+      enabled: true
+      minReplicaCount: 3
+      maxReplicaCount: 6
+      cpuAvg:
+        enabled: true
+        container: controller
+      memoryAvg:
+        enabled: true
+        container: controller
+    monitoring:
+      enabled: false
+      cpuAvg:
+        enabled: false
+        container: controller
+      memoryAvg:
+        enabled: false
+        container: controller

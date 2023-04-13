@@ -54,6 +54,7 @@ manifests:
     {{ range $key, $patch := $releasePatches.patches }}
       {{ $patch.name }}:
         targetObjectRef: {{ toYaml $patch.targetObjectRef | nindent 10 }}
+        sourceObjectRefs: {{ toYaml $patch.sourceObjectRefs | nindent 10 }}
         patchType: {{ coalesce (getOrNil "patchType" $patch) "application/strategic-merge-patch+json" }}
         patchTemplate: |
           {{ toYaml $patch.patchTemplate | nindent 10 }}

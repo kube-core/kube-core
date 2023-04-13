@@ -47,7 +47,8 @@ templates:
     release: {}
     slos: {}
     monitoring: {}
-    scaling: {}
+    scaling:
+      enabled: false
     chaos: {}
     secrets: {}
     rules: {}
@@ -118,7 +119,8 @@ templates:
     release: {}
     slos: {}
     monitoring: {}
-    scaling: {}
+    scaling:
+      enabled: false
     chaos: {}
     secrets: {}
     customExtensions: {}
@@ -190,7 +192,8 @@ templates:
     release: {}
     slos: {}
     monitoring: {}
-    scaling: {}
+    scaling:
+      enabled: false
     chaos: {}
     secrets: {}
     customExtensions: {}
@@ -261,7 +264,8 @@ templates:
     release: {}
     slos: {}
     monitoring: {}
-    scaling: {}
+    scaling:
+      enabled: false
     chaos: {}
     external-secrets: {}
     secrets: {}
@@ -332,7 +336,8 @@ templates:
     release: {}
     slos: {}
     monitoring: {}
-    scaling: {}
+    scaling:
+      enabled: false
     chaos: {}
     external-secrets:
     secrets: {}

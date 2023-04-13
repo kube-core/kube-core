@@ -15,29 +15,34 @@
 {{ $templateValues := (dict "coreValues" $values "releaseValues" $extension "parentReleaseValues" $release "releaseNamespace" $releaseNamespace "releaseName" $releaseName) }}
 
 {{/* Extensions Header - End */}}
-
-{{ if (eq ($extension | getOrNil "type") "app-extensions") }}
 resources:
+  {{ $extensionListKey := "list" }}
+  {{ $extensionList := (coalesce ($extension | getOrNil $extensionListKey) (dict $releaseName $extension)) }}
   keda-scaledobject:
-    {{ $releaseName }}: {{ toYaml $extension | nindent 6 }}
-      targetName: {{ $releaseName }}
+  {{ range $resourceName, $resourceConfig := $extensionList }}
+    {{- $resourceNameTemplate := (printf "%s-%s" $releaseName $resourceName) }}
+    {{- if eq $releaseName $resourceName }}
+    {{- $resourceNameTemplate = $releaseName }}
+    {{- end }}
+    {{ $resourceNameTemplate }}: {{ toYaml $resourceConfig | nindent 6 }}
       namespace: {{ $releaseNamespace }}
+      {{ if (not $resourceConfig | getOrNil "targetName") }}
+      targetName: {{ $releaseName }}
+      {{ end }}
       prometheusEndpoint: {{ $release.metadata.config.monitoring.metricsEndpoint }}
       scaleTargetRef:
-        {{ if $extension | getOrNil "scaleTargetRef" | getOrNil "apiVersion" }}
-        apiVersion: {{ $extension.scaleTargetRef.apiVersion }}
+        {{ if $resourceConfig | getOrNil "scaleTargetRefApiVersion" }}
+        apiVersion: {{ $resourceConfig.scaleTargetRefApiVersion }}
         {{ end }}
-        {{ if $extension | getOrNil "scaleTargetRef" | getOrNil "kind" }}
-        kind: {{ $extension.scaleTargetRef.kind }}
+        {{ if $resourceConfig | getOrNil "scaleTargetRefKind" }}
+        kind: {{ $resourceConfig.scaleTargetRefKind }}
         {{ end }}
-        {{ if $extension | getOrNil "scaleTargetRef" | getOrNil "name" }}
-        name: {{ $extension.scaleTargetRef.name }}
+        {{ if $resourceConfig | getOrNil "scaleTargetRefName" }}
+        name: {{ $resourceConfig.scaleTargetRefName }}
         {{ else }}
         name: {{ $releaseName }}
         {{ end }}
-{{ else }}
-scaling: {{ toYaml (index $values.releases $releaseName "scaling") | nindent 2 }}
-{{ end }}
+  {{ end }}
 
 #   {{ if ($extension | getOrNil "custom") }}
 #   {{ range $resourceName, $resourceConfig := ($extension | getOrNil "custom") }}

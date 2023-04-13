@@ -188,15 +188,11 @@
   - {{ (tpl (readFile "values/release-patches.yaml.gotmpl") .) | nindent 4 }}
 {{ end }}
 
-{{ if $release.scaling }}
+{{ if $release.scaling.enabled }}
 {{ $extensionType := "scaling" }}
 {{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 - name: {{ $extensionName }}
-{{ if (eq ($release | getOrNil "scaling" | getOrNil "type") "app-extensions") }}
   chart: ../releases/dist/releases/charts/app-extensions
-{{ else }}
-  chart: ../releases/dist/releases/charts/app-scaling
-{{ end }}
   kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
   namespace: {{ $releaseNamespace }}
   {{ $_ := set . "releaseName" $extensionName }}
