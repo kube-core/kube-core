@@ -518,6 +518,10 @@ kps:
       tolerations: {{ toYaml (index $release "scheduling" "all" "tolerations") | nindent 8 }}
       nodeSelector: {{ toYaml (index $release "scheduling" "all" "nodeSelector") | nindent 8 }}
       affinity: {{ toYaml (index $release "scheduling" "all" "affinity") | nindent 8 }}
+      logFormat: json
+      {{ if (index $release "config" "debug") }}
+      logLevel: debug
+      {{ end }}
     config:
       global:
         resolve_timeout: 5m
@@ -537,14 +541,14 @@ kps:
           - alertname="InfoInhibitor"
           receiver: 'null'
         {{ range (index $release "config" "alertmanager" "routes") }}
-        - {{.}}: {{ toYaml (index $release "config" "alertmanager" "routes" | nindent 6) }}
+        - {{.}}: {{ toYaml (index $release "config" "alertmanager" "routes" | nindent 10) }}
         {{ end }}
         {{- if index $release "config" "opsgenie" "heartbeat" "enabled" }}
-          - matchers:
-              - alertname="Watchdog"
-            repeat_interval: 2m
-            group_interval: 2m
-            receiver: 'heartbeat'
+        - matchers:
+            - alertname="Watchdog"
+          repeat_interval: 2m
+          group_interval: 2m
+          receiver: 'heartbeat'
         {{- end }}
         {{- if ( $values | get (printf "releases.%s.config.alertmanager.additionalRoutes" .Release.Name ) false) }}
         {{ toYaml (index $release "config" "alertmanager" "additionalRoutes") | nindent 10 }}
@@ -554,35 +558,41 @@ kps:
         {{- if index $release "config" "opsgenie" "heartbeat" "enabled" }}
         - name: 'heartbeat'
           webhook_configs:
-            - url: {{ index $release "config" "opsgenie" "heartbeat" "endpoint" }}
-              send_resolved: true
-              http_config:
-                basic_auth:
-                  password: {{ index $release "config" "opsgenie" "heartbeat" "apiKey" }}
+          {{ if index $release "config" "opsgenie" "heartbeat" "endpointOverride" }}
+          - url: {{ index $release "config" "opsgenie" "heartbeat" "endpointOverride" }}
+          {{ else }}
+          - url: 'https://api.opsgenie.com/v2/heartbeats/k8s-{{ $values.cluster.config.name }}-heartbeat/ping'
+          {{ end }}
+            send_resolved: true
+            http_config:
+              basic_auth:
+                password: {{ index $release "config" "opsgenie" "heartbeat" "apiKey" }}
         {{- end }}
         - name: 'default'
           {{- if index $release "config" "robusta" "enabled" }}
           webhook_configs:
-            - url: 'http://kps-runner.monitoring.svc.cluster.local/api/alerts'
-              send_resolved: true
-              max_alerts: 1
+          - url: 'http://kps-runner.monitoring.svc.cluster.local/api/alerts'
+            send_resolved: true
+            max_alerts: 1
           {{- end }}
           {{- if index $release "config" "opsgenie" "alerts" "enabled" }}
           opsgenie_configs:
-            - api_key: {{ index $release "config" "opsgenie" "alerts" "apiKey" }}
-              send_resolved: true
-              tags: {{ $values.cluster.config.name }}
-              message: |-
-                {{`{{ if .CommonAnnotations.message }}
-                  {{ .CommonAnnotations.message }}
-                {{ else if .CommonAnnotations.description }}
-                  {{ .CommonAnnotations.description }}
-                {{ else }}
-                  {{ range .Alerts }}
-                    {{ range .Annotations.SortedPairs }}{{.Value }}{{ end }}
-                  {{ end }}
-                {{ end }}`}}
-              priority: {{`'{{if or (eq .CommonLabels.severity "P1") (eq .CommonLabels.severity "P2") (eq .CommonLabels.severity "P3") (eq .CommonLabels.severity "P4") (eq .CommonLabels.severity "P5")}}{{ .CommonLabels.severity }}{{else}}P4{{end}}'`}}
+          - api_key: {{ index $release "config" "opsgenie" "alerts" "apiKey" }}
+            send_resolved: true
+            tags: {{ $values.cluster.config.name }}
+            message: |-
+              {{`{{ if .CommonAnnotations.message }}
+                {{ .CommonAnnotations.message }}
+              {{ else if .CommonAnnotations.description }}
+                {{ .CommonAnnotations.description }}
+              {{ else if .Alerts }}
+                {{ range .Alerts }}
+                  {{ range .Annotations.SortedPairs }}{{.Value }}{{ end }}
+                {{ end }}
+              {{ else }}
+                Empty Message
+              {{ end }}`}}
+            priority: {{`'{{if or (eq .CommonLabels.severity "P1") (eq .CommonLabels.severity "P2") (eq .CommonLabels.severity "P3") (eq .CommonLabels.severity "P4") (eq .CommonLabels.severity "P5")}}{{ .CommonLabels.severity }}{{else}}P4{{end}}'`}}
           {{- end }}
         {{- if ( $values | get (printf "releases.%s.config.alertmanager.additionalReceivers" .Release.Name ) false) }}
         {{ toYaml (index $release "config" "alertmanager" "additionalReceivers") | nindent 8 }}
@@ -853,25 +863,24 @@ kps-robusta:
   enablePlatformPlaybooks: false
   clusterName: {{ $values.cluster.config.name }}
   sinksConfig:
-  {{ range $sinkName, $sinkConfig := (index $release "config" "robusta" "slackSinks") }}
-  {{ $name := (coalesce ($sinkConfig | getOrNil "nameOverride") (printf "slack-%s-%s" $values.cluster.config.name $sinkName)) }}
-  {{ $channel := (coalesce ($sinkConfig | getOrNil "channel") (printf "k8s-%s-%s-robusta" $values.cluster.config.name $sinkName)) }}
-  {{ $apiKey := (coalesce ($sinkConfig | getOrNil "apiKey") (index $release "config" "robusta" "slack" "apiKey"))  }}
-  {{ $isDefault := (. | getOrNil "default") }}
-  {{ $namespace := (.| getOrNil "namespace")  }}
+  {{- range $sinkName, $sinkConfig := (index $release "config" "robusta" "slackSinks") }}
+  {{- $name := (coalesce ($sinkConfig | getOrNil "nameOverride") (printf "slack-%s-%s" $values.cluster.config.name $sinkName)) }}
+  {{- $channel := (coalesce ($sinkConfig | getOrNil "channel") (printf "k8s-%s-%s-robusta" $values.cluster.config.name $sinkName)) }}
+  {{- $apiKey := (coalesce ($sinkConfig | getOrNil "apiKey") (index $release "config" "robusta" "slack" "apiKey"))  }}
+  {{- $isDefault := (. | getOrNil "default") }}
+  {{- $namespace := (.| getOrNil "namespace")  }}
   - slack_sink:
       name: {{ $name }}
-      {{ if $isDefault }}
+      {{- if $isDefault }}
       default: true
-      {{ end }}
+      {{- end }}
       slack_channel: {{ $channel }}
       api_key: {{ $apiKey }}
-      {{ if $namespace }}
+      {{- if $namespace }}
       match:
         namespace: ^{{ $namespace }}$
-      {{ end }}
-
-  {{ end }}
+      {{- end }}
+  {{- end }}
   {{- if (index $release "config" "robusta" "additionalSinks") }}
   {{ toYaml (index $release "config" "robusta" "additionalSinks") | nindent 2 }}
   {{- end }}
