@@ -159,7 +159,6 @@ do
     rm -rf ${releaseProcessedPath}/OWNERS
     rm -rf ${releaseProcessedPath}/README.md
     rm -rf ${releaseProcessedPath}/README.md.gotmpl
-    rm -rf ${releaseProcessedPath}/files
     rm -rf ${processedTmpFolder}
 
 done || true
