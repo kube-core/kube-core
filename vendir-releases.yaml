@@ -129,7 +129,7 @@ directories:
       - path: chartmuseum
         helmChart:
           name: chartmuseum
-          version: 3.4.0
+          version: 3.9.3
           repository:
             url: https://chartmuseum.github.io/charts
 

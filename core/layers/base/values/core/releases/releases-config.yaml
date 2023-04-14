@@ -117,28 +117,41 @@ releases:
         # nginx.ingress.kubernetes.io/rewrite-target: /$1
         labels: {}
         subdomain: prometheus-pushgateway
+  
   chartmuseum:
     config:
-      env:
-        open:
-          ALLOW_OVERWRITE: true
-          AUTH_ANONYMOUS_GET: true
-          DISABLE_API: false
-          DISABLE_METRICS: false
-          DISABLE_STATEFILES: true
-      ingress:
-        annotations:
-          cert-manager.io/cluster-issuer: letsencrypt-prod
-          nginx.ingress.kubernetes.io/server-snippet: |
-            location ~ ^/(metrics) {
-              deny all;
-              return 403;
-            }
-        labels:
-          ingress.neo9.io/access-filtered: "false"
-        subdomain: charts
-      persistence:
+      museum:
+        cacheInterval: 1m
+        allowOverwrite: true
+        authAnonymousGet: true
+        disableStatefiles: true
+        disableApi: false
+        adminUser: devops
+      storage:
+        cloudOrLocal: cloud
+        bucketName: "chartmuseum"
+        bucketPrefix: ""
+      metrics:
         enabled: true
+        serviceMonitor:
+          enabled: false
+      ingress:
+        enabled: true
+        annotations: {}
+        labels: {}
+        subdomain: charts
+    customExtensions:
+      enabled: true
+      resources:
+        prometheus-servicemonitor:
+          default:
+            enabled: true
+            targetName: chartmuseum
+            endpoints:
+            - port: http
+              interval: 2s
+              path: /metrics
+
   container-registry-cleaner:
     config:
       concurrencyPolicy: Forbid

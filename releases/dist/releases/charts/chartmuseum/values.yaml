@@ -3,14 +3,16 @@ extraArgs: []
 replicaCount: 1
 strategy:
   type: RollingUpdate
-  rollingUpdate:
-    maxUnavailable: 0
 image:
   repository: ghcr.io/helm/chartmuseum
-  tag: v0.13.1
+  tag: v0.15.0
   pullPolicy: IfNotPresent
 secret:
   labels: {}
+## Labels to apply to all resources
+##
+commonLabels: {}
+# team_name: dev
 env:
   open:
     # storage backend, can be one of: local, alibaba, amazon, google, microsoft, oracle
@@ -68,8 +70,8 @@ env:
     LOG_JSON: true
     # disable use of index-cache.yaml
     DISABLE_STATEFILES: false
-    # disable Prometheus metrics
-    DISABLE_METRICS: true
+    # enable Prometheus metrics
+    ENABLE_METRICS: false
     # disable all routes prefixed with /api
     DISABLE_API: true
     # allow chart versions to be re-uploaded
@@ -131,8 +133,27 @@ deployment:
   #   name: value
   # additional volumes
   extraVolumes: []
+  #  - name: nginx-config
+  #    secret:
+  #      secretName: nginx-config
   # additional volumes to mount
   extraVolumeMounts: []
+  ## sidecarContainers for the Chartmuseum
+  # Can be used to add a proxy to the pod that does
+  # scanning for secrets, signing, authentication, validation
+  # of the chart's content, send notifications...
+  sidecarContainers: {}
+  ## Example sidecarContainer which uses an extraVolume from above and
+  ## a named port that can be referenced in the service as targetPort.
+  #  proxy:
+  #    image: nginx:latest
+  #    ports:
+  #      - name: proxy
+  #        containerPort: 8081
+  #    volumeMounts:
+  #      - name: nginx-config
+  #        readOnly: true
+  #        mountPath: /etc/nginx
 
 ## Pod annotations
 ## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
@@ -140,6 +161,11 @@ deployment:
 ##
 podAnnotations: {}
   # iam.amazonaws.com/role: role-arn
+
+## Pod labels
+## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+podLabels: {}
+  # name: value
 
 service:
   servicename:
@@ -153,6 +179,10 @@ service:
   loadBalancerSourceRanges: []
   # clusterIP: None
   externalPort: 8080
+  ## targetPort of the container to use. If a sidecar should handle the
+  ## requests first, use the named port from the sidecar. See sidecar example
+  ## from deployment above. Leave empty to use chartmuseum directly.
+  targetPort:
   nodePort:
   annotations: {}
   labels: {}
@@ -180,12 +210,16 @@ probes:
     timeoutSeconds: 1
     successThreshold: 1
     failureThreshold: 3
+  livenessHttpGetConfig:
+    scheme: HTTP
   readiness:
     initialDelaySeconds: 5
     periodSeconds: 10
     timeoutSeconds: 1
     successThreshold: 1
     failureThreshold: 3
+  readinessHttpGetConfig:
+    scheme: HTTP
 
 serviceAccount:
   create: false
@@ -266,6 +300,7 @@ volumePermissions:
 ## Ingress for load balancer
 ingress:
   enabled: false
+  pathType: "ImplementationSpecific"
   ## Chartmuseum Ingress labels
   ##
   labels: {}
