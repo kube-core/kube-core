@@ -11,6 +11,11 @@ releases:
       roles:
       - roles/compute.admin
       - roles/container.admin
+  chartmuseum:
+    cloud:
+      enabled: true
+      bucket:
+        enabled: true
   cluster-issuers:
     cloud:
       enabled: true

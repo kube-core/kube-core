@@ -27,6 +27,9 @@ spec:
       {{- end }}
       labels:
         {{- include "chartmuseum.selectorLabels" . | nindent 8 }}
+        {{- if .Values.podLabels }}
+        {{- toYaml .Values.podLabels | nindent 8 }}
+        {{- end }}
     spec:
       {{- if .Values.priorityClassName }}
       priorityClassName: "{{ .Values.priorityClassName }}"
@@ -120,11 +123,13 @@ spec:
           httpGet:
             path: {{ .Values.env.open.CONTEXT_PATH }}/health
             port: http
+{{ toYaml .Values.probes.livenessHttpGetConfig | indent 12 }}
 {{ toYaml .Values.probes.liveness | indent 10 }}
         readinessProbe:
           httpGet:
             path: {{ .Values.env.open.CONTEXT_PATH }}/health
             port: http
+{{ toYaml .Values.probes.readinessHttpGetConfig | indent 12 }}
 {{ toYaml .Values.probes.readiness | indent 10 }}
         volumeMounts:
 {{- if .Values.deployment.extraVolumeMounts }}
@@ -146,6 +151,12 @@ spec:
         - name: public-key
           mountPath: /var/keys
           readOnly: true
+{{- end }}
+{{- if .Values.deployment.sidecarContainers }}
+{{- range $name, $spec :=  .Values.deployment.sidecarContainers }}
+      - name: {{ $name }}
+{{- toYaml $spec | nindent 8 }}
+{{- end }}
 {{- end }}
       {{- with .Values.resources }}
         resources:

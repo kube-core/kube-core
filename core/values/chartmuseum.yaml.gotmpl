@@ -1,52 +1,107 @@
-extraArgs: []
+{{/* Release Values Templates Header - START */}}
+{{ $values := (coalesce (. | getOrNil "values") (. | getOrNil "Values")) }}
+{{ $release := (index $values.releases .Release.Name) }}
+{{ $releaseName := .Release.Name }}
+{{ $releaseNamespace := .Release.Namespace }}
+{{ $releaseType := $release.type }}
+
+{{ $_ := set $release "name" $releaseName }}
+{{ $_ := set $release "namespace" $releaseNamespace }}
+{{ (tpl (readFile "../templates/releases/standard/variables/release-variables-config.yaml.gotmpl") (dict "item" $release "values" $values)) }}
+{{ (tpl (readFile "../templates/releases/standard/variables/release-variables-cloud.yaml.gotmpl") (dict "item" $release "values" $values)) }}
+{{/* Release Values Templates Header - END */}}
+
+{{ $bucketName := "chartmuseum" }}
+{{ if $release.metadata.config.cloudEnabled }}
+{{ $bucketName = $release.metadata.namingConfig.templated.releaseBucketName }}
+{{ else }}
+{{ $bucketName = ($values | get "cluster.config.storage.bucketName" (printf "%s-chartmuseum" $values.cluster.config.name)) }}
+{{ end }}
+
 replicaCount: 1
+
+resources: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
 strategy:
   type: RollingUpdate
   rollingUpdate:
+    maxSurge: 1
     maxUnavailable: 0
-image:
-  repository: ghcr.io/helm/chartmuseum
-  tag: v0.13.1
-  pullPolicy: IfNotPresent
-secret:
-  labels: {}
-env:
-  {{- if (index .Values.releases .Release.Name "config" "env") }}
-    {{ toYaml (index .Values.releases .Release.Name "config" "env") | nindent 2 }}
-  {{- end }}
-
-probes:
-  readiness:
-    periodSeconds: 2
-    initialDelaySeconds: 20
-
-persistence:
-  # Default operation mode should be with bucket/object storage, persistence only usefull for test with local storage
-  enabled: {{ (index .Values.releases .Release.Name "config" "persistence" "enabled") }}
-  accessMode: ReadWriteOnce
-  size: 8Gi
-  labels: {}
-    # name: value
-  path: /storage
 
 ingress:
   enabled: true
+  ingressClassName: {{ $values.cluster.common.defaultIngressClass }}
   annotations:
+    nginx.ingress.kubernetes.io/server-snippet: |
+      location ~* "^/metrics" {
+        deny all;
+        return 403;
+      }
     {{ if .Values.cluster.common.defaultIngressAnnotations }}
       {{ toYaml .Values.cluster.common.defaultIngressAnnotations | nindent 4 }}
     {{- end }}
-    {{- if (index .Values.releases .Release.Name "config" "ingress" "annotations") }}
-      {{ toYaml (index .Values.releases .Release.Name "config" "ingress" "annotations") | nindent 4 }}
+    {{- if (index $release "config" "ingress" "annotations") }}
+      {{ toYaml (index $release "config" "ingress" "annotations") | nindent 4 }}
     {{- end }}
   labels:
     {{ if .Values.cluster.common.defaultIngressLabels }}
       {{ toYaml .Values.cluster.common.defaultIngressLabels | nindent 4 }}
     {{- end }}
-    {{- if (index .Values.releases .Release.Name "config" "ingress" "labels") }}
-      {{ toYaml (index .Values.releases .Release.Name "config" "ingress" "labels") | nindent 4 }}
+    {{- if (index $release "config" "ingress" "labels") }}
+      {{ toYaml (index $release "config" "ingress" "labels") | nindent 4 }}
     {{- end }}
   hosts:
-    - name: {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
+    - name: {{ (index $release "config" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
       path: /
       tls: true
-      tlsSecret: {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") | replace "." "-"}}-tls
+      tlsSecret: {{ (index $release "config" "ingress" "subdomain") | replace "." "-"}}-tls
+
+serviceMonitor:
+  enabled: false
+{{/* As the chart use .Capabilities.APIVersions.Has which have issue, we create the serviceMonitor separately
+  enabled: {{ or (index $release "config" "metrics" "serviceMonitor" "enabled") $values.core.packages.monitoring.enabled ($values.releases.kps.enabled) }}
+*/}}
+
+# https://chartmuseum.com/docs/#all-cli-options
+env:
+  open:
+    ENABLE_METRICS: {{ or (index $release "config" "metrics" "enabled") ($values.releases.kps.enabled) }}
+    CACHE_INTERVAL: {{ index $release "config" "museum" "cacheInterval" }}
+    ALLOW_OVERWRITE: {{ index $release "config" "museum" "allowOverwrite" }}
+    AUTH_ANONYMOUS_GET: {{ index $release "config" "museum" "authAnonymousGet" }}
+    DISABLE_STATEFILES: {{ index $release "config" "museum" "disableStatefiles" }}
+    DISABLE_API: {{ index $release "config" "museum" "disableApi" }}
+    BASIC_AUTH_USER: {{ index $release "config" "museum" "adminUser" }}
+  {{ if eq (index $release "config" "storage" "cloudOrLocal") "local" }}
+    STORAGE: local
+  {{ else if eq (index $release "config" "storage" "cloudOrLocal") "cloud" }}
+    {{ if eq $values.cloud.provider "gcp" }}
+    STORAGE: google
+    STORAGE_GOOGLE_BUCKET: {{ $bucketName }}
+    STORAGE_GOOGLE_PREFIX: {{ index $release "config" "storage" "bucketPrefix" }}
+    {{ end }}
+  {{ end }}
+  existingSecret: chartmuseum-dynamic-secrets-basic-admin-password
+  existingSecretMappings:
+    BASIC_AUTH_PASS: BASIC_AUTH_PASS
+
+{{ if eq (index $release "config" "storage" "cloudOrLocal") "cloud" }}
+{{ if eq $values.cloud.provider "gcp" }}
+gcp:
+  secret:
+    enabled: true
+    key: privateKey
+    name: chartmuseum
+{{ end }}
+{{ end }}
+
+persistence:
+  # Default operation mode should be with bucket/object storage, persistence only usefull for test with local storage
+  {{ if eq (index $release "config" "storage" "cloudOrLocal") "local" }}
+  enabled: true
+  {{ else }}
+  enabled: false
+  {{ end }}

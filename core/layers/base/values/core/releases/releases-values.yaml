@@ -1,13 +1,4 @@
 releases:
-  chartmuseum:
-    values:
-      extraArgs:
-        - --cache-interval=1m
-      gcp:
-        secret:
-          enabled: false
-          key: chartmuseum-sa.json
-          name: chartmuseum-sa
   cluster-logging:
     values:
       installCRDs: false

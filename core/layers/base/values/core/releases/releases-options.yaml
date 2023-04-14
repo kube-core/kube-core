@@ -13,6 +13,10 @@ releases:
       patchIngresses: true
       upgradeIngress: true
       upgradeIngressPortIsHttp: true
+  chartmuseum:
+    options:
+      injectClusterLoggingLabel: true
+      injectReloaderAnnotations: true
   dex:
     options:
       injectReloaderAnnotations: true
