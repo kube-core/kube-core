@@ -317,6 +317,16 @@ kps:
             orgId: 1
             type: file
           {{- end }}
+          {{- if index $values.releases "chartmuseum" "enabled" }}
+          - disableDeletion: true
+            editable: false
+            folder: Chartmuseum
+            name: chartmuseum
+            options:
+              path: /var/lib/grafana/dashboards/chartmuseum
+            orgId: 1
+            type: file
+          {{- end }}
           {{- if ( $values | get (printf "releases.%s.config.grafana.dashboardProviders" .Release.Name ) false) }}
           {{ toYaml (index $release "config" "grafana" "dashboardProviders") | nindent 10 }}
           {{- end }}
@@ -430,6 +440,12 @@ kps:
         pyrra-list:
           datasource: Thanos
           url: https://raw.githubusercontent.com/pyrra-dev/pyrra/main/examples/grafana/list.json
+      {{- end }}
+      {{- if index $values.releases "chartmuseum" "enabled" }}
+      chartmuseum:
+        chartmuseum-dashboard:
+          datasource: Thanos
+          url: https://raw.githubusercontent.com/neo9/grafana-dashboards/master/chartmuseum/chartmuseum.json
       {{- end }}
       kube-core:
       {{- if index $values.releases "kyverno" "enabled" }}
