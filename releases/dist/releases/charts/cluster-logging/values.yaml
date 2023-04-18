@@ -334,7 +334,22 @@ cluster:
       es:
         enabled: false
         config:
-          ilm_policy_id: 7-days-default
+          ilm_policy_overwrite: true
+          ilm_policy_id: ""
+          ilm_policy:
+            policy:
+              phases:
+                hot:
+                  min_age: 0ms
+                  actions:
+                    rollover:
+                      max_size: 50gb
+                      max_age: 7d
+                delete:
+                  min_age: 7d
+                  actions:
+                    delete:
+                      delete_searchable_snapshot: true
       minio:
         enabled: false
         config:

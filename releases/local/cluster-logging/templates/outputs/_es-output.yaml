@@ -21,7 +21,9 @@ spec:
     enable_ilm: true
     logstash_format: true
     with_transporter_log: false # Set to true if you need to debug
-    ilm_policy_id: {{ coalesce .ilmPolicyName .cluster.logging.integrations.es.config.ilm_policy_id | quote }}
+    ilm_policy_id: {{ coalesce .ilmPolicyName .cluster.logging.integrations.es.config.ilm_policy_id (printf "%s.default" .cluster.config.name) | quote }}
+    ilm_policy: |
+      {{ toJson .cluster.logging.integrations.es.config.ilm_policy | indent 6 }}
     logstash_prefix: "{{ .cluster.config.name }}.{{ coalesce .name "default" }}"
     template_name: "{{ .cluster.config.name }}.{{ coalesce .name "default" }}"
     index_name: "{{ .cluster.config.name }}.{{ coalesce .name "default" }}"

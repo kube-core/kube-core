@@ -30,6 +30,23 @@ cluster:
     integrations:
       es:
         enabled: true
+        config:
+          ilm_policy_overwrite: true
+          ilm_policy_id: ""
+          ilm_policy:
+            policy:
+              phases:
+                hot:
+                  min_age: 0ms
+                  actions:
+                    rollover:
+                      max_size: 50gb
+                      max_age: 30d
+                delete:
+                  min_age: 30d
+                  actions:
+                    delete:
+                      delete_searchable_snapshot: true
       tekton:
         enabled: {{ .Values.releases.tekton.enabled }}
         txtLogs: false
