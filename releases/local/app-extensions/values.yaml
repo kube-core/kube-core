@@ -12,6 +12,20 @@ patch:
   serviceAccountName: my-patch-operator-sa
 
 resource:
+  eck-elasticsearch:
+    enabled: false
+    storageSize: 20Gi
+    storageClassName: gcp-sc-delete-wait
+    esJavaOpts: -Xms500m -Xmx500m
+    replicas: 3
+    resources:
+      requests:
+        cpu: 1
+        memory: 1Gi
+      limits:
+        memory: 1Gi
+  eck-kibana:
+    enabled: false
   slack-channel:
     enabled: false
     # channelName: "my-channel-with-prefix"
@@ -74,6 +88,30 @@ resource:
     enabled: false
   kube-ingress:
     enabled: false
+    defaultRules: true
+    tls: true
+    # ingressClassName: nginx
+    # name: my-app
+    # subDomain: app
+    # subDomainBase: dev
+    # subDomainOverride: app.dev
+    # serviceName: my-service
+    # portName: http-rest
+    # portNumber: 80
+    # customSecretName: test
+    # host: my.domain.tld
+    # path: /test
+    # customRules:
+    # - host: my.extra.host
+    #   http:
+    #     paths:
+    #       - path: /path
+    #         pathType: Prefix
+    #         backend:
+    #           service:
+    #             name: svc
+    #             port:
+    #               name: grpc
   patch-recordsetinjectipfromlb:
     enabled: false
   prometheus-rule:
@@ -126,6 +164,7 @@ resource:
     # env: default
   prometheus-rule:
     enabled: false
+    namespaceSuffix: false
     prometheusEndpoint: http://prometheus-operated.monitoring.svc.cluster.local:9090
     rules: []
     # rules:
@@ -158,6 +197,14 @@ resource:
       # query: my_query
       # namespace: logging-es-http
       # name: logging-es-http
+    ingressControllerAccessFreq:
+      enabled: false
+      istio: false
+      # controllerClass: "nginx"
+      window: 1m
+      # query: my_query
+      # namespace: logging-es-http
+      # name: logging-es-http
     serviceAccessFreq:
       enabled: false
       window: 1m
@@ -166,6 +213,7 @@ resource:
       # name: logging-es-http
   keda-scaledobject:
     enabled: false
+    namespaceSuffix: false
     minReplicaCount: 1
     maxReplicaCount: 10
     prometheusEndpoint: http://prometheus-operated.monitoring.svc.cluster.local:9090
@@ -199,6 +247,9 @@ resource:
       enabled: false
       threshold: 0.90
     ingressAccessFreq:
+      enabled: false
+      threshold: 100
+    ingressControllerAccessFreq:
       enabled: false
       threshold: 100
     serviceAccessFreq:

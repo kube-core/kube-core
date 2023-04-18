@@ -62,6 +62,12 @@
         value: {{ (coalesce (index $values.cluster.common.defaultIngressClass) "nginx") }}-{{ $releaseNamespace }}
   {{- end }}
 
+  {{- if .item.options.forceIngressClass }}
+      - op: replace
+        path: "/spec/ingressClassName"
+        value: {{ .item.options.forceIngressClass }}
+  {{- end }}
+
   {{ $releaseHostNameBase :=  (printf "%s.%s" $releaseName $releaseNamespace) }}
   {{ if (eq $releaseName $releaseNamespace) }}
   {{ $releaseHostNameBase = $releaseName }}

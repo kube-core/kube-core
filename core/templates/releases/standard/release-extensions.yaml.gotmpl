@@ -403,3 +403,28 @@
   - {{ (tpl (readFile "values/release-slack.yaml.gotmpl") .) | nindent 4 }}
 
 {{ end }}
+
+
+{{ $ingress := ($release | getOrNil "ingress") }}
+{{ $ingressEnabled := ($ingress | getOrNil "enabled") }}
+
+{{ if (and $ingressEnabled) }}
+{{ $extensionType := "ingress" }}
+{{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
+
+- name: {{ $extensionName }}
+  chart: ../releases/dist/releases/charts/app-extensions
+  kubeContext: {{ coalesce .releaseContext $values.cluster.config.context }}
+  namespace: {{ $releaseNamespace }}
+  {{ $_ := set . "releaseName" $extensionName }}
+  {{ $_ := set . "extensionType" $extensionType }}
+  {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") . }}
+  {{ $_ := set . "releaseName" .parentReleaseName }}
+  labels:
+    app: {{ $releaseName }}
+    type: "ingress"
+  values:
+  # - "./values/release-cloud.yaml.gotmpl"
+  - {{ (tpl (readFile "values/release-ingress.yaml.gotmpl") .) | nindent 4 }}
+
+{{ end }}

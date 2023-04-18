@@ -16,7 +16,11 @@ spec:
   scaleTargetRef:
     apiVersion: {{ $resource.scaleTargetRef.apiVersion }}
     kind: {{ $resource.scaleTargetRef.kind }}
+    {{ if (eq $resource.namespaceSuffix true) }}
+    name: {{ $resource.scaleTargetRef.name }}-{{ $resource.namespace }}
+    {{ else }}
     name: {{ $resource.scaleTargetRef.name }}
+    {{ end }}
   minReplicaCount: {{ $resource.minReplicaCount }}
   maxReplicaCount: {{ $resource.maxReplicaCount }}
   triggers:
@@ -99,6 +103,17 @@ spec:
       serverAddress: {{ $resource.prometheusEndpoint }}
       metricName: {{ $metricName }}
       threshold: {{ coalesce $resource.ingressAccessFreq.threshold | quote }}
+      query: {{ $query }}
+  {{- end }}
+
+  {{- if $resource.ingressControllerAccessFreq.enabled }}
+  {{- $metricName := coalesce $resource.ingressControllerAccessFreq.metricName (printf "%s_ingress_controller_access_frequency" $nameBase) }}
+  {{- $query := coalesce $resource.ingressControllerAccessFreq.query $metricName }}
+  - type: prometheus
+    metadata:
+      serverAddress: {{ $resource.prometheusEndpoint }}
+      metricName: {{ $metricName }}
+      threshold: {{ coalesce $resource.ingressControllerAccessFreq.threshold | quote }}
       query: {{ $query }}
   {{- end }}
 

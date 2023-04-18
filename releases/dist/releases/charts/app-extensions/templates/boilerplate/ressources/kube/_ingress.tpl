@@ -3,12 +3,25 @@
 {{- $resourceName := (coalesce .value.resourceName .value.name .key) }}
 {{- $namespace := (coalesce .value.namespace "default") }}
 {{- $domain := (coalesce .value.domain .common.cluster.config.domain) }}
-{{- $host := (coalesce .value.host (printf "%s.%s.%s" $name $namespace $domain)) }}
+{{- $subDomainBase := $namespace }}
+{{- if .value.subDomainBase }}
+{{- $subDomainBase = .value.subDomainBase }}
+{{- end }}
+{{- $nameTemplate := printf "%s.%s" $name $namespace -}}
+{{- if eq $name $namespace }}
+{{- $nameTemplate = $name }}
+{{- end }}
+{{- $host := (coalesce .value.host (printf "%s.%s.%s" (coalesce .value.subDomain $nameTemplate) $subDomainBase $domain)) }}
+{{- if .value.subDomainOverride }}
+{{- $host = (coalesce .value.host (printf "%s.%s" .value.subDomainOverride $domain)) }}
+{{- end }}
+{{- $path := (coalesce .value.path "/") }}
+{{- $pathType := (coalesce .value.pathType "ImplementationSpecific") }}
 
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ $name }}
+  name: {{ $resourceName }}
   namespace: {{ $namespace }}
   labels:
     {{- with .value.labels }}
@@ -31,14 +44,25 @@ spec:
       {{- end }}
   {{- end }}
   rules:
-    - host: {{ $host }}
-      http:
-        paths:
-          - path: /
-            pathType: ImplementationSpecific
-            backend:
-              service:
-                name: {{ coalesce .value.serviceName $name }}
-                port:
-                  name: {{ coalesce .value.portName "http" }}
+  {{- if .value.defaultRules }}
+  - host: {{ $host }}
+    http:
+      paths:
+        - path: {{ $path }}
+          pathType: {{ $pathType }}
+          backend:
+            service:
+              name: {{ coalesce .value.serviceName $name }}
+              port:
+                {{- if (not .value.portNumber) }}
+                name: {{ coalesce .value.portName "http" }}
+                {{- else }}
+                number: {{ .value.portNumber }}
+                {{- end }}
+  {{- end -}}
+  {{- if .value.customRules }}
+  {{- range .value.customRules }}
+  - {{ toYaml . | nindent 4 | trim }}
+  {{- end -}}
+  {{- end -}}
 {{- end -}}

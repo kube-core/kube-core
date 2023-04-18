@@ -1,0 +1,52 @@
+releases:
+  istio-jaeger:
+    ingress:
+      pathType: Prefix
+      enabled: true
+      ingressClassName: nginx-istio
+      name: jaeger
+      subDomainOverride: jaeger.mesh
+      serviceName: jaeger-query
+      portName: http-query
+      # portNumber: 16686
+  istio-kiali:
+    ingress:
+      enabled: true
+      ingressClassName: nginx-istio
+      name: kiali
+      subDomainOverride: kiali.mesh
+      serviceName: kiali
+      # Override resourceName because operator reconciles kiali ingress. TODO: Fill bug about it
+      resourceName: kiali-web
+      # portName: http-query
+      portNumber: 20001
+  istio-grafana:
+    ingress:
+      enabled: true
+      ingressClassName: nginx-istio
+      subDomainOverride: grafana.mesh
+      serviceName: grafana
+      portNumber: 3000
+  istio-prometheus:
+    ingress:
+      enabled: true
+      ingressClassName: nginx-istio
+      subDomainOverride: prometheus.mesh
+      serviceName: prometheus
+      # portNumber: 9090
+  istio-elasticsearch:
+    ingress:
+      enabled: true
+      list:
+        elasticsearch:
+          enabled: true
+          ingressClassName: nginx-istio
+          subDomainOverride: elasticsearch.mesh
+          serviceName: elasticsearch-es-http
+          portNumber: 9200
+        kibana:
+          enabled: true
+          ingressClassName: nginx-istio
+          subDomainOverride: kibana.mesh
+          serviceName: elasticsearch-kb-http
+          portNumber: 5601
