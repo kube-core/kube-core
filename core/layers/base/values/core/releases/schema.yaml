@@ -508,3 +508,4 @@ releases:
   istio-elasticsearch: *release
   jaeger-managed: *release
   kiali-managed: *release
+  sidecar-cleaner: *release
