@@ -2,7 +2,13 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.11.23](https://github.com/kube-core/kube-core/compare/v0.11.22...v0.11.23)
+
+- releases/cluster-logging: Added custom default ILM policy [`4064db7`](https://github.com/kube-core/kube-core/commit/4064db7b909330ded1869e620035f85a1b653fc7)
+
 #### [v0.11.22](https://github.com/kube-core/kube-core/compare/v0.11.21...v0.11.22)
+
+> 18 April 2023
 
 - releases: Upgraded istio integration [`bc1105a`](https://github.com/kube-core/kube-core/commit/bc1105a056a8dc5a54321c8a3566c43c83055415)
 - releases/istio: Fixed istio releases [`0853364`](https://github.com/kube-core/kube-core/commit/08533648cba3fcb643712f5c426d71e8f6fb1b9c)
@@ -12,6 +18,7 @@ All notable changes to this project will be documented in this file. Dates are d
 - cli/scripts: Added some utility scripts [`4e01917`](https://github.com/kube-core/kube-core/commit/4e01917722e076c11a546c5d1bac0c0422f50872)
 - core/templates: Reworked scaling extension integration [`4737315`](https://github.com/kube-core/kube-core/commit/4737315fbb11c768a898cf8d006118b630745815)
 - releases/kps: Fixed some templating issues [`1bded2f`](https://github.com/kube-core/kube-core/commit/1bded2f0bc95d6a24e9be932f9312a081101b941)
+- release: v0.11.22 [`38b06cd`](https://github.com/kube-core/kube-core/commit/38b06cd9848256d92873accf8d4f2b91dd30427f)
 - releases/app-extensions: Added extraPrometheusTriggers on ScaledObject [`56a02ac`](https://github.com/kube-core/kube-core/commit/56a02acc80eae915e2a4fe6a433f72e07248ad11)
 - core/releases: Added chartmuseum dashboard to monitoring grafana [`69e8aa6`](https://github.com/kube-core/kube-core/commit/69e8aa6316b1ca581ed586c9cdcc87cd6f634852)
 - core/releases: Added config key for nginx-ingress LB IP & default resources requests [`d71677f`](https://github.com/kube-core/kube-core/commit/d71677f7e9918937fd9af29aeac3fd9a5a227c1e)
