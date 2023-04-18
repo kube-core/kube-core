@@ -90,26 +90,38 @@ streaming:
     autoTopicCreation: false
     adminRetries: 2
 
-# customRunnerDefinition: |-
-#         {
-#           "spec": {
-#             "template": {
-#                 "spec": {
-#                   "nodeSelector": {
-#                     "type": "predator"
-#                   },
-#                   "tolerations": [{
-#                     "key": "type",
-#                     "operator": "Equal",
-#                     "value": "predator",
-#                     "effect": "NoSchedule"
-#                   },{
-#                     "key": "type",
-#                     "operator": "Equal",
-#                     "value": "predator",
-#                     "effect": "NoExecute"
-#                   }]
-#                 }
-#             }
-#           }
-#         }
+customRunnerDefinition: |-
+  {
+    "spec": {
+      "template": {
+        "metadata": {
+          "annotations": {
+            "sidecar.istio.io/inject": "false"
+          }
+        }
+      }
+    }
+  }
+
+# {
+#   "spec": {
+#     "template": {
+#       "spec": {
+#         "nodeSelector": {
+#           "type": "predator"
+#         },
+#         "tolerations": [{
+#           "key": "type",
+#           "operator": "Equal",
+#           "value": "predator",
+#           "effect": "NoSchedule"
+#         },{
+#           "key": "type",
+#           "operator": "Equal",
+#           "value": "predator",
+#           "effect": "NoExecute"
+#         }]
+#       }
+#     }
+#   }
+# }

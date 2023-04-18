@@ -1,5 +1,6 @@
 services:
   nginx-ingress-controller: {}
+  nginx-istio-ingress-controller: {}
     # TODO: Implement values templating in these resources
     # scaling:
     #   enabled: true

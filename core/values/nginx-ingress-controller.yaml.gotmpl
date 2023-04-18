@@ -42,7 +42,7 @@ ingressClassResource:
   parameters: {}
 electionID: {{ $values.cluster.common.defaultIngressClass }}-istio-{{ $releaseNamespace }}
 extraArgs:
-  ingress-class: {{ $values.cluster.common.defaultIngressClass }}-{{ $releaseNamespace }}
+  ingress-class: {{ $values.cluster.common.defaultIngressClass }}-istio-{{ $releaseNamespace }}
 fullnameOverride: nginx-istio-ingress-controller-{{ $releaseNamespace }}
 {{ else }}
 ingressClassResource:

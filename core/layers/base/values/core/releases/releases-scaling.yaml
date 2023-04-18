@@ -1,7 +1,7 @@
 releases:
   logging-stack:
     scaling:
-      enabled: true
+      enabled: false
       list:
         es:
           enabled: false
@@ -41,20 +41,51 @@ releases:
             threshold: 0.80
   nginx-ingress-controller:
     scaling:
-      enabled: true
+      enabled: false
+      namespaceSuffix: false
       minReplicaCount: 3
-      maxReplicaCount: 6
+      maxReplicaCount: 9
       cpuAvg:
         enabled: true
-        container: controller
       memoryAvg:
         enabled: true
-        container: controller
+      ingressControllerAccessFreq:
+        enabled: true
     monitoring:
       enabled: false
+      namespaceSuffix: false
       cpuAvg:
-        enabled: false
+        enabled: true
         container: controller
       memoryAvg:
-        enabled: false
+        enabled: true
+        container: controller
+      ingressControllerAccessFreq:
+        enabled: true
+        container: controller
+  nginx-istio-ingress-controller:
+    scaling:
+      enabled: false
+      namespaceSuffix: false
+      minReplicaCount: 3
+      maxReplicaCount: 9
+      cpuAvg:
+        enabled: true
+      memoryAvg:
+        enabled: true
+      ingressControllerAccessFreq:
+        itio:  true
+        enabled: true
+    monitoring:
+      enabled: false
+      namespaceSuffix: false
+      cpuAvg:
+        enabled: true
+        container: controller
+      memoryAvg:
+        enabled: true
+        container: controller
+      ingressControllerAccessFreq:
+        enabled: true
+        itio:  true
         container: controller

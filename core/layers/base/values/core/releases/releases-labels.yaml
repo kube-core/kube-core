@@ -126,7 +126,7 @@ releases:
     labels:
       component: egress
       group: istio
-  istiod:
+  istio-discovery:
     labels:
       component: discovery
       group: istio

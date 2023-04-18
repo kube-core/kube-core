@@ -451,8 +451,9 @@ releases:
       publishServiceEnabled: true
       replicaCount: 2
       serviceType: LoadBalancer
-      sidecarHosts:
-        - istio-system/*
+      sidecarHosts: []
+      # - other-namespace/*
+      # - istio-system/*
       loadBalancerIP: ""
       tolerations: []
   polaris:
@@ -563,3 +564,9 @@ releases:
     # values:
     #   prometheusUrl: my-prom
     #   prometheusExternalUrl: my-prom-ui
+  kiali-operator:
+    slack:
+      enabled: true
+      # channels:
+      #   test:
+      #     enabled: true

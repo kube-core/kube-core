@@ -37,22 +37,9 @@ resources:
         {{ if $resourceConfig | getOrNil "scaleTargetRefKind" }}
         kind: {{ $resourceConfig.scaleTargetRefKind }}
         {{ end }}
-        {{ if $resourceConfig | getOrNil "scaleTargetRefName" }}
+        {{ if ($resourceConfig | getOrNil "scaleTargetRefName") }}
         name: {{ $resourceConfig.scaleTargetRefName }}
         {{ else }}
         name: {{ $releaseName }}
         {{ end }}
   {{ end }}
-
-#   {{ if ($extension | getOrNil "custom") }}
-#   {{ range $resourceName, $resourceConfig := ($extension | getOrNil "custom") }}
-#   {{ $sloType := (coalesce ($resourceConfig | getOrNil "type") "pyrra") }}
-#   {{ if (eq $sloType "pyrra") }}
-#     {{ $releaseName }}-{{ $resourceName }}: {{ toYaml $resourceConfig | nindent 6 }}
-#       namespace: {{ $releaseNamespace }}
-#       {{ if (not $resourceConfig | getOrNil "targetName") }}
-#       targetName: {{ $releaseName }}
-#       {{ end }}
-#   {{ end }}
-#   {{ end }}
-#   {{ end }}

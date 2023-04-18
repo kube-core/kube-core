@@ -4,17 +4,20 @@ releases:
       enabled: true
       patches:
         patch-nginx-istio-ingress-clusterip:
-          name: patch-nginx-istio-ingress-clusterip
+          templated: false
+          namespacePrefix: false
+          namespaceSuffix: false
           targetObjectRef:
             apiVersion: apps/v1
             kind: Deployment
             name: nginx-istio-ingress-controller
-          patchTemplate:
+            namespace: nginx-istio
+          templatedPatchTemplate: |-
             spec:
               template:
                 metadata:
                   annotations:
-                    traffic.sidecar.istio.io/excludeOutboundIPRanges: "{{ (index . 1).spec.clusterIP }}"
+                    traffic.sidecar.istio.io/excludeOutboundIPRanges: {{(index . 1).spec.clusterIP}}/24
           sourceObjectRefs:
             - apiVersion: v1
               kind: Service

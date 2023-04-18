@@ -386,6 +386,26 @@ directories:
           repository:
             url: https://oauth2-proxy.github.io/manifests
 
+      - path: kiali-operator
+        helmChart:
+          name: kiali-operator
+          version: 1.66.0
+          repository:
+            url: https://kiali.org/helm-charts
+
+      - path: jaeger-operator
+        helmChart:
+          name: jaeger-operator
+          version: 2.42.0
+          repository:
+            url: https://jaegertracing.github.io/helm-charts
+      - path: sidecar-cleaner
+        helmChart:
+          name: sidecar-cleaner
+          version: 0.3.0
+          repository:
+            url: https://opensource.aoe.com/kubernetes-sidecar-cleaner/
+
       # Local Releases
       - path: slack-operator
         directory:
@@ -520,6 +540,18 @@ directories:
       - path: opencost
         directory:
           path: ../../../releases/local/opencost
+      - path: istio-jaeger
+        directory:
+          path: ../../../releases/local/istio-jaeger
+      - path: istio-elasticsearch
+        directory:
+          path: ../../../releases/local/istio-elasticsearch
+      - path: jaeger-managed
+        directory:
+          path: ../../../releases/local/jaeger-managed
+      - path: istio-ingress-config
+        directory:
+          path: ../../../releases/local/istio-ingress-config
 
   # - path: releases/crds
   #   contents:

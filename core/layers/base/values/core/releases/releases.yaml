@@ -155,11 +155,38 @@ releases:
     chart: ../releases/dist/releases/charts/raw
     release:
       wait: true
+  istio-ingress-config:
+    shortName: istio-ing-conf
+    namespace: nginx-istio-ingress
+    namespaceShortName: istio-ing
+    chart: ../releases/dist/releases/charts/istio-ingress-config
+    release:
+      wait: true
   istio-kiali:
     shortName: istio-kia
     namespace: istio-system
     namespaceShortName: istio
-    chart: ../releases/dist/releases/charts/istio-kiali
+    chart: ../releases/local/kiali-managed
+  istio-jaeger:
+    shortName: istio-jae
+    namespace: istio-system
+    namespaceShortName: jae-ope
+    chart: ../releases/dist/releases/charts/jaeger-managed
+  istio-elasticsearch:
+    shortName: istio-es
+    namespace: istio-system
+    namespaceShortName: es-ope
+    chart: ../releases/dist/releases/charts/istio-elasticsearch
+  jaeger-managed:
+    shortName: jae
+    namespace: jaeger
+    namespaceShortName: jae
+    chart: ../releases/dist/releases/charts/jaeger-managed
+  kiali-managed:
+    shortName: kia
+    namespace: kiali
+    namespaceShortName: kia
+    chart: ../releases/local/kiali-managed
   istio-prometheus:
     shortName: istio-prm
     namespace: istio-system
@@ -170,7 +197,7 @@ releases:
     namespace: istio-system
     namespaceShortName: istio
     chart: ../releases/dist/releases/charts/istio-rules-external-services
-  istiod:
+  istio-discovery:
     shortName: istiod
     namespace: istio-system
     namespaceShortName: istio
@@ -272,7 +299,7 @@ releases:
   nginx-istio-ingress-controller:
     shortName: istio-ngx-ing
     extraReleaseValues:
-      - ./values/nginx-ingress-controller.yaml.gotmpl
+    - ./values/nginx-ingress-controller.yaml.gotmpl
     namespace: nginx-istio-ingress
     namespaceShortName: istio-ngx-ing
     chart: ../releases/dist/releases/charts/nginx-ingress-controller
@@ -519,3 +546,18 @@ releases:
     namespace: slack-operator
     namespaceShortName: slk-ope
     chart: ../releases/dist/releases/charts/slack-operator
+  kiali-operator:
+    shortName: kli-ope
+    namespace: kiali-operator
+    namespaceShortName: kli-ope
+    chart: ../releases/dist/releases/charts/kiali-operator
+  jaeger-operator:
+    shortName: jae-ope
+    namespace: jaeger-operator
+    namespaceShortName: jae-ope
+    chart: ../releases/dist/releases/charts/jaeger-operator
+  sidecar-cleaner:
+    shortName: sid-clea
+    namespace: sidecar-cleaner
+    namespaceShortName: sid-clea
+    chart: ../releases/dist/releases/charts/sidecar-cleaner

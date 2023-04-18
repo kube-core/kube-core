@@ -20,6 +20,7 @@ templates:
       renderExtensions: true
       forceNamespace: true
       forceNamespaceIngressClass: false
+      forceIngressClass: false
       forceNamespaceVisitorGroup: false
       forceClusterIssuer: ""
       forceNamespaceClusterIssuer: false
@@ -47,6 +48,8 @@ templates:
     release: {}
     slos: {}
     monitoring: {}
+    ingress:
+      enabled: false
     scaling:
       enabled: false
     chaos: {}
@@ -92,6 +95,7 @@ templates:
       renderExtensions: false
       forceNamespace: false
       forceNamespaceIngressClass: false
+      forceIngressClass: false
       forceNamespaceVisitorGroup: false
       forceClusterIssuer: ""
       forceNamespaceClusterIssuer: false
@@ -119,6 +123,8 @@ templates:
     release: {}
     slos: {}
     monitoring: {}
+    ingress:
+      enabled: false
     scaling:
       enabled: false
     chaos: {}
@@ -165,6 +171,7 @@ templates:
       renderExtensions: false
       forceNamespace: false
       forceNamespaceIngressClass: false
+      forceIngressClass: false
       forceNamespaceVisitorGroup: false
       forceClusterIssuer: ""
       forceNamespaceClusterIssuer: false
@@ -192,6 +199,8 @@ templates:
     release: {}
     slos: {}
     monitoring: {}
+    ingress:
+      enabled: false
     scaling:
       enabled: false
     chaos: {}
@@ -237,6 +246,7 @@ templates:
       renderExtensions: true
       forceNamespace: true
       forceNamespaceIngressClass: false
+      forceIngressClass: false
       forceNamespaceVisitorGroup: false
       forceClusterIssuer: ""
       forceNamespaceClusterIssuer: false
@@ -264,6 +274,8 @@ templates:
     release: {}
     slos: {}
     monitoring: {}
+    ingress:
+      enabled: false
     scaling:
       enabled: false
     chaos: {}
@@ -309,6 +321,7 @@ templates:
       renderExtensions: true
       forceNamespace: true
       forceNamespaceIngressClass: false
+      forceIngressClass: false
       forceNamespaceVisitorGroup: false
       forceClusterIssuer: ""
       forceNamespaceClusterIssuer: false
@@ -336,6 +349,8 @@ templates:
     release: {}
     slos: {}
     monitoring: {}
+    ingress:
+      enabled: false
     scaling:
       enabled: false
     chaos: {}
@@ -415,10 +430,11 @@ releases:
   istio-base: *release
   istio-grafana: *release
   istio-ingress-sidecar: *release
+  istio-ingress-config: *release
   istio-kiali: *release
   istio-prometheus: *release
   istio-rules-external-services: *release
-  istiod: *release
+  istio-discovery: *release
   keda: *release
   keycloak: *release
   keycloak-dev: *release
@@ -486,3 +502,9 @@ releases:
   pyrra: *release
   linkerd: *release
   slack-operator: *release
+  kiali-operator: *release
+  jaeger-operator: *release
+  istio-jaeger: *release
+  istio-elasticsearch: *release
+  jaeger-managed: *release
+  kiali-managed: *release

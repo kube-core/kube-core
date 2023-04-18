@@ -71,28 +71,44 @@ releases:
       injectReloaderAnnotations: true
   istio-grafana:
     options:
+      forceIngressClass: nginx-istio
       applyDefaultAnnotationsOnIngress: true
       applyDefaultLabelsOnIngress: true
       injectDefaultIngressClassName: true
       injectReloaderAnnotations: true
       patchIngresses: true
-      upgradeIngress: true
+  istio-jaeger:
+    options:
+      forceIngressClass: nginx-istio
+      applyDefaultAnnotationsOnIngress: true
+      applyDefaultLabelsOnIngress: true
+      injectDefaultIngressClassName: true
+      injectReloaderAnnotations: true
+      patchIngresses: true
   istio-kiali:
     options:
+      forceIngressClass: nginx-istio
       applyDefaultAnnotationsOnIngress: true
       applyDefaultLabelsOnIngress: true
       injectDefaultIngressClassName: true
       injectReloaderAnnotations: true
       patchIngresses: true
-      upgradeIngress: true
   istio-prometheus:
     options:
+      forceIngressClass: nginx-istio
       applyDefaultAnnotationsOnIngress: true
       applyDefaultLabelsOnIngress: true
       injectDefaultIngressClassName: true
       injectReloaderAnnotations: true
       patchIngresses: true
-      upgradeIngress: true
+  istio-elasticsearch:
+    options:
+      forceIngressClass: nginx-istio
+      applyDefaultAnnotationsOnIngress: true
+      applyDefaultLabelsOnIngress: true
+      injectDefaultIngressClassName: true
+      injectReloaderAnnotations: true
+      patchIngresses: true
   keda:
     options:
       injectClusterLoggingLabel: true

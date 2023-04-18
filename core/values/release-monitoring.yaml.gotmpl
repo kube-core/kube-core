@@ -1,18 +1,29 @@
-{{ $values := .values }}
+{{/* Extensions Header - Start */}}
+
+{{/* Common Variables */}}
+{{ $values := (coalesce (. | getOrNil "values") (. | getOrNil "Values")) }}
 {{ $releases := (merge $values.releases $values.applications $values.services )}}
-{{ $releaseNamespace := .releaseNamespace }}
 
-{{ $cloudProject := $values.cloud.project }}
-{{ $cloudLocation := $values.cloud.default.location }}
-{{ $clusterName := $values.cluster.config.name }}
+{{/* Release Variables */}}
+{{ $release := .item }}
+{{ $releaseName := $release.name }}
+{{ $releaseNamespace := $release.namespace }}
+{{ $releaseType := $release.type }}
+{{ $extension := (coalesce (index $release .extensionType) (index $release (.extensionType | camelcase | untitle)) ) }}
+{{ $extensionEnabled := ($extension | getOrNil "enabled") }}
 
-{{ $mainReleaseName := (.releaseName | replace "-monitoring" "") }}
-{{ $mainRelease := ($releases | getOrNil $mainReleaseName) }}
-{{ $currentRelease := ($releases | getOrNil .releaseName) }}
+{{ $templateValues := (dict "coreValues" $values "releaseValues" $extension "parentReleaseValues" $release "releaseNamespace" $releaseNamespace "releaseName" $releaseName) }}
 
-{{ $monitoringConfig := ($mainRelease | getOrNil "monitoring") }}
-
+{{/* Extensions Header - End */}}
 resources:
+  {{ $extensionListKey := "list" }}
+  {{ $extensionList := (coalesce ($extension | getOrNil $extensionListKey) (dict $releaseName $extension)) }}
   prometheus-rule:
-    {{ $mainReleaseName }}: {{ toYaml $monitoringConfig | nindent 6 }}
+  {{ range $resourceName, $resourceConfig := $extensionList }}
+    {{- $resourceNameTemplate := (printf "%s-%s" $releaseName $resourceName) }}
+    {{- if eq $releaseName $resourceName }}
+    {{- $resourceNameTemplate = $releaseName }}
+    {{- end }}
+    {{ $resourceNameTemplate }}: {{ toYaml $resourceConfig | nindent 6 }}
       namespace: {{ $releaseNamespace }}
+  {{ end }}

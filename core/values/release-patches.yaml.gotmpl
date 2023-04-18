@@ -5,7 +5,7 @@
 {{ $mainReleaseName := (.releaseName | replace "-patches" "") }}
 {{ $mainRelease := .item }}
 
-{{ $releasePatches := (index $releases $mainReleaseName "patches" )}}
+{{ $releasePatches := $mainRelease.patches }}
 {{ $releasePatchesEnabled := ($releasePatches | getOrNil "enabled") }}
 
 {{ $serviceAccountName := (printf "patch-operator-admin-%s-%s" $releaseNamespace $mainReleaseName )}}
@@ -52,11 +52,33 @@ manifests:
       name: {{ $serviceAccountName }}
     patches:
     {{ range $key, $patch := $releasePatches.patches }}
-      {{ $patch.name }}:
+      {{ $key }}:
+        {{ if (eq ($patch | getOrNil "templated") true) }}
+        targetObjectRef:
+          namespace: {{ coalesce ($patch.targetObjectRef | getOrNil "namespace") $releaseNamespace }}
+          {{ if ($patch | getOrNil "namespaceSuffix") }}
+          name: {{ coalesce ($patch.targetObjectRef | getOrNil "name") $mainRelease.name }}-{{ $mainRelease.namespace }}
+          {{ else if ($patch | getOrNil "namespacePrefix") }}
+          name: {{ $releaseNamespace }}-{{ coalesce ($patch.targetObjectRef | getOrNil "name") $mainRelease.name }}
+          {{ else }}
+          name: {{ coalesce ($patch.targetObjectRef | getOrNil "name") $mainRelease.name }}
+          {{ end }}
+          kind: {{ coalesce ($patch.targetObjectRef | getOrNil "kind") "deployment" }}
+          apiVersion: {{ coalesce ($patch.targetObjectRef | getOrNil "apiVersion") "v1" }}
+        {{ else }}
         targetObjectRef: {{ toYaml $patch.targetObjectRef | nindent 10 }}
+        {{ end }}
+
+
         sourceObjectRefs: {{ toYaml $patch.sourceObjectRefs | nindent 10 }}
+
         patchType: {{ coalesce (getOrNil "patchType" $patch) "application/strategic-merge-patch+json" }}
-        patchTemplate: |
+        {{ if $patch | getOrNil "templatedPatchTemplate" }}
+        patchTemplate: |-
+          {{ $patch.templatedPatchTemplate | nindent 10 }}
+        {{ else }}
+        patchTemplate: |-
           {{ toYaml $patch.patchTemplate | nindent 10 }}
+        {{ end }}
     {{ end }}
 {{ end }}
