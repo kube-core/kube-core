@@ -2,9 +2,28 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.11.22](https://github.com/kube-core/kube-core/compare/v0.11.21...v0.11.22)
+
+- releases: Upgraded istio integration [`bc1105a`](https://github.com/kube-core/kube-core/commit/bc1105a056a8dc5a54321c8a3566c43c83055415)
+- releases/istio: Fixed istio releases [`0853364`](https://github.com/kube-core/kube-core/commit/08533648cba3fcb643712f5c426d71e8f6fb1b9c)
+- releases/app-extensions: Added ingress integration & Upgraded some resources [`16f8f57`](https://github.com/kube-core/kube-core/commit/16f8f5776077a6e228eabaa023aaf8c21f57022a)
+- core/layers: Updated layers to improve istio integration [`c3e1754`](https://github.com/kube-core/kube-core/commit/c3e1754e89b5ff6bcf62d216b5914aceeeffc1fb)
+- core/releases: Updated and added cloud integration for chartmuseum [`0ea536c`](https://github.com/kube-core/kube-core/commit/0ea536cb891bc12b5c0ac38873876dd56ae848a0)
+- cli/scripts: Added some utility scripts [`4e01917`](https://github.com/kube-core/kube-core/commit/4e01917722e076c11a546c5d1bac0c0422f50872)
+- core/templates: Reworked scaling extension integration [`4737315`](https://github.com/kube-core/kube-core/commit/4737315fbb11c768a898cf8d006118b630745815)
+- releases/kps: Fixed some templating issues [`1bded2f`](https://github.com/kube-core/kube-core/commit/1bded2f0bc95d6a24e9be932f9312a081101b941)
+- releases/app-extensions: Added extraPrometheusTriggers on ScaledObject [`56a02ac`](https://github.com/kube-core/kube-core/commit/56a02acc80eae915e2a4fe6a433f72e07248ad11)
+- core/releases: Added chartmuseum dashboard to monitoring grafana [`69e8aa6`](https://github.com/kube-core/kube-core/commit/69e8aa6316b1ca581ed586c9cdcc87cd6f634852)
+- core/releases: Added config key for nginx-ingress LB IP & default resources requests [`d71677f`](https://github.com/kube-core/kube-core/commit/d71677f7e9918937fd9af29aeac3fd9a5a227c1e)
+- releases/app-extensions: Added SlackChannel [`40ea7e4`](https://github.com/kube-core/kube-core/commit/40ea7e43190bd9be33539fd4a126d9bb44c43808)
+- cli/scripts: Allowed files folder in charts dist build [`d49dbd3`](https://github.com/kube-core/kube-core/commit/d49dbd356138c7a221b87634c9bb079e21343cf8)
+
 #### [v0.11.21](https://github.com/kube-core/kube-core/compare/v0.11.20...v0.11.21)
 
+> 7 April 2023
+
 - releases/nginx-ingress-controller: Upgraded chart to v9.5.1 [`76a8e62`](https://github.com/kube-core/kube-core/commit/76a8e6295f5d7bc40a9e2f5eb30b48d835c88541)
+- release: v0.11.21 [`473cff4`](https://github.com/kube-core/kube-core/commit/473cff4dc794ce7cc28263495dfb142e9fe0ae8b)
 
 #### [v0.11.20](https://github.com/kube-core/kube-core/compare/v0.11.19...v0.11.20)
 
