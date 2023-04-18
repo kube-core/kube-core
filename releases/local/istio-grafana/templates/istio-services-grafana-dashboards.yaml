@@ -1,0 +1,15 @@
+apiVersion: v1
+data:
+  istio-extension-dashboard.json: |
+    {{ .Files.Get "files/istio-extension-dashboard.json" | indent 4 }}
+  istio-mesh-dashboard.json: |
+    {{ .Files.Get "files/istio-mesh-dashboard.json" | indent 4 }}
+  istio-service-dashboard.json: |
+    {{ .Files.Get "files/istio-service-dashboard.json" | indent 4 }}
+  istio-workload-dashboard.json: |
+    {{ .Files.Get "files/istio-workload-dashboard.json" | indent 4 }}
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: istio-services-grafana-dashboards
+  namespace: istio-system

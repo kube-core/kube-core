@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   labels: {{ toYaml (.Values.cluster.common.defaultIngressLabels) | nindent 4 }}
@@ -6,16 +6,19 @@ metadata:
   name: prometheus
   namespace: istio-system
 spec:
+  ingressClassName: {{ .Values.cluster.common.defaultIngressClass }}
   rules:
-  - host: prometheus.mesh.{{ .Values.cluster.config.domain }}
+  - host: prometheus.istio-system.{{ .Values.cluster.config.domain }}
     http:
       paths:
       - backend:
-          serviceName: prometheus
-          servicePort: 9090
+          service:
+            name: prometheus
+            port:
+              number: 9090
         path: /
         pathType: ImplementationSpecific
   tls:
   - hosts:
-    - prometheus.mesh.{{ .Values.cluster.config.domain }}
+    - prometheus.istio-system.{{ .Values.cluster.config.domain }}
     secretName: prometheus-tls

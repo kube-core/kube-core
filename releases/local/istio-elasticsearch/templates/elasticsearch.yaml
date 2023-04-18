@@ -1,0 +1,67 @@
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: elasticsearch
+spec:
+  http:
+    tls:
+      selfSignedCertificate:
+        disabled: true
+  nodeSets:
+    - config:
+        node.roles:
+          - master
+          - data
+          - ingest
+        node.store.allow_mmap: false
+        xpack.security.authc:
+          anonymous:
+            authz_exception: false
+            roles: superuser
+            username: anonymous
+      count: 3
+      name: default
+      podTemplate:
+        metadata:
+          creationTimestamp: null
+        spec:
+          containers:
+            - env:
+                - name: ES_JAVA_OPTS
+                  value: -Xms2g -Xmx2g
+              name: elasticsearch
+              resources:
+                limits:
+                  cpu: 2
+                  memory: 4Gi
+                requests:
+                  cpu: 1
+                  memory: 4Gi
+          initContainers:
+            - command:
+                - sh
+                - -c
+                - sysctl -w vm.max_map_count=262144
+              name: sysctl
+              securityContext:
+                privileged: true
+            - command:
+                - sh
+                - -c
+                - ulimit -n 65536
+              image: busybox
+              name: increase-ulimit
+              securityContext:
+                privileged: true
+      volumeClaimTemplates:
+        - metadata:
+            name: elasticsearch-data
+          spec:
+            accessModes:
+              - ReadWriteOnce
+            resources:
+              requests:
+                storage: 20Gi
+            storageClassName: gcp-sc-delete-wait
+  version: 8.3.3
+  volumeClaimDeletePolicy: DeleteOnScaledownOnly

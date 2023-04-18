@@ -1,11 +1,14 @@
 manifests:
-- apiVersion: networking.istio.io/v1alpha3
+- apiVersion: networking.istio.io/v1beta1
   kind: Sidecar
   metadata:
     name: ingress
-    namespace: nginx-istio-ingress
   spec:
     egress:
     - hosts:
-      {{ toYaml (index .Values.releases "nginx-istio-ingress-controller" "config" "sidecarHosts") | indent 6 | trim }}
-
+      - istio-system/*
+      {{ if (index .Values.releases "nginx-istio-ingress-controller" "config" "sidecarHosts") }}
+      {{ range (index .Values.releases "nginx-istio-ingress-controller" "config" "sidecarHosts") }}
+      - {{ . }}
+      {{ end }}
+      {{ end }}

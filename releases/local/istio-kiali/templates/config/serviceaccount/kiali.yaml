@@ -1,0 +1,17 @@
+# Source: kiali-server/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kiali
+  namespace: istio-system
+  labels:
+    helm.sh/chart: kiali-server-1.63.1
+    app: kiali
+    app.kubernetes.io/name: kiali
+    app.kubernetes.io/instance: kiali
+    version: "v1.63.1"
+    app.kubernetes.io/version: "v1.63.1"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: "kiali"
+...
+

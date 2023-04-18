@@ -22,7 +22,6 @@ webhooks:
         namespace: {{ .Values.global.istioNamespace }}
         path: "/validate"
       {{- end }}
-      caBundle: "" # patched at runtime when the webhook is ready.
     rules:
       - operations:
           - CREATE
@@ -32,6 +31,9 @@ webhooks:
           - networking.istio.io
           - telemetry.istio.io
           - extensions.istio.io
+          {{- if .Values.base.validateGateway }}
+          - gateway.networking.k8s.io
+          {{- end }}
         apiVersions:
           - "*"
         resources:

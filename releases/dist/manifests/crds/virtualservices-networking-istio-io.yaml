@@ -136,6 +136,35 @@ spec:
                             delegate VirtualService resides.
                           type: string
                       type: object
+                    directResponse:
+                      description: A HTTP rule can either return a direct_response,
+                        redirect or forward (default) traffic.
+                      properties:
+                        body:
+                          description: Specifies the content of the response body.
+                          oneOf:
+                          - not:
+                              anyOf:
+                              - required:
+                                - string
+                              - required:
+                                - bytes
+                          - required:
+                            - string
+                          - required:
+                            - bytes
+                          properties:
+                            bytes:
+                              description: response body as base64 encoded bytes.
+                              format: binary
+                              type: string
+                            string:
+                              type: string
+                          type: object
+                        status:
+                          description: Specifies the HTTP response status to be returned.
+                          type: integer
+                      type: object
                     fault:
                       description: Fault injection policy to apply on HTTP traffic
                         at the client side.
@@ -158,6 +187,7 @@ spec:
                             - http2Error
                           properties:
                             grpcStatus:
+                              description: GRPC status code to use to abort the request.
                               type: string
                             http2Error:
                               type: string
@@ -400,6 +430,10 @@ spec:
                             description: Source namespace constraining the applicability
                               of a rule to workloads in that namespace.
                             type: string
+                          statPrefix:
+                            description: The human readable prefix to use when emitting
+                              statistics for this route.
+                            type: string
                           uri:
                             oneOf:
                             - not:
@@ -494,8 +528,8 @@ spec:
                       description: The name assigned to the route for debugging purposes.
                       type: string
                     redirect:
-                      description: A HTTP rule can either redirect or forward (default)
-                        traffic.
+                      description: A HTTP rule can either return a direct_response,
+                        redirect or forward (default) traffic.
                       oneOf:
                       - not:
                           anyOf:
@@ -561,8 +595,8 @@ spec:
                           type: string
                       type: object
                     route:
-                      description: A HTTP rule can either redirect or forward (default)
-                        traffic.
+                      description: A HTTP rule can either return a direct_response,
+                        redirect or forward (default) traffic.
                       items:
                         properties:
                           destination:
@@ -616,6 +650,8 @@ spec:
                                 type: object
                             type: object
                           weight:
+                            description: Weight specifies the relative proportion
+                              of traffic to be forwarded to the destination.
                             format: int32
                             type: integer
                         type: object
@@ -685,6 +721,8 @@ spec:
                                 type: string
                             type: object
                           weight:
+                            description: Weight specifies the relative proportion
+                              of traffic to be forwarded to the destination.
                             format: int32
                             type: integer
                         type: object
@@ -751,6 +789,8 @@ spec:
                                 type: string
                             type: object
                           weight:
+                            description: Weight specifies the relative proportion
+                              of traffic to be forwarded to the destination.
                             format: int32
                             type: integer
                         type: object
@@ -879,6 +919,35 @@ spec:
                             delegate VirtualService resides.
                           type: string
                       type: object
+                    directResponse:
+                      description: A HTTP rule can either return a direct_response,
+                        redirect or forward (default) traffic.
+                      properties:
+                        body:
+                          description: Specifies the content of the response body.
+                          oneOf:
+                          - not:
+                              anyOf:
+                              - required:
+                                - string
+                              - required:
+                                - bytes
+                          - required:
+                            - string
+                          - required:
+                            - bytes
+                          properties:
+                            bytes:
+                              description: response body as base64 encoded bytes.
+                              format: binary
+                              type: string
+                            string:
+                              type: string
+                          type: object
+                        status:
+                          description: Specifies the HTTP response status to be returned.
+                          type: integer
+                      type: object
                     fault:
                       description: Fault injection policy to apply on HTTP traffic
                         at the client side.
@@ -901,6 +970,7 @@ spec:
                             - http2Error
                           properties:
                             grpcStatus:
+                              description: GRPC status code to use to abort the request.
                               type: string
                             http2Error:
                               type: string
@@ -1143,6 +1213,10 @@ spec:
                             description: Source namespace constraining the applicability
                               of a rule to workloads in that namespace.
                             type: string
+                          statPrefix:
+                            description: The human readable prefix to use when emitting
+                              statistics for this route.
+                            type: string
                           uri:
                             oneOf:
                             - not:
@@ -1237,8 +1311,8 @@ spec:
                       description: The name assigned to the route for debugging purposes.
                       type: string
                     redirect:
-                      description: A HTTP rule can either redirect or forward (default)
-                        traffic.
+                      description: A HTTP rule can either return a direct_response,
+                        redirect or forward (default) traffic.
                       oneOf:
                       - not:
                           anyOf:
@@ -1304,8 +1378,8 @@ spec:
                           type: string
                       type: object
                     route:
-                      description: A HTTP rule can either redirect or forward (default)
-                        traffic.
+                      description: A HTTP rule can either return a direct_response,
+                        redirect or forward (default) traffic.
                       items:
                         properties:
                           destination:
@@ -1359,6 +1433,8 @@ spec:
                                 type: object
                             type: object
                           weight:
+                            description: Weight specifies the relative proportion
+                              of traffic to be forwarded to the destination.
                             format: int32
                             type: integer
                         type: object
@@ -1428,6 +1504,8 @@ spec:
                                 type: string
                             type: object
                           weight:
+                            description: Weight specifies the relative proportion
+                              of traffic to be forwarded to the destination.
                             format: int32
                             type: integer
                         type: object
@@ -1494,6 +1572,8 @@ spec:
                                 type: string
                             type: object
                           weight:
+                            description: Weight specifies the relative proportion
+                              of traffic to be forwarded to the destination.
                             format: int32
                             type: integer
                         type: object

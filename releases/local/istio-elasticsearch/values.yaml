@@ -1,0 +1,10 @@
+cluster:
+  common:
+    defaultServiceAnnotations: {}
+    defaultServiceLabels: {}
+    defaultIngressAnnotations: {}
+    defaultIngressLabels: {}
+  config:
+    domain: kube-core.io
+
+elasticsearch: {}

@@ -1,0 +1,54 @@
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+  name: elasticsearch
+spec:
+  version: 8.3.3
+  config:
+    # telemetry.optIn: "true"
+    # telemetry.allowChangingOptInStatus: "true"
+    uiSettings.overrides.theme:darkMode: "true"
+    xpack.security.authc.providers:
+      basic.basic1:
+        order: 0
+      anonymous.anonymous1:
+        order: 1
+        credentials:
+          username: "anonymous_service_account"
+          password: "anonymous_service_account_password"
+  podTemplate:
+    spec:
+      containers:
+      - name: kibana
+        env:
+          - name: ESUSER
+            value: elastic
+          - name: ESPASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: elasticsearch-es-elastic-user
+                key: elastic
+        resources:
+          requests:
+            memory: 256m
+            cpu: 0.1
+          limits:
+            memory: 1Gi
+            cpu: 1
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: 5601
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+  http:
+    tls:
+      selfSignedCertificate:
+        disabled: true
+  elasticsearchRef:
+    name: elasticsearch
+  count: 1

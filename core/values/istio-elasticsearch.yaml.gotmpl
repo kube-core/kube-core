@@ -1,0 +1,15 @@
+{{/* Release Values Templates Header - START */}}
+{{ $values := (coalesce (. | getOrNil "values") (. | getOrNil "Values")) }}
+{{ $release := (index $values.releases .Release.Name) }}
+{{ $releaseName := .Release.Name }}
+{{ $releaseNamespace := .Release.Namespace }}
+{{ $releaseType := $release.type }}
+
+{{ $_ := set $release "name" $releaseName }}
+{{ $_ := set $release "namespace" $releaseNamespace }}
+{{ (tpl (readFile "../templates/releases/standard/variables/release-variables-config.yaml.gotmpl") (dict "item" $release "values" $values)) }}
+{{ (tpl (readFile "../templates/releases/standard/variables/release-variables-cloud.yaml.gotmpl") (dict "item" $release "values" $values)) }}
+{{/* Release Values Templates Header - END */}}
+{{ $jaegerSubdomain := (coalesce ((index $values.releases "istio-jaeger" "ingress") | getOrNil "subDomainOverride") ((index $values.releases "istio-jaeger" "ingress") | getOrNil "subDomain") "jaeger.istio-system")  }}
+{{ $grafanaSubdomain := (coalesce ((index $values.releases "istio-grafana" "ingress") | getOrNil "subDomainOverride") ((index $values.releases "istio-grafana" "ingress") | getOrNil "subDomain") "grafana.istio-system")  }}
+cluster: {{ toYaml .Values.cluster | nindent 4 }}

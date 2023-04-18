@@ -1,3 +1,4 @@
+{{ $mcsAPIGroup := or .Values.pilot.env.MCS_API_GROUP "multicluster.x-k8s.io" }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -81,6 +82,9 @@ rules:
       - "signers"
     resourceNames:
     - "kubernetes.io/legacy-unknown"
+{{- range .Values.global.certSigners }}
+    - {{ . | quote }}
+{{- end }}
     verbs: ["approve"]
 
   # Used by Istiod to verify the JWT tokens
@@ -100,6 +104,9 @@ rules:
   - apiGroups: ["networking.x-k8s.io", "gateway.networking.k8s.io"]
     resources: ["*"] # TODO: should be on just */status but wildcard is not supported
     verbs: ["update", "patch"]
+  - apiGroups: ["gateway.networking.k8s.io"]
+    resources: ["gatewayclasses"]
+    verbs: ["create", "update", "patch", "delete"]
 
   # Needed for multicluster secret reading, possibly ingress certs in the future
   - apiGroups: [""]
@@ -107,12 +114,12 @@ rules:
     verbs: ["get", "watch", "list"]
 
   # Used for MCS serviceexport management
-  - apiGroups: ["multicluster.x-k8s.io"]
+  - apiGroups: ["{{ $mcsAPIGroup }}"]
     resources: ["serviceexports"]
     verbs: [ "get", "watch", "list", "create", "delete"]
 
   # Used for MCS serviceimport management
-  - apiGroups: ["multicluster.x-k8s.io"]
+  - apiGroups: ["{{ $mcsAPIGroup }}"]
     resources: ["serviceimports"]
     verbs: ["get", "watch", "list"]
 ---
@@ -131,4 +138,7 @@ rules:
   - apiGroups: [""]
     verbs: [ "get", "watch", "list", "update", "patch", "create", "delete" ]
     resources: [ "services" ]
+  - apiGroups: [""]
+    verbs: [ "get", "watch", "list", "update", "patch", "create", "delete" ]
+    resources: [ "serviceaccounts"]
 {{- end }}

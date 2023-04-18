@@ -1,0 +1,25 @@
+# Source: prometheus/templates/server/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    component: "server"
+    app: prometheus
+    release: prometheus
+    chart: prometheus-15.9.0
+    heritage: Helm
+  name: prometheus
+  namespace: istio-system
+spec:
+  ports:
+    - name: http
+      port: 9090
+      protocol: TCP
+      targetPort: 9090
+  selector:
+    component: "server"
+    app: prometheus
+    release: prometheus
+  sessionAffinity: None
+  type: "ClusterIP"
+

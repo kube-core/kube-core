@@ -1,0 +1,15 @@
+# Source: prometheus/templates/server/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    component: "server"
+    app: prometheus
+    release: prometheus
+    chart: prometheus-15.9.0
+    heritage: Helm
+  name: prometheus
+  namespace: istio-system
+  annotations:
+    {}
+

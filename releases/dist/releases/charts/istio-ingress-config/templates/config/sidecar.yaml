@@ -1,0 +1,17 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Sidecar
+metadata:
+  name: {{ coalesce .Values.name .Release.Name }}
+spec:
+  egress:
+  - hosts:
+    {{ if .Values.sidecarHosts }}
+    {{ range .Values.sidecarHosts }}
+    - {{ . }}
+    {{ end }}
+    {{ end }}
+    {{ if .Values.additionnalSidecarHosts }}
+    {{ range .Values.additionnalSidecarHosts }}
+    - {{ . }}
+    {{ end }}
+    {{ end }}

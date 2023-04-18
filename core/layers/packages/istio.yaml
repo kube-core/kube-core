@@ -14,7 +14,7 @@ releases:
       package: istio
     enabled: true
 
-  istiod:
+  istio-discovery:
     labels:
       package: istio
     enabled: true

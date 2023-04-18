@@ -1,1 +1,72 @@
+{{/* Release Values Templates Header - START */}}
+{{ $values := (coalesce (. | getOrNil "values") (. | getOrNil "Values")) }}
+{{ $release := (index $values.releases .Release.Name) }}
+{{ $releaseName := .Release.Name }}
+{{ $releaseNamespace := .Release.Namespace }}
+{{ $releaseType := $release.type }}
+
+{{ $_ := set $release "name" $releaseName }}
+{{ $_ := set $release "namespace" $releaseNamespace }}
+{{ (tpl (readFile "../templates/releases/standard/variables/release-variables-config.yaml.gotmpl") (dict "item" $release "values" $values)) }}
+{{ (tpl (readFile "../templates/releases/standard/variables/release-variables-cloud.yaml.gotmpl") (dict "item" $release "values" $values)) }}
+{{/* Release Values Templates Header - END */}}
+{{ $jaegerSubdomain := (coalesce ((index $values.releases "istio-jaeger" "ingress") | getOrNil "subDomainOverride") ((index $values.releases "istio-jaeger" "ingress") | getOrNil "subDomain") "jaeger.istio-system")  }}
+{{ $grafanaSubdomain := (coalesce ((index $values.releases "istio-grafana" "ingress") | getOrNil "subDomainOverride") ((index $values.releases "istio-grafana" "ingress") | getOrNil "subDomain") "grafana.istio-system")  }}
 cluster: {{ toYaml .Values.cluster | nindent 4 }}
+spec:
+  deployment:
+    replicas: 1
+    resources:
+      limits:
+        memory: 1Gi
+      requests:
+        cpu: 10m
+        memory: 64Mi
+    view_only_mode: false
+  external_services:
+    custom_dashboards:
+      enabled: true
+    istio:
+      component_status:
+        components:
+        - app_label: "istio-ingressgateway"
+          is_core: false
+          is_proxy: true
+          # default: namespace is undefined
+          namespace: istio-system
+        - app_label: "istio-egressgateway"
+          is_core: false
+          is_proxy: true
+          # default: namespace is undefined
+          namespace: istio-system
+        enabled: true
+      root_namespace: istio-system
+    grafana:
+      enabled: true
+      dashboards:
+      - name: "Istio Service Dashboard"
+        variables:
+          namespace: "var-namespace"
+          service: "var-service"
+      - name: "Istio Workload Dashboard"
+        variables:
+          namespace: "var-namespace"
+          workload: "var-workload"
+      - name: "Istio Mesh Dashboard"
+      - name: "Istio Control Plane Dashboard"
+      - name: "Istio Performance Dashboard"
+      - name: "Istio Wasm Extension Dashboard"
+      url: https://{{ $grafanaSubdomain }}.{{ $release.metadata.config.clusterDomain }}
+      in_cluster_url: 'http://grafana:3000'
+    tracing:
+      enabled: true
+      in_cluster_url: 'http://jaeger-query:16686/jaeger'
+      use_grpc: false
+      url: https://{{ $jaegerSubdomain }}.{{ $release.metadata.config.clusterDomain }}/jaeger
+    prometheus:
+      url: http://prometheus:9090/
+  istio_labels:
+    app_label_name: "app.kubernetes.io/name"
+    injection_label_name: "istio-injection"
+    injection_label_rev:  "istio.io/rev"
+    version_label_name: "app.kubernetes.io/version"

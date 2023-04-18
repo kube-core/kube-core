@@ -1,6 +1,6 @@
 apiVersion: v2
 name: istio-prometheus
-version: 1.10.2
+version: '1.17'
 description: Helm chart for deploying Istio Prometheus
 keywords:
   - istio

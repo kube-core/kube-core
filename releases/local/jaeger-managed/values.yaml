@@ -1,0 +1,12 @@
+cluster:
+  common:
+    defaultServiceAnnotations: {}
+    defaultServiceLabels: {}
+    defaultIngressAnnotations: {}
+    defaultIngressLabels: {}
+  config:
+    domain: kube-core.io
+name: jaeger
+spec:
+  ingress:
+    enabled: false

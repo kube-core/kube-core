@@ -1,0 +1,63 @@
+cluster: {{ toYaml .Values.cluster | nindent 4 }}
+spec:
+  # strategy: allInOne
+  strategy: production
+  collector:
+    maxReplicas: 5
+    resources:
+      limits:
+        cpu: 100m
+        memory: 128Mi
+    options:
+      log-level: info
+      es:
+        use-aliases: true
+        use-ilm: true
+  query:
+    options:
+      log-level: info
+      query:
+        base-path: "/jaeger"
+      prometheus:
+        server-url: "http://prometheus:9090"
+      es:
+        use-aliases: true
+        use-ilm: true
+    metricsStorage: # <3>
+      type: prometheus # <4>
+  allInOne:
+    image: jaegertracing/all-in-one:1.44.0
+    options:
+      log-level: debug
+      query:
+        base-path: "/jaeger"
+      prometheus:
+        server-url: "http://prometheus:9090"
+    metricsStorage: # <3>
+      type: prometheus # <4>
+  sampling:
+    options:
+      default_strategy:
+        type: probabilistic
+        param: 0.5
+  # storage:
+  #   type: memory
+  #   options:
+  #     max-traces: 100000
+  # storage:
+  #   type: badger
+  #   options:
+  #     max-traces: 100000
+  #     badger:
+  #       ephemeral: false
+  storage:
+    type: elasticsearch
+    options:
+      es:
+        server-urls: http://elasticsearch-es-http:9200
+        index-prefix: istio
+        # https://github.com/jaegertracing/jaeger/issues/3571
+        version: 7                                  # Necessary as it doesn't work with 8 yet
+        create-index-templates: false               # Necessary as it doesn't work with 8 yet
+  # agent:
+  #   strategy: DaemonSet

@@ -1,0 +1,7 @@
+apiVersion: v2
+appVersion: v0.1.0
+description: A simple app to watch and clean up istio-proxy sidecars in kubernetes
+  Jobs with /quitquitquit
+name: sidecar-cleaner
+type: application
+version: 0.3.0
