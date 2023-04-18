@@ -2,9 +2,16 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.11.24](https://github.com/kube-core/kube-core/compare/v0.11.23...v0.11.24)
+
+- core/layers: Fixed sidecar-cleaner not in schema [`560b647`](https://github.com/kube-core/kube-core/commit/560b64744c8af3b6a4f8286a9ee21c18489ea49c)
+
 #### [v0.11.23](https://github.com/kube-core/kube-core/compare/v0.11.22...v0.11.23)
 
+> 18 April 2023
+
 - releases/cluster-logging: Added custom default ILM policy [`4064db7`](https://github.com/kube-core/kube-core/commit/4064db7b909330ded1869e620035f85a1b653fc7)
+- release: v0.11.23 [`4ea5738`](https://github.com/kube-core/kube-core/commit/4ea5738a1519568d7c3e81c1bf96202d0571d310)
 
 #### [v0.11.22](https://github.com/kube-core/kube-core/compare/v0.11.21...v0.11.22)
 
