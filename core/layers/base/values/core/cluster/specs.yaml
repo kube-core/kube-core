@@ -1,258 +1,186 @@
 cluster:
   specs:
     autoscaling:
-      profile: OPTIMIZE_UTILIZATION # or BALANCED
+      profile: OPTIMIZE_UTILIZATION
       resourceLimits:
-        - resourceType: 'cpu'
-          minimum: 8
-          maximum: 32
-        - resourceType: 'memory'
-          minimum: 32
-          maximum: 128
+      - resourceType: cpu
+        minimum: 8
+        maximum: 32
+      - resourceType: memory
+        minimum: 32
+        maximum: 128
       management:
         autoRepair: true
         autoUpgrade: true
       diskSizeGb: 100
     kubernetes:
-      version: 1.21
+      version: 1.24
     nodes:
       main:
-        machine_type: "n2-custom-8-24576"
+        machine_type: e2-standard-4
         initial_node_count: 0
         min_count: 0
         max_count: 8
         local_ssd_count: 0
         disk_size_gb: 100
-        disk_type: "pd-ssd"
-        image_type: "COS"
-        auto_repair: true
-        auto_upgrade: true
-        preemptible: true
-        node_metadata: "UNSPECIFIED"
-      safety:
-        machine_type: "n2-custom-8-24576"
-        initial_node_count: 0
-        min_count: 0
-        max_count: 8
-        local_ssd_count: 0
-        disk_size_gb: 100
-        disk_type: "pd-ssd"
-        image_type: "COS"
+        disk_type: pd-ssd
+        image_type: COS_CONTAINERD
         auto_repair: true
         auto_upgrade: true
         preemptible: false
-        node_metadata: "UNSPECIFIED"
+        spot: true
+        node_metadata: UNSPECIFIED
+      safety:
+        machine_type: e2-standard-4
+        initial_node_count: 0
+        min_count: 0
+        max_count: 8
+        local_ssd_count: 0
+        disk_size_gb: 100
+        disk_type: pd-ssd
+        image_type: COS_CONTAINERD
+        auto_repair: true
+        auto_upgrade: true
+        preemptible: false
+        spot: false
+        node_metadata: UNSPECIFIED
       system:
-        machine_type: "e2-micro"
+        machine_type: e2-micro
         min_count: 2
         max_count: 10
         local_ssd_count: 0
         disk_size_gb: 30
-        disk_type: "pd-ssd"
-        image_type: "COS"
+        disk_type: pd-ssd
+        image_type: COS_CONTAINERD
         auto_repair: true
         auto_upgrade: true
-        preemptible: true
+        preemptible: false
+        spot: true
         initial_node_count: 1
-        node_metadata: "UNSPECIFIED"
+        node_metadata: UNSPECIFIED
       production:
-        machine_type: "n2-custom-8-24576"
+        machine_type: e2-standard-4
         initial_node_count: 0
         min_count: 0
         max_count: 1
         local_ssd_count: 0
         disk_size_gb: 100
-        disk_type: "pd-ssd"
-        image_type: "COS"
+        disk_type: pd-ssd
+        image_type: COS_CONTAINERD
         auto_repair: true
         auto_upgrade: true
-        preemptible: true
-        node_metadata: "UNSPECIFIED"
+        preemptible: false
+        spot: true
+        node_metadata: UNSPECIFIED
       monitoring:
-        machine_type: "n2-custom-8-24576"
+        machine_type: e2-standard-4
         initial_node_count: 0
         min_count: 0
         max_count: 1
         local_ssd_count: 0
         disk_size_gb: 100
-        disk_type: "pd-ssd"
-        image_type: "COS"
+        disk_type: pd-ssd
+        image_type: COS_CONTAINERD
         auto_repair: true
         auto_upgrade: true
-        preemptible: true
-        node_metadata: "UNSPECIFIED"
+        preemptible: false
+        spot: true
+        node_metadata: UNSPECIFIED
       logging:
-        machine_type: "n2-custom-8-24576"
+        machine_type: e2-standard-4
         initial_node_count: 0
         min_count: 0
         max_count: 1
         local_ssd_count: 0
         disk_size_gb: 100
-        disk_type: "pd-ssd"
-        image_type: "COS"
+        disk_type: pd-ssd
+        image_type: COS_CONTAINERD
         auto_repair: true
         auto_upgrade: true
-        preemptible: true
-        node_metadata: "UNSPECIFIED"
+        preemptible: false
+        spot: true
+        node_metadata: UNSPECIFIED
       data:
-        machine_type: "n2-custom-8-24576"
+        machine_type: e2-standard-4
         initial_node_count: 0
         min_count: 0
         max_count: 1
         local_ssd_count: 0
         disk_size_gb: 100
-        disk_type: "pd-ssd"
-        image_type: "COS"
+        disk_type: pd-ssd
+        image_type: COS_CONTAINERD
         auto_repair: true
         auto_upgrade: true
-        preemptible: true
-        node_metadata: "UNSPECIFIED"
+        preemptible: false
+        spot: true
+        node_metadata: UNSPECIFIED
       search:
-        machine_type: "n2-custom-8-24576"
+        machine_type: e2-standard-4
         initial_node_count: 0
         min_count: 0
         max_count: 1
         local_ssd_count: 0
         disk_size_gb: 100
-        disk_type: "pd-ssd"
-        image_type: "COS"
+        disk_type: pd-ssd
+        image_type: COS_CONTAINERD
         auto_repair: true
         auto_upgrade: true
-        preemptible: true
-        node_metadata: "UNSPECIFIED"
+        preemptible: false
+        spot: true
+        node_metadata: UNSPECIFIED
       web:
-        machine_type: "n2-custom-8-24576"
+        machine_type: e2-standard-4
         initial_node_count: 0
         min_count: 0
         max_count: 1
         local_ssd_count: 0
         disk_size_gb: 100
-        disk_type: "pd-ssd"
-        image_type: "COS"
+        disk_type: pd-ssd
+        image_type: COS_CONTAINERD
         auto_repair: true
         auto_upgrade: true
-        preemptible: true
-        node_metadata: "UNSPECIFIED"
+        preemptible: false
+        spot: true
+        node_metadata: UNSPECIFIED
       batch:
-        machine_type: "n2-custom-8-24576"
+        machine_type: e2-standard-4
         initial_node_count: 0
         min_count: 0
         max_count: 1
         local_ssd_count: 0
         disk_size_gb: 100
-        disk_type: "pd-ssd"
-        image_type: "COS"
+        disk_type: pd-ssd
+        image_type: COS_CONTAINERD
         auto_repair: true
         auto_upgrade: true
-        preemptible: true
-        node_metadata: "UNSPECIFIED"
+        preemptible: false
+        spot: true
+        node_metadata: UNSPECIFIED
       predator:
-        machine_type: "n2-custom-8-24576"
+        machine_type: e2-standard-4
         initial_node_count: 0
         min_count: 0
         max_count: 1
         local_ssd_count: 0
         disk_size_gb: 100
-        disk_type: "pd-ssd"
-        image_type: "COS"
+        disk_type: pd-ssd
+        image_type: COS_CONTAINERD
         auto_repair: true
         auto_upgrade: true
-        preemptible: true
-        node_metadata: "UNSPECIFIED"
+        preemptible: false
+        spot: true
+        node_metadata: UNSPECIFIED
       sf:
-        machine_type: "n2-custom-8-24576"
+        machine_type: e2-standard-4
         initial_node_count: 0
         min_count: 0
         max_count: 1
         local_ssd_count: 0
         disk_size_gb: 100
-        disk_type: "pd-ssd"
-        image_type: "COS"
+        disk_type: pd-ssd
+        image_type: COS_CONTAINERD
         auto_repair: true
         auto_upgrade: true
-        preemptible: true
-        node_metadata: "UNSPECIFIED"
-  logging:
-    flows:
-      flows:
-      - name: app
-      - name: cluster
-    integrations:
-      es:
-        enabled: true
-    stack:
-      es:
-        nodes:
-          storageClass: gcp-sc-retain-wait-ssd
-          affinity: {}
-          nodeSelector: {}
-          tolerations:
-          - key: "type"
-            operator: "Equal"
-            value: "search"
-            effect: "NoSchedule"
-          - key: "type"
-            operator: "Equal"
-            value: "search"
-            effect: "NoExecute"
-          - key: "type"
-            operator: "Equal"
-            value: "logging"
-            effect: "NoSchedule"
-          - key: "type"
-            operator: "Equal"
-            value: "logging"
-            effect: "NoExecute"
-          - key: "type"
-            operator: "Equal"
-            value: "monitoring"
-            effect: "NoSchedule"
-          - key: "type"
-            operator: "Equal"
-            value: "monitoring"
-            effect: "NoExecute"
-      kibana:
-        enabled: true
-      minio:
-        enabled: true
-      fluentd:
-        buffer:
-          storageClass: gcp-sc-retain-wait-ssd
-        tolerations:
-        - key: "type"
-          operator: "Equal"
-          value: "monitoring"
-          effect: "NoSchedule"
-        - key: "type"
-          operator: "Equal"
-          value: "monitoring"
-          effect: "NoExecute"
-        affinity: {}
-      fluentbit:
-        enabled: true
-        tolerations:
-        - key: "type"
-          operator: "Equal"
-          value: "monitoring"
-          effect: "NoSchedule"
-        - key: "type"
-          operator: "Equal"
-          value: "monitoring"
-          effect: "NoExecute"
-        - key: "type"
-          operator: "Equal"
-          value: "production"
-          effect: "NoSchedule"
-        - key: "type"
-          operator: "Equal"
-          value: "production"
-          effect: "NoExecute"
-        # - key: "type"
-        #   operator: "Equal"
-        #   value: "system"
-        #   effect: "NoSchedule"
-        # - key: "type"
-        #   operator: "Equal"
-        #   value: "system"
-        #   effect: "NoExecute"
-        affinity: {}
+        preemptible: false
+        spot: true
+        node_metadata: UNSPECIFIED

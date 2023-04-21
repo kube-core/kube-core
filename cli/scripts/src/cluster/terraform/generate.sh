@@ -56,7 +56,7 @@ eval "${absolutePaths}"
 
 check_requirements
 prepare_workspace
-check_context "${cluster_config_context}"
+# check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
 ## Docs Start ##
@@ -91,6 +91,7 @@ if [[ ! -z ${tfTemplates} ]]; then
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_MAIN_AUTO_REPAIR/${cluster_specs_nodes_main_auto_repair}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_MAIN_AUTO_UPGRADE/${cluster_specs_nodes_main_auto_upgrade}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_MAIN_PREEMPTIBLE/${cluster_specs_nodes_main_preemptible}/g" \
+            -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_MAIN_SPOT/${cluster_specs_nodes_main_spot}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_MAIN_INITIAL_NODE_COUNT/${cluster_specs_nodes_main_initial_node_count}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_MAIN_NODE_METADATA/${cluster_specs_nodes_main_node_metadata}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_SAFETY_MACHINE_TYPE/${cluster_specs_nodes_safety_machine_type}/g" \
@@ -103,6 +104,7 @@ if [[ ! -z ${tfTemplates} ]]; then
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_SAFETY_AUTO_REPAIR/${cluster_specs_nodes_safety_auto_repair}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_SAFETY_AUTO_UPGRADE/${cluster_specs_nodes_safety_auto_upgrade}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_SAFETY_PREEMPTIBLE/${cluster_specs_nodes_safety_preemptible}/g" \
+            -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_SAFETY_SPOT/${cluster_specs_nodes_safety_spot}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_SAFETY_INITIAL_NODE_COUNT/${cluster_specs_nodes_safety_initial_node_count}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_SAFETY_NODE_METADATA/${cluster_specs_nodes_safety_node_metadata}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_SYSTEM_MACHINE_TYPE/${cluster_specs_nodes_system_machine_type}/g" \
@@ -115,6 +117,7 @@ if [[ ! -z ${tfTemplates} ]]; then
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_SYSTEM_AUTO_REPAIR/${cluster_specs_nodes_system_auto_repair}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_SYSTEM_AUTO_UPGRADE/${cluster_specs_nodes_system_auto_upgrade}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_SYSTEM_PREEMPTIBLE/${cluster_specs_nodes_system_preemptible}/g" \
+            -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_SYSTEM_SPOT/${cluster_specs_nodes_system_spot}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_SYSTEM_INITIAL_NODE_COUNT/${cluster_specs_nodes_system_initial_node_count}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_SYSTEM_NODE_METADATA/${cluster_specs_nodes_system_node_metadata}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_PRODUCTION_MACHINE_TYPE/${cluster_specs_nodes_production_machine_type}/g" \
@@ -127,6 +130,7 @@ if [[ ! -z ${tfTemplates} ]]; then
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_PRODUCTION_AUTO_REPAIR/${cluster_specs_nodes_production_auto_repair}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_PRODUCTION_AUTO_UPGRADE/${cluster_specs_nodes_production_auto_upgrade}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_PRODUCTION_PREEMPTIBLE/${cluster_specs_nodes_production_preemptible}/g" \
+            -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_PRODUCTION_SPOT/${cluster_specs_nodes_production_spot}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_PRODUCTION_INITIAL_NODE_COUNT/${cluster_specs_nodes_production_initial_node_count}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_PRODUCTION_NODE_METADATA/${cluster_specs_nodes_production_node_metadata}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_MONITORING_MACHINE_TYPE/${cluster_specs_nodes_monitoring_machine_type}/g" \
@@ -139,6 +143,7 @@ if [[ ! -z ${tfTemplates} ]]; then
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_MONITORING_AUTO_REPAIR/${cluster_specs_nodes_monitoring_auto_repair}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_MONITORING_AUTO_UPGRADE/${cluster_specs_nodes_monitoring_auto_upgrade}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_MONITORING_PREEMPTIBLE/${cluster_specs_nodes_monitoring_preemptible}/g" \
+            -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_MONITORING_SPOT/${cluster_specs_nodes_monitoring_spot}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_MONITORING_INITIAL_NODE_COUNT/${cluster_specs_nodes_monitoring_initial_node_count}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_MONITORING_NODE_METADATA/${cluster_specs_nodes_monitoring_node_metadata}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_LOGGING_MACHINE_TYPE/${cluster_specs_nodes_logging_machine_type}/g" \
@@ -151,6 +156,7 @@ if [[ ! -z ${tfTemplates} ]]; then
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_LOGGING_AUTO_REPAIR/${cluster_specs_nodes_logging_auto_repair}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_LOGGING_AUTO_UPGRADE/${cluster_specs_nodes_logging_auto_upgrade}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_LOGGING_PREEMPTIBLE/${cluster_specs_nodes_logging_preemptible}/g" \
+            -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_LOGGING_SPOT/${cluster_specs_nodes_logging_spot}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_LOGGING_INITIAL_NODE_COUNT/${cluster_specs_nodes_logging_initial_node_count}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_LOGGING_NODE_METADATA/${cluster_specs_nodes_logging_node_metadata}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_DATA_MACHINE_TYPE/${cluster_specs_nodes_data_machine_type}/g" \
@@ -163,6 +169,7 @@ if [[ ! -z ${tfTemplates} ]]; then
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_DATA_AUTO_REPAIR/${cluster_specs_nodes_data_auto_repair}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_DATA_AUTO_UPGRADE/${cluster_specs_nodes_data_auto_upgrade}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_DATA_PREEMPTIBLE/${cluster_specs_nodes_data_preemptible}/g" \
+            -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_DATA_SPOT/${cluster_specs_nodes_data_spot}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_DATA_INITIAL_NODE_COUNT/${cluster_specs_nodes_data_initial_node_count}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_DATA_NODE_METADATA/${cluster_specs_nodes_data_node_metadata}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_SEARCH_MACHINE_TYPE/${cluster_specs_nodes_search_machine_type}/g" \
@@ -175,6 +182,7 @@ if [[ ! -z ${tfTemplates} ]]; then
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_SEARCH_AUTO_REPAIR/${cluster_specs_nodes_search_auto_repair}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_SEARCH_AUTO_UPGRADE/${cluster_specs_nodes_search_auto_upgrade}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_SEARCH_PREEMPTIBLE/${cluster_specs_nodes_search_preemptible}/g" \
+            -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_SEARCH_SPOT/${cluster_specs_nodes_search_spot}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_SEARCH_INITIAL_NODE_COUNT/${cluster_specs_nodes_search_initial_node_count}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_SEARCH_NODE_METADATA/${cluster_specs_nodes_search_node_metadata}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_WEB_MACHINE_TYPE/${cluster_specs_nodes_web_machine_type}/g" \
@@ -187,6 +195,7 @@ if [[ ! -z ${tfTemplates} ]]; then
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_WEB_AUTO_REPAIR/${cluster_specs_nodes_web_auto_repair}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_WEB_AUTO_UPGRADE/${cluster_specs_nodes_web_auto_upgrade}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_WEB_PREEMPTIBLE/${cluster_specs_nodes_web_preemptible}/g" \
+            -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_WEB_SPOT/${cluster_specs_nodes_web_spot}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_WEB_INITIAL_NODE_COUNT/${cluster_specs_nodes_web_initial_node_count}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_WEB_NODE_METADATA/${cluster_specs_nodes_web_node_metadata}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_BATCH_MACHINE_TYPE/${cluster_specs_nodes_batch_machine_type}/g" \
@@ -199,6 +208,7 @@ if [[ ! -z ${tfTemplates} ]]; then
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_BATCH_AUTO_REPAIR/${cluster_specs_nodes_batch_auto_repair}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_BATCH_AUTO_UPGRADE/${cluster_specs_nodes_batch_auto_upgrade}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_BATCH_PREEMPTIBLE/${cluster_specs_nodes_batch_preemptible}/g" \
+            -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_BATCH_SPOT/${cluster_specs_nodes_batch_spot}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_BATCH_INITIAL_NODE_COUNT/${cluster_specs_nodes_batch_initial_node_count}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_BATCH_NODE_METADATA/${cluster_specs_nodes_batch_node_metadata}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_PREDATOR_MACHINE_TYPE/${cluster_specs_nodes_predator_machine_type}/g" \
@@ -211,6 +221,7 @@ if [[ ! -z ${tfTemplates} ]]; then
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_PREDATOR_AUTO_REPAIR/${cluster_specs_nodes_predator_auto_repair}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_PREDATOR_AUTO_UPGRADE/${cluster_specs_nodes_predator_auto_upgrade}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_PREDATOR_PREEMPTIBLE/${cluster_specs_nodes_predator_preemptible}/g" \
+            -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_PREDATOR_SPOT/${cluster_specs_nodes_predator_spot}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_PREDATOR_INITIAL_NODE_COUNT/${cluster_specs_nodes_predator_initial_node_count}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_PREDATOR_NODE_METADATA/${cluster_specs_nodes_predator_node_metadata}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_SF_MACHINE_TYPE/${cluster_specs_nodes_sf_machine_type}/g" \
@@ -223,6 +234,7 @@ if [[ ! -z ${tfTemplates} ]]; then
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_SF_AUTO_REPAIR/${cluster_specs_nodes_sf_auto_repair}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_SF_AUTO_UPGRADE/${cluster_specs_nodes_sf_auto_upgrade}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_SF_PREEMPTIBLE/${cluster_specs_nodes_sf_preemptible}/g" \
+            -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_SF_SPOT/${cluster_specs_nodes_sf_spot}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_SF_INITIAL_NODE_COUNT/${cluster_specs_nodes_sf_initial_node_count}/g" \
             -e "s/KUBE_CORE_CLUSTER_SPECS_NODES_SF_NODE_METADATA/${cluster_specs_nodes_sf_node_metadata}/g" \
         > ${targetPath}/$(basename $template)
