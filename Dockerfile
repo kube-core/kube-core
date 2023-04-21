@@ -27,7 +27,7 @@ RUN apk add --no-cache python3 && \
 RUN curl -sSL https://sdk.cloud.google.com | bash
 ENV PATH $PATH:/root/google-cloud-sdk/bin
 
-RUN curl -sLS https://dl.get-arkade.dev | sh
+RUN curl -sLS https://get.arkade.dev | sh
 RUN arkade get kubectl
 RUN mv /root/.arkade/bin/kubectl /usr/local/bin/
 
