@@ -95,7 +95,7 @@ jobs:
         run: |
           rm -rf ./dist-manifests/manifests/
           mkdir -p ./dist-manifests/manifests
-          cp -rf ./kube-core/releases/dist/releases/crds/* ./dist-manifests/manifests/
+          cp -rf ./kube-core/releases/dist/manifests/* ./dist-manifests/manifests/
 
           cd ./dist-manifests
           gitStatus=$(git status --porcelain)
