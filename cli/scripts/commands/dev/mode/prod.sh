@@ -66,39 +66,41 @@ releasesPath="${corePath}/core/layers/base/values/core/releases"
 coreReleasesPath=${corePath}/releases
 
 # cat ${corePath}/envs/default/core/releases/releases.yaml | sed 's|../releases/dist/releases/charts/|../releases/local/|'
-localReleases=$(cat ${corePath}/vendir-releases.yaml | grep "/releases/local/" | awk '{ print $2}' | awk -F/ '{print $NF}')
+localReleases=$(cat ${corePath}/vendir-releases.yaml | grep "/releases/local/" | awk '{ print $2}' | awk -F/ '{print $NF}') || true
 externalReleases=$(cat ${corePath}/vendir-releases.yaml | grep "name:" | awk '{ print $2}' | awk -F/ '{print $NF}')
 
-echo "Linking local & external kube-core releases for prod..."
+if [[ ! -z "${localReleases}" ]]; then
+    echo "Linking local & external kube-core releases for prod..."
 
-echo "${localReleases}" | while read release; do
-    sed -i "s|../releases/.*/${release}|../releases/dist/releases/charts/${release}|" ${corePath}/core/layers/base/values/core/releases/releases.yaml
-done || true
+    echo "${localReleases}" | while read release; do
+        sed -i "s|../releases/.*/${release}|../releases/dist/releases/charts/${release}|" ${corePath}/core/layers/base/values/core/releases/releases.yaml
+    done || true
 
-echo "${externalReleases}" | while read release; do
-    sed -i "s|../releases/.*/${release}|../releases/dist/releases/charts/${release}|" ${corePath}/core/layers/base/values/core/releases/releases.yaml
-done || true
+    echo "${externalReleases}" | while read release; do
+        sed -i "s|../releases/.*/${release}|../releases/dist/releases/charts/${release}|" ${corePath}/core/layers/base/values/core/releases/releases.yaml
+    done || true
 
-templatedReleases=$( grep -Erl "../releases/(dist|local)" ${corePath}/core/templates/)
-releasesList=$(echo "${templatedReleases}" | while read release; do
-    releaseName="$(cat ${release} | grep "chart:"  | awk '{ print $2}' | awk -F/ '{print $NF}')"
-    echo "${releaseName}"
-done || true)
+    templatedReleases=$( grep -Erl "../releases/(dist|local)" ${corePath}/core/templates/)
+    releasesList=$(echo "${templatedReleases}" | while read release; do
+        releaseName="$(cat ${release} | grep "chart:"  | awk '{ print $2}' | awk -F/ '{print $NF}')"
+        echo "${releaseName}"
+    done || true)
 
-# echo "${releasesList}" | sort -u
+    # echo "${releasesList}" | sort -u
 
-echo "${templatedReleases}" | while read template; do
-    echo "${releasesList}" | sort -u | while read release; do
-        if grep -q ${release} ${template}; then
-            if [[ "${template}" == "${corePath}/core/templates/releases/standard/crds.yaml.gotmpl" ]]; then
-                sed -i "s|../releases/.*/${release}|../releases/dist/releases/crds/${release}|" ${template}
-            else
-                sed -i "s|../releases/.*/${release}|../releases/dist/releases/charts/${release}|" ${template}
+    echo "${templatedReleases}" | while read template; do
+        echo "${releasesList}" | sort -u | while read release; do
+            if grep -q ${release} ${template}; then
+                if [[ "${template}" == "${corePath}/core/templates/releases/standard/crds.yaml.gotmpl" ]]; then
+                    sed -i "s|../releases/.*/${release}|../releases/dist/releases/crds/${release}|" ${template}
+                else
+                    sed -i "s|../releases/.*/${release}|../releases/dist/releases/charts/${release}|" ${template}
+                fi
+
             fi
-
-        fi
+        done
     done
-done
-
-
-echo "Done linking !"
+    echo "Done linking !"
+else
+    echo "No local releases to link"
+fi
