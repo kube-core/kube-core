@@ -1,4 +1,4 @@
-name: sync-dist-charts
+name: sync-dist
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
     - main
 
 jobs:
-  release-charts:
+  release-dist:
     permissions:
       contents: write
     runs-on: ubuntu-latest
@@ -78,6 +78,36 @@ jobs:
 
             git add .
             git commit -m "releases: Upgraded charts from kube-core"
+            git push
+          fi
+          cd -
+
+      - name: Checkout dist-manifests
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          path: dist-manifests
+          repository: kube-core/dist-manifests
+          ssh-key: ${{ secrets.DIST_MANIFESTS_SSH_KEY }}
+          persist-credentials: true
+
+      - name: Push dist-manifests
+        run: |
+          rm -rf ./dist-manifests/manifests/
+          mkdir -p ./dist-manifests/manifests
+          cp -rf ./kube-core/releases/dist/releases/crds/* ./dist-manifests/manifests/
+
+          cd ./dist-manifests
+          gitStatus=$(git status --porcelain)
+          somethingChanged="false"
+
+          if [[ ! -z "${gitStatus}" ]]; then
+            somethingChanged="true"
+          fi
+          if [[ "${somethingChanged}" == "true" ]]; then
+
+            git add .
+            git commit -m "releases: Upgraded manifests from kube-core"
             git push
           fi
           cd -
