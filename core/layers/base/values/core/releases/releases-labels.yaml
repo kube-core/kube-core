@@ -51,10 +51,6 @@ releases:
     labels:
       component: eck
       group: operators
-  efk:
-    labels:
-      component: efk
-      group: logging
   estafette-gke-node-pool-shifter:
     labels:
       cloud: gke
@@ -156,10 +152,6 @@ releases:
     labels:
       component: registry
       group: cluster
-  kubernetes-dashboard:
-    labels:
-      component: admin
-      group: cluster
   logging-gcs:
     labels: {}
   logging-operator:
@@ -170,10 +162,6 @@ releases:
     labels:
       component: stack
       group: logging
-  metrics-server:
-    labels:
-      component: metrics
-      group: cluster
   minio-operator:
     labels:
       component: minio

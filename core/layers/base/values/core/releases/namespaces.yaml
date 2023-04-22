@@ -23,8 +23,6 @@ namespaces:
     enabled: true
   dex:
     enabled: true
-  efk:
-    enabled: true
   elastic-system:
     enabled: true
   estafette:
@@ -50,8 +48,6 @@ namespaces:
   kube-downscaler:
     enabled: true
   kube-fledged:
-    enabled: true
-  kubernetes-dashboard:
     enabled: true
   kube-system:
     enabled: true

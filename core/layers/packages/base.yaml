@@ -23,8 +23,6 @@ releases:
     enabled: false
   eck-operator:
     enabled: false
-  efk:
-    enabled: false
   estafette-gke-node-pool-shifter:
     enabled: false
   estafette-gke-preemptible-killer:
@@ -59,13 +57,9 @@ releases:
     enabled: false
   kube-fledged:
     enabled: false
-  kubernetes-dashboard:
-    enabled: false
   logging-operator:
     enabled: false
   logging-stack:
-    enabled: false
-  metrics-server:
     enabled: false
   minio-operator:
     enabled: false

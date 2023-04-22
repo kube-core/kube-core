@@ -1,7 +1,0 @@
-cloud:
-  provider: gcp
-users:
-  cluster-admin: []
-  admin: []
-  edit: []
-  view: []

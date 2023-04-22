@@ -1,5 +1,0 @@
-apiVersion: v2
-description: Easily deploy buckets using Crossplane.
-name: crossplane-buckets
-type: application
-version: 0.3.1

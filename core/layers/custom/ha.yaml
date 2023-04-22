@@ -28,21 +28,6 @@ releases:
       replicaCount: 2
       minAvailable: 2
       autoscaling: {}
-
-  metrics-server:
-    values:
-      replicas: 6
-
-
-  efk:
-    config:
-      replicas: 3
-      minimumMasterNodes: 2
-    values:
-      fluentd:
-        aggregator:
-          replicaCount: 3
-
   kps:
     config:
       prometheus:

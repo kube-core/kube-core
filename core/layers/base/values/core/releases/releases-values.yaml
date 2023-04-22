@@ -5,15 +5,6 @@ releases:
   eck-operator:
     values:
       installCRDs: false
-  kubernetes-dashboard:
-    values:
-      resources:
-        limits:
-          cpu: 0.5
-          memory: 200Mi
-        requests:
-          cpu: 50m
-          memory: 100Mi
   logging-stack:
     values:
       installCRDs: false

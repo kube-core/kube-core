@@ -78,11 +78,6 @@ releases:
     namespace: elastic-system
     namespaceShortName: eck-sys
     chart: ../releases/dist/releases/charts/eck-operator
-  efk:
-    shortName: efk
-    namespace: efk
-    namespaceShortName: efk
-    chart: ../releases/dist/releases/charts/efk
   estafette-gke-node-pool-shifter:
     shortName: estf-shift
     namespace: estafette
@@ -237,11 +232,6 @@ releases:
     namespace: kube-fledged
     namespaceShortName: kub-fleg
     chart: ../releases/dist/releases/charts/kube-fledged
-  kubernetes-dashboard:
-    shortName: kub-dash
-    namespace: kubernetes-dashboard
-    namespaceShortName: kub-dash
-    chart: ../releases/dist/releases/charts/kubernetes-dashboard
   logging-gcs:
     shortName: log-gcs
     namespace: crossplane-system
@@ -257,10 +247,6 @@ releases:
     namespace: logging
     namespaceShortName: log
     chart: ../releases/dist/releases/charts/logging-stack
-  metrics-server:
-    namespace: system-tools
-    namespaceShortName: sys-tls
-    chart: ../releases/dist/releases/charts/metrics-server
   minio-operator:
     shortName: minio-ope
     namespace: minio-operator

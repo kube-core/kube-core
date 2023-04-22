@@ -1,8 +1,0 @@
-apiVersion: v1
-appVersion: 1.2.4
-description: Kubernetes controller that can shift nodes from one node pool to another,
-  to favour for example preemptibles over regular vms
-home: https://helm.estafette.io
-icon: https://helm.estafette.io/icon.png
-name: estafette-gke-node-pool-shifter
-version: 1.2.4

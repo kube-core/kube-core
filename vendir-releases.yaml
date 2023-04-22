@@ -147,13 +147,6 @@ directories:
           repository:
             url: https://helm.elastic.co
 
-      - path: efk
-        helmChart:
-          name: efk
-          version: 1.1.0
-          repository:
-            url: https://charts.neo9.pro
-
       - path: estafette-k8s-node-compactor
         helmChart:
           name: estafette-k8s-node-compactor
@@ -230,13 +223,6 @@ directories:
           version: v0.8.2
           repository:
             url: https://senthilrch.github.io/kubefledged-charts/
-
-      - path: kubernetes-dashboard
-        helmChart:
-          name: kubernetes-dashboard
-          version: 5.0.0
-          repository:
-            url: https://kubernetes.github.io/dashboard/
 
       - path: sonatype-nexus
         helmChart:
@@ -406,152 +392,262 @@ directories:
           repository:
             url: https://opensource.aoe.com/kubernetes-sidecar-cleaner/
 
-      # Local Releases
-      - path: slack-operator
-        directory:
-          path: ../../../releases/local/slack-operator
-
-      - path: linkerd
-        directory:
-          path: ../../../releases/local/linkerd
-
-      - path: env-config
-        directory:
-          path: ../../../releases/local/env-config
-
-      - path: namespace
-        directory:
-          path: ../../../releases/local/namespace
-
-      - path: flux-repository
-        directory:
-          path: ../../../releases/local/flux-repository
-
-      - path: cluster-rbac
-        directory:
-          path: ../../../releases/local/cluster-rbac
-
-      - path: cluster-policies
-        directory:
-          path: ../../../releases/local/cluster-policies
-
-      - path: raw
-        directory:
-          path: ../../../releases/local/raw
-
-      - path: ingress-access-operator
-        directory:
-          path: ../../../releases/local/ingress-access-operator
-
-      - path: estafette-gke-node-pool-shifter
-        directory:
-          path: ../../../releases/local/estafette-gke-node-pool-shifter
-
-      - path: estafette-gke-preemptible-killer
-        directory:
-          path: ../../../releases/local/estafette-gke-preemptible-killer
-
-      - path: cluster-logging
-        directory:
-          path: ../../../releases/local/cluster-logging
-
-      - path: test-logging
-        directory:
-          path: ../../../releases/local/test-logging
-
       - path: container-registry-cleaner
-        directory:
-          path: ../../../releases/local/container-registry-cleaner
-      - path: container-registry-operator
-        directory:
-          path: ../../../releases/local/container-registry-operator
+        helmChart:
+          name: container-registry-cleaner
+          version: 0.1.0
+          repository:
+            url: https://neo9.github.io/helm-charts
       - path: container-registry-config
-        directory:
-          path: ../../../releases/local/container-registry-config
-      - path: flux
-        directory:
-          path: ../../../releases/local/flux
-      - path: flux-config
-        directory:
-          path: ../../../releases/local/flux-config
-      - path: imagecache
-        directory:
-          path: ../../../releases/local/imagecache
-      - path: istio-base
-        directory:
-          path: ../../../releases/local/istio-base
-      - path: istio-grafana
-        directory:
-          path: ../../../releases/local/istio-grafana
-      - path: istio-kiali
-        directory:
-          path: ../../../releases/local/istio-kiali
-      - path: istio-prometheus
-        directory:
-          path: ../../../releases/local/istio-prometheus
-      - path: istio-discovery
-        directory:
-          path: ../../../releases/local/istio-discovery
-      - path: logging-stack
-        directory:
-          path: ../../../releases/local/logging-stack
-      - path: metrics-server
-        directory:
-          path: ../../../releases/local/metrics-server
+        helmChart:
+          name: container-registry-config
+          version: 0.1.0
+          repository:
+            url: https://neo9.github.io/helm-charts
+      - path: container-registry-operator
+        helmChart:
+          name: container-registry-operator
+          version: 0.1.0
+          repository:
+            url: https://neo9.github.io/helm-charts
+      - path: estafette-gke-node-pool-shifter
+        helmChart:
+          name: estafette-gke-node-pool-shifter
+          version: 0.1.0
+          repository:
+            url: https://neo9.github.io/helm-charts
+      - path: estafette-gke-preemptible-killer
+        helmChart:
+          name: estafette-gke-preemptible-killer
+          version: 0.1.0
+          repository:
+            url: https://neo9.github.io/helm-charts
+      - path: ingress-access-operator
+        helmChart:
+          name: ingress-access-operator
+          version: 0.1.0
+          repository:
+            url: https://neo9.github.io/helm-charts
       - path: minio-operator
-        directory:
-          path: ../../../releases/local/minio-operator
+        helmChart:
+          name: minio-operator
+          version: 0.1.0
+          repository:
+            url: https://neo9.github.io/helm-charts
       - path: minio-tenants
-        directory:
-          path: ../../../releases/local/minio-tenants
+        helmChart:
+          name: minio-tenants
+          version: 0.1.0
+          repository:
+            url: https://neo9.github.io/helm-charts
       - path: mysql-backup
-        directory:
-          path: ../../../releases/local/mysql-backup
-      - path: keycloak-operator
-        directory:
-          path: ../../../releases/local/keycloak-operator
-      - path: node-initializer
-        directory:
-          path: ../../../releases/local/node-initializer
-      - path: priority-class
-        directory:
-          path: ../../../releases/local/priority-class
-      - path: sloop
-        directory:
-          path: ../../../releases/local/sloop
-      - path: system-jobs
-        directory:
-          path: ../../../releases/local/system-jobs
-      - path: tekton
-        directory:
-          path: ../../../releases/local/tekton
-      - path: tekton-catalog
-        directory:
-          path: ../../../releases/local/tekton-catalog
-      - path: tekton-logging
-        directory:
-          path: ../../../releases/local/tekton-logging
-      - path: app-scaling
-        directory:
-          path: ../../../releases/local/app-scaling
-      - path: app-extensions
-        directory:
-          path: ../../../releases/local/app-extensions
+        helmChart:
+          name: mysql-backup
+          version: 0.1.0
+          repository:
+            url: https://neo9.github.io/helm-charts
       - path: opencost
-        directory:
-          path: ../../../releases/local/opencost
-      - path: istio-jaeger
-        directory:
-          path: ../../../releases/local/istio-jaeger
+        helmChart:
+          name: opencost
+          version: 0.1.0
+          repository:
+            url: https://neo9.github.io/helm-charts
+      - path: sloop
+        helmChart:
+          name: sloop
+          version: 0.1.0
+          repository:
+            url: https://neo9.github.io/helm-charts
+      - path: tekton
+        helmChart:
+          name: tekton
+          version: 0.1.0
+          repository:
+            url: https://neo9.github.io/helm-charts
+      - path: tekton-catalog
+        helmChart:
+          name: tekton-catalog
+          version: 0.1.0
+          repository:
+            url: https://neo9.github.io/helm-charts
+      - path: tekton-logging
+        helmChart:
+          name: tekton-logging
+          version: 0.1.0
+          repository:
+            url: https://neo9.github.io/helm-charts
+      - path: app-extensions
+        helmChart:
+          name: app-extensions
+          version: 0.1.0
+          repository:
+            url: https://kube-core.github.io/helm-charts
+      - path: cluster-logging
+        helmChart:
+          name: cluster-logging
+          version: 0.1.0
+          repository:
+            url: https://kube-core.github.io/helm-charts
+      - path: cluster-policies
+        helmChart:
+          name: cluster-policies
+          version: 0.1.0
+          repository:
+            url: https://kube-core.github.io/helm-charts
+      - path: cluster-rbac
+        helmChart:
+          name: cluster-rbac
+          version: 0.1.0
+          repository:
+            url: https://kube-core.github.io/helm-charts
+      - path: env-config
+        helmChart:
+          name: env-config
+          version: 0.1.0
+          repository:
+            url: https://kube-core.github.io/helm-charts
+      - path: flux
+        helmChart:
+          name: flux
+          version: 0.1.0
+          repository:
+            url: https://kube-core.github.io/helm-charts
+      - path: flux-config
+        helmChart:
+          name: flux-config
+          version: 0.1.0
+          repository:
+            url: https://kube-core.github.io/helm-charts
+      - path: flux-repository
+        helmChart:
+          name: flux-repository
+          version: 0.1.0
+          repository:
+            url: https://kube-core.github.io/helm-charts
+      - path: imagecache
+        helmChart:
+          name: imagecache
+          version: 0.1.0
+          repository:
+            url: https://kube-core.github.io/helm-charts
+      - path: istio-base
+        helmChart:
+          name: istio-base
+          version: 0.1.0
+          repository:
+            url: https://kube-core.github.io/helm-charts
+      - path: istio-discovery
+        helmChart:
+          name: istio-discovery
+          version: 0.1.0
+          repository:
+            url: https://kube-core.github.io/helm-charts
       - path: istio-elasticsearch
-        directory:
-          path: ../../../releases/local/istio-elasticsearch
-      - path: jaeger-managed
-        directory:
-          path: ../../../releases/local/jaeger-managed
+        helmChart:
+          name: istio-elasticsearch
+          version: 0.1.0
+          repository:
+            url: https://kube-core.github.io/helm-charts
+      - path: istio-grafana
+        helmChart:
+          name: istio-grafana
+          version: 0.1.0
+          repository:
+            url: https://kube-core.github.io/helm-charts
       - path: istio-ingress-config
-        directory:
-          path: ../../../releases/local/istio-ingress-config
+        helmChart:
+          name: istio-ingress-config
+          version: 0.1.0
+          repository:
+            url: https://kube-core.github.io/helm-charts
+      - path: istio-jaeger
+        helmChart:
+          name: istio-jaeger
+          version: 0.1.0
+          repository:
+            url: https://kube-core.github.io/helm-charts
+      - path: istio-kiali
+        helmChart:
+          name: istio-kiali
+          version: 0.1.0
+          repository:
+            url: https://kube-core.github.io/helm-charts
+      - path: istio-prometheus
+        helmChart:
+          name: istio-prometheus
+          version: 0.1.0
+          repository:
+            url: https://kube-core.github.io/helm-charts
+      - path: jaeger-managed
+        helmChart:
+          name: jaeger-managed
+          version: 0.1.0
+          repository:
+            url: https://kube-core.github.io/helm-charts
+      - path: kiali-managed
+        helmChart:
+          name: kiali-managed
+          version: 0.1.0
+          repository:
+            url: https://kube-core.github.io/helm-charts
+      - path: linkerd
+        helmChart:
+          name: linkerd
+          version: 0.1.0
+          repository:
+            url: https://kube-core.github.io/helm-charts
+      - path: logging-stack
+        helmChart:
+          name: logging-stack
+          version: 0.1.0
+          repository:
+            url: https://kube-core.github.io/helm-charts
+      - path: namespace
+        helmChart:
+          name: namespace
+          version: 0.1.0
+          repository:
+            url: https://kube-core.github.io/helm-charts
+      - path: node-initializer
+        helmChart:
+          name: node-initializer
+          version: 0.1.0
+          repository:
+            url: https://kube-core.github.io/helm-charts
+      - path: priority-class
+        helmChart:
+          name: priority-class
+          version: 0.1.0
+          repository:
+            url: https://kube-core.github.io/helm-charts
+      - path: raw
+        helmChart:
+          name: raw
+          version: 0.1.0
+          repository:
+            url: https://kube-core.github.io/helm-charts
+      - path: slack-operator
+        helmChart:
+          name: slack-operator
+          version: 0.1.0
+          repository:
+            url: https://kube-core.github.io/helm-charts
+      - path: system-jobs
+        helmChart:
+          name: system-jobs
+          version: 0.1.0
+          repository:
+            url: https://kube-core.github.io/helm-charts
+      - path: test-logging
+        helmChart:
+          name: test-logging
+          version: 0.1.0
+          repository:
+            url: https://kube-core.github.io/helm-charts
+
+
+      # Local Releases
+
 
   # - path: releases/crds
   #   contents:

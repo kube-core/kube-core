@@ -23,77 +23,6 @@ releases:
             value: system
       nodeSelector: {}
       priorityClass: {}
-  efk:
-    scheduling:
-      all:
-        affinity:
-          nodeAffinity:
-            preferredDuringSchedulingIgnoredDuringExecution:
-              - preference:
-                  matchExpressions:
-                    - key: type
-                      operator: In
-                      values:
-                        - logging
-                weight: 100
-              - preference:
-                  matchExpressions:
-                    - key: type
-                      operator: In
-                      values:
-                        - main
-                weight: 50
-              - preference:
-                  matchExpressions:
-                    - key: type
-                      operator: In
-                      values:
-                        - safety
-                weight: 1
-          podAntiAffinity:
-            preferredDuringSchedulingIgnoredDuringExecution:
-              - podAffinityTerm:
-                  labelSelector:
-                    matchExpressions:
-                      - key: app
-                        operator: In
-                        values:
-                          - elasticsearch-master
-                  topologyKey: kubernetes.io/hostname
-                weight: 100
-        antiAffinity: soft
-        nodeSelector: {}
-        tolerations:
-          - effect: NoSchedule
-            key: type
-            operator: Equal
-            value: logging
-          - effect: NoExecute
-            key: type
-            operator: Equal
-            value: logging
-          - effect: NoSchedule
-            key: type
-            operator: Equal
-            value: main
-          - effect: NoExecute
-            key: type
-            operator: Equal
-            value: main
-          - effect: NoSchedule
-            key: type
-            operator: Equal
-            value: safety
-          - effect: NoExecute
-            key: type
-            operator: Equal
-            value: safety
-      elasticsearch:
-        affinity: {}
-      elasticsearchExporter: {}
-      fluentd: {}
-      kibana: {}
-      metricbeat: {}
   estafette-gke-node-pool-shifter:
     scheduling:
       affinity:
@@ -330,38 +259,6 @@ releases:
           key: type
           operator: Equal
           value: system
-  metrics-server:
-    values:
-      affinity:
-        nodeAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - preference:
-                matchExpressions:
-                  - key: type
-                    operator: In
-                    values:
-                      - system
-              weight: 1
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - podAffinityTerm:
-                labelSelector:
-                  matchExpressions:
-                    - key: app
-                      operator: In
-                      values:
-                        - custom-metrics-server
-                topologyKey: kubernetes.io/hostname
-              weight: 100
-      tolerations:
-        - effect: "NoSchedule"
-          key: "type"
-          operator: "Equal"
-          value: "system"
-        - effect: "NoExecute"
-          key: "type"
-          operator: "Equal"
-          value: "system"
   predator:
     scheduling:
       tolerations:

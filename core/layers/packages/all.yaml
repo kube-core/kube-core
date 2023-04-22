@@ -45,10 +45,6 @@ releases:
     labels:
       package: all
     enabled: true
-  efk:
-    labels:
-      package: all
-    enabled: true
   estafette-gke-node-pool-shifter:
     labels:
       package: all
@@ -117,19 +113,11 @@ releases:
     labels:
       package: all
     enabled: true
-  kubernetes-dashboard:
-    labels:
-      package: all
-    enabled: true
   logging-operator:
     labels:
       package: all
     enabled: true
   logging-stack:
-    labels:
-      package: all
-    enabled: true
-  metrics-server:
     labels:
       package: all
     enabled: true

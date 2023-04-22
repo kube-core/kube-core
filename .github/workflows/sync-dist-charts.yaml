@@ -1,0 +1,106 @@
+name: sync-dist-charts
+
+on:
+  push:
+    branches:
+    - main
+
+jobs:
+  release-charts:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout kube-core
+        uses: actions/checkout@v3
+        with:
+          path: kube-core
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "$GITHUB_ACTOR"
+          git config --global user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+      - name: Checkout dist-charts
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          path: dist-charts
+          repository: kube-core/dist-charts
+          ssh-key: ${{ secrets.DIST_CHARTS_SSH_KEY }}
+          persist-credentials: true
+
+      - name: Push dist-charts
+        run: |
+          rm -rf ./dist-charts/charts/
+          mkdir -p ./dist-charts/charts
+          cp -rf ./kube-core/releases/dist/releases/charts/* ./dist-charts/charts/
+
+          cd ./dist-charts
+          gitStatus=$(git status --porcelain)
+          somethingChanged="false"
+
+          if [[ ! -z "${gitStatus}" ]]; then
+            somethingChanged="true"
+          fi
+          if [[ "${somethingChanged}" == "true" ]]; then
+
+            git add .
+            git commit -m "releases: Upgraded charts from kube-core"
+            git push
+          fi
+          cd -
+
+      - name: Checkout crd-charts
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          path: crd-charts
+          repository: kube-core/crd-charts
+          ssh-key: ${{ secrets.CRD_CHARTS_SSH_KEY }}
+          persist-credentials: true
+
+      - name: Push crd-charts
+        run: |
+          rm -rf ./crd-charts/charts/
+          mkdir -p ./crd-charts/charts
+          cp -rf ./kube-core/releases/dist/releases/crds/* ./crd-charts/charts/
+
+          cd ./crd-charts
+          gitStatus=$(git status --porcelain)
+          somethingChanged="false"
+
+          if [[ ! -z "${gitStatus}" ]]; then
+            somethingChanged="true"
+          fi
+          if [[ "${somethingChanged}" == "true" ]]; then
+
+            git add .
+            git commit -m "releases: Upgraded charts from kube-core"
+            git push
+          fi
+          cd -
+
+      # - name: Install Helm
+      #   uses: azure/setup-helm@v3
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # - name: "Run chart-releaser: releases/charts"
+      #   uses: helm/chart-releaser-action@v1.5.0
+      #   with:
+      #     charts_dir: releases/dist/releases/charts
+      #   env:
+      #     CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      #     CR_SKIP_EXISTING: true
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # - name: "Run chart-releaser: releases/crds"
+      #   uses: helm/chart-releaser-action@v1.5.0
+      #   with:
+      #     charts_dir: releases/dist/releases/crds
+      #   env:
+      #     CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      #     CR_SKIP_EXISTING: true
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

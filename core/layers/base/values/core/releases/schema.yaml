@@ -415,7 +415,6 @@ releases:
   crossplane-provider: *release
   crossplane-provider-config: *release
   eck-operator: *release
-  efk: *release
   estafette-gke-node-pool-shifter: *release
   estafette-gke-preemptible-killer: *release
   estafette-k8s-node-compactor: *release
@@ -442,11 +441,9 @@ releases:
   kube-cleanup-operator: *release
   kube-downscaler: *release
   kube-fledged: *release
-  kubernetes-dashboard: *release
   logging-gcs: *release
   logging-operator: *release
   logging-stack: *release
-  metrics-server: *release
   minio-operator: *release
   minio-tenants: *release
   mongodb-atlas-operator: *release

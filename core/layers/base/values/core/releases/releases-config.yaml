@@ -117,7 +117,7 @@ releases:
         # nginx.ingress.kubernetes.io/rewrite-target: /$1
         labels: {}
         subdomain: prometheus-pushgateway
-  
+
   chartmuseum:
     config:
       museum:
@@ -166,38 +166,6 @@ releases:
         gcp:
           enabled: false
           projectID:
-  efk:
-    config:
-      elasticsearch:
-        bucket_name: bucket_name
-        gcs: false
-        ingress:
-          annotations: {}
-          enabled: true
-          labels: {}
-          subdomain: elasticsearch.efk
-        s3: false
-      esJavaOpts: -Xmx2g -Xms2g
-      ilmPolicy: |
-        {"policy":{"phases":{"hot":{"min_age":"0ms","actions":{"rollover":{"max_age":"5m","max_size":"10mb","max_docs":100},"set_priority":{"priority":100}}},"warm":{"actions":{"set_priority":{"priority":50}}},"cold":{"min_age":"5m","actions":{"freeze":{},"set_priority":{"priority":0}}},"delete":{"min_age":"10m","actions":{"delete":{"delete_searchable_snapshot":true}}}}}}
-      image: docker.elastic.co/elasticsearch/elasticsearch
-      kibana:
-        ingress:
-          annotations: {}
-          enabled: true
-          labels: {}
-          subdomain: kibana.efk
-      queryDefaultField: json.message
-      resources:
-        limits:
-          cpu: 1000m
-          memory: 3Gi
-        requests:
-          cpu: 200m
-          memory: 1Gi
-      values: {}
-      watchedNamespaces:
-        - kube-system
   estafette-gke-node-pool-shifter:
     config:
       interval: 300
@@ -399,13 +367,6 @@ releases:
           retentionResolutionRaw: 20d
         externalObjectStorageBackend:
           enabled: false
-  kubernetes-dashboard:
-    config:
-      ingress:
-        annotations: {}
-        labels: {}
-        subdomain: kubernetes-dashboard
-      replicaCount: 1
   nexus:
     config:
       ingress:
