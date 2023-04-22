@@ -410,7 +410,6 @@ releases:
   container-registry-config: *release
   container-registry-operator: *release
   crossplane: *release
-  crossplane-buckets: *release
   crossplane-cloud: *release
   crossplane-provider: *release
   crossplane-provider-config: *release

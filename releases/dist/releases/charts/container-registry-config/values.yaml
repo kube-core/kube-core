@@ -1,5 +1,5 @@
 cloud:
-  project: kube-core
+  project: myproject
   provider: gcp
 
 cluster:

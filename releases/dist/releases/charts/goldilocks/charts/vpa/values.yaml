@@ -40,7 +40,7 @@ recommender:
     # maxUnavailable: 1
   image:
     # recommender.image.repository -- The location of the recommender image
-    repository: k8s.gcr.io/autoscaling/vpa-recommender
+    repository: registry.k8s.io/autoscaling/vpa-recommender
     # recommender.image.pullPolicy -- The pull policy for the recommender image. Recommend not changing this
     pullPolicy: Always
     # recommender.image.tag -- Overrides the image tag whose default is the chart appVersion
@@ -78,7 +78,7 @@ updater:
     # maxUnavailable: 1
   image:
     # updater.image.repository -- The location of the updater image
-    repository: k8s.gcr.io/autoscaling/vpa-updater
+    repository: registry.k8s.io/autoscaling/vpa-updater
     # updater.image.pullPolicy -- The pull policy for the updater image. Recommend not changing this
     pullPolicy: Always
     # updater.image.tag -- Overrides the image tag whose default is the chart appVersion
@@ -108,6 +108,8 @@ updater:
 admissionController:
   # admissionController.enabled -- If true, will install the admission-controller component of vpa
   enabled: false
+  # admissionController.extraArgs -- A key-value map of flags to pass to the admissionController
+  extraArgs: {}
   # admissionController.generateCertificate -- If true and admissionController is enabled, a pre-install hook will run to create the certificate for the webhook
   generateCertificate: true
   certGen:
@@ -118,10 +120,15 @@ admissionController:
       tag: v11-alpine
       # admissionController.certGen.image.pullPolicy -- The pull policy for the certgen image. Recommend not changing this
       pullPolicy: Always
-      # admissionController.certGen.env -- Additional environment variables to be added to the certgen container. Format is KEY: Value format
+    # admissionController.certGen.env -- Additional environment variables to be added to the certgen container. Format is KEY: Value format
     env: {}
     # admissionController.certGen.resources -- The resources block for the certgen pod
     resources: {}
+    # admissionController.certGen.securityContext -- The securityContext block for the certgen pod
+    securityContext: {}
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
   # admissionController.cleanupOnDelete.enabled -- If true, a post-delete job will remove the mutatingwebhookconfiguration and the tls secret for the admission controller
   cleanupOnDelete:
     enabled: true
@@ -130,13 +137,17 @@ admissionController:
       repository: quay.io/reactiveops/ci-images
       # admissionController.cleanupOnDelete.image.tag -- The image tag to use for the admission controller cleanup image
       tag: v11-alpine
+    resources: {}
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
   replicaCount: 1
   # admissionController.podDisruptionBudget -- This is the setting for the pod disruption budget
   podDisruptionBudget: {}
     # maxUnavailable: 1
   image:
     # admissionController.image.repository -- The location of the vpa admission controller image
-    repository: k8s.gcr.io/autoscaling/vpa-admission-controller
+    repository: registry.k8s.io/autoscaling/vpa-admission-controller
     # admissionController.image.pullPolicy -- The pull policy for the admission controller image. Recommend not changing this
     pullPolicy: Always
     # admissionController.image.tag -- Overrides the image tag whose default is the chart appVersion

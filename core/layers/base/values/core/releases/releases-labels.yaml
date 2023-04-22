@@ -37,8 +37,6 @@ releases:
     labels:
       component: crossplane
       group: devops
-  crossplane-buckets:
-    labels: {}
   crossplane-provider:
     labels:
       component: crossplane

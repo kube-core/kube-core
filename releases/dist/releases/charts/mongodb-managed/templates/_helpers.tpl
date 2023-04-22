@@ -54,16 +54,27 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 Create the name of the service account to use
 */}}
 {{- define "mongodb-managed.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create -}}
-    {{ default (include "mongodb-managed.fullname" .) .Values.serviceAccount.name }}
-{{- else -}}
-    {{ default "default" .Values.serviceAccount.name }}
-{{- end -}}
-{{- end -}}
+{{- if .Values.serviceAccount.create }}
+{{- default (include "mongodb-managed.fullname" .) .Values.serviceAccount.name }}
+{{- else }}
+{{- default "default" .Values.serviceAccount.name }}
+{{- end }}
+{{- end }}
 
 {{/*
-Create the name of the secret for a user (in loop).
+Create the name of the cluster role to use
+*/}}
+{{- define "mongodb-managed.roleName" -}}
+{{- if .Values.rbac.role.create }}
+{{- default (include "mongodb-managed.fullname" .) .Values.rbac.role.name }}
+{{- else }}
+{{- default "default" .Values.rbac.role.name }}
+{{- end }}
+{{- end }}
+
+{{/*
+Generate secretName created/used for each mongodb user, by iterating on user definition 
 */}}
 {{- define "mongodb-managed.secretName" -}}
-{{- printf "%s-%s-%s" (include "mongodb-managed.fullname" .global) (.loop.db | default .loop.name) (.loop.name) -}}
+{{- printf "%s-%s-%s" (include "mongodb-managed.fullname" .global) (.user.db | default .user.name) (.user.name) -}}
 {{- end -}}

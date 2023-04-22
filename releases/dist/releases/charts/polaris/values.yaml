@@ -1,6 +1,10 @@
 # config -- The [polaris configuration](https://github.com/FairwindsOps/polaris#configuration). If not provided then the [default](https://github.com/FairwindsOps/polaris/blob/master/examples/config.yaml) config from Polaris is used.
 config: null
 
+# configUrl -- Use a config from an accessible URL source.  NOTE: `config` & `configUrl` are mutually exclusive.  Setting `configURL` will take precedence over `config`.  Only one may be used.
+# configUrl: https://example.com/config.yaml
+configUrl: null
+
 image:
   # image.repository -- Image repo
   repository: quay.io/fairwinds/polaris
@@ -35,6 +39,8 @@ dashboard:
   listeningAddress:
   # dashboard.replicas -- Number of replicas to run.
   replicas: 2
+  # dashboard.logLevel -- Set the logging level for the Dashboard command
+  logLevel: Info
   # dashboard.podAdditionalLabels -- Custom additional labels on dashboard pods.
   podAdditionalLabels: {}
   # dashboard.resources -- Requests and limits for the dashboard
@@ -45,17 +51,48 @@ dashboard:
     limits:
       cpu: 150m
       memory: 512Mi
+  # dashboard.extraContainers -- allows injecting additional containers.
+  extraContainers: []
+  # extraContainers:
+  #   - name: oauth-proxy
+  #     image: quay.io/oauth2-proxy/oauth2-proxy:v7.3.0
+  #     args:
+  #       - --upstream=http://127.0.0.1:8080
+  #       - --http-address=0.0.0.0:8081
+  #     ports:
+  #     - containerPort: 8081
+  #       name: oauth-proxy
+  #       protocol: TCP
+  #    resources: {}
   service:
     # dashboard.service.type -- Service Type
     type: ClusterIP
     # dashboard.service.annotations -- Service annotations
     annotations: {}
+    # dashboard.service.targetPort -- Service targetport, defaults to dashboard.port
+    targetPort:
+    # dashboard.service.loadBalancerSourceRanges -- List of allowed CIDR values
+    loadBalancerSourceRanges: []
   # dashboard.nodeSelector -- Dashboard pod nodeSelector
   nodeSelector: {}
   # dashboard.tolerations -- Dashboard pod tolerations
   tolerations: []
   # dashboard.affinity -- Dashboard pods affinity
   affinity: {}
+  # dashboard.topologySpreadConstraints -- Dashboard pods topologySpreadConstraints
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: topology.kubernetes.io/zone
+      whenUnsatisfiable: ScheduleAnyway
+      labelSelector:
+        matchLabels:
+          component: dashboard
+    - maxSkew: 1
+      topologyKey: kubernetes.io/hostname
+      whenUnsatisfiable: ScheduleAnyway
+      labelSelector:
+        matchLabels:
+          component: dashboard
   ingress:
     # dashboard.ingress.enabled -- Whether to enable ingress to the dashboard
     enabled: false
@@ -75,6 +112,15 @@ dashboard:
   disallowConfigExemptions: false
   # dashboard.disallowAnnotationExemptions -- Disallow exemptions that are configured via annotations
   disallowAnnotationExemptions: false
+  # dashboard.containerSecurityContext -- securityContext to apply to the dashboard container
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    capabilities:
+      drop:
+        - ALL
 
 webhook:
   # webhook.enable -- Whether to run the webhook
@@ -91,6 +137,20 @@ webhook:
   tolerations: []
   # webhook.affinity -- Webhook pods affinity
   affinity: {}
+  # webhook.topologySpreadConstraints -- Webhook pods topologySpreadConstraints
+  topologySpreadConstraints:
+  - maxSkew: 1
+    topologyKey: topology.kubernetes.io/zone
+    whenUnsatisfiable: ScheduleAnyway
+    labelSelector:
+      matchLabels:
+        component: webhook
+  - maxSkew: 1
+    topologyKey: kubernetes.io/hostname
+    whenUnsatisfiable: ScheduleAnyway
+    labelSelector:
+      matchLabels:
+        component: webhook
   # webhook.caBundle -- CA Bundle to use for Validating Webhook instead of cert-manager
   caBundle: null
   # webhook.secretName -- Name of the secret containing a TLS certificate to use if cert-manager is not used.

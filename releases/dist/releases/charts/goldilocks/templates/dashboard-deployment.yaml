@@ -3,6 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "goldilocks.fullname" . }}-dashboard
+  namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ include "goldilocks.name" . }}
     helm.sh/chart: {{ include "goldilocks.chart" . }}
@@ -41,11 +42,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- if .Values.dashboard.serviceAccount.create }}
-      serviceAccountName: {{ include "goldilocks.fullname" . }}-dashboard
-      {{- else }}
-      serviceAccountName: {{ .Values.dashboard.serviceAccount.name }}
-      {{- end }}
+      serviceAccountName: {{ template "dashboard.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.dashboard.podSecurityContext | nindent 8 }}
       containers:

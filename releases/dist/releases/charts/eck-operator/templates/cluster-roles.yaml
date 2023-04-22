@@ -26,6 +26,9 @@ rules:
   - apiGroups: ["elasticsearch.k8s.elastic.co"]
     resources: ["elasticsearches"]
     verbs: ["get", "list", "watch"]
+  - apiGroups: ["autoscaling.k8s.elastic.co"]
+    resources: ["elasticsearchautoscalers"]
+    verbs: ["get", "list", "watch"]
   - apiGroups: ["apm.k8s.elastic.co"]
     resources: ["apmservers"]
     verbs: ["get", "list", "watch"]
@@ -43,6 +46,9 @@ rules:
     verbs: ["get", "list", "watch"]
   - apiGroups: ["maps.k8s.elastic.co"]
     resources: ["elasticmapsservers"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["stackconfigpolicy.k8s.elastic.co"]
+    resources: ["stackconfigpolicies"]
     verbs: ["get", "list", "watch"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -57,6 +63,9 @@ rules:
   - apiGroups: ["elasticsearch.k8s.elastic.co"]
     resources: ["elasticsearches"]
     verbs: ["create", "delete", "deletecollection", "patch", "update"]
+  - apiGroups: ["autoscaling.k8s.elastic.co"]
+    resources: ["elasticsearchautoscalers"]
+    verbs: ["create", "delete", "deletecollection", "patch", "update"]
   - apiGroups: ["apm.k8s.elastic.co"]
     resources: ["apmservers"]
     verbs: ["create", "delete", "deletecollection", "patch", "update"]
@@ -74,5 +83,8 @@ rules:
     verbs: ["create", "delete", "deletecollection", "patch", "update"]
   - apiGroups: ["maps.k8s.elastic.co"]
     resources: ["elasticmapsservers"]
+    verbs: ["create", "delete", "deletecollection", "patch", "update"]
+  - apiGroups: ["stackconfigpolicy.k8s.elastic.co"]
+    resources: ["stackconfigpolicies"]
     verbs: ["create", "delete", "deletecollection", "patch", "update"]
 {{- end -}}

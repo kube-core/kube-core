@@ -1,6 +1,6 @@
 apiVersion: v2
-name: mysql-backup
+appVersion: 0.1.0
 description: Chart for kubernetes cronjob to do mysql-backup
+name: mysql-backup
 type: application
 version: 0.1.0
-appVersion: "2.6.0"

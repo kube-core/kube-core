@@ -190,6 +190,10 @@ pod:
   annotations: {}
   securityContext: {}
     # fsGroup: 2000
+  envFrom:
+    enabled: true
+    configmaps: []
+    secrets: []
   env:
     # -- Define env values for pods, example commented out in values.yaml files
     values: []

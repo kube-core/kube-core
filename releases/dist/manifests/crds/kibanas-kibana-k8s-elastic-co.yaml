@@ -3,14 +3,14 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.9.1
+    controller-gen.kubebuilder.io/version: v0.11.3
   creationTimestamp: null
   labels:
     app.kubernetes.io/instance: 'release-name'
     app.kubernetes.io/managed-by: 'Helm'
     app.kubernetes.io/name: 'eck-operator-crds'
-    app.kubernetes.io/version: '2.4.0'
-    helm.sh/chart: 'eck-operator-crds-2.4.0'
+    app.kubernetes.io/version: '2.7.0'
+    helm.sh/chart: 'eck-operator-crds-2.7.0'
   name: kibanas.kibana.k8s.elastic.co
 spec:
   group: kibana.k8s.elastic.co
@@ -248,14 +248,24 @@ spec:
                               to be "ExternalName".
                             type: string
                           externalTrafficPolicy:
-                            description: externalTrafficPolicy denotes if this Service
-                              desires to route external traffic to node-local or cluster-wide
-                              endpoints. "Local" preserves the client source IP and
-                              avoids a second hop for LoadBalancer and Nodeport type
-                              services, but risks potentially imbalanced traffic spreading.
-                              "Cluster" obscures the client source IP and may cause
-                              a second hop to another node, but should have good overall
-                              load-spreading.
+                            description: externalTrafficPolicy describes how nodes
+                              distribute service traffic they receive on one of the
+                              Service's "externally-facing" addresses (NodePorts,
+                              ExternalIPs, and LoadBalancer IPs). If set to "Local",
+                              the proxy will configure the service in a way that assumes
+                              that external load balancers will take care of balancing
+                              the service traffic between nodes, and so each node
+                              will deliver traffic only to the node-local endpoints
+                              of the service, without masquerading the client source
+                              IP. (Traffic mistakenly sent to a node with no endpoints
+                              will be dropped.) The default value, "Cluster", uses
+                              the standard behavior of routing to all endpoints evenly
+                              (possibly modified by topology and other features).
+                              Note that traffic sent to an External IP or LoadBalancer
+                              IP from within the cluster will always get "Cluster"
+                              semantics, but clients sending to a NodePort from within
+                              the cluster may need to take traffic policy into account
+                              when picking a node.
                             type: string
                           healthCheckNodePort:
                             description: healthCheckNodePort specifies the healthcheck
@@ -269,17 +279,19 @@ spec:
                               not.  If this field is specified when creating a Service
                               which does not need it, creation will fail. This field
                               will be wiped when updating a Service to no longer need
-                              it (e.g. changing type).
+                              it (e.g. changing type). This field cannot be updated
+                              once set.
                             format: int32
                             type: integer
                           internalTrafficPolicy:
-                            description: InternalTrafficPolicy specifies if the cluster
-                              internal traffic should be routed to all endpoints or
-                              node-local endpoints only. "Cluster" routes internal
-                              traffic to a Service to all endpoints. "Local" routes
-                              traffic to node-local endpoints only, traffic is dropped
-                              if no node-local endpoints are ready. The default value
-                              is "Cluster".
+                            description: InternalTrafficPolicy describes how nodes
+                              distribute service traffic they receive on the ClusterIP.
+                              If set to "Local", the proxy will assume that pods only
+                              want to talk to endpoints of the service on the same
+                              node as the pod, dropping the traffic if there are no
+                              local endpoints. The default value, "Cluster", uses
+                              the standard behavior of routing to all endpoints evenly
+                              (possibly modified by topology and other features).
                             type: string
                           ipFamilies:
                             description: "IPFamilies is a list of IP families (e.g.
@@ -556,7 +568,7 @@ spec:
                 properties:
                   logs:
                     description: Logs holds references to Elasticsearch clusters which
-                      will receive log data from this Kibana.
+                      receive log data from an associated resource.
                     properties:
                       elasticsearchRefs:
                         description: ElasticsearchRefs is a reference to a list of
@@ -603,7 +615,7 @@ spec:
                     type: object
                   metrics:
                     description: Metrics holds references to Elasticsearch clusters
-                      which will receive monitoring data from this Kibana.
+                      which receive monitoring data from this resource.
                     properties:
                       elasticsearchRefs:
                         description: ElasticsearchRefs is a reference to a list of
@@ -941,14 +953,24 @@ spec:
                               to be "ExternalName".
                             type: string
                           externalTrafficPolicy:
-                            description: externalTrafficPolicy denotes if this Service
-                              desires to route external traffic to node-local or cluster-wide
-                              endpoints. "Local" preserves the client source IP and
-                              avoids a second hop for LoadBalancer and Nodeport type
-                              services, but risks potentially imbalanced traffic spreading.
-                              "Cluster" obscures the client source IP and may cause
-                              a second hop to another node, but should have good overall
-                              load-spreading.
+                            description: externalTrafficPolicy describes how nodes
+                              distribute service traffic they receive on one of the
+                              Service's "externally-facing" addresses (NodePorts,
+                              ExternalIPs, and LoadBalancer IPs). If set to "Local",
+                              the proxy will configure the service in a way that assumes
+                              that external load balancers will take care of balancing
+                              the service traffic between nodes, and so each node
+                              will deliver traffic only to the node-local endpoints
+                              of the service, without masquerading the client source
+                              IP. (Traffic mistakenly sent to a node with no endpoints
+                              will be dropped.) The default value, "Cluster", uses
+                              the standard behavior of routing to all endpoints evenly
+                              (possibly modified by topology and other features).
+                              Note that traffic sent to an External IP or LoadBalancer
+                              IP from within the cluster will always get "Cluster"
+                              semantics, but clients sending to a NodePort from within
+                              the cluster may need to take traffic policy into account
+                              when picking a node.
                             type: string
                           healthCheckNodePort:
                             description: healthCheckNodePort specifies the healthcheck
@@ -962,17 +984,19 @@ spec:
                               not.  If this field is specified when creating a Service
                               which does not need it, creation will fail. This field
                               will be wiped when updating a Service to no longer need
-                              it (e.g. changing type).
+                              it (e.g. changing type). This field cannot be updated
+                              once set.
                             format: int32
                             type: integer
                           internalTrafficPolicy:
-                            description: InternalTrafficPolicy specifies if the cluster
-                              internal traffic should be routed to all endpoints or
-                              node-local endpoints only. "Cluster" routes internal
-                              traffic to a Service to all endpoints. "Local" routes
-                              traffic to node-local endpoints only, traffic is dropped
-                              if no node-local endpoints are ready. The default value
-                              is "Cluster".
+                            description: InternalTrafficPolicy describes how nodes
+                              distribute service traffic they receive on the ClusterIP.
+                              If set to "Local", the proxy will assume that pods only
+                              want to talk to endpoints of the service on the same
+                              node as the pod, dropping the traffic if there are no
+                              local endpoints. The default value, "Cluster", uses
+                              the standard behavior of routing to all endpoints evenly
+                              (possibly modified by topology and other features).
                             type: string
                           ipFamilies:
                             description: "IPFamilies is a list of IP families (e.g.

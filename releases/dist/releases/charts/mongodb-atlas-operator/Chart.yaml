@@ -1,10 +1,10 @@
 apiVersion: v2
-appVersion: 1.3.0
+appVersion: 1.7.2
 dependencies:
 - condition: mongodb-atlas-operator-crds.enabled
   name: mongodb-atlas-operator-crds
   repository: https://mongodb.github.io/helm-charts
-  version: 1.3.0
+  version: 1.7.2
 description: 'MongoDB Atlas Operator - a Helm chart for installing and upgrading Atlas
   Operator: the official Kubernetes operator allowing to manage MongoDB Atlas resources
   from Kubernetes'
@@ -22,4 +22,4 @@ maintainers:
   name: MongoDB
 name: mongodb-atlas-operator
 type: application
-version: 1.3.0
+version: 1.7.2

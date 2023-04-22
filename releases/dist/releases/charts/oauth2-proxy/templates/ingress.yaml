@@ -11,6 +11,7 @@ metadata:
     app: {{ template "oauth2-proxy.name" . }}
 {{- include "oauth2-proxy.labels" . | indent 4 }}
   name: {{ template "oauth2-proxy.fullname" . }}
+  namespace: {{ template "oauth2-proxy.namespace" $ }}
 {{- with .Values.ingress.annotations }}
   annotations:
 {{ toYaml . | indent 4 }}
@@ -21,7 +22,7 @@ spec:
   {{- end }}
   rules:
     {{- range $host := .Values.ingress.hosts }}
-    - host: {{ $host | quote }}
+    - host: {{ tpl $host $ | quote }}
       http:
         paths:
 {{- if $extraPaths }}
@@ -35,6 +36,6 @@ spec:
     {{- end -}}
   {{- if .Values.ingress.tls }}
   tls:
-{{ toYaml .Values.ingress.tls | indent 4 }}
+{{ tpl (toYaml .Values.ingress.tls) $ | indent 4 }}
   {{- end -}}
 {{- end -}}

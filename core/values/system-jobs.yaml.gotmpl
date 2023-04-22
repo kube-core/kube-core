@@ -6,7 +6,7 @@ tekton:
   pipeline: {{ toYaml (index .Values.releases "tekton" "config" "pipeline") | nindent 4 }}
 cleaner:
   enabled: true
-  includes: Terminated|Completed|Error|Evicted|CrashLoopBackOff|ImagePullBackOff|ErrImagePull|ContainerCannotRun|NodeAffinity|Shutdown|ContainerStatusUnknown
+  includes: OOMKilled|Terminated|Completed|Error|Evicted|CrashLoopBackOff|ImagePullBackOff|ErrImagePull|ContainerCannotRun|NodeAffinity|Shutdown|ContainerStatusUnknown
   excludeTekton: true
   excludeCatalogue: true
 tainter:

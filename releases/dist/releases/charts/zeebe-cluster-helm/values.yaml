@@ -2,17 +2,22 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-global: 
+# Annotations to apply to the statefullset
+annotations: {}
+
+global:
   elasticsearch:
-    url: 
+    url:
     host: "elasticsearch-master"
     port: 9200
   zeebe: "{{ .Release.Name }}-zeebe"
 
 image:
   repository: camunda/zeebe
-  tag: 1.1.2
+  tag: 1.3.4
   pullPolicy: IfNotPresent
+  pullSecrets: []
+  #  - name: myregistrykey
 
 clusterSize: "3"
 partitionCount: "3"
@@ -25,6 +30,7 @@ env: []
 logLevel: info
 
 gateway:
+  annotations: {}
   replicas: 1
   logLevel: info
   env: []
@@ -32,15 +38,20 @@ gateway:
     enabled: false
     minAvailable: 1
     maxUnavailable:
+  priorityClassName: ""
   resources:  {}
+  serviceAccount:
+    create: true
+    name: ""
+    annotations: {}
 
 elasticsearch:
   enabled: true
-  imageTag: 7.13.2
+  imageTag: 7.16.2
 
 kibana:
   enabled: false
-  imageTag: 7.13.2
+  imageTag: 7.16.2
 
 prometheus:
   enabled: false
@@ -55,14 +66,15 @@ JavaOpts: >-
   -XX:+ExitOnOutOfMemoryError
 
 labels:
-  app: zeebe    
+  app: zeebe
 serviceType: ClusterIP
 serviceGatewayType: ClusterIP
 serviceHttpPort: 9600
-serviceGatewayPort: 26500    
-serviceCommandPort: 26501     
-serviceInternalPort: 26502  
-resources: 
+serviceGatewayPort: 26500
+serviceCommandPort: 26501
+serviceInternalPort: 26502
+priorityClassName: ""
+resources:
   requests:
     cpu: 500m
     memory: 2Gi
@@ -79,9 +91,17 @@ podDisruptionBudget:
   enabled: false
   minAvailable:
   maxUnavailable: 1
+podSecurityContext: {}
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
 
 nodeSelector: {}
 
 tolerations: []
 
 affinity: {}
+
+extraVolumes: {}
+extraVolumeMounts: {}

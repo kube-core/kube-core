@@ -1,0 +1,68 @@
+cluster:
+  common:
+    defaultServiceAnnotations: {}
+    defaultServiceLabels: {}
+    defaultIngressAnnotations: {}
+    defaultIngressLabels: {}
+  config:
+    domain: kube-core.io
+name: kiali
+spec:
+  auth:
+    strategy: anonymous
+  deployment:
+    accessible_namespaces:
+    - '**'
+    ingress:
+      enabled: false
+      class_name: nginx
+    logger:
+      log_format: json
+      log_level: info
+      sampler_rate: "1"
+    namespace: istio-system
+    pod_labels:
+      sidecar.istio.io/inject: "false"
+    view_only_mode: false
+  external_services:
+    custom_dashboards:
+      enabled: true
+    istio:
+      root_namespace: istio-system
+    grafana:
+      enabled: true
+      # url: 'https://grafana.istio-system.domain'
+      in_cluster_url: 'http://grafana:3000'
+    tracing:
+      enabled: true
+      in_cluster_url: 'http://tracing/jaeger'
+      use_grpc: false
+      # url: 'https://jaeger.istio-system.domain'
+    prometheus:
+      url: "http://prometheus:9090/"
+  istio_namespace: istio-system
+  kiali_feature_flags:
+    ui_defaults:
+      namespaces:
+      - prod
+    certificates_information_indicators:
+      enabled: true
+      secrets:
+      - cacerts
+      - istio-ca-secret
+    clustering:
+      autodetect_secrets:
+        enabled: true
+        label: istio/multiCluster=true
+      clusters: []
+    disabled_features: []
+    validations:
+      ignore:
+      - KIA1201
+  login_token:
+    signing_key: CHANGEME
+  server:
+    metrics_enabled: true
+    metrics_port: 9090
+    port: 20001
+    web_root: /kiali

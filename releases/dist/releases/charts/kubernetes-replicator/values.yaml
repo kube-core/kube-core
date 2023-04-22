@@ -6,15 +6,24 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 grantClusterAdmin: false
+automountServiceAccountToken: true
 args: []
   # - -resync-period=30m
   # - -allow-all=false
+
+## Deployment strategy / DaemonSet updateStrategy
+##
+updateStrategy: {}
+#   type: RollingUpdate
+#   rollingUpdate:
+#     maxUnavailable: 1
 
 serviceAccount:
   create: true
   annotations: {}
   name:
   privileges: []
+  automountServiceAccountToken: true
   # - apiGroups: [""]
   #   resources: ["configmaps"]
 podSecurityContext: {}
@@ -27,6 +36,8 @@ securityContext: {}
   # readOnlyRootFilesystem: true
   # runAsNonRoot: true
   # runAsUser: 1000
+
+priorityClassName: ""
 
 resources: {}
   # limits:

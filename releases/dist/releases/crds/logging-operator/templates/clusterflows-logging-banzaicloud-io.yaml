@@ -88,6 +88,8 @@ spec:
                           items:
                             type: string
                           type: array
+                        match_tag:
+                          type: string
                         max_bytes:
                           type: integer
                         max_lines:
@@ -934,6 +936,8 @@ spec:
                     tag_normaliser:
                       properties:
                         format:
+                          type: string
+                        match_tag:
                           type: string
                       type: object
                     throttle:
@@ -1099,6 +1103,8 @@ spec:
                           items:
                             type: string
                           type: array
+                        match_tag:
+                          type: string
                         max_bytes:
                           type: integer
                         max_lines:
@@ -1945,6 +1951,8 @@ spec:
                     tag_normaliser:
                       properties:
                         format:
+                          type: string
+                        match_tag:
                           type: string
                       type: object
                     throttle:

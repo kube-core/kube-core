@@ -95,6 +95,10 @@ spec:
     - name: WALG_S3_PREFIX
       value: {{ printf "s3://%s/%s" $value.preConfigured.awsBackup.bucketName $value.preConfigured.awsBackup.prefix }}
     {{- end }}
+    {{- if $value.preConfigured.awsBackup.region }}
+    - name: AWS_REGION
+      value: {{ $value.preConfigured.awsBackup.region }}
+    {{- end }}
   {{- with $value.additionnalSpec }}
   {{- toYaml . | nindent 2 }}
   {{- end }}

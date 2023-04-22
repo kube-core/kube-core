@@ -9,12 +9,12 @@ dependencies:
 - alias: kps-thanos
   condition: kps-thanos.enabled
   name: thanos
-  repository: https://charts.bitnami.com/bitnami/
+  repository: https://charts.bitnami.com/bitnami
   version: 12.0.4
 - alias: kps-minio
   condition: kps-minio.enabled
   name: minio
-  repository: https://helm.min.io/
+  repository: https://helm.min.io
   version: 8.0.10
 - alias: kps-robusta
   condition: kps-robusta.enabled

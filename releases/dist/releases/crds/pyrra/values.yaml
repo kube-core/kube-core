@@ -11,7 +11,10 @@ image:
   # -- Overrides pullpolicy
   pullPolicy: IfNotPresent
   # -- Overrides the image tag
-  tag: "v0.5.1"
+  tag: "v0.5.7"
+
+additionalLabels: {}
+  # app: pyrra
 
 serviceAccount:
   # -- Specifies whether a service account should be created
@@ -64,13 +67,17 @@ ingress:
   #      - chart-example.local
 
 # -- resource limits and requests for server pod
-resources:
-  limits:
-    cpu: 100m
-    memory: 30Mi
-  requests:
-    cpu: 100m
-    memory: 20Mi
+resources:  {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 30Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 20Mi
 
 # -- node selector for scheduling server pod
 nodeSelector: {}
@@ -79,4 +86,10 @@ tolerations: {}
 
 serviceMonitor:
   # -- enables servicemonitor for server monitoring
+  enabled: false
+  # -- Set labels for the ServiceMonitor, use this to define your scrape label for Prometheus Operator
+  labels: {}
+
+genericRules: 
+  # -- enables generate Pyrra generic recording rules. Pyrra generates metrics with the same name for each SLO.
   enabled: false

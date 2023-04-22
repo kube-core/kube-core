@@ -23,6 +23,10 @@ spec:
         {{- end }}
     spec:
       serviceAccountName: {{ include "sloth.fullname" . }}
+      {{- with .Values.securityContext.pod }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
         - name: sloth
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
@@ -55,6 +59,7 @@ spec:
             {{- if .Values.customSloConfig.enabled }}
             - --slo-period-windows-path={{ .Values.customSloConfig.path }}
             {{- end }}
+            - --logger={{ .Values.sloth.logger }}
             {{- if .Values.sloth.debug.enabled }}
             - --debug
             {{- end}}
@@ -75,12 +80,16 @@ spec:
               mountPath: {{ .Values.customSloConfig.path }}
           {{- end }}
           {{- end }}
+          {{- with .Values.securityContext.container }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           resources:
-            limits:
-              memory: 150Mi
-            requests:
-              cpu: 5m
-              memory: 75Mi
+          {{- toYaml .Values.resources | nindent 12 }}
+          {{- with .Values.tolerations }}
+          tolerations:
+{{ toYaml . | trim | indent 12 }}
+          {{- end }}
         {{- if .Values.commonPlugins.enabled }}
         - name: git-sync-plugins
           image: {{ .Values.commonPlugins.image.repository }}:{{ .Values.commonPlugins.image.tag }}
@@ -93,13 +102,17 @@ spec:
             - name: sloth-common-sli-plugins
               # Default path for git-sync.
               mountPath: /tmp/git
+          {{- with .Values.securityContext.container }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           resources:
-            limits:
-              memory: 100Mi
-            requests:
-              cpu: 5m
-              memory: 50Mi
+          {{- toYaml .Values.commonPlugins.gitRepo.resources | nindent 12 }}
         {{- end }}
+      {{- if .Values.imagePullSecrets }}
+      imagePullSecrets:
+{{ include "sloth.imagePullSecrets" . | trim | indent 8 }}
+      {{- end }}
       {{- if or .Values.commonPlugins.enabled .Values.customSloConfig.enabled }}
       volumes:
       {{- if .Values.commonPlugins.enabled }}

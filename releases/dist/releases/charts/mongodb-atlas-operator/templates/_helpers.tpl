@@ -40,6 +40,9 @@ helm.sh/chart: {{ include "mongodb-atlas-operator.chart" . }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- range $key, $value := .Values.extraLabels }}
+{{ $key }}: {{ $value }}
+{{- end }}
 {{- end }}
 
 {{/*
@@ -188,6 +191,26 @@ RBAC permissions
   - atlas.mongodb.com
   resources:
   - atlasbackupschedules/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - atlas.mongodb.com
+  resources:
+  - atlasteams
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - atlas.mongodb.com
+  resources:
+  - atlasteams/status
   verbs:
   - get
   - patch

@@ -8,7 +8,7 @@ metadata:
   annotations:
     {{- range $key, $value := .Values.annotations }}
     {{ $key }}: {{ $value | quote }}
-    {{- end }}   
+    {{- end }}
 spec:
   replicas: {{ .Values.clusterSize  }}
   selector:
@@ -28,17 +28,26 @@ spec:
       annotations:
         {{- range $key, $value := .Values.podAnnotations }}
         {{ $key }}: {{ $value | quote }}
-        {{- end }}   
+        {{- end }}
     spec:
+      {{- if .Values.priorityClassName }}
+      priorityClassName: {{ .Values.priorityClassName | quote }}
+      {{- end }}
+      {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+        {{ toYaml .Values.image.pullSecrets | indent 8 | trim }}
+      {{- end }}
       initContainers:
         {{- if .Values.extraInitContainers }}
         {{ tpl .Values.extraInitContainers . | indent 8 | trim }}
-        {{- end }}    
+        {{- end }}
       containers:
       - name: {{ .Chart.Name }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         env:
+        - name: LC_ALL
+          value: C.UTF-8
         - name: ZEEBE_BROKER_CLUSTER_CLUSTERNAME
           value: {{ tpl .Values.global.zeebe . }}
         - name: ZEEBE_LOG_LEVEL
@@ -71,22 +80,25 @@ spec:
         - name: ZEEBE_BROKER_NETWORK_INTERNALAPI_PORT
           value: {{  .Values.serviceInternalPort | quote }}
         - name: ZEEBE_BROKER_NETWORK_MONITORINGAPI_PORT
-          value: {{  .Values.serviceHttpPort | quote }}         
+          value: {{  .Values.serviceHttpPort | quote }}
         - name: K8S_POD_NAME
           valueFrom:
             fieldRef:
-              fieldPath: metadata.name              
+              fieldPath: metadata.name
         - name: JAVA_TOOL_OPTIONS
           value: {{ .Values.JavaOpts | quote }}
-      {{- if .Values.envTemplated }}      
+      {{- if .Values.envTemplated }}
         {{- range $key, $value := .Values.envTemplated }}
         - name: {{ $key }}
           value: {{ tpl ($value | toString) $ }}
         {{- end }}
-      {{- end }}   
+      {{- end }}
       {{- if .Values.env }}
         {{ toYaml .Values.env | indent 8 | trim }}
       {{- end }}
+        {{- if .Values.command}}
+        command: {{ .Values.command }}
+        {{- end }}
         ports:
         - containerPort: {{ .Values.serviceHttpPort  }}
           name: {{ default "http" .Values.serviceHttpName  }}
@@ -102,7 +114,7 @@ spec:
           successThreshold: {{ .Values.readinessProbe.successThreshold }}
           timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
         resources:
-          {{- toYaml .Values.resources | nindent 12 }}
+          {{- toYaml .Values.resources | nindent 10 }}
         volumeMounts:
         - name: config
           mountPath: /usr/local/zeebe/config/application.yaml
@@ -119,6 +131,9 @@ spec:
           mountPath: /usr/local/zeebe/config/log4j2.xml
           subPath: broker-log4j2.xml
         {{- end }}
+        {{- if .Values.extraVolumeMounts}}
+        {{ .Values.extraVolumeMounts | toYaml | nindent 8 }}
+        {{- end }}
         securityContext:
           {{ toYaml .Values.podSecurityContext | indent 12 | trim }}
       volumes:
@@ -127,7 +142,13 @@ spec:
           name: {{ include "zeebe-cluster.fullname" . }}
           defaultMode: 0744
       - name: exporters
-        emptyDir: {}    
+        emptyDir: {}
+      {{- if .Values.extraVolumes}}
+      {{ .Values.extraVolumes | toYaml | nindent 6 }}
+      {{- end }}
+      {{- if .Values.serviceAccount.name }}
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      {{- end }}
 {{- with .Values.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 8 }}

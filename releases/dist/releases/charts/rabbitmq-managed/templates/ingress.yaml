@@ -15,6 +15,7 @@ kind: Ingress
 metadata:
   name: {{ include "rabbitmq-managed.fullname" . }}
   labels:
+    {{- include "rabbitmq-managed.labels" . | nindent 4 }}
     {{- with .Values.ingress.labels }}
       {{- toYaml . | nindent 4 }}
     {{- end }}

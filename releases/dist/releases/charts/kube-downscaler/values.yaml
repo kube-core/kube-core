@@ -4,6 +4,9 @@ replicaCount: 1
 debug:
   enable: false
 
+events:
+  enable: true
+
 ## Namespace where kube-downscaler is going to be deployed.
 # namespace:
   ## Deployment will query all namespaces if left empty:
@@ -18,13 +21,25 @@ rbac:
   create: true
   ## Ignored if rbac.create is true
   serviceAccountName: default
+  extraRules: []
+   # - apiGroups:
+   #     - argoproj.io
+   #   resources:
+   #     - rollouts
+   #   verbs:
+   #     - get
+   #     - watch
+   #     - list
+   #     - update
+   #     - patch
 
 image:
   repository: hjacobs/kube-downscaler
-  tag: 21.2.0
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
   pullPolicy: IfNotPresent
   args: []
-    # --default-uptime="Mon-Fri 07:30-20:30 Europe/Berlin"
+    # - --include-resources=deployments,cronjobs
 
 resources:
   limits:
@@ -34,16 +49,19 @@ resources:
     cpu: 50m
     memory: 200Mi
 
-securityContext:
-  readOnlyRootFilesystem: true
-  runAsNonRoot: true
-  runAsUser: 1000
+securityContext: {}
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
 
 extraLabels: {}
 
+# Set environment variables to override the default configuration
+# By default the uptime is "always"
+# More information here: https://codeberg.org/hjacobs/kube-downscaler#configuration
 deployment:
-  environment:
-    DEFAULT_UPTIME: "Mon-Fri 07:00-20:00 Europe/Berlin"
+  environment: {}
+    # DEFAULT_UPTIME: "Mon-Fri 07:00-20:00 Europe/Berlin"
 
 # This will periodically remove all annotations preventing downscaling
 # Sometimes people forget to remove the annotations and this can incur costs
@@ -69,3 +87,4 @@ fullnameOverride: ""
 nodeSelector: {}
 tolerations: []
 affinity: {}
+priorityClassName: ""

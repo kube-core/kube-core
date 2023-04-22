@@ -13,10 +13,10 @@ tenant:
 credentials:
   admin:
     user: admin
-    password: admin123
+    password: changeme
   user:
     user: minio
-    password: minio123
+    password: changeme
 
 
 storageConfigCheck:

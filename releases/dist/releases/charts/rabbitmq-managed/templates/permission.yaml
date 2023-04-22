@@ -5,6 +5,8 @@ apiVersion: rabbitmq.com/v1beta1
 kind: Permission
 metadata:
   name: {{ include "rabbitmq-managed.fullname" $ }}-permission-{{ $user.name }}{{ printf "-%s" $permission.vhost | trimSuffix "/" | trimSuffix "-" }}
+  labels:
+    {{- include "rabbitmq-managed.labels" $ | nindent 4 }}
 spec:
   vhost: {{ $permission.vhost }}
   userReference:

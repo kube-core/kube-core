@@ -5,4 +5,4 @@ description: Kubernetes controller that can shift nodes from one node pool to an
 home: https://helm.estafette.io
 icon: https://helm.estafette.io/icon.png
 name: estafette-gke-node-pool-shifter
-version: 1.2.4
+version: 0.1.0

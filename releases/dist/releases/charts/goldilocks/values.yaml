@@ -17,7 +17,7 @@ image:
   # image.repository -- Repository for the goldilocks image
   repository: us-docker.pkg.dev/fairwinds-ops/oss/goldilocks
   # image.tag -- The goldilocks image tag to use
-  tag: v4.5.1
+  tag: v4.6.3
   # image.pullPolicy -- imagePullPolicy - Highly recommended to leave this as `Always`
   pullPolicy: Always
 
@@ -61,10 +61,10 @@ controller:
   resources:
     limits:
       cpu: 25m
-      memory: 32Mi
+      memory: 256Mi
     requests:
       cpu: 25m
-      memory: 32Mi
+      memory: 256Mi
   # controller.podSecurityContext -- Defines the podSecurityContext for the controller pod
   podSecurityContext: {}
   # controller.securityContext -- The container securityContext for the controller container
@@ -158,10 +158,10 @@ dashboard:
   resources:
     limits:
       cpu: 25m
-      memory: 32Mi
+      memory: 256Mi
     requests:
       cpu: 25m
-      memory: 32Mi
+      memory: 256Mi
   # dashboard.podSecurityContext -- Defines the podSecurityContext for the dashboard pod
   podSecurityContext: {}
   # dashboard.securityContext -- The container securityContext for the dashboard container

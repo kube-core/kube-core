@@ -51,7 +51,13 @@ podSecurityContext:
   runAsNonRoot: true
 
 # securityContext defines the security context of the operator container.
-securityContext: {}
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
 
 # nodeSelector defines the node selector for the operator pod.
 nodeSelector: {}
@@ -143,6 +149,9 @@ config:
   # containerRegistry to use for pulling Elasticsearch and other application container images.
   containerRegistry: docker.elastic.co
 
+  # containerSuffix suffix to be appended to container images by default. Cannot be combined with -ubiOnly flag
+  # containerSuffix: ""
+
   # maxConcurrentReconciles is the number of concurrent reconciliation operations to perform per controller.
   maxConcurrentReconciles: "3"
 
@@ -181,6 +190,9 @@ config:
 
   # enableLeaderElection specifies whether leader election should be enabled
   enableLeaderElection: true
+
+  # Interval between observations of Elasticsearch health, non-positive values disable asynchronous observation.
+  elasticsearchObservationInterval: 10s
 
 # Prometheus PodMonitor configuration
 # Reference: https://github.com/prometheus-operator/prometheus-operator/blob/master/Documentation/api.md#podmonitor
@@ -222,5 +234,5 @@ global:
   # Usually we do want that to happen (e.g. all-in-one.yaml) but, sometimes we don't (e.g. E2E tests). 
   createOperatorNamespace: true
   # kubeVersion is the effective Kubernetes version we target when generating the all-in-one.yaml.
-  kubeVersion: 1.16.0
+  kubeVersion: 1.21.0
 

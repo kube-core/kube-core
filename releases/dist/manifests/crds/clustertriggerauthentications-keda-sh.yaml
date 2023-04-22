@@ -6,12 +6,12 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.9.0
   labels:
     app.kubernetes.io/name: keda-operator    
-    helm.sh/chart: keda-2.8.2
+    helm.sh/chart: keda-2.10.2
     app.kubernetes.io/component: operator
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/part-of: keda-operator
-    app.kubernetes.io/version: 2.8.1
+    app.kubernetes.io/version: 2.10.1
   name: clustertriggerauthentications.keda.sh
 spec:
   group: keda.sh
@@ -104,6 +104,18 @@ spec:
                     - clientId
                     - clientSecret
                     - tenantId
+                    type: object
+                  podIdentity:
+                    description: AuthPodIdentity allows users to select the platform
+                      native identity mechanism
+                    properties:
+                      identityId:
+                        type: string
+                      provider:
+                        description: PodIdentityProvider contains the list of providers
+                        type: string
+                    required:
+                    - provider
                     type: object
                   secrets:
                     items:

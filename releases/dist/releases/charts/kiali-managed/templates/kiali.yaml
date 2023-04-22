@@ -1,0 +1,11 @@
+apiVersion: kiali.io/v1alpha1
+kind: Kiali
+metadata:
+  name: {{ coalesce .Values.name "kiali" }}
+  {{ if .Values.labels }}
+  labels: {{ toYaml .Values.labels | nindent 4 }}
+  {{ end }}
+  {{ if .Values.annotations }}
+  annotations: {{ toYaml .Values.annotations | nindent 4 }}
+  {{ end }}
+spec: {{ toYaml .Values.spec | nindent 2 }}

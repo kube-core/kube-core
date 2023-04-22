@@ -6,7 +6,7 @@ cluster:
   # -- Name of the cluster, if not specified will be the name of the release
   name: ""
   # -- [Required] TeamId, also the prefix for postgresql ressources
-  teamIdPrefix: ""
+  teamIdPrefix: "apps"
   # -- Annotations for the postgresql ressources
   annotations: {}
     ## Those are to use to delete postgresql cluster when deletion protection is activated on operator
@@ -40,6 +40,7 @@ cluster:
       prefix: ""
       bucketName: ""
       roleIam: ""
+      region: "eu-west-1"
 
   # -- Add values directly into the spec of the postgresql, to create DB, clone another cluster, etc. (check commented values)
   additionnalSpec: {}
@@ -79,4 +80,3 @@ cluster:
     #       operator: In
     #       values:
     #       - key-1
-

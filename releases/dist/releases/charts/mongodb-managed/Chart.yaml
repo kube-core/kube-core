@@ -4,8 +4,8 @@ dependencies:
   condition: mongodb-exporter.enabled
   name: prometheus-mongodb-exporter
   repository: https://prometheus-community.github.io/helm-charts
-  version: 2.9.0
-description: A Helm chart for Kubernetes
+  version: 3.1.2
+description: A Helm chart to manage mongodbcommunity cluster
 name: mongodb-managed
 type: application
-version: 0.5.1
+version: 0.6.3

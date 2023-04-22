@@ -13,14 +13,14 @@ ingress:
     {{ toYaml (index .Values.releases .Release.Name "config" "ingress" "annotations") | nindent 4 }}
   {{- end }}
   {{- if eq (index .Values.releases $releaseName "namespace") $releaseNamespace }}
-  hosts: 
+  hosts:
     - {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
   tls:
     - secretName: {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") | replace "." "-"}}-tls
       hosts:
         - {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
   {{- else }}
-  hosts: 
+  hosts:
     - {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ $releaseNamespace }}.{{ .Values.cluster.config.domain }}
   tls:
     - secretName: {{ printf "%s-%s" (index .Values.releases .Release.Name "config" "ingress" "subdomain") $releaseNamespace | replace "." "-"}}-tls
@@ -28,10 +28,10 @@ ingress:
         - {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ $releaseNamespace }}.{{ .Values.cluster.config.domain }}
   {{- end }}
 
-image:
-  registry: docker.io
-  repository: bitnami/oauth2-proxy
-  tag: 7.4.0-debian-11-r3
+# image:
+#   registry: docker.io
+#   repository: bitnami/oauth2-proxy
+#   tag: latest
 
 replicaCount: 2
 podDisruptionBudget:

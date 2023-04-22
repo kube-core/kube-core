@@ -210,42 +210,42 @@ backupsEnabled: true
 snapshotsEnabled: false
 
 # Whether to deploy the restic daemonset.
-deployRestic: false
+deployNodeAgent: false
 
-restic:
-  podVolumePath: /var/lib/kubelet/pods
-  privileged: false
-  # Pod priority class name to use for the Restic daemonset. Optional.
-  priorityClassName: ""
-  # Resource requests/limits to specify for the Restic daemonset deployment. Optional.
-  resources: {}
-  # Tolerations to use for the Restic daemonset. Optional.
-  tolerations: []
+# nodeAgent:
+#   podVolumePath: /var/lib/kubelet/pods
+#   privileged: false
+#   # Pod priority class name to use for the Restic daemonset. Optional.
+#   priorityClassName: ""
+#   # Resource requests/limits to specify for the Restic daemonset deployment. Optional.
+#   resources: {}
+#   # Tolerations to use for the Restic daemonset. Optional.
+#   tolerations: []
 
-  # Annotations to set for the Restic daemonset. Optional.
-  annotations: {}
+#   # Annotations to set for the Restic daemonset. Optional.
+#   annotations: {}
 
-  # labels to set for the Restic daemonset. Optional.
-  labels: {}
+#   # labels to set for the Restic daemonset. Optional.
+#   labels: {}
 
-  # Extra volumes for the Restic daemonset. Optional.
-  extraVolumes: []
+#   # Extra volumes for the Restic daemonset. Optional.
+#   extraVolumes: []
 
-  # Extra volumeMounts for the Restic daemonset. Optional.
-  extraVolumeMounts: []
+#   # Extra volumeMounts for the Restic daemonset. Optional.
+#   extraVolumeMounts: []
 
-  # Configure the dnsPolicy of the Restic daemonset
-  # See: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy
-  dnsPolicy: ClusterFirst
+#   # Configure the dnsPolicy of the Restic daemonset
+#   # See: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy
+#   dnsPolicy: ClusterFirst
 
-  # SecurityContext to use for the Velero deployment. Optional.
-  # Set fsGroup for `AWS IAM Roles for Service Accounts`
-  # see more informations at: https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html
-  securityContext: {}
-    # fsGroup: 1337
+#   # SecurityContext to use for the Velero deployment. Optional.
+#   # Set fsGroup for `AWS IAM Roles for Service Accounts`
+#   # see more informations at: https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html
+#   securityContext: {}
+#     # fsGroup: 1337
 
-  # Node selector to use for the Restic daemonset. Optional.
-  nodeSelector: {}
+#   # Node selector to use for the Restic daemonset. Optional.
+#   nodeSelector: {}
 
 # Backup schedules to create.
 # Eg:

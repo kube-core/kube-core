@@ -2,8 +2,32 @@ apiVersion: rabbitmq.com/v1beta1
 kind: RabbitmqCluster
 metadata:
   name: {{ include "rabbitmq-managed.fullname" . }}
+  labels:
+    {{- include "rabbitmq-managed.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.cluster.replicaCount }}
+  {{- if .Values.cluster.image }}
+  image: {{ .Values.cluster.image }}
+  {{- end }}
+{{- if or .Values.cluster.resources.limits .Values.cluster.resources.requests }}
+  resources:
+  {{- if .Values.cluster.resources.limits }}
+    limits:
+    {{- toYaml .Values.cluster.resources.limits | nindent 6 }}
+  {{- end }}
+  {{- if .Values.cluster.resources.requests }}
+    requests:
+    {{- toYaml .Values.cluster.resources.requests | nindent 6 }}
+  {{- end }}
+{{- end }}
+  {{- if .Values.cluster.rabbitmqConf }}
+  rabbitmq:
+    {{- toYaml .Values.cluster.rabbitmqConf | nindent 4 }}
+  {{- end }}
+  {{- if .Values.cluster.override }}
+  override:
+    {{- toYaml .Values.cluster.override | nindent 4 }}
+  {{- end }}
   {{- with .Values.cluster.extraSpec }}
     {{- toYaml . | nindent 2 }}
   {{- end }}

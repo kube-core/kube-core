@@ -16,13 +16,60 @@ rules:
   - watch
   - list
 - apiGroups:
-  - extensions
   - apps
-  - autoscaling
   resources:
   - deployments
   - statefulsets
+  verbs:
+  - get
+  - watch
+  - list
+  - update
+  - patch
+- apiGroups:
+  - autoscaling
+  resources:
   - horizontalpodautoscalers
+  verbs:
+  - get
+  - watch
+  - list
+  - update
+  - patch
+- apiGroups:
+  - batch
+  resources:
+  - cronjobs
+  verbs:
+  - get
+  - watch
+  - list
+  - update
+  - patch
+- apiGroups:
+  - zalando.org
+  resources:
+  - stacks
+  verbs:
+  - get
+  - watch
+  - list
+  - update
+  - patch
+- apiGroups:
+  - argoproj.io
+  resources:
+  - rollouts
+  verbs:
+  - get
+  - watch
+  - list
+  - update
+  - patch
+- apiGroups:
+  - keda.sh
+  resources:
+  - scaledobjects
   verbs:
   - get
   - watch
@@ -32,8 +79,15 @@ rules:
 - apiGroups:
   - ""
   resources:
-  - namespaces
+  - events
   verbs:
   - get
+  - create
+  - watch
   - list
+  - update
+  - patch
+{{ if .Values.rbac.extraRules }}
+  {{- toYaml .Values.rbac.extraRules }}
+{{- end }}
 {{- end -}}

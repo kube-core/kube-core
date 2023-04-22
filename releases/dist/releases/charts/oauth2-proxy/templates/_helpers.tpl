@@ -79,6 +79,17 @@ Create the name of the service account to use
 {{- end -}}
 
 {{/*
+Allow the release namespace to be overridden for multi-namespace deployments in combined charts
+*/}}
+{{- define "oauth2-proxy.namespace" -}}
+  {{- if .Values.namespaceOverride -}}
+    {{- .Values.namespaceOverride -}}
+  {{- else -}}
+    {{- .Release.Namespace -}}
+  {{- end -}}
+{{- end -}}
+
+{{/*
 Redis subcharts fullname
 */}}
 {{- define "oauth2-proxy.redis.fullname" -}}
@@ -100,4 +111,11 @@ Compute the redis url if not set explicitly.
 {{- else -}}
 {{ fail "please set sessionStorage.redis.standalone.connectionUrl or enable the redis subchart via redis.enabled" }}
 {{- end -}}
+{{- end -}}
+
+{{/*
+Returns the version
+*/}}
+{{- define "oauth2-proxy.version" -}}
+{{ trimPrefix "v" (lower (.Values.image.tag | default (printf "v%s" .Chart.AppVersion))) }}
 {{- end -}}

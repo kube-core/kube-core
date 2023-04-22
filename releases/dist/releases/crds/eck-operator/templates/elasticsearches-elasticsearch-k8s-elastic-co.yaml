@@ -3,14 +3,14 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.9.1
+    controller-gen.kubebuilder.io/version: v0.11.3
   creationTimestamp: null
   labels:
     app.kubernetes.io/instance: 'release-name'
     app.kubernetes.io/managed-by: 'Helm'
     app.kubernetes.io/name: 'eck-operator-crds'
-    app.kubernetes.io/version: '2.4.0'
-    helm.sh/chart: 'eck-operator-crds-2.4.0'
+    app.kubernetes.io/version: '2.7.0'
+    helm.sh/chart: 'eck-operator-crds-2.7.0'
   name: elasticsearches.elasticsearch.k8s.elastic.co
 spec:
   group: elasticsearch.k8s.elastic.co
@@ -207,14 +207,24 @@ spec:
                               to be "ExternalName".
                             type: string
                           externalTrafficPolicy:
-                            description: externalTrafficPolicy denotes if this Service
-                              desires to route external traffic to node-local or cluster-wide
-                              endpoints. "Local" preserves the client source IP and
-                              avoids a second hop for LoadBalancer and Nodeport type
-                              services, but risks potentially imbalanced traffic spreading.
-                              "Cluster" obscures the client source IP and may cause
-                              a second hop to another node, but should have good overall
-                              load-spreading.
+                            description: externalTrafficPolicy describes how nodes
+                              distribute service traffic they receive on one of the
+                              Service's "externally-facing" addresses (NodePorts,
+                              ExternalIPs, and LoadBalancer IPs). If set to "Local",
+                              the proxy will configure the service in a way that assumes
+                              that external load balancers will take care of balancing
+                              the service traffic between nodes, and so each node
+                              will deliver traffic only to the node-local endpoints
+                              of the service, without masquerading the client source
+                              IP. (Traffic mistakenly sent to a node with no endpoints
+                              will be dropped.) The default value, "Cluster", uses
+                              the standard behavior of routing to all endpoints evenly
+                              (possibly modified by topology and other features).
+                              Note that traffic sent to an External IP or LoadBalancer
+                              IP from within the cluster will always get "Cluster"
+                              semantics, but clients sending to a NodePort from within
+                              the cluster may need to take traffic policy into account
+                              when picking a node.
                             type: string
                           healthCheckNodePort:
                             description: healthCheckNodePort specifies the healthcheck
@@ -228,17 +238,19 @@ spec:
                               not.  If this field is specified when creating a Service
                               which does not need it, creation will fail. This field
                               will be wiped when updating a Service to no longer need
-                              it (e.g. changing type).
+                              it (e.g. changing type). This field cannot be updated
+                              once set.
                             format: int32
                             type: integer
                           internalTrafficPolicy:
-                            description: InternalTrafficPolicy specifies if the cluster
-                              internal traffic should be routed to all endpoints or
-                              node-local endpoints only. "Cluster" routes internal
-                              traffic to a Service to all endpoints. "Local" routes
-                              traffic to node-local endpoints only, traffic is dropped
-                              if no node-local endpoints are ready. The default value
-                              is "Cluster".
+                            description: InternalTrafficPolicy describes how nodes
+                              distribute service traffic they receive on the ClusterIP.
+                              If set to "Local", the proxy will assume that pods only
+                              want to talk to endpoints of the service on the same
+                              node as the pod, dropping the traffic if there are no
+                              local endpoints. The default value, "Cluster", uses
+                              the standard behavior of routing to all endpoints evenly
+                              (possibly modified by topology and other features).
                             type: string
                           ipFamilies:
                             description: "IPFamilies is a list of IP families (e.g.
@@ -515,7 +527,7 @@ spec:
                 properties:
                   logs:
                     description: Logs holds references to Elasticsearch clusters which
-                      receive log data from this Elasticsearch cluster.
+                      receive log data from an associated resource.
                     properties:
                       elasticsearchRefs:
                         description: ElasticsearchRefs is a reference to a list of
@@ -562,7 +574,7 @@ spec:
                     type: object
                   metrics:
                     description: Metrics holds references to Elasticsearch clusters
-                      which receive monitoring data from this Elasticsearch cluster.
+                      which receive monitoring data from this resource.
                     properties:
                       elasticsearchRefs:
                         description: ElasticsearchRefs is a reference to a list of
@@ -698,9 +710,12 @@ spec:
                                   provisioner or an external controller can support
                                   the specified data source, it will create a new
                                   volume based on the contents of the specified data
-                                  source. If the AnyVolumeDataSource feature gate
-                                  is enabled, this field will always have the same
-                                  contents as the DataSourceRef field.'
+                                  source. When the AnyVolumeDataSource feature gate
+                                  is enabled, dataSource contents will be copied to
+                                  dataSourceRef, and dataSourceRef contents will be
+                                  copied to dataSource when dataSourceRef.namespace
+                                  is not specified. If the namespace is specified,
+                                  then dataSourceRef will not be copied to dataSource.'
                                 properties:
                                   apiGroup:
                                     description: APIGroup is the group for the resource
@@ -725,27 +740,33 @@ spec:
                               dataSourceRef:
                                 description: 'dataSourceRef specifies the object from
                                   which to populate the volume with data, if a non-empty
-                                  volume is desired. This may be any local object
-                                  from a non-empty API group (non core object) or
-                                  a PersistentVolumeClaim object. When this field
-                                  is specified, volume binding will only succeed if
-                                  the type of the specified object matches some installed
-                                  volume populator or dynamic provisioner. This field
-                                  will replace the functionality of the DataSource
-                                  field and as such if both fields are non-empty,
-                                  they must have the same value. For backwards compatibility,
-                                  both fields (DataSource and DataSourceRef) will
-                                  be set to the same value automatically if one of
-                                  them is empty and the other is non-empty. There
-                                  are two important differences between DataSource
-                                  and DataSourceRef: * While DataSource only allows
-                                  two specific types of objects, DataSourceRef allows
+                                  volume is desired. This may be any object from a
+                                  non-empty API group (non core object) or a PersistentVolumeClaim
+                                  object. When this field is specified, volume binding
+                                  will only succeed if the type of the specified object
+                                  matches some installed volume populator or dynamic
+                                  provisioner. This field will replace the functionality
+                                  of the dataSource field and as such if both fields
+                                  are non-empty, they must have the same value. For
+                                  backwards compatibility, when namespace isn''t specified
+                                  in dataSourceRef, both fields (dataSource and dataSourceRef)
+                                  will be set to the same value automatically if one
+                                  of them is empty and the other is non-empty. When
+                                  namespace is specified in dataSourceRef, dataSource
+                                  isn''t set to the same value and must be empty.
+                                  There are three important differences between dataSource
+                                  and dataSourceRef: * While dataSource only allows
+                                  two specific types of objects, dataSourceRef allows
                                   any non-core object, as well as PersistentVolumeClaim
-                                  objects. * While DataSource ignores disallowed values
-                                  (dropping them), DataSourceRef preserves all values,
+                                  objects. * While dataSource ignores disallowed values
+                                  (dropping them), dataSourceRef preserves all values,
                                   and generates an error if a disallowed value is
-                                  specified. (Beta) Using this field requires the
-                                  AnyVolumeDataSource feature gate to be enabled.'
+                                  specified. * While dataSource only allows local
+                                  objects, dataSourceRef allows objects in any namespaces.
+                                  (Beta) Using this field requires the AnyVolumeDataSource
+                                  feature gate to be enabled. (Alpha) Using the namespace
+                                  field of dataSourceRef requires the CrossNamespaceVolumeDataSource
+                                  feature gate to be enabled.'
                                 properties:
                                   apiGroup:
                                     description: APIGroup is the group for the resource
@@ -762,11 +783,21 @@ spec:
                                     description: Name is the name of resource being
                                       referenced
                                     type: string
+                                  namespace:
+                                    description: Namespace is the namespace of resource
+                                      being referenced Note that when a namespace
+                                      is specified, a gateway.networking.k8s.io/ReferenceGrant
+                                      object is required in the referent namespace
+                                      to allow that namespace's owner to accept the
+                                      reference. See the ReferenceGrant documentation
+                                      for details. (Alpha) This field requires the
+                                      CrossNamespaceVolumeDataSource feature gate
+                                      to be enabled.
+                                    type: string
                                 required:
                                 - kind
                                 - name
                                 type: object
-                                x-kubernetes-map-type: atomic
                               resources:
                                 description: 'resources represents the minimum resources
                                   the volume should have. If RecoverVolumeExpansionFailure
@@ -775,6 +806,29 @@ spec:
                                   value but must still be higher than capacity recorded
                                   in the status field of the claim. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#resources'
                                 properties:
+                                  claims:
+                                    description: "Claims lists the names of resources,
+                                      defined in spec.resourceClaims, that are used
+                                      by this container. \n This is an alpha field
+                                      and requires enabling the DynamicResourceAllocation
+                                      feature gate. \n This field is immutable."
+                                    items:
+                                      description: ResourceClaim references one entry
+                                        in PodSpec.ResourceClaims.
+                                      properties:
+                                        name:
+                                          description: Name must match the name of
+                                            one entry in pod.spec.resourceClaims of
+                                            the Pod where this field is used. It makes
+                                            that resource available inside a container.
+                                          type: string
+                                      required:
+                                      - name
+                                      type: object
+                                    type: array
+                                    x-kubernetes-list-map-keys:
+                                    - name
+                                    x-kubernetes-list-type: map
                                   limits:
                                     additionalProperties:
                                       anyOf:
@@ -1069,6 +1123,31 @@ spec:
                             type: object
                         type: object
                         x-kubernetes-map-type: atomic
+                      unhealthyPodEvictionPolicy:
+                        description: "UnhealthyPodEvictionPolicy defines the criteria
+                          for when unhealthy pods should be considered for eviction.
+                          Current implementation considers healthy pods, as pods that
+                          have status.conditions item with type=\"Ready\",status=\"True\".
+                          \n Valid policies are IfHealthyBudget and AlwaysAllow. If
+                          no policy is specified, the default behavior will be used,
+                          which corresponds to the IfHealthyBudget policy. \n IfHealthyBudget
+                          policy means that running pods (status.phase=\"Running\"),
+                          but not yet healthy can be evicted only if the guarded application
+                          is not disrupted (status.currentHealthy is at least equal
+                          to status.desiredHealthy). Healthy pods will be subject
+                          to the PDB for eviction. \n AlwaysAllow policy means that
+                          all running pods (status.phase=\"Running\"), but not yet
+                          healthy are considered disrupted and can be evicted regardless
+                          of whether the criteria in a PDB is met. This means perspective
+                          running pods of a disrupted application might not get a
+                          chance to become healthy. Healthy pods will be subject to
+                          the PDB for eviction. \n Additional policies may be added
+                          in the future. Clients making eviction decisions should
+                          disallow eviction of unhealthy pods if they encounter an
+                          unrecognized policy in this field. \n This field is alpha-level.
+                          The eviction API uses this field when the feature gate PDBUnhealthyPodEvictionPolicy
+                          is enabled (disabled by default)."
+                        type: string
                     type: object
                 type: object
               remoteClusters:
@@ -1270,14 +1349,24 @@ spec:
                               to be "ExternalName".
                             type: string
                           externalTrafficPolicy:
-                            description: externalTrafficPolicy denotes if this Service
-                              desires to route external traffic to node-local or cluster-wide
-                              endpoints. "Local" preserves the client source IP and
-                              avoids a second hop for LoadBalancer and Nodeport type
-                              services, but risks potentially imbalanced traffic spreading.
-                              "Cluster" obscures the client source IP and may cause
-                              a second hop to another node, but should have good overall
-                              load-spreading.
+                            description: externalTrafficPolicy describes how nodes
+                              distribute service traffic they receive on one of the
+                              Service's "externally-facing" addresses (NodePorts,
+                              ExternalIPs, and LoadBalancer IPs). If set to "Local",
+                              the proxy will configure the service in a way that assumes
+                              that external load balancers will take care of balancing
+                              the service traffic between nodes, and so each node
+                              will deliver traffic only to the node-local endpoints
+                              of the service, without masquerading the client source
+                              IP. (Traffic mistakenly sent to a node with no endpoints
+                              will be dropped.) The default value, "Cluster", uses
+                              the standard behavior of routing to all endpoints evenly
+                              (possibly modified by topology and other features).
+                              Note that traffic sent to an External IP or LoadBalancer
+                              IP from within the cluster will always get "Cluster"
+                              semantics, but clients sending to a NodePort from within
+                              the cluster may need to take traffic policy into account
+                              when picking a node.
                             type: string
                           healthCheckNodePort:
                             description: healthCheckNodePort specifies the healthcheck
@@ -1291,17 +1380,19 @@ spec:
                               not.  If this field is specified when creating a Service
                               which does not need it, creation will fail. This field
                               will be wiped when updating a Service to no longer need
-                              it (e.g. changing type).
+                              it (e.g. changing type). This field cannot be updated
+                              once set.
                             format: int32
                             type: integer
                           internalTrafficPolicy:
-                            description: InternalTrafficPolicy specifies if the cluster
-                              internal traffic should be routed to all endpoints or
-                              node-local endpoints only. "Cluster" routes internal
-                              traffic to a Service to all endpoints. "Local" routes
-                              traffic to node-local endpoints only, traffic is dropped
-                              if no node-local endpoints are ready. The default value
-                              is "Cluster".
+                            description: InternalTrafficPolicy describes how nodes
+                              distribute service traffic they receive on the ClusterIP.
+                              If set to "Local", the proxy will assume that pods only
+                              want to talk to endpoints of the service on the same
+                              node as the pod, dropping the traffic if there are no
+                              local endpoints. The default value, "Cluster", uses
+                              the standard behavior of routing to all endpoints evenly
+                              (possibly modified by topology and other features).
                             type: string
                           ipFamilies:
                             description: "IPFamilies is a list of IP families (e.g.
@@ -1960,14 +2051,24 @@ spec:
                               to be "ExternalName".
                             type: string
                           externalTrafficPolicy:
-                            description: externalTrafficPolicy denotes if this Service
-                              desires to route external traffic to node-local or cluster-wide
-                              endpoints. "Local" preserves the client source IP and
-                              avoids a second hop for LoadBalancer and Nodeport type
-                              services, but risks potentially imbalanced traffic spreading.
-                              "Cluster" obscures the client source IP and may cause
-                              a second hop to another node, but should have good overall
-                              load-spreading.
+                            description: externalTrafficPolicy describes how nodes
+                              distribute service traffic they receive on one of the
+                              Service's "externally-facing" addresses (NodePorts,
+                              ExternalIPs, and LoadBalancer IPs). If set to "Local",
+                              the proxy will configure the service in a way that assumes
+                              that external load balancers will take care of balancing
+                              the service traffic between nodes, and so each node
+                              will deliver traffic only to the node-local endpoints
+                              of the service, without masquerading the client source
+                              IP. (Traffic mistakenly sent to a node with no endpoints
+                              will be dropped.) The default value, "Cluster", uses
+                              the standard behavior of routing to all endpoints evenly
+                              (possibly modified by topology and other features).
+                              Note that traffic sent to an External IP or LoadBalancer
+                              IP from within the cluster will always get "Cluster"
+                              semantics, but clients sending to a NodePort from within
+                              the cluster may need to take traffic policy into account
+                              when picking a node.
                             type: string
                           healthCheckNodePort:
                             description: healthCheckNodePort specifies the healthcheck
@@ -1981,17 +2082,19 @@ spec:
                               not.  If this field is specified when creating a Service
                               which does not need it, creation will fail. This field
                               will be wiped when updating a Service to no longer need
-                              it (e.g. changing type).
+                              it (e.g. changing type). This field cannot be updated
+                              once set.
                             format: int32
                             type: integer
                           internalTrafficPolicy:
-                            description: InternalTrafficPolicy specifies if the cluster
-                              internal traffic should be routed to all endpoints or
-                              node-local endpoints only. "Cluster" routes internal
-                              traffic to a Service to all endpoints. "Local" routes
-                              traffic to node-local endpoints only, traffic is dropped
-                              if no node-local endpoints are ready. The default value
-                              is "Cluster".
+                            description: InternalTrafficPolicy describes how nodes
+                              distribute service traffic they receive on the ClusterIP.
+                              If set to "Local", the proxy will assume that pods only
+                              want to talk to endpoints of the service on the same
+                              node as the pod, dropping the traffic if there are no
+                              local endpoints. The default value, "Cluster", uses
+                              the standard behavior of routing to all endpoints evenly
+                              (possibly modified by topology and other features).
                             type: string
                           ipFamilies:
                             description: "IPFamilies is a list of IP families (e.g.
@@ -2346,9 +2449,12 @@ spec:
                                   provisioner or an external controller can support
                                   the specified data source, it will create a new
                                   volume based on the contents of the specified data
-                                  source. If the AnyVolumeDataSource feature gate
-                                  is enabled, this field will always have the same
-                                  contents as the DataSourceRef field.'
+                                  source. When the AnyVolumeDataSource feature gate
+                                  is enabled, dataSource contents will be copied to
+                                  dataSourceRef, and dataSourceRef contents will be
+                                  copied to dataSource when dataSourceRef.namespace
+                                  is not specified. If the namespace is specified,
+                                  then dataSourceRef will not be copied to dataSource.'
                                 properties:
                                   apiGroup:
                                     description: APIGroup is the group for the resource
@@ -2373,27 +2479,33 @@ spec:
                               dataSourceRef:
                                 description: 'dataSourceRef specifies the object from
                                   which to populate the volume with data, if a non-empty
-                                  volume is desired. This may be any local object
-                                  from a non-empty API group (non core object) or
-                                  a PersistentVolumeClaim object. When this field
-                                  is specified, volume binding will only succeed if
-                                  the type of the specified object matches some installed
-                                  volume populator or dynamic provisioner. This field
-                                  will replace the functionality of the DataSource
-                                  field and as such if both fields are non-empty,
-                                  they must have the same value. For backwards compatibility,
-                                  both fields (DataSource and DataSourceRef) will
-                                  be set to the same value automatically if one of
-                                  them is empty and the other is non-empty. There
-                                  are two important differences between DataSource
-                                  and DataSourceRef: * While DataSource only allows
-                                  two specific types of objects, DataSourceRef allows
+                                  volume is desired. This may be any object from a
+                                  non-empty API group (non core object) or a PersistentVolumeClaim
+                                  object. When this field is specified, volume binding
+                                  will only succeed if the type of the specified object
+                                  matches some installed volume populator or dynamic
+                                  provisioner. This field will replace the functionality
+                                  of the dataSource field and as such if both fields
+                                  are non-empty, they must have the same value. For
+                                  backwards compatibility, when namespace isn''t specified
+                                  in dataSourceRef, both fields (dataSource and dataSourceRef)
+                                  will be set to the same value automatically if one
+                                  of them is empty and the other is non-empty. When
+                                  namespace is specified in dataSourceRef, dataSource
+                                  isn''t set to the same value and must be empty.
+                                  There are three important differences between dataSource
+                                  and dataSourceRef: * While dataSource only allows
+                                  two specific types of objects, dataSourceRef allows
                                   any non-core object, as well as PersistentVolumeClaim
-                                  objects. * While DataSource ignores disallowed values
-                                  (dropping them), DataSourceRef preserves all values,
+                                  objects. * While dataSource ignores disallowed values
+                                  (dropping them), dataSourceRef preserves all values,
                                   and generates an error if a disallowed value is
-                                  specified. (Beta) Using this field requires the
-                                  AnyVolumeDataSource feature gate to be enabled.'
+                                  specified. * While dataSource only allows local
+                                  objects, dataSourceRef allows objects in any namespaces.
+                                  (Beta) Using this field requires the AnyVolumeDataSource
+                                  feature gate to be enabled. (Alpha) Using the namespace
+                                  field of dataSourceRef requires the CrossNamespaceVolumeDataSource
+                                  feature gate to be enabled.'
                                 properties:
                                   apiGroup:
                                     description: APIGroup is the group for the resource
@@ -2410,11 +2522,21 @@ spec:
                                     description: Name is the name of resource being
                                       referenced
                                     type: string
+                                  namespace:
+                                    description: Namespace is the namespace of resource
+                                      being referenced Note that when a namespace
+                                      is specified, a gateway.networking.k8s.io/ReferenceGrant
+                                      object is required in the referent namespace
+                                      to allow that namespace's owner to accept the
+                                      reference. See the ReferenceGrant documentation
+                                      for details. (Alpha) This field requires the
+                                      CrossNamespaceVolumeDataSource feature gate
+                                      to be enabled.
+                                    type: string
                                 required:
                                 - kind
                                 - name
                                 type: object
-                                x-kubernetes-map-type: atomic
                               resources:
                                 description: 'resources represents the minimum resources
                                   the volume should have. If RecoverVolumeExpansionFailure
@@ -2423,6 +2545,29 @@ spec:
                                   value but must still be higher than capacity recorded
                                   in the status field of the claim. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#resources'
                                 properties:
+                                  claims:
+                                    description: "Claims lists the names of resources,
+                                      defined in spec.resourceClaims, that are used
+                                      by this container. \n This is an alpha field
+                                      and requires enabling the DynamicResourceAllocation
+                                      feature gate. \n This field is immutable."
+                                    items:
+                                      description: ResourceClaim references one entry
+                                        in PodSpec.ResourceClaims.
+                                      properties:
+                                        name:
+                                          description: Name must match the name of
+                                            one entry in pod.spec.resourceClaims of
+                                            the Pod where this field is used. It makes
+                                            that resource available inside a container.
+                                          type: string
+                                      required:
+                                      - name
+                                      type: object
+                                    type: array
+                                    x-kubernetes-list-map-keys:
+                                    - name
+                                    x-kubernetes-list-type: map
                                   limits:
                                     additionalProperties:
                                       anyOf:
@@ -2719,6 +2864,31 @@ spec:
                             type: object
                         type: object
                         x-kubernetes-map-type: atomic
+                      unhealthyPodEvictionPolicy:
+                        description: "UnhealthyPodEvictionPolicy defines the criteria
+                          for when unhealthy pods should be considered for eviction.
+                          Current implementation considers healthy pods, as pods that
+                          have status.conditions item with type=\"Ready\",status=\"True\".
+                          \n Valid policies are IfHealthyBudget and AlwaysAllow. If
+                          no policy is specified, the default behavior will be used,
+                          which corresponds to the IfHealthyBudget policy. \n IfHealthyBudget
+                          policy means that running pods (status.phase=\"Running\"),
+                          but not yet healthy can be evicted only if the guarded application
+                          is not disrupted (status.currentHealthy is at least equal
+                          to status.desiredHealthy). Healthy pods will be subject
+                          to the PDB for eviction. \n AlwaysAllow policy means that
+                          all running pods (status.phase=\"Running\"), but not yet
+                          healthy are considered disrupted and can be evicted regardless
+                          of whether the criteria in a PDB is met. This means perspective
+                          running pods of a disrupted application might not get a
+                          chance to become healthy. Healthy pods will be subject to
+                          the PDB for eviction. \n Additional policies may be added
+                          in the future. Clients making eviction decisions should
+                          disallow eviction of unhealthy pods if they encounter an
+                          unrecognized policy in this field. \n This field is alpha-level.
+                          The eviction API uses this field when the feature gate PDBUnhealthyPodEvictionPolicy
+                          is enabled (disabled by default)."
+                        type: string
                     type: object
                 type: object
               secureSettings:

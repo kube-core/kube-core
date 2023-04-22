@@ -5,11 +5,11 @@ mongodb-exporter:
   existingSecret:
     name:
 
-If you are using external secrets template ($.Values.mongodbMonitoring.externalSecrets = true )
+If you create mongodb user for monitoring ($.Values.mongodbMonitoring.user.create = true )
 You can simply copy/paste this into your values :
 
 mongodb-exporter: 
   existingSecret:
-    name: {{ printf "%s-monitoring" (include "mongodb-managed.fullname" . ) }}
+    name: {{ include "mongodb-managed.fullname" . }}-admin-monitoring
 
 {{- end }}

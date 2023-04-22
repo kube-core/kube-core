@@ -1,9 +1,9 @@
 dependencies:
 - name: vpa
   repository: https://charts.fairwinds.com/stable
-  version: 1.3.0
+  version: 1.7.2
 - name: metrics-server
   repository: https://charts.bitnami.com/bitnami
-  version: 5.11.4
-digest: sha256:4e2efee832b80f88e0b88d2a226085a8b7aa1c04931b6f92b6a6f8fa7832e570
-generated: "2022-12-15T20:23:56.413717438Z"
+  version: 6.2.4
+digest: sha256:23ef20272334cfbf190a9508ae3cb94d04b7f0fe858ef154c0780238fd954fc0
+generated: "2023-04-20T19:06:31.661082878Z"

@@ -450,13 +450,6 @@ releases:
       runnerDockerImage: zooz/predator-runner:1.6
       runnerMemory: 256
       skipInternalAddressCheck: true
-  reloader:
-    config:
-      ignoreConfigMaps: false
-      ignoreNamespaces: ""
-      ignoreSecrets: false
-      logFormat: ""
-      watchGlobally: true
   sloop:
     config:
       ingress:

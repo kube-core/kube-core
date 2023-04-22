@@ -1,27 +1,27 @@
 # Git Provider & Config
 git:
-  provider: KUBE_CORE_GIT_PROVIDER
-  web: KUBE_CORE_GIT_WEB
-  github_read_token: ./keys/.github-read-token #KUBE_CORE_GITHUB_READ_TOKEN
+  provider: GIT_PROVIDER
+  web: GIT_WEB
+  github_read_token: ./keys/.github-read-token #GITHUB_READ_TOKEN
   api:
-    url: KUBE_CORE_GIT_API_URL
-    host: KUBE_CORE_GIT_API_HOST
-    token: ./keys/.git-api-token #KUBE_CORE_GIT_API_TOKEN
+    url: GIT_API_URL
+    host: GIT_API_HOST
+    token: ./keys/.git-api-token #GIT_API_TOKEN
   ssh:
-    url: KUBE_CORE_GIT_SSH_URL
-    host: KUBE_CORE_GIT_SSH_HOST
-    key: ./keys/.git-ssh-key #KUBE_CORE_GIT_SSH_KEY
-    known_hosts: ./keys/.git-ssh-hosts #KUBE_CORE_GIT_SSH_KNOWN_HOSTS
+    url: GIT_SSH_URL
+    host: GIT_SSH_HOST
+    key: ./keys/.git-ssh-key #GIT_SSH_KEY
+    known_hosts: ./keys/.git-ssh-hosts #GIT_SSH_KNOWN_HOSTS
   webhooks:
-    token: ./keys/.git-webhooks-token #KUBE_CORE_GIT_WEBHOOKS_TOKEN
+    token: ./keys/.git-webhooks-token #GIT_WEBHOOKS_TOKEN
   bot:
-    user: KUBE_CORE_GIT_BOT_USER
-    name: KUBE_CORE_GIT_BOT_NAME
+    user: GIT_BOT_USER
+    name: GIT_BOT_NAME
 
 cloud:
-  provider: KUBE_CORE_CLOUD_PROVIDER
+  provider: CLOUD_PROVIDER
   default:
-    location: KUBE_CORE_CLOUD_DEFAULT_LOCATION
+    location: CLOUD_DEFAULT_LOCATION
   registry:
     hostname: REGISTRY
 # Cluster configuration
@@ -30,13 +30,13 @@ cluster:
     defaultIngressAnnotations: {}
     defaultServiceAnnotations: {}
   config:
-    name: KUBE_CORE_CLUSTER_CONFIG_NAME
+    name: CLUSTER_CONFIG_NAME
     repository:
-      name: KUBE_CORE_CLUSTER_CONFIG_REPOSITORY_NAME
-      url: KUBE_CORE_CLUSTER_CONFIG_REPOSITORY_URL
-      ref: KUBE_CORE_CLUSTER_CONFIG_REPOSITORY_REF
-      path: KUBE_CORE_CLUSTER_CONFIG_REPOSITORY_PATH
-    adminEmail: KUBE_CORE_CLUSTER_CONFIG_ADMIN_EMAIL
+      name: CLUSTER_CONFIG_REPOSITORY_NAME
+      url: CLUSTER_CONFIG_REPOSITORY_URL
+      ref: CLUSTER_CONFIG_REPOSITORY_REF
+      path: CLUSTER_CONFIG_REPOSITORY_PATH
+    adminEmail: CLUSTER_CONFIG_ADMIN_EMAIL
   logging:
     integrations:
       tekton:
@@ -64,9 +64,6 @@ cluster:
       version: "14.15.4"
       tests:
         image: "ihebchakroun/node-14.15.4-chrome-lighthouse:latest"
-
-
-
 
 
 tekton:

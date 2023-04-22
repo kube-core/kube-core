@@ -4,4 +4,4 @@ home: https://github.com/slok/sloth
 kubeVersion: '>= 1.19.0-0'
 name: sloth
 type: application
-version: 0.5.2
+version: 0.7.0

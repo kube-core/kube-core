@@ -2,7 +2,20 @@ labels: {}
 
 image:
   repository: ghcr.io/slok/sloth
-  tag: v0.10.0
+  tag: v0.11.0
+
+# -- Container resources: requests and limits for CPU, Memory
+resources:
+  limits:
+    cpu: 50m
+    memory: 150Mi
+  requests:
+    cpu: 5m
+    memory: 75Mi
+
+imagePullSecrets: []
+#  - name: secret1
+#  - name: secret2
 
 sloth:
   resyncInterval: ""    # The controller resync interval duration (e.g 15m).
@@ -14,18 +27,28 @@ sloth:
   optimizedRules: true  # Reduce prom load for calculating period window burnrates.
   debug:
     enabled: false
+  # Could be: default or json
+  logger: default
 
 commonPlugins:
   enabled: true
   image:
     repository: k8s.gcr.io/git-sync/git-sync
-    tag: v3.3.4
+    tag: v3.6.1
   gitRepo:
     url: https://github.com/slok/sloth-common-sli-plugins
     branch: main
+    resources:
+      limits:
+        cpu: 50m
+        memory: 100Mi
+      requests:
+        cpu: 5m
+        memory: 50Mi
 
 metrics:
   enabled: true
+  #scrapeInterval: 30s
   prometheusLabels: {}
 
 customSloConfig:
@@ -36,3 +59,19 @@ customSloConfig:
 #    kind: AlertWindows
 #    spec:
 #    ... See https://sloth.dev/usage/slo-period-windows/
+
+# add deployment pod tolerations
+# tolerations:
+#   - key: kubernetes.azure.com/scalesetpriority
+#     operator: Equal
+#     value: spot
+#     effect: NoSchedule
+
+securityContext:
+  pod: null
+  #   fsGroup: 100
+  #   runAsGroup: 1000
+  #   runAsNonRoot: true
+  #   runAsUser: 100
+  container: null
+  #   allowPrivilegeEscalation: false

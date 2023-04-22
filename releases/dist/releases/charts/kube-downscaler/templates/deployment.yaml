@@ -18,7 +18,13 @@ spec:
       labels:
         app.kubernetes.io/name: {{ include "kube-downscaler.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
+        {{- if .Values.extraLabels }}
+          {{- toYaml .Values.extraLabels | nindent 8 }}
+        {{- end }}
     spec:
+      {{- if .Values.priorityClassName }}
+      priorityClassName: "{{ .Values.priorityClassName }}"
+      {{- end }}
       serviceAccountName: {{ if .Values.rbac.create }}{{ template "kube-downscaler.fullname" . }}{{ else }}"{{ .Values.rbac.serviceAccountName }}"{{ end }}
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -26,12 +32,18 @@ spec:
     {{- end }}
       containers:
       - name: {{ template "kube-downscaler.fullname" . }}
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 10 }}
+        {{- with .Values.deployment.environment }}
         env:
-{{- range $key, $value := .Values.deployment.environment }}
+        {{- range $key, $value := . }}
+          {{- if $value }}
           - name: {{ $key }}
             value: {{ $value | quote }}
-{{- end }}
+          {{- end }}
+        {{- end }}
+        {{- end }}
         args:
         - --interval={{ .Values.interval }}
         {{- if .Values.namespace }}
@@ -41,6 +53,9 @@ spec:
         {{- end }}
         {{- if .Values.debug.enable }}
         - --debug
+        {{- end }}
+        {{- if .Values.events.enable }}
+        - --enable-events
         {{- end }}
         {{- with .Values.image.args }}
 {{ toYaml . | indent 8 }}

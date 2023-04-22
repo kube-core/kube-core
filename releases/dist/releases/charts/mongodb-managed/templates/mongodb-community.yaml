@@ -2,6 +2,8 @@ apiVersion: mongodbcommunity.mongodb.com/v1
 kind: MongoDBCommunity
 metadata:
   name: {{ include "mongodb-managed.fullname" . }}
+  labels:
+    {{- include "mongodb-managed.labels" . | nindent 4 }}
 spec:
   members: {{ .Values.replicaCount }}
   type: ReplicaSet
@@ -12,44 +14,78 @@ spec:
       modes: ["SCRAM"]
   statefulSet:
     spec:
+      metadata:
+        labels: 
+          {{- include "mongodb-managed.labels" . | nindent 10 }}
+        {{- if .Values.labels }}
+          {{- toYaml .Values.labels | nindent 10 }}
+        {{- end }}
+        {{- if .Values.annotations }}
+        annotations: 
+          {{- toYaml .Values.annotations | nindent 10 }}
+        {{- end }}
       template:
         metadata:
-          {{ if .Values.labels }}
-          labels: {{ toYaml .Values.labels | nindent 12 }}
-          {{ end }}
-          {{ if .Values.annotations }}
-          annotations: {{ toYaml .Values.annotations | nindent 12 }}
-          {{ end }}
+          labels: 
+            {{- include "mongodb-managed.labels" . | nindent 12 }}
+          {{- if .Values.mongodb.labels }}
+            {{ toYaml .Values.mongodb.labels | nindent 12 }}
+          {{- end }}
+          {{- if .Values.mongodb.annotations }}
+          annotations: 
+            {{- toYaml .Values.mongodb.annotations | nindent 12 }}
+          {{- end }}
         spec:
-          {{ if .Values.nodeSelector }}
+          {{- if .Values.nodeSelector }}
           nodeSelector: {{ toYaml .Values.nodeSelector | nindent 12 }}
-          {{ end }}
-          {{ if .Values.tolerations }}
+          {{- end }}
+          {{- if .Values.tolerations }}
           tolerations: {{ toYaml .Values.tolerations | nindent 12 }}
-          {{ end }}
-          {{ if .Values.affinity }}
+          {{- end }}
+          {{- if .Values.affinity }}
           affinity: {{ toYaml .Values.affinity | nindent 12 }}
-          {{ end }}
+          {{- end }}
           serviceAccount: {{ include "mongodb-managed.serviceAccountName" . }}
           serviceAccountName: {{ include "mongodb-managed.serviceAccountName" . }}
-          {{- if .Values.resources }}
+          {{- if or (or .Values.resources.limits .Values.resources.requests) (or .Values.mongodbAgent.resources.limits .Values.mongodbAgent.resources.requests) }}
           containers:
+            {{- if or .Values.resources.limits .Values.resources.requests }}
             - name: "mongod"
               resources:
-              {{- toYaml .Values.resources | nindent 16 }}
+              {{- if .Values.resources.limits }}
+                limits:
+                {{- toYaml .Values.resources.limits | nindent 18 }}
+              {{- end }}
+              {{- if .Values.resources.requests }}
+                requests:
+                {{- toYaml .Values.resources.requests | nindent 18 }}
+              {{- end }}
+            {{- end }}
+            {{- if or .Values.mongodbAgent.resources.limits .Values.mongodbAgent.resources.requests }}
+            - name: "mongodb-agent"
+              resources:
+              {{- if .Values.mongodbAgent.resources.limits }}
+                limits:
+                {{- toYaml .Values.mongodbAgent.resources.limits | nindent 18 }}
+              {{- end }}
+              {{- if .Values.mongodbAgent.resources.requests }}
+                requests:
+                {{- toYaml .Values.mongodbAgent.resources.requests | nindent 18 }}
+              {{- end }}
+            {{- end }}         
           {{- end }}
   users:
     {{- range $user := .Values.users }}
     - name: {{ $user.name }}
       db: {{ default $user.name $user.db }}
       passwordSecretRef:
-        name: {{ include "mongodb-managed.secretName" (dict "global" $ "loop" .) }}-password
+        name: {{ include "mongodb-managed.secretName" (dict "global" $ "user" .) }}-password
       roles:
       {{- range $role := $user.roles }}
         - name: {{ $role.name }}
           db: {{ default ( default $user.name $user.db ) $role.db }}
       {{- end }}
-      scramCredentialsSecretName: {{ include "mongodb-managed.secretName" (dict "global" $ "loop" .) }}
+      scramCredentialsSecretName: {{ include "mongodb-managed.secretName" (dict "global" $ "user" .) }}
     {{- end }}
     {{- if .Values.mongodbMonitoring.user.create }}
     - name: monitoring

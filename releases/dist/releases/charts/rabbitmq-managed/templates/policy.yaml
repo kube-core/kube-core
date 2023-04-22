@@ -4,6 +4,8 @@ apiVersion: rabbitmq.com/v1beta1
 kind: Policy
 metadata:
   name: {{ include "rabbitmq-managed.fullname" $ }}-policy-{{ $policy.name }}
+  labels:
+    {{- include "rabbitmq-managed.labels" $ | nindent 4 }}
 spec:
   name: {{ $policy.name }}
   vhost: {{ $policy.vhost }}

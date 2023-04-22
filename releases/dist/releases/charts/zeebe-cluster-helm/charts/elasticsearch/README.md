@@ -52,7 +52,7 @@ See [supported configurations][] for more details.
 
 ## Installing
 
-This chart is tested with the latest 7.13.2 version.
+This chart is tested with the latest 7.16.3 version.
 
 ### Install released version using Helm repository
 
@@ -67,11 +67,11 @@ This chart is tested with the latest 7.13.2 version.
 
 * Clone the git repo: `git clone git@github.com:elastic/helm-charts.git`
 
-* Checkout the branch : `git checkout 7.13`
+* Checkout the branch : `git checkout 7.16`
 
 * Install it:
-  - with Helm 3: `helm install elasticsearch ./helm-charts/elasticsearch --set imageTag=7.13.2`
-  - with Helm 2 (deprecated): `helm install --name elasticsearch ./helm-charts/elasticsearch --set imageTag=7.13.2`
+  - with Helm 3: `helm install elasticsearch ./helm-charts/elasticsearch --set imageTag=7.16.3`
+  - with Helm 2 (deprecated): `helm install --name elasticsearch ./helm-charts/elasticsearch --set imageTag=7.16.3`
 
 
 ## Upgrading
@@ -113,10 +113,12 @@ support multiple versions with minimal changes.
 | `antiAffinity`                     | Setting this to hard enforces the [anti-affinity][] rules. If it is set to soft it will be done "best effort". Other values will be ignored                                                                                                                                                                       | `hard`                                           |
 | `clusterHealthCheckParams`         | The [Elasticsearch cluster health status params][] that will be used by readiness [probe][] command                                                                                                                                                                                                               | `wait_for_status=green&timeout=1s`               |
 | `clusterName`                      | This will be used as the Elasticsearch [cluster.name][] and should be unique per cluster in the namespace                                                                                                                                                                                                         | `elasticsearch`                                  |
+| `clusterDeprecationIndexing`       | Enable or disable deprecation logs to be indexed (should be disabled when deploying master only node groups)                                                                                                                                                                                                      | `false`                                          |
 | `enableServiceLinks`               | Set to false to disabling service links, which can cause slow pod startup times when there are many services in the current namespace.                                                                                                                                                                            | `true`                                           |
 | `envFrom`                          | Templatable string to be passed to the [environment from variables][] which will be appended to the `envFrom:` definition for the container                                                                                                                                                                       | `[]`                                             |
 | `esConfig`                         | Allows you to add any config files in `/usr/share/elasticsearch/config/` such as `elasticsearch.yml` and `log4j2.properties`. See [values.yaml][] for an example of the formatting                                                                                                                                | `{}`                                             |
 | `esJavaOpts`                       | [Java options][] for Elasticsearch. This is where you could configure the [jvm heap size][]                                                                                                                                                                                                                       | `""`                                             |
+| `esJvmOptions`                       | [Java options][] for Elasticsearch. Override the default JVM options by adding custom options files .  See [values.yaml][] for an example of the formatting                                                                                                                                                                                                                        | `{}`                                             |
 | `esMajorVersion`                   | Deprecated. Instead, use the version of the chart corresponding to your ES minor version. Used to set major version specific configuration. If you are using a custom image and not running the default Elasticsearch version you will need to set this to the version you are running (e.g. `esMajorVersion: 6`) | `""`                                             |
 | `extraContainers`                  | Templatable string of additional `containers` to be passed to the `tpl` function                                                                                                                                                                                                                                  | `""`                                             |
 | `extraEnvs`                        | Extra [environment variables][] which will be appended to the `env:` definition for the container                                                                                                                                                                                                                 | `[]`                                             |
@@ -124,11 +126,12 @@ support multiple versions with minimal changes.
 | `extraVolumeMounts`                | Templatable string of additional `volumeMounts` to be passed to the `tpl` function                                                                                                                                                                                                                                | `""`                                             |
 | `extraVolumes`                     | Templatable string of additional `volumes` to be passed to the `tpl` function                                                                                                                                                                                                                                     | `""`                                             |
 | `fullnameOverride`                 | Overrides the `clusterName` and `nodeGroup` when used in the naming of resources. This should only be used when using a single `nodeGroup`, otherwise you will have name conflicts                                                                                                                                | `""`                                             |
+| `healthNameOverride`               | Overrides `test-elasticsearch-health` pod name                                                                                                                                                                                                                                                                    | `""`                                             |
 | `hostAliases`                      | Configurable [hostAliases][]                                                                                                                                                                                                                                                                                      | `[]`                                             |
 | `httpPort`                         | The http port that Kubernetes will use for the healthchecks and the service. If you change this you will also need to set [http.port][] in `extraEnvs`                                                                                                                                                            | `9200`                                           |
 | `imagePullPolicy`                  | The Kubernetes [imagePullPolicy][] value                                                                                                                                                                                                                                                                          | `IfNotPresent`                                   |
 | `imagePullSecrets`                 | Configuration for [imagePullSecrets][] so that you can use a private registry for your image                                                                                                                                                                                                                      | `[]`                                             |
-| `imageTag`                         | The Elasticsearch Docker image tag                                                                                                                                                                                                                                                                                | `7.13.2`                                |
+| `imageTag`                         | The Elasticsearch Docker image tag                                                                                                                                                                                                                                                                                | `7.16.3`                                         |
 | `image`                            | The Elasticsearch Docker image                                                                                                                                                                                                                                                                                    | `docker.elastic.co/elasticsearch/elasticsearch`  |
 | `ingress`                          | Configurable [ingress][] to expose the Elasticsearch service. See [values.yaml][] for an example                                                                                                                                                                                                                  | see [values.yaml][]                              |
 | `initResources`                    | Allows you to set the [resources][] for the `initContainer` in the StatefulSet                                                                                                                                                                                                                                    | `{}`                                             |
@@ -151,7 +154,7 @@ support multiple versions with minimal changes.
 | `podSecurityPolicy`                | Configuration for create a pod security policy with minimal permissions to run this Helm chart with `create: true`. Also can be used to reference an external pod security policy with `name: "externalPodSecurityPolicy"`                                                                                        | see [values.yaml][]                              |
 | `priorityClassName`                | The name of the [PriorityClass][]. No default is supplied as the PriorityClass must be created first                                                                                                                                                                                                              | `""`                                             |
 | `protocol`                         | The protocol that will be used for the readiness [probe][]. Change this to `https` if you have `xpack.security.http.ssl.enabled` set                                                                                                                                                                              | `http`                                           |
-| `rbac`                             | Configuration for creating a role, role binding and ServiceAccount as part of this Helm chart with `create: true`. Also can be used to reference an external ServiceAccount with `serviceAccountName: "externalServiceAccountName"`                                                                               | see [values.yaml][]                              |
+| `rbac`                             | Configuration for creating a role, role binding and ServiceAccount as part of this Helm chart with `create: true`. Also can be used to reference an external ServiceAccount with `serviceAccountName: "externalServiceAccountName"`, or automount the service account token                                       | see [values.yaml][]                              |
 | `readinessProbe`                   | Configuration fields for the readiness [probe][]                                                                                                                                                                                                                                                                  | see [values.yaml][]                              |
 | `replicas`                         | Kubernetes replica count for the StatefulSet (i.e. how many pods)                                                                                                                                                                                                                                                 | `3`                                              |
 | `resources`                        | Allows you to set the [resources][] for the StatefulSet                                                                                                                                                                                                                                                           | see [values.yaml][]                              |
@@ -160,6 +163,7 @@ support multiple versions with minimal changes.
 | `secretMounts`                     | Allows you easily mount a secret as a file inside the StatefulSet. Useful for mounting certificates and other secrets. See [values.yaml][] for an example                                                                                                                                                         | `[]`                                             |
 | `securityContext`                  | Allows you to set the [securityContext][] for the container                                                                                                                                                                                                                                                       | see [values.yaml][]                              |
 | `service.annotations`              | [LoadBalancer annotations][] that Kubernetes will use for the service. This will configure load balancer if `service.type` is `LoadBalancer`                                                                                                                                                                      | `{}`                                             |
+| `service.enabled`                  | Enable non-headless service                                                                                                                                                                                                                                                                                       | `true`                                           |
 | `service.externalTrafficPolicy`    | Some cloud providers allow you to specify the [LoadBalancer externalTrafficPolicy][]. Kubernetes will use this to preserve the client source IP. This will configure load balancer if `service.type` is `LoadBalancer`                                                                                            | `""`                                             |
 | `service.httpPortName`             | The name of the http port within the service                                                                                                                                                                                                                                                                      | `http`                                           |
 | `service.labelsHeadless`           | Labels to be added to headless service                                                                                                                                                                                                                                                                            | `{}`                                             |
@@ -172,6 +176,7 @@ support multiple versions with minimal changes.
 | `sysctlInitContainer`              | Allows you to disable the `sysctlInitContainer` if you are setting [sysctl vm.max_map_count][] with another method                                                                                                                                                                                                | `enabled: true`                                  |
 | `sysctlVmMaxMapCount`              | Sets the [sysctl vm.max_map_count][] needed for Elasticsearch                                                                                                                                                                                                                                                     | `262144`                                         |
 | `terminationGracePeriod`           | The [terminationGracePeriod][] in seconds used when trying to stop the pod                                                                                                                                                                                                                                        | `120`                                            |
+| `tests.enabled`                    | Enable creating test related resources when running `helm template` or `helm test`                                                                                                                                                                                                                                | `true`                                           |
 | `tolerations`                      | Configurable [tolerations][]                                                                                                                                                                                                                                                                                      | `[]`                                             |
 | `transportPort`                    | The transport port that Kubernetes will use for the service. If you change this you will also need to set [transport port configuration][] in `extraEnvs`                                                                                                                                                         | `9300`                                           |
 | `updateStrategy`                   | The [updateStrategy][] for the StatefulSet. By default Kubernetes will wait for the cluster to be green after upgrading each pod. Setting this to `OnDelete` will allow you to manually delete each pod during upgrades                                                                                           | `RollingUpdate`                                  |
@@ -379,7 +384,7 @@ lifecycle:
 Please check [CONTRIBUTING.md][] before any contribution or for any questions
 about our development and testing process.
 
-[7.13]: https://github.com/elastic/helm-charts/releases
+[7.16]: https://github.com/elastic/helm-charts/releases
 [#63]: https://github.com/elastic/helm-charts/issues/63
 [BREAKING_CHANGES.md]: https://github.com/elastic/helm-charts/blob/master/BREAKING_CHANGES.md
 [CHANGELOG.md]: https://github.com/elastic/helm-charts/blob/master/CHANGELOG.md
@@ -387,34 +392,34 @@ about our development and testing process.
 [alternate scheduler]: https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/#specify-schedulers-for-pods
 [annotations]: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
 [anti-affinity]: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
-[cluster.name]: https://www.elastic.co/guide/en/elasticsearch/reference/7.13/important-settings.html#cluster-name
-[clustering and node discovery]: https://github.com/elastic/helm-charts/tree/7.13/elasticsearch/README.md#clustering-and-node-discovery
-[config example]: https://github.com/elastic/helm-charts/tree/7.13/elasticsearch/examples/config/values.yaml
+[cluster.name]: https://www.elastic.co/guide/en/elasticsearch/reference/7.16/important-settings.html#cluster-name
+[clustering and node discovery]: https://github.com/elastic/helm-charts/tree/7.16/elasticsearch/README.md#clustering-and-node-discovery
+[config example]: https://github.com/elastic/helm-charts/tree/7.16/elasticsearch/examples/config/values.yaml
 [curator]: https://www.elastic.co/guide/en/elasticsearch/client/curator/7.9/snapshot.html
-[custom docker image]: https://www.elastic.co/guide/en/elasticsearch/reference/7.13/docker.html#_c_customized_image
+[custom docker image]: https://www.elastic.co/guide/en/elasticsearch/reference/7.16/docker.html#_c_customized_image
 [deploys statefulsets serially]: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#pod-management-policies
-[discovery.zen.minimum_master_nodes]: https://www.elastic.co/guide/en/elasticsearch/reference/7.13/discovery-settings.html#minimum_master_nodes
-[docker for mac]: https://github.com/elastic/helm-charts/tree/7.13/elasticsearch/examples/docker-for-mac
-[elasticsearch cluster health status params]: https://www.elastic.co/guide/en/elasticsearch/reference/7.13/cluster-health.html#request-params
-[elasticsearch docker image]: https://www.elastic.co/guide/en/elasticsearch/reference/7.13/docker.html
+[discovery.zen.minimum_master_nodes]: https://www.elastic.co/guide/en/elasticsearch/reference/7.16/discovery-settings.html#minimum_master_nodes
+[docker for mac]: https://github.com/elastic/helm-charts/tree/7.16/elasticsearch/examples/docker-for-mac
+[elasticsearch cluster health status params]: https://www.elastic.co/guide/en/elasticsearch/reference/7.16/cluster-health.html#request-params
+[elasticsearch docker image]: https://www.elastic.co/guide/en/elasticsearch/reference/7.16/docker.html
 [environment variables]: https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/#using-environment-variables-inside-of-your-config
 [environment from variables]: https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#configure-all-key-value-pairs-in-a-configmap-as-container-environment-variables
-[examples]: https://github.com/elastic/helm-charts/tree/7.13/elasticsearch/examples/
-[examples/multi]: https://github.com/elastic/helm-charts/tree/7.13/elasticsearch/examples/multi
-[examples/security]: https://github.com/elastic/helm-charts/tree/7.13/elasticsearch/examples/security
+[examples]: https://github.com/elastic/helm-charts/tree/7.16/elasticsearch/examples/
+[examples/multi]: https://github.com/elastic/helm-charts/tree/7.16/elasticsearch/examples/multi
+[examples/security]: https://github.com/elastic/helm-charts/tree/7.16/elasticsearch/examples/security
 [gke]: https://cloud.google.com/kubernetes-engine
 [helm]: https://helm.sh
 [helm/charts stable]: https://github.com/helm/charts/tree/master/stable/elasticsearch/
-[how to install plugins guide]: https://github.com/elastic/helm-charts/tree/7.13/elasticsearch/README.md#how-to-install-plugins
-[how to use the keystore]: https://github.com/elastic/helm-charts/tree/7.13/elasticsearch/README.md#how-to-use-the-keystore
-[http.port]: https://www.elastic.co/guide/en/elasticsearch/reference/7.13/modules-http.html#_settings
+[how to install plugins guide]: https://github.com/elastic/helm-charts/tree/7.16/elasticsearch/README.md#how-to-install-plugins
+[how to use the keystore]: https://github.com/elastic/helm-charts/tree/7.16/elasticsearch/README.md#how-to-use-the-keystore
+[http.port]: https://www.elastic.co/guide/en/elasticsearch/reference/7.16/modules-http.html#_settings
 [imagePullPolicy]: https://kubernetes.io/docs/concepts/containers/images/#updating-images
 [imagePullSecrets]: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/#create-a-pod-that-uses-your-secret
 [ingress]: https://kubernetes.io/docs/concepts/services-networking/ingress/
-[java options]: https://www.elastic.co/guide/en/elasticsearch/reference/7.13/jvm-options.html
-[jvm heap size]: https://www.elastic.co/guide/en/elasticsearch/reference/7.13/heap-size.html
+[java options]: https://www.elastic.co/guide/en/elasticsearch/reference/7.16/jvm-options.html
+[jvm heap size]: https://www.elastic.co/guide/en/elasticsearch/reference/7.16/heap-size.html
 [hostAliases]: https://kubernetes.io/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/
-[kind]: https://github.com/elastic/helm-charts/tree/7.13/elasticsearch/examples/kubernetes-kind
+[kind]: https://github.com/elastic/helm-charts/tree/7.16/elasticsearch/examples/kubernetes-kind
 [kubernetes secrets]: https://kubernetes.io/docs/concepts/configuration/secret/
 [labels]: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
 [lifecycle hooks]: https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/
@@ -422,32 +427,32 @@ about our development and testing process.
 [loadBalancer externalTrafficPolicy]: https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip
 [loadBalancer]: https://kubernetes.io/docs/concepts/services-networking/service/#loadbalancer
 [maxUnavailable]: https://kubernetes.io/docs/tasks/run-application/configure-pdb/#specifying-a-poddisruptionbudget
-[migration guide]: https://github.com/elastic/helm-charts/tree/7.13/elasticsearch/examples/migration/README.md
-[minikube]: https://github.com/elastic/helm-charts/tree/7.13/elasticsearch/examples/minikube
-[microk8s]: https://github.com/elastic/helm-charts/tree/7.13/elasticsearch/examples/microk8s
-[multi]: https://github.com/elastic/helm-charts/tree/7.13/elasticsearch/examples/multi/
-[network.host elasticsearch setting]: https://www.elastic.co/guide/en/elasticsearch/reference/7.13/network.host.html
+[migration guide]: https://github.com/elastic/helm-charts/tree/7.16/elasticsearch/examples/migration/README.md
+[minikube]: https://github.com/elastic/helm-charts/tree/7.16/elasticsearch/examples/minikube
+[microk8s]: https://github.com/elastic/helm-charts/tree/7.16/elasticsearch/examples/microk8s
+[multi]: https://github.com/elastic/helm-charts/tree/7.16/elasticsearch/examples/multi/
+[network.host elasticsearch setting]: https://www.elastic.co/guide/en/elasticsearch/reference/7.16/network.host.html
 [node affinity settings]: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#node-affinity-beta-feature
-[node-certificates]: https://www.elastic.co/guide/en/elasticsearch/reference/7.13/configuring-tls.html#node-certificates
+[node-certificates]: https://www.elastic.co/guide/en/elasticsearch/reference/7.16/configuring-tls.html#node-certificates
 [nodePort]: https://kubernetes.io/docs/concepts/services-networking/service/#nodeport
-[nodes types]: https://www.elastic.co/guide/en/elasticsearch/reference/7.13/modules-node.html
+[nodes types]: https://www.elastic.co/guide/en/elasticsearch/reference/7.16/modules-node.html
 [nodeSelector]: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector
-[openshift]: https://github.com/elastic/helm-charts/tree/7.13/elasticsearch/examples/openshift
+[openshift]: https://github.com/elastic/helm-charts/tree/7.16/elasticsearch/examples/openshift
 [priorityClass]: https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/#priorityclass
 [probe]: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/
 [resources]: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
-[roles]: https://www.elastic.co/guide/en/elasticsearch/reference/7.13/modules-node.html
+[roles]: https://www.elastic.co/guide/en/elasticsearch/reference/7.16/modules-node.html
 [secret]: https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets
 [securityContext]: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
 [service types]: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
-[snapshot lifecycle management]: https://www.elastic.co/guide/en/elasticsearch/reference/7.13/snapshot-lifecycle-management.html
-[snapshot plugin]: https://www.elastic.co/guide/en/elasticsearch/plugins/7.13/repository.html
-[snapshot repository]: https://www.elastic.co/guide/en/elasticsearch/reference/7.13/modules-snapshots.html
-[supported configurations]: https://github.com/elastic/helm-charts/tree/7.13/README.md#supported-configurations
-[sysctl vm.max_map_count]: https://www.elastic.co/guide/en/elasticsearch/reference/7.13/vm-max-map-count.html#vm-max-map-count
+[snapshot lifecycle management]: https://www.elastic.co/guide/en/elasticsearch/reference/7.16/snapshot-lifecycle-management.html
+[snapshot plugin]: https://www.elastic.co/guide/en/elasticsearch/plugins/7.16/repository.html
+[snapshot repository]: https://www.elastic.co/guide/en/elasticsearch/reference/7.16/modules-snapshots.html
+[supported configurations]: https://github.com/elastic/helm-charts/tree/7.16/README.md#supported-configurations
+[sysctl vm.max_map_count]: https://www.elastic.co/guide/en/elasticsearch/reference/7.16/vm-max-map-count.html#vm-max-map-count
 [terminationGracePeriod]: https://kubernetes.io/docs/concepts/workloads/pods/pod/#termination-of-pods
 [tolerations]: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
-[transport port configuration]: https://www.elastic.co/guide/en/elasticsearch/reference/7.13/modules-transport.html#_transport_settings
+[transport port configuration]: https://www.elastic.co/guide/en/elasticsearch/reference/7.16/modules-transport.html#_transport_settings
 [updateStrategy]: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/
-[values.yaml]: https://github.com/elastic/helm-charts/tree/7.13/elasticsearch/values.yaml
+[values.yaml]: https://github.com/elastic/helm-charts/tree/7.16/elasticsearch/values.yaml
 [volumeClaimTemplate for statefulsets]: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-storage

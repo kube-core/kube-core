@@ -44,11 +44,6 @@ releases:
     namespace: crossplane-system
     namespaceShortName: xpln-sys
     chart: ../releases/dist/releases/charts/crossplane
-  crossplane-buckets:
-    shortName: xpln-bkt
-    namespace: crossplane-system
-    namespaceShortName: xpln-sys
-    chart: ../releases/dist/releases/charts/crossplane-buckets
   crossplane-cloud:
     shortName: xpln-clo
     namespace: crossplane-system
@@ -161,7 +156,7 @@ releases:
     shortName: istio-kia
     namespace: istio-system
     namespaceShortName: istio
-    chart: ../releases/local/kiali-managed
+    chart: ../releases/dist/releases/charts/kiali-managed
   istio-jaeger:
     shortName: istio-jae
     namespace: istio-system
@@ -181,7 +176,7 @@ releases:
     shortName: kia
     namespace: kiali
     namespaceShortName: kia
-    chart: ../releases/local/kiali-managed
+    chart: ../releases/dist/releases/charts/kiali-managed
   istio-prometheus:
     shortName: istio-prm
     namespace: istio-system

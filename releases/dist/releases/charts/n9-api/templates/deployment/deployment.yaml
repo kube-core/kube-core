@@ -132,6 +132,17 @@ spec:
             timeoutSeconds: {{ default .Values.healthCheck.timeoutSeconds .Values.healthCheck.readiness.timeoutSeconds }}
             failureThreshold: {{ default .Values.healthCheck.failureThreshold .Values.healthCheck.readiness.failureThreshold }}
           {{- end }}
+          {{ if (and (.Values.pod.envFrom.enabled) (or .Values.pod.envFrom.configmaps .Values.pod.envFrom.secrets)) }}
+          envFrom:
+          {{ range .Values.pod.envFrom.configmaps }}
+          - configMapRef:
+              name: {{ . }}
+          {{ end }}
+          {{ range .Values.pod.envFrom.secrets }}
+          - secretRef:
+              name: {{ . }}
+          {{ end }}
+          {{ end }}
           env:
           {{- include "n9-api.apiType-env-values" . | nindent 10 -}}
           {{- if ( default .Values.global.logLevel .Values.api.logLevel ) }}

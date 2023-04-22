@@ -47,7 +47,7 @@ Common labels
 */}}
 {{- define "n9-api.labels" -}}
 {{ include "n9-api.selectorLabels" . }}
-app.kubernetes.io/version: {{ include "n9-api.version" . }}
+app.kubernetes.io/version: {{ include "n9-api.version" . | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 helm.sh/chart: {{ include "n9-api.chart" . }}
 {{- end }}

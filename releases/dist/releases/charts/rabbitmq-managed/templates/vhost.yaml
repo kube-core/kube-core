@@ -2,6 +2,8 @@ apiVersion: rabbitmq.com/v1beta1
 kind: Vhost
 metadata:
   name: {{ include "rabbitmq-managed.fullname" $ }}-vhost-root
+  labels:
+    {{- include "rabbitmq-managed.labels" . | nindent 4 }}
 spec:
   name: /
   rabbitmqClusterReference:
@@ -14,6 +16,8 @@ apiVersion: rabbitmq.com/v1beta1
 kind: Vhost
 metadata:
   name: {{ include "rabbitmq-managed.fullname" $ }}-vhost-{{ . | kebabcase }}
+  labels:
+    {{- include "rabbitmq-managed.labels" $ | nindent 4 }}
 spec:
   name: {{ . | kebabcase }}
   rabbitmqClusterReference:

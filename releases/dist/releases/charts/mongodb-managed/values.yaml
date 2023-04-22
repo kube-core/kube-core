@@ -1,38 +1,28 @@
-# Default values for mongodb-managed.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-labels: {}
-annotations: {}
-replicaCount: 3
-
 nameOverride: ""
 fullnameOverride: ""
 
+# -- Additionnal labels to add to the metadata of mongodb statefulset
+labels: {}
+# -- Additionnal annotations to add to the metadata of mongodb statefulset
+annotations: {}
+
+replicaCount: 3
+
 mongodb:
-  version: 4.2.6
-  featureCompatibilityVersion: 4.2
+  version: 6.0.5
+  featureCompatibilityVersion: "6.0"
+  # -- Additionnal labels to add to the metadata of mongodb pods
+  labels: {}
+  # -- Additionnal annotations to add to the metadata of mongodb pods
+  annotations: {}
 
-# -- Create a service account for the operator god sake.
-serviceAccount:
-  create: true
-
-# We usually recommend not to specify default resources and to leave this as a conscious
-# choice for the user. This also increases chances charts run on environments with little
-# resources, such as Minikube. If you do want to specify resources, uncomment the following
-# lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-resources:
-  # -- Define pod limits.
-  limits: {}
-    # cpu: 1.5
-    # memory: 3G
-  # -- Define pod requests.
-  requests: {}
-    # cpu: 0.75
-    # memory: 1.5G
-
-# -- Define the list of users.
+# -- Define the list of mongo users, their roles and attributed db
 users: []
   # - name: username
+  #   db: dbname
+  #   roles:
+  #   - name: readWrite
+  # - name: username (db will be named as user)
   #   roles:
   #   - name: readWrite
 
@@ -40,30 +30,86 @@ tolerations: []
 affinity: {}
 nodeSelector: {}
 
+resources:
+  # -- Define mongodb container limits.
+  limits: {}
+    # cpu: "1"
+    # memory: 2G
+  # -- Define mongodb container requests.
+  requests: {}
+    # cpu: 500m
+    # memory: 1G
+
+mongodbAgent:
+  resources:
+    # -- Define limits for mongodb-agent from the operator.
+    limits: {}
+      # cpu: 500m
+      # memory: 500M
+    # -- Define requests for mongodb-agent from the operator.
+    requests:
+      cpu: 50m
+      memory: 50M
+
+serviceAccount:
+  # -- Specifiy whether a service account should be created
+  create: true
+  annotations: {}
+  # -- Name of k8s serviceAccount to create or to use if not created by chart
+  name: ""
+
+# -- Create Role and bind it to the service account
+rbac:
+  role:
+    # -- Specifies whether a role should be created, also require to set rules.
+    create: true
+    # -- Name of k8s role to create or to use if not created by chart
+    name: ""
+    # -- Bind role to service account created/named in chart values
+    autoBindRole: true
+    # -- Used to replace default chart rules
+    rules: {}
+
 mongodbMonitoring:
   user:
+    # -- Create a dedicated mongodb user with monitoring roles to be used by mongodb-exporter
     create: true
     additionnalRoles: []
-  externalSecrets:
-    # -- Require external secrets set in cluster with a store in namespace
-    enabled: false
-    # secretStoreRef:
-    #   name: k8s-integration
-    #   kind: ClusterSecretStore
 
 mongodb-exporter:
   # -- If enabled, proper value should be set to connect exporter to mongodb
   enabled: true
-
-  # [mongodb[+srv]://][user:pass@]host1[:port1][,host2[:port2],...][/database][?options]
-  mongodb:
-    # -- Default value set to permits exporter deployment without valid uri
-    uri: "dummy-default"
-
-  # Name of an externally managed secret (in the same namespace) containing the connection uri as key `mongodb-uri`.
-  # If this is provided, the value mongodb.uri is ignored.
   existingSecret:
-    # name: {{ printf "%s-monitoring" (include "mongodb-managed.fullname" . ) }}
-    # -- (REQUIRED) If using external secret, bootstrap with ".Release.Name-monitoring", or check notes.
+    # -- (REQUIRED) If using external secret, name format is "$fullnameOverride-admin-monitoring", or check output during release install/upgrades
     name: ""
-    key: "mongodb-uri"
+    key: "connectionString.standardSrv"
+
+  extraArgs:
+    - --collect-all
+    - --no-mongodb.direct-connect
+    - --compatible-mode
+
+  tolerations: []
+  affinity: {}
+  nodeSelector: {}
+
+  resources:
+    # -- Define mongodb-exporter container limits.
+    limits:
+      cpu: 100m
+      memory: 50M
+    # -- Define mongodb-exporter container requests.
+    requests:
+      cpu: 20m
+      memory: 50M
+
+  serviceMonitor:
+    enabled: false
+    interval: 30s
+    scrapeTimeout: 10s
+    namespace:
+    additionalLabels: {}
+    targetLabels: []
+    metricRelabelings: []
+    scheme: ""
+    tlsConfig: {}

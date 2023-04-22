@@ -33,7 +33,7 @@ commonAnnotations: {}
 image:
   registry: docker.io
   repository: bitnami/sealed-secrets-controller
-  tag: v0.18.1
+  tag: v0.20.5
   ## Specify a imagePullPolicy
   ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
   ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
@@ -56,6 +56,12 @@ secretName: "sealed-secrets-key"
 ## @param updateStatus Specifies whether the Sealed Secrets controller should update the status subresource
 ##
 updateStatus: true
+## @param skipRecreate Specifies whether the Sealed Secrets controller should skip recreating removed secrets
+## Setting it to false allows to optionally restore backward compatibility in low priviledge
+## environments when old versions of the controller did not require watch permissions on secrets
+## for secret re-creation.
+##
+skipRecreate: false
 ## @param keyrenewperiod Specifies key renewal period. Default 30 days
 ## e.g
 ## keyrenewperiod: "720h30m"
@@ -151,15 +157,17 @@ podSecurityContext:
 ## @param containerSecurityContext.readOnlyRootFilesystem Whether the Sealed Secret container has a read-only root filesystem
 ## @param containerSecurityContext.runAsNonRoot Indicates that the Sealed Secret container must run as a non-root user
 ## @param containerSecurityContext.runAsUser Set Sealed Secret containers' Security Context runAsUser
+## @extra containerSecurityContext.capabilities Adds and removes POSIX capabilities from running containers (see `values.yaml`)
+## @skip  containerSecurityContext.capabilities.drop
 ##
 containerSecurityContext:
   enabled: true
   readOnlyRootFilesystem: true
   runAsNonRoot: true
   runAsUser: 1001
-
-## @param automountServiceAccountToken whether to automatically mount the service account API-token to a particular pod
-automountServiceAccountToken: ""
+  capabilities:
+    drop:
+      - ALL
 
 ## @param podLabels [object] Extra labels for Sealed Secret pods
 ## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
@@ -187,6 +195,18 @@ nodeSelector: {}
 ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
 ##
 tolerations: []
+## @param additionalVolumes [object] Extra Volumes for the Sealed Secrets Controller Deployment
+## ref: https://kubernetes.io/docs/concepts/storage/volumes/
+##
+additionalVolumes: []
+## @param additionalVolumeMounts [object] Extra volumeMounts for the Sealed Secrets Controller container
+## ref: https://kubernetes.io/docs/concepts/storage/volumes/
+##
+additionalVolumeMounts: []
+## @param hostNetwork Sealed Secrets pods' hostNetwork
+hostNetwork: false
+## @param dnsPolicy Sealed Secrets pods' dnsPolicy
+dnsPolicy: ""
 
 ## @section Traffic Exposure Parameters
 
@@ -240,7 +260,7 @@ ingress:
   ##   kubernetes.io/ingress.class: nginx
   ##   cert-manager.io/cluster-issuer: cluster-issuer-name
   ##
-  annotations:
+  annotations: {}
   ## @param ingress.tls Enable TLS configuration for the host defined at `ingress.hostname` parameter
   ## TLS certificates will be retrieved from a TLS secret with name: `{{- printf "%s-tls" .Values.ingress.hostname }}`
   ## You can:
@@ -310,6 +330,10 @@ networkPolicy:
 ## ServiceAccount configuration
 ##
 serviceAccount:
+  ## @param serviceAccount.annotations [object] Annotations for Sealed Secret service account
+  ## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
+  ##
+  annotations: {}
   ## @param serviceAccount.create Specifies whether a ServiceAccount should be created
   ##
   create: true
@@ -320,8 +344,6 @@ serviceAccount:
   ## If not set and create is true, a name is generated using the sealed-secrets.fullname template
   ##
   name: ""
-  ## @param serviceAccount.automountServiceAccountToken Specifies, whether to mount the service account API-token
-  automountServiceAccountToken: ""
 ## RBAC configuration
 ##
 rbac:
@@ -331,6 +353,9 @@ rbac:
   ## @param rbac.clusterRole Specifies whether the Cluster Role resource should be created
   ##
   clusterRole: true
+  ## @param rbac.clusterRoleName Specifies the name for the Cluster Role resource
+  ##
+  clusterRoleName: "secrets-unsealer"
   ## @param rbac.labels Extra labels to be added to RBAC resources
   ##
   labels: {}

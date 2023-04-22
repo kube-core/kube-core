@@ -3,6 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "vpa.fullname" . }}-admission-controller
+  namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/component: admission-controller
     {{- include "vpa.labels" . | nindent 4 }}
@@ -41,6 +42,12 @@ spec:
             {{- toYaml .Values.admissionController.securityContext | nindent 12 }}
           image: "{{ .Values.admissionController.image.repository }}:{{ .Values.admissionController.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.admissionController.image.pullPolicy }}
+          {{- if .Values.admissionController.extraArgs }}
+          args:
+          {{- range $key, $value := .Values.admissionController.extraArgs }}
+            - --{{ $key }}={{ $value }}
+          {{- end }}
+          {{- end }}
           volumeMounts:
             - name: tls-certs
               mountPath: "/etc/tls-certs"

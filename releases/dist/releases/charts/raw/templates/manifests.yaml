@@ -9,5 +9,5 @@ kind: ConfigMap
 apiVersion: v1
 metadata:
   name: {{ .Release.Name }}
-data: {}
+data: {{ toYaml .Values | nindent 2 }}
 {{ end }}
