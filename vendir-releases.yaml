@@ -19,15 +19,15 @@ directories:
       - path: mongodb-managed
         helmChart:
           name: mongodb-managed
-          version: 0.5.1
+          version: 0.6.3
           repository:
-            url: https://charts.neo9.pro
+            url: https://neo9.github.io/helm-charts
       - path: postgres-managed
         helmChart:
           name: postgres-managed
-          version: 0.2.2
+          version: 0.2.3
           repository:
-            url: https://charts.neo9.pro
+            url: https://neo9.github.io/helm-charts
       - path: postgres-operator
         helmChart:
           name: postgres-operator
@@ -37,9 +37,9 @@ directories:
       - path: rabbitmq-managed
         helmChart:
           name: rabbitmq-managed
-          version: 0.3.0
+          version: 0.4.1
           repository:
-            url: https://charts.neo9.pro
+            url: https://neo9.github.io/helm-charts
       - path: node-problem-detector
         helmChart:
           name: node-problem-detector
@@ -106,12 +106,6 @@ directories:
           version: 2.8.2
           repository:
             url: https://kedacore.github.io/charts
-      - path: crossplane-buckets
-        helmChart:
-          name: crossplane-buckets
-          version: 0.3.1
-          repository:
-            url: https://charts.neo9.pro
       - path: logging-operator
         helmChart:
           name: logging-operator
@@ -178,16 +172,16 @@ directories:
       - path: n9-api
         helmChart:
           name: n9-api
-          version: 1.3.8
+          version: 1.3.10
           repository:
-            url: https://charts.neo9.pro
+            url: https://neo9.github.io/helm-charts
 
       - path: istio-rules-external-services
         helmChart:
           name: istio-rules-external-services
           version: 1.12.1
           repository:
-            url: https://charts.neo9.pro
+            url: https://neo9.github.io/helm-charts
 
       - path: keycloak
         helmChart:
@@ -196,19 +190,12 @@ directories:
           repository:
             url: https://charts.bitnami.com/bitnami
 
-      - path: keycloak-managed
-        helmChart:
-          name: keycloak-managed
-          version: 0.7.0
-          repository:
-            url: https://charts.neo9.pro
-
       - path: kps
         helmChart:
           name: kps
           version: 1.1.1
           repository:
-            url: https://charts.neo9.pro
+            url: https://neo9.github.io/helm-charts
 
       - path: kube-downscaler
         helmChart:
