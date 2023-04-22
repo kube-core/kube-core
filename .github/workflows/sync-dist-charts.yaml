@@ -52,22 +52,22 @@ jobs:
           fi
           cd -
 
-      - name: Checkout crd-charts
+      - name: Checkout dist-crds
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          path: crd-charts
-          repository: kube-core/crd-charts
+          path: dist-crds
+          repository: kube-core/dist-crds
           ssh-key: ${{ secrets.CRD_CHARTS_SSH_KEY }}
           persist-credentials: true
 
-      - name: Push crd-charts
+      - name: Push dist-crds
         run: |
-          rm -rf ./crd-charts/charts/
-          mkdir -p ./crd-charts/charts
-          cp -rf ./kube-core/releases/dist/releases/crds/* ./crd-charts/charts/
+          rm -rf ./dist-crds/charts/
+          mkdir -p ./dist-crds/charts
+          cp -rf ./kube-core/releases/dist/releases/crds/* ./dist-crds/charts/
 
-          cd ./crd-charts
+          cd ./dist-crds
           gitStatus=$(git status --porcelain)
           somethingChanged="false"
 
