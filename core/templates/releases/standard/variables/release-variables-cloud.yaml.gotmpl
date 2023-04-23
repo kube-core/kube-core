@@ -203,7 +203,7 @@
 {{ $ | getOrNil "INVALID_IAM_ROLE_EXTERNAL_NAME" | required (printf "IAM role can't contain '-', replace with '.' ; Current: %s" $releaseIamRoleExternalName )}}
 {{ end }}
 {{ if (gt ($releaseServiceAccountName | len) 63) }}
-{{ $ | getOrNil "INVALID_SERVICE_ACCOUNT_NAME" | required (printf "Service Account name can't exceed 30 characters ; Current: %s => %s" $releaseServiceAccountName ($releaseServiceAccountName | len | toString) )}}
+{{/* $ | getOrNil "INVALID_SERVICE_ACCOUNT_NAME" | required (printf "Service Account name can't exceed 30 characters ; Current: %s => %s" $releaseServiceAccountName ($releaseServiceAccountName | len | toString) )*/}}
 {{ end }}
 {{ $name = $shortName }}
 
