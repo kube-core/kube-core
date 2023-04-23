@@ -16,6 +16,10 @@ cluster:
   config: {{ toYaml .Values.cluster.config | nindent 4 }}
   logging:
     config:
+      indexTemplate:
+        secretRef:
+          name: logstash-default-index-template
+          key: template
     {{ if $release.metadata.config.cloudEnabled }}
       bucketPrefixOverride: {{ $release.metadata.namingConfig.templated.releaseBucketName }}
     {{ end }}
