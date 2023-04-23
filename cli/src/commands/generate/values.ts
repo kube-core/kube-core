@@ -54,9 +54,7 @@ export default class GenerateValues extends BaseCommand {
     let layersTemplate = "core/layers/base"
 
     if (flags.quickstart === true) {
-      layersTemplate = "core/layers/generate/quickstart"
-    } else {
-      layersTemplate = "core/layers/generate/full"
+      layersTemplate = "core/layers/quickstart"
     }
 
     await this.mergeCoreLayersWithLocalLayers(`${layersTemplate}/values/cluster/config`, `cluster/config`);
@@ -99,9 +97,9 @@ export default class GenerateValues extends BaseCommand {
         `${name}${ext}`
       );
       let coreFileData
-      if (ext === ".yaml") {
+      if (ext === ".yaml" && name !== "schema") {
         coreFileData = YAML.parse(await fs.readFile(file, "utf8"));
-      } else if (ext === ".gotmpl") {
+      } else if (ext === ".gotmpl" || name == "schema") {
         coreFileData = await fs.readFile(file, "utf8")
       }
       let mergedData = {};
@@ -110,7 +108,7 @@ export default class GenerateValues extends BaseCommand {
       if (this.utils.fileExists(targetPath)) {
         // console.log(`File exists: ${targetPath}`)
 
-        if(ext === ".yaml") {
+        if(ext === ".yaml" && name !== "schema") {
           let currentFileData = YAML.parse(await fs.readFile(targetPath, "utf8"));
           console.info(
             `Merging: kube-core:${file.replace(
@@ -120,7 +118,7 @@ export default class GenerateValues extends BaseCommand {
               );
               mergedData = merge(coreFileData, currentFileData);
               // console.log(mergedData)
-        } else if (ext === ".gotmpl") {
+        } else if (ext === ".gotmpl" || name == "schema") {
           let currentFileData = await fs.readFile(targetPath, "utf8")
           console.info(
             `Copying: kube-core:${file.replace(
@@ -134,9 +132,9 @@ export default class GenerateValues extends BaseCommand {
         mergedData = coreFileData;
       }
       await this.utils.mkdir(upath.parse(targetPath).dir);
-      if(ext === ".yaml") {
+      if(ext === ".yaml" && name !== "schema") {
         await fs.writeFile(targetPath, YAML.stringify(mergedData))
-      } else if (ext === ".gotmpl") {
+      } else if (ext === ".gotmpl" || name == "schema") {
         await fs.writeFile(targetPath, mergedData)
       }
     }
