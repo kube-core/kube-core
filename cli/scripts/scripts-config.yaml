@@ -385,7 +385,7 @@ scripts:
     description: Legacy python parser for bash scripts. To replace with CLI.
     args: ""
   utils_generate_scripts_config:
-    path: ../cli/scripts/src/utils/generate-scripts-config.sh
+    path: ./src/utils/generate-scripts-config.sh
     name: utils_generate_scripts_config
     description: Generates scripts-config.yaml
     args: ""
@@ -459,6 +459,11 @@ scripts:
     name: dev_mode_legacy
     description: For kube-core releases development. DEPRECATED. Switches releases references to legacy mode (not using vendir)
     args: ""
+  dev_mode_local:
+    path: ./commands/dev/mode/local.sh
+    name: dev_mode_local
+    description: Brings all dependencies charts locally under releases/local for faster development
+    args: ""
   dev_mode_prod:
     path: ./commands/dev/mode/prod.sh
     name: dev_mode_prod
@@ -503,6 +508,11 @@ scripts:
     path: ./commands/dev/releases/run.sh
     name: dev_releases_run
     description: For kube-core releases development. Builds all dist releases.
+    args: ""
+  dev_releases_update_releases:
+    path: ./commands/dev/releases/update-releases.sh
+    name: dev_releases_update_releases
+    description: For kube-core releases development. Updates all vendir-releases entries to latest versions.
     args: ""
   dev_utils_build:
     path: ./commands/dev/utils/build.sh

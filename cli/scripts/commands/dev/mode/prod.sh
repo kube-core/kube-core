@@ -66,7 +66,8 @@ releasesPath="${corePath}/core/layers/base/values/core/releases"
 coreReleasesPath=${corePath}/releases
 
 # cat ${corePath}/envs/default/core/releases/releases.yaml | sed 's|../releases/dist/releases/charts/|../releases/local/|'
-localReleases=$(cat ${corePath}/vendir-releases.yaml | grep "/releases/local/" | awk '{ print $2}' | awk -F/ '{print $NF}') || true
+localReleases=$(find ${coreReleasesPath}/local -maxdepth 1 -type d | xargs -i basename '{}') || true
+
 externalReleases=$(cat ${corePath}/vendir-releases.yaml | grep "name:" | awk '{ print $2}' | awk -F/ '{print $NF}')
 
 if [[ ! -z "${localReleases}" ]]; then

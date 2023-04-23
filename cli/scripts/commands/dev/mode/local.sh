@@ -59,40 +59,13 @@ check_requirements
 # check_args "$@"
 ## Header End
 ## Docs Start ##
-## For kube-core releases development. Switches dist releases references to local releases in kube-core.
+## Brings all dependencies charts locally under releases/local for faster development
 ## Docs End ##
 
 releasesPath="${corePath}/core/layers/base/values/core/releases"
-coreReleasesPath=${corePath}/releases
+distReleasesPath=${corePath}/releases/dist/releases/charts
+localReleasesPath=${corePath}/releases/local
 
-# cat ${corePath}/envs/default/core/releases/releases.yaml | sed 's|../releases/dist/releases/charts/|../releases/local/|'
-localReleases=$(find ${coreReleasesPath}/local -maxdepth 1 -type d | xargs -i basename '{}') || true
-
-if [[ ! -z "${localReleases}" ]]; then
-    echo "Linking local kube-core releases for development..."
-
-    echo "${localReleases}" | while read release; do
-        sed -i "s|../releases/.*/${release}|../releases/local/${release}|" ${corePath}/core/layers/base/values/core/releases/releases.yaml
-    done || true
-
-    templatedReleases=$( grep -Erl "../releases/(dist|local)" ${corePath}/core/templates/)
-    releasesList=$(echo "${templatedReleases}" | while read release; do
-        releaseName="$(cat ${release} | grep "chart:"  | awk '{ print $2}' | awk -F/ '{print $NF}')"
-        echo "${releaseName}"
-    done || true)
-
-    # echo "${releasesList}" | sort -u
-
-    echo "${templatedReleases}" | while read template; do
-        echo "${releasesList}" | sort -u | while read release; do
-            if grep -q ${release} ${template}; then
-                if echo "${localReleases}" | grep -q ${release}; then
-                    sed -i "s|../releases/.*/${release}|../releases/local/${release}|" ${template}
-                fi
-            fi
-        done
-    done
-    echo "Done linking !"
-else
-    echo "No local releases to link"
-fi
+mkdir -p ${localReleasesPath}
+cp -rf ${distReleasesPath}/* ${localReleasesPath}/
+${scripts_dev_mode_dev_path} $@
