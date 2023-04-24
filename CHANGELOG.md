@@ -2,7 +2,18 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.12.1](https://github.com/kube-core/kube-core/compare/v0.12.0...v0.12.1)
+
+- cli/scripts: Updated some scripts [`4712c03`](https://github.com/kube-core/kube-core/commit/4712c03d6e828a92dbc90eeb6a884120099632ce)
+- cli/commands: Fixed generate:values command [`9ced61e`](https://github.com/kube-core/kube-core/commit/9ced61e2a74f6e0607c290704d4bba5d83560d96)
+- core/values: Specify default index template in cluster-logging [`a0b383d`](https://github.com/kube-core/kube-core/commit/a0b383d797db0e3bc846cd59a9513287a1bf75a2)
+- core/templates: Disabled ServiceAccount name length validation for release-cloud [`a2b1336`](https://github.com/kube-core/kube-core/commit/a2b1336b73e2e856085c3558d580b5257a00c91c)
+- workflows/sync-dist: Fixed wrong synced path for dist-manifests [`758693a`](https://github.com/kube-core/kube-core/commit/758693aa8505f48d2b5abb195745f5acb2ce1a14)
+- repo: Added releases/local to .gitignore [`7220db8`](https://github.com/kube-core/kube-core/commit/7220db8c77920f4aa8190671aa0004eff847f82b)
+
 #### [v0.12.0](https://github.com/kube-core/kube-core/compare/v0.11.24...v0.12.0)
+
+> 23 April 2023
 
 - releases: Updated all core dependencies [`dd6fa4e`](https://github.com/kube-core/kube-core/commit/dd6fa4eaf3a5f2817e5155e41c524eab1ce7e705)
 - releases: Removed all local releases [`e602fc4`](https://github.com/kube-core/kube-core/commit/e602fc40aaaa630a27257bf82fc071760c021fc8)
@@ -11,6 +22,7 @@ All notable changes to this project will be documented in this file. Dates are d
 - cli/scripts: Updated prod mode script [`f7021b1`](https://github.com/kube-core/kube-core/commit/f7021b1c9ce8cb0bc034f38bace64c67bdd07cef)
 - workflows/sync-dist: Added dist-manifest repo to sync [`4ad5d05`](https://github.com/kube-core/kube-core/commit/4ad5d050420c13071196cafc953535bc377eb50c)
 - releases: Updated some releases [`5d8aad7`](https://github.com/kube-core/kube-core/commit/5d8aad7e86a8b4734720fddae531665cb043a7f2)
+- release: v0.12.0 [`4e3aa92`](https://github.com/kube-core/kube-core/commit/4e3aa920b9a8a1fcc3e89de23178ad1d93aeb563)
 - repo/actions: Renamed crds-charts repo to dist-crds [`e2e9aee`](https://github.com/kube-core/kube-core/commit/e2e9aeebbea8037c58debd248a8ad2662a134290)
 - dockerfile: Updated arkade cli install [`753a1de`](https://github.com/kube-core/kube-core/commit/753a1dee82268105ed9ff5c16f032e8dd96816ed)
 
