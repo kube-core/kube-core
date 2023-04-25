@@ -15,7 +15,7 @@ manifests:
       ingress.neo9.io/category: "default"
   spec:
     sources:
-    {{- with .Values.cluster.config.cidr }}
+    {{- with .Values.cluster.config.network.cidr }}
       {{- toYaml . | nindent 6 }}
     {{- end }}
 {{ range .Values.cluster.config.extraVisitorGroups }}

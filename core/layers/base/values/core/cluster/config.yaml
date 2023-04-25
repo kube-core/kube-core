@@ -10,13 +10,24 @@ cluster:
     contextShortName: KUBE_CORE_CLUSTER_CONFIG_CONTEXT_SHORT_NAME
     domain: KUBE_CORE_CLUSTER_CONFIG_DOMAIN
     additionnalDomains: [] # KUBE_CORE_CLUSTER_CONFIG_ADDITIONNAL_DOMAINS
-    cidr:
-    - name: cluster-range
-      cidr: KUBE_CORE_CLUSTER_CONFIG_CIDR_CLUSTER_RANGE
-    - name: cluster-nat
-      cidr: KUBE_CORE_CLUSTER_CONFIG_CIDR_CLUSTER_NAT
     network:
+      cluster:
+        block: KUBE_CORE_NETWORK_CLUSTER_BLOCK
       type: KUBE_CORE_CLUSTER_CONFIG_NETWORK_TYPE
+      master: KUBE_CORE_CLUSTER_CONFIG_NETWORK_MASTER
+      cidr:
+      - name: cluster-range
+        cidr: KUBE_CORE_CLUSTER_CONFIG_CIDR_CLUSTER_RANGE
+      - name: cluster-nat
+        cidr: KUBE_CORE_CLUSTER_CONFIG_CIDR_CLUSTER_NAT
+      vpc:
+        subnet: "10.KUBE_CORE_NETWORK_CLUSTER_BLOCK.0.0/24"
+        pods: "10.KUBE_CORE_NETWORK_CLUSTER_BLOCK.128.0/17"
+        # Range /20 corresponds to 8,192 services
+        services: "10.KUBE_CORE_NETWORK_CLUSTER_BLOCK.96.0/19"
+        # Private cluster require a dedicated non-overlapping /28 ranges for controlplane
+        controlplane: "10.KUBE_CORE_NETWORK_CLUSTER_BLOCK.95.0/28"
+      maxPodsPerNode: 64
     repository:
       name: KUBE_CORE_CLUSTER_CONFIG_REPOSITORY_NAME
       url: KUBE_CORE_CLUSTER_CONFIG_REPOSITORY_URL
