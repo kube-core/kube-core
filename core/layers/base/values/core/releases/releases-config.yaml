@@ -103,8 +103,9 @@ releases:
         subdomain: oauth2
       rules:
         emailDomain: "*"
+        cookieDomain: ""
         cookieExpiration: 12h
-        allowedDomainRedirection:
+        allowedDomainRedirection: ""
       metrics:
         enabled: true
         serviceMonitor:

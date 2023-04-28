@@ -6,6 +6,7 @@ ingress:
   className: {{ .Values.cluster.common.defaultIngressClass }}
   certManager: true
   annotations:
+    forecastle.stakater.com/icon: https://repository-images.githubusercontent.com/105262714/eeb5b100-faff-11e9-9b0b-a97d43094103
   {{- if .Values.cluster.common.defaultIngressAnnotations }}
     {{ toYaml .Values.cluster.common.defaultIngressAnnotations | nindent 4 }}
   {{- end }}
@@ -28,11 +29,6 @@ ingress:
         - {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ $releaseNamespace }}.{{ .Values.cluster.config.domain }}
   {{- end }}
 
-# image:
-#   registry: docker.io
-#   repository: bitnami/oauth2-proxy
-#   tag: latest
-
 replicaCount: 2
 podDisruptionBudget:
   enabled: true
@@ -47,7 +43,6 @@ extraArgs:
   oidc-issuer-url: {{ printf "https://%s.%s/" (index .Values.releases "dex" "config" "ingress" "subdomain") ( .Values.cluster.config.domain ) | quote }}
   scope: openid email profile
   email-domain: {{ (index .Values.releases .Release.Name "config" "rules" "emailDomain") | quote }}
-  cookie-name: {{ printf "secure_%s" .Release.Name | snakecase }}
   cookie-expire: {{ (index .Values.releases .Release.Name "config" "rules" "cookieExpiration") }}
   reverse-proxy: true
   upstream: static://202
@@ -58,11 +53,13 @@ extraArgs:
   {{- if eq (index .Values.releases $releaseName "namespace") $releaseNamespace }}
   redirect-url: {{ printf "https://%s.%s/oauth2/callback" (index .Values.releases .Release.Name "config" "ingress" "subdomain") .Values.cluster.config.domain }}
   whitelist-domain: {{ coalesce (index .Values.releases .Release.Name "config" "rules" "allowedDomainRedirection") (printf "*.%s" .Values.cluster.config.domain) | quote }}
-  cookie-domain: {{ printf ".%s" .Values.cluster.config.domain | quote }}
+  cookie-domain: {{ coalesce (index .Values.releases .Release.Name "config" "rules" "cookieDomain") (printf ".%s" .Values.cluster.config.domain) | quote }}
+  cookie-name: {{ printf "oauth_%s" .Values.cluster.config.domain | replace "." "_" }}
   {{- else }}
   redirect-url: {{ printf "https://%s.%s.%s/oauth2/callback" (index .Values.releases .Release.Name "config" "ingress" "subdomain") $releaseNamespace .Values.cluster.config.domain }}
   whitelist-domain: {{ coalesce (index .Values.releases .Release.Name "config" "rules" "allowedDomainRedirection") (printf "*.%s.%s" $releaseNamespace .Values.cluster.config.domain) | quote }}
-  cookie-domain: {{ printf ".%s.%s" $releaseNamespace .Values.cluster.config.domain | quote }}
+  cookie-domain: {{ coalesce (index .Values.releases .Release.Name "config" "rules" "cookieDomain") (printf ".%s.%s" $releaseNamespace .Values.cluster.config.domain ) | quote }}
+  cookie-name: {{ printf "oauth_%s-%s" $releaseNamespace .Values.cluster.config.domain | replace "." "_" }}
   {{- end }}
 
 proxyVarsAsSecrets: false
