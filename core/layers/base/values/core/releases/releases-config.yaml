@@ -257,10 +257,7 @@ releases:
     config:
       alertmanager:
         routes: []
-        inhibitRules:
-        - target_matchers:
-          - alertname="CPUThrottlingHigh"
-          - container="metrics-server-nanny"
+        inhibitRules: []
         retention: 72h
         replicaCount: 3
         additionalReceivers: []

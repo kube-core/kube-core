@@ -9,6 +9,10 @@
 {{ $_ := set $release "namespace" $releaseNamespace }}
 {{ (tpl (readFile "../templates/releases/standard/variables/release-variables-config.yaml.gotmpl") (dict "item" $release "values" $values)) }}
 {{ (tpl (readFile "../templates/releases/standard/variables/release-variables-cloud.yaml.gotmpl") (dict "item" $release "values" $values)) }}
+
+{{ $aws := (eq $.Values.cloud.provider "aws" ) }}
+{{ $gcp := (eq $.Values.cloud.provider "gcp" ) }}
+{{ $provider :=  $.Values.cloud.provider }}
 {{/* Release Values Templates Header - END */}}
 
 kps:
@@ -542,6 +546,14 @@ kps:
       global:
         resolve_timeout: 5m
       inhibit_rules:
+      {{ if $gcp }}
+        - target_matchers:
+          - alertname="CPUThrottlingHigh"
+          - container="metrics-server-nanny"
+        - target_matchers:
+          - alertname="CPUThrottlingHigh"
+          - container="metrics-server"
+      {{ end }}
       {{ range (index $release "config" "alertmanager" "inhibitRules") }}
       - {{ toYaml . | nindent 8 }}
       {{ end }}
