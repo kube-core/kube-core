@@ -3,11 +3,29 @@
 
 Tools for kube-core development.
 
+* [`kube-core dev mode dev`](#kube-core-dev-mode-dev)
 * [`kube-core dev mode hot-reload`](#kube-core-dev-mode-hot-reload)
+* [`kube-core dev mode local`](#kube-core-dev-mode-local)
+* [`kube-core dev mode prod`](#kube-core-dev-mode-prod)
 * [`kube-core dev releases add chart`](#kube-core-dev-releases-add-chart)
 * [`kube-core dev releases add local-chart`](#kube-core-dev-releases-add-local-chart)
 * [`kube-core dev releases add release`](#kube-core-dev-releases-add-release)
 * [`kube-core dev releases build`](#kube-core-dev-releases-build)
+
+## `kube-core dev mode dev`
+
+For kube-core releases development. Switches dist releases references to local releases in kube-core.
+
+```
+USAGE
+  $ kube-core dev mode dev
+
+DESCRIPTION
+  For kube-core releases development. Switches dist releases references to local releases in kube-core.
+
+EXAMPLES
+  $ kube-core dev mode dev
+```
 
 ## `kube-core dev mode hot-reload`
 
@@ -25,6 +43,36 @@ DESCRIPTION
 
 EXAMPLES
   $ kube-core dev mode hot-reload
+```
+
+## `kube-core dev mode local`
+
+For kube-core releases development. Brings all dependencies charts locally under releases/local for faster development
+
+```
+USAGE
+  $ kube-core dev mode local
+
+DESCRIPTION
+  For kube-core releases development. Brings all dependencies charts locally under releases/local for faster development
+
+EXAMPLES
+  $ kube-core dev mode local
+```
+
+## `kube-core dev mode prod`
+
+For kube-core releases development. Switches local releases references to dist releases in kube-core.
+
+```
+USAGE
+  $ kube-core dev mode prod
+
+DESCRIPTION
+  For kube-core releases development. Switches local releases references to dist releases in kube-core.
+
+EXAMPLES
+  $ kube-core dev mode prod
 ```
 
 ## `kube-core dev releases add chart`

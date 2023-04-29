@@ -33,7 +33,7 @@ $ npm install -g @kube-core/cli
 $ kube-core COMMAND
 running command...
 $ kube-core (--version)
-@kube-core/cli/0.12.1 win32-x64 node-v18.12.0
+@kube-core/cli/0.12.2 win32-x64 node-v18.12.0
 $ kube-core --help [COMMAND]
 USAGE
   $ kube-core COMMAND
@@ -48,6 +48,7 @@ USAGE
 * [`kube-core apply`](docs/apply.md) - Apply kube-core and cluster configuration.
 * [`kube-core autocomplete`](docs/autocomplete.md) - display autocomplete installation instructions
 * [`kube-core build`](docs/build.md) - Build kube-core and cluster configuration.
+* [`kube-core cluster`](docs/cluster.md) - Generates cluster-config.yaml from core values.
 * [`kube-core dev`](docs/dev.md) - Tools for kube-core development.
 * [`kube-core diff`](docs/diff.md) - Run a diff on a cluster.
 * [`kube-core generate`](docs/generate.md) - Generate various resources.

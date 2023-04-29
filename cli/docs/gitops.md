@@ -8,6 +8,7 @@ Explore and manage your GitOps config
 * [`kube-core gitops config find`](#kube-core-gitops-config-find)
 * [`kube-core gitops config read`](#kube-core-gitops-config-read)
 * [`kube-core gitops config search`](#kube-core-gitops-config-search)
+* [`kube-core gitops overlays apply`](#kube-core-gitops-overlays-apply)
 
 ## `kube-core gitops config`
 
@@ -139,4 +140,19 @@ EXAMPLES
   $ kube-core gitops config search | grep /deployment | grep spec.containers | grep nginx | gron --ungron | yq -P -C
   # Hilight your matches
   $ kube-core gitops config search | grep /deployment | grep spec.containers | grep nginx | gron --ungron | yq -P -C | grep --color=always -E 'nginx|$'
+```
+
+## `kube-core gitops overlays apply`
+
+Applies overlays on gitops config
+
+```
+USAGE
+  $ kube-core gitops overlays apply
+
+DESCRIPTION
+  Applies overlays on gitops config
+
+EXAMPLES
+  $ kube-core gitops overlays apply
 ```

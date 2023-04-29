@@ -2,9 +2,32 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.12.2](https://github.com/kube-core/kube-core/compare/v0.12.1...v0.12.2)
+
+- releases: Rebuilt releases [`b1eea6d`](https://github.com/kube-core/kube-core/commit/b1eea6d509b3fbe8fbb1294aa937d525efb37db5)
+- cli/scripts: Completely reworked cluster setup scripts & Added CLI commands for that [`a2ff285`](https://github.com/kube-core/kube-core/commit/a2ff28542caac90d3fb761d190678f8cf81aa933)
+- core/values: Updated velero configuration [`1c92293`](https://github.com/kube-core/kube-core/commit/1c9229398ea9ad9b368c54a43e986966d9622283)
+- cli/commands: Added dev/prod/local commands for faster development [`f88ca80`](https://github.com/kube-core/kube-core/commit/f88ca80c018cad623279b7cb220723a291d62129)
+- cli/scripts: Improved update-releases script [`6be6e66`](https://github.com/kube-core/kube-core/commit/6be6e66848ea00ee65cf46db9bfa791700def9b3)
+- core/layers: Shortened CRO naming config [`c0c1546`](https://github.com/kube-core/kube-core/commit/c0c15464a13bfe3d3463ba6ad93ab283d1781c66)
+- core/layers: Added cluster network configuration in values [`97f1ade`](https://github.com/kube-core/kube-core/commit/97f1adee080f7ff133038609a2fff7a5f6fb9af0)
+- cli/commands: Added gitops:overlays:apply to apply overlays on gitops config [`2a27d66`](https://github.com/kube-core/kube-core/commit/2a27d66c73f163d96a8ab7106a745d1b9520f24a)
+- core/layers: Added more options for gitops config [`de563d0`](https://github.com/kube-core/kube-core/commit/de563d07d1e30616277f199468b98716ce17a447)
+- core/releases: Added default alertmanager inhibitrules for gke clusters [`14adb6b`](https://github.com/kube-core/kube-core/commit/14adb6bf14928540280fa2d37332b1dcf4969151)
+- core/releases: Improved oauth2 proxy default cookie configuration [`9fcf848`](https://github.com/kube-core/kube-core/commit/9fcf848cea9470ddd18624da3dde30fbbb458f79)
+- core/layers: Added flux-ssh secret replication for flux-repository [`8b0e24e`](https://github.com/kube-core/kube-core/commit/8b0e24e24e37843b80a154f3a5d58ea1972696fd)
+- cli/scripts: Added flux.kube-core.io annotation to rewrite flux imagepolicies after kubectl slice [`3186b25`](https://github.com/kube-core/kube-core/commit/3186b25a6220c79cab3f81031eb5ff9ffdbe208f)
+- core/layers: Removed useless secret on CRO [`26fc59a`](https://github.com/kube-core/kube-core/commit/26fc59ab99cda2e3b10ce81e12a5eb1b791e765d)
+- core/values: Fixed some templating bugs [`ed3925c`](https://github.com/kube-core/kube-core/commit/ed3925ce748f9984a00fbd6f22b3317cb93031ef)
+- core/values: Added some values injection in flux-repository [`94259df`](https://github.com/kube-core/kube-core/commit/94259df6b1092094974dbb3f5d5f0262178b80bf)
+- core/layers: Fixed GCP IAM for tekton and CRO [`8cc98b3`](https://github.com/kube-core/kube-core/commit/8cc98b38cf2687a3011aebd8256c45f62493e111)
+
 #### [v0.12.1](https://github.com/kube-core/kube-core/compare/v0.12.0...v0.12.1)
 
+> 24 April 2023
+
 - cli/scripts: Updated some scripts [`4712c03`](https://github.com/kube-core/kube-core/commit/4712c03d6e828a92dbc90eeb6a884120099632ce)
+- release: v0.12.1 [`1a9b4a6`](https://github.com/kube-core/kube-core/commit/1a9b4a6fb8e8680a98d9039ca6242e2a45a43f99)
 - cli/commands: Fixed generate:values command [`9ced61e`](https://github.com/kube-core/kube-core/commit/9ced61e2a74f6e0607c290704d4bba5d83560d96)
 - core/values: Specify default index template in cluster-logging [`a0b383d`](https://github.com/kube-core/kube-core/commit/a0b383d797db0e3bc846cd59a9513287a1bf75a2)
 - core/templates: Disabled ServiceAccount name length validation for release-cloud [`a2b1336`](https://github.com/kube-core/kube-core/commit/a2b1336b73e2e856085c3558d580b5257a00c91c)

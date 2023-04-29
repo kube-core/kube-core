@@ -3,25 +3,9 @@
 
 Generate various resources.
 
-* [`kube-core generate cluster-config`](#kube-core-generate-cluster-config)
 * [`kube-core generate helmfiles`](#kube-core-generate-helmfiles)
 * [`kube-core generate local`](#kube-core-generate-local)
 * [`kube-core generate values`](#kube-core-generate-values)
-
-## `kube-core generate cluster-config`
-
-Generates cluster-config.yaml from core values.
-
-```
-USAGE
-  $ kube-core generate cluster-config
-
-DESCRIPTION
-  Generates cluster-config.yaml from core values.
-
-EXAMPLES
-  $ kube-core generate:cluster-config
-```
 
 ## `kube-core generate helmfiles`
 
