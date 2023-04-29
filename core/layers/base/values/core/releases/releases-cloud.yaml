@@ -36,11 +36,13 @@ releases:
       enabled: true
       roles:
       - roles/storage.objectAdmin
+      - roles/storage.admin
   container-registry-operator:
     cloud:
       enabled: true
       roles:
       - roles/storage.objectAdmin
+      - roles/storage.admin
   cluster-logging:
     cloud:
       enabled: true
