@@ -7,6 +7,7 @@ cluster:
   config:
     repository:
       path: "/"
+    name: kube-core
 
 gitops:
   bot:
@@ -14,7 +15,19 @@ gitops:
     name: ""
   ref: "main"
   repository: https://github.com/dparbhakar/kube-core
+
   config:
+    full:
+      kustomization:
+        enabled: false
+      imageUpdateAutomation:
+        enabled: false
+    core:
+      enabled: false
+      imagePolicy:
+        enabled: true
+      imageRepository:
+        enabled: true
     default:
       kustomization:
         force: true

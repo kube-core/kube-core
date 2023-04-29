@@ -64,7 +64,7 @@ spec:
       description: The image used by the task
       type: string
       default: neo9sas/devops-tools:v1.5.0
-      
+
 
     - name: apps-branch
       description: The cluster name
@@ -127,7 +127,7 @@ spec:
 
     - name: garden
       image: $(params.image)
-      imagePullPolicy: Always
+      imagePullPolicy: IfNotPresent
       command: ["/bin/bash"]
       volumeMounts:
         - name: kubeconfig
@@ -186,7 +186,7 @@ spec:
           gardenEnv="$(params.garden-env)"
 
           # TODO: See if we really need to be root
-          userHome=/root 
+          userHome=/root
 
 
           # Init Root Repository Submodules

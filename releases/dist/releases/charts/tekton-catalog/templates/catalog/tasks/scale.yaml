@@ -36,7 +36,7 @@ spec:
 
   stepTemplate:
     image: $(params.image)
-    imagePullPolicy: Always
+    imagePullPolicy: IfNotPresent
     env:
       - name: GOOGLE_APPLICATION_CREDENTIALS
         value: /tmp/tekton/tekton.json

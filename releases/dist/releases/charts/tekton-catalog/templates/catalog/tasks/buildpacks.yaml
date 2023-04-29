@@ -120,7 +120,7 @@ spec:
 
     - name: create
       image: $(params.BUILDER_IMAGE)
-      imagePullPolicy: Always
+      imagePullPolicy: IfNotPresent
       command: ["/cnb/lifecycle/creator"]
       args:
         - "-app=$(workspaces.source.path)/$(params.SOURCE_SUBPATH)"

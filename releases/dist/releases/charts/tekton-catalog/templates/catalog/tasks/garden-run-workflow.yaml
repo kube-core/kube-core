@@ -64,7 +64,7 @@ spec:
       description: The image used by the task
       type: string
       default: neo9sas/devops-tools:v1.5.0
-      
+
 
     - name: apps-branch
       description: The cluster name
@@ -116,7 +116,7 @@ spec:
 
     - name: garden
       image: $(params.image)
-      imagePullPolicy: Always
+      imagePullPolicy: IfNotPresent
       command: ["/bin/bash"]
       volumeMounts:
         - name: kubeconfig
@@ -161,9 +161,9 @@ spec:
           terraformPath=${rootPath}/terraform
           gardenCommand="$(params.garden-command)"
           gardenEnv="$(params.garden-env)"
-          
+
           # TODO: See if we really need to be root
-          userHome=/root 
+          userHome=/root
 
           # Setup required/optional env vars
           export user=$(params.garden-user)
@@ -185,6 +185,6 @@ spec:
           # garden ${gardenCommand} $(params.garden-args) --env=${gardenEnv} --yes > $(workspaces.output.path)/garden-logs 2> $(workspaces.output.path)/garden-errors
 
           (garden ${gardenCommand} $(params.garden-args) --env=${gardenEnv} --yes | tee $(workspaces.output.path)/garden-logs) 3>&1 1>&2 2>&3 | tee $(workspaces.output.path)/garden-errors
-          
+
           cat error.log >> $(workspaces.output.path)/garden-errors
           cat error.log > $(workspaces.output.path)/garden-run-workflow-errors

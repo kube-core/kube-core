@@ -68,7 +68,7 @@ spec:
   steps:
     - name: run-job
       image: $(params.image)
-      imagePullPolicy: Always
+      imagePullPolicy: IfNotPresent
       command: ["/bin/bash"]
       volumeMounts:
         - name: kubeconfig-internal-gcloud

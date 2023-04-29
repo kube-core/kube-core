@@ -64,7 +64,7 @@ spec:
       description: The image used by the task
       type: string
       default: neo9sas/devops-tools:v1.5.0
-      
+
 
     - name: apps-branch
       description: The cluster name
@@ -141,7 +141,7 @@ spec:
 
     - name: garden
       image: $(params.image)
-      imagePullPolicy: Always
+      imagePullPolicy: IfNotPresent
       command: ["/bin/bash"]
       volumeMounts:
         - name: kubeconfig
@@ -189,9 +189,9 @@ spec:
           gardenArgs="$(params.garden-args)"
           projectName="$(params.trigger-git-project-name)-image"
           triggerProjectCommit="$(params.trigger-git-commit)"
-          
+
           # TODO: See if we really need to be root
-          userHome=/root 
+          userHome=/root
 
           # Setup required/optional env vars
           export user=$(params.garden-user)
@@ -213,7 +213,7 @@ spec:
           # garden ${gardenCommand} ${gardenArgs} --env=${gardenEnv} --yes > $(workspaces.output.path)/garden-test-logs 2> $(workspaces.output.path)/garden-test-errors
 
           (garden ${gardenCommand} ${projectName} ${gardenArgs} --env=${gardenEnv} --yes | tee $(workspaces.output.path)/garden-test-logs) 3>&1 1>&2 2>&3 | tee $(workspaces.output.path)/garden-test-errors
-          
+
           cat .garden/error.log >> $(workspaces.output.path)/garden-errors
           cat .garden/error.log > $(workspaces.output.path)/garden-test-errors
 

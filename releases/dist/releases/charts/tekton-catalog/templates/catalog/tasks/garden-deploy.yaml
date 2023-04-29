@@ -112,7 +112,7 @@ spec:
 
     - name: garden
       image: $(params.image)
-      imagePullPolicy: Always
+      imagePullPolicy: IfNotPresent
       command: ["/bin/bash"]
       volumeMounts:
         - name: kubeconfig
@@ -161,7 +161,7 @@ spec:
           projectName="$(params.trigger-git-project-name)"
 
           # TODO: See if we really need to be root
-          userHome=/root 
+          userHome=/root
 
           # Setup required/optional env vars
           export user=$(params.garden-user)
@@ -202,7 +202,7 @@ spec:
           then
             echo "Getting ingresses ..."
             envIngresses=$(kubectl get ingress -n ${gardenUser}-${gardenEnv} -o json | jq -r '.items[] | "- http://\(.spec.rules[].host)"')
-            
+
           elif [[ "${gardenEnv}" == "integration" || "${gardenEnv}" == "staging" || "${gardenEnv}" == "production" ]]
           then
             echo "Getting ingresses ..."
@@ -218,7 +218,7 @@ spec:
           echo "$envIngresses" > $(workspaces.output.path)/garden-deploy-env-ingresses
 
           GARDEN_LOGGER_TYPE=basic
-          #  
+          #
 
           if [[ "$(params.init-project)" == "true" && "${gardenCommand}" == "deploy" ]]
           then
@@ -228,7 +228,7 @@ spec:
           if [[ -s "$(workspaces.output.path)/garden-deploy-errors" ]]
           then
             echo "Failed"
-            cat $(workspaces.output.path)/garden-deploy-errors 
+            cat $(workspaces.output.path)/garden-deploy-errors
             exit 1
           else
             echo "Completed"

@@ -97,7 +97,7 @@ directories:
       - path: prometheus-adapter
         helmChart:
           name: prometheus-adapter
-          version: 4.1.1
+          version: 4.2.0
           repository:
             url: https://prometheus-community.github.io/helm-charts
       - path: keda
@@ -127,7 +127,7 @@ directories:
       - path: crossplane
         helmChart:
           name: crossplane
-          version: 1.11.3
+          version: 1.12.1
           repository:
             url: https://charts.crossplane.io/stable
       - path: eck-operator
@@ -157,7 +157,7 @@ directories:
       - path: forecastle
         helmChart:
           name: forecastle
-          version: v1.0.124
+          version: v1.0.125
           repository:
             url: https://stakater.github.io/stakater-charts
       - path: n9-api
@@ -175,7 +175,7 @@ directories:
       - path: keycloak
         helmChart:
           name: keycloak
-          version: 14.2.0
+          version: 14.4.0
           repository:
             url: https://charts.bitnami.com/bitnami
       - path: kps
@@ -205,7 +205,7 @@ directories:
       - path: nginx
         helmChart:
           name: nginx
-          version: 13.2.34
+          version: 14.1.0
           repository:
             url: https://charts.bitnami.com/bitnami
       - path: nginx-ingress-controller
@@ -235,7 +235,7 @@ directories:
       - path: reloader
         helmChart:
           name: reloader
-          version: v1.0.22
+          version: v1.0.24
           repository:
             url: https://stakater.github.io/stakater-charts
       - path: kubernetes-replicator
@@ -259,7 +259,7 @@ directories:
       - path: velero
         helmChart:
           name: velero
-          version: 3.1.6
+          version: 4.0.1
           repository:
             url: https://vmware-tanzu.github.io/helm-charts
       - path: zeebe-cluster-helm
@@ -319,13 +319,13 @@ directories:
       - path: oauth2-proxy
         helmChart:
           name: oauth2-proxy
-          version: 6.11.0
+          version: 6.12.0
           repository:
             url: https://oauth2-proxy.github.io/manifests
       - path: kiali-operator
         helmChart:
           name: kiali-operator
-          version: 1.66.0
+          version: 1.67.0
           repository:
             url: https://kiali.org/helm-charts
       - path: jaeger-operator
@@ -463,13 +463,13 @@ directories:
       - path: flux-config
         helmChart:
           name: flux-config
-          version: 0.1.0
+          version: 0.2.0
           repository:
             url: https://kube-core.github.io/helm-charts
       - path: flux-repository
         helmChart:
           name: flux-repository
-          version: 0.1.0
+          version: 0.2.0
           repository:
             url: https://kube-core.github.io/helm-charts
       - path: imagecache

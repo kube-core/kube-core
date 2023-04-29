@@ -40,7 +40,7 @@ spec:
       description: The script to execute
       type: string
       default: "echo devops-tools"
-    
+
     - name: image
       description: The image used by the task
       type: string
@@ -49,7 +49,7 @@ spec:
   steps:
     - name: exec-script
       image: $(params.image)
-      imagePullPolicy: Always
+      imagePullPolicy: IfNotPresent
       volumeMounts:
         - name: kubeconfig
           mountPath: /tmp/kubeconfig
@@ -70,6 +70,5 @@ spec:
           value: /tmp/tekton/tekton.json
         - name: KUBECONFIG
           value: /tmp/kubeconfig-internal-gcloud/kubeconfig-internal-gcloud.yaml
-      script: | 
+      script: |
         $(params.script)
-      

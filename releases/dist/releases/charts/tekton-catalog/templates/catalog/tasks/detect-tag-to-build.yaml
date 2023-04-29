@@ -24,6 +24,10 @@ spec:
       name: container-images-repository
       type: string
     - default: ""
+      description: Container images repository namespace to add in built image tag
+      name: container-images-repository-namespace
+      type: string
+    - default: ""
       description: The git project name which is at the origin of the push
       name: git-project-name
       type: string
@@ -47,7 +51,7 @@ spec:
   steps:
     - name: exec-script
       image: $(params.image)
-      imagePullPolicy: Always
+      imagePullPolicy: IfNotPresent
       command:
         - /bin/bash
       args:
@@ -58,10 +62,14 @@ spec:
           timestamp=$(date +"%s")
 
           imageRepository="$(params.container-images-repository)"
+          imageRepositoryNamespace="$(params.container-images-repository-namespace)"
           projectName="$(params.git-project-name)"
           inputTag="$(params.container-image-tag)"
-
+          if [[ ! -z "${imageRepositoryNamespace}" ]]; then
+            imageRepository="${imageRepository}/${imageRepositoryNamespace}"
+          fi
           baseImage="${imageRepository}/${projectName}:${inputTag}"
+
 
           regexVersion='^v([0-9]+\.){0,2}(\*|[0-9]+)([-,a-z,0-9]*)$'
           targetImage=""

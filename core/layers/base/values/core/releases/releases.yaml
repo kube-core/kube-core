@@ -112,7 +112,7 @@ releases:
     shortName: flux-cfg
     namespace: flux-system
     namespaceShortName: flux-sys
-    chart: ../releases/local/flux-config
+    chart: ../releases/dist/releases/charts/flux-config
   forecastle:
     shortName: frcstl
     namespace: forecastle
@@ -127,7 +127,7 @@ releases:
     shortName: ing-acs-ope
     namespace: ingress-access-operator
     namespaceShortName: ing-acs-ope
-    chart: ../releases/local/n9-api
+    chart: ../releases/dist/releases/charts/n9-api
   istio-base:
     shortName: istiob
     namespace: istio-system
@@ -368,17 +368,17 @@ releases:
     shortName: sys-jobs
     namespace: system-tools
     namespaceShortName: sys-tls
-    chart: ../releases/local/system-jobs
+    chart: ../releases/dist/releases/charts/system-jobs
   tekton:
     shortName: tktn
     namespace: tekton-pipelines
     namespaceShortName: tktn
-    chart: ../releases/local/tekton
+    chart: ../releases/dist/releases/charts/tekton
   tekton-catalog:
     shortName: tktn-cat
     namespace: tekton-pipelines
     namespaceShortName: tktn
-    chart: ../releases/local/tekton-catalog
+    chart: ../releases/dist/releases/charts/tekton-catalog
     release:
       needs:
         - tekton-pipelines/tekton
@@ -386,7 +386,7 @@ releases:
     shortName: tktn-log
     namespace: logging
     namespaceShortName: log
-    chart: ../releases/local/tekton-logging
+    chart: ../releases/dist/releases/charts/tekton-logging
   test-logging:
     shortName: test-log
     namespace: test-logging
@@ -471,7 +471,7 @@ releases:
     shortName: flux-rep
     namespace: flux-system
     namespaceShortName: flx
-    chart: ../releases/local/flux-repository
+    chart: ../releases/dist/releases/charts/flux-repository
   dex:
     shortName: dex
     namespace: dex

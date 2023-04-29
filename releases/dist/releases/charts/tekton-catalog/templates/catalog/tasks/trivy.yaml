@@ -58,7 +58,7 @@ spec:
   steps:
     - name: scan
       image: $(params.trivy-image)
-      imagePullPolicy: Always
+      imagePullPolicy: IfNotPresent
       command: ["/bin/bash"]
       volumeMounts:
         - name: kubeconfig

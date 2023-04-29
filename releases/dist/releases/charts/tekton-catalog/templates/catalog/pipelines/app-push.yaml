@@ -89,6 +89,10 @@ spec:
   - name: chart-version
     type: string
     description: The chart helm version to use for continuous deployment
+  - default: ""
+    description: Container images repository namespace to add in built image tag
+    name: container-images-repository-namespace
+    type: string
   workspaces:
   - name: ws
 
@@ -138,6 +142,8 @@ spec:
     params:
       - name: container-images-repository
         value: "$(params.container-images-repository)"
+      - name: container-images-repository-namespace
+        value: "$(params.container-images-repository-namespace)"
       - name: git-project-name
         value: "$(params.git-project-name)"
       - name: container-image-tag

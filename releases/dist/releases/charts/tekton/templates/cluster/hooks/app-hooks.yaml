@@ -63,10 +63,13 @@ spec:
               #used to specify the chart name. default: latest
             - key: chart-version
               expression: "requestURL.parseURL().rawQuery.contains('chartVersion=') ? requestURL.parseURL().query['chartVersion'] : ''"
+            - key: container-images-repository-namespace
+              expression: "requestURL.parseURL().rawQuery.contains('repositoryNamespace=') ? requestURL.parseURL().query['repositoryNamespace'] : ''"
       bindings:
         - ref: parse-gitlab-push-hook
         - ref: parse-gitlab-push-hook-extensions
         - ref: parse-param-debug-extensions
+        - ref: parse-container-images-repository-namespace-from-query
         - ref: parse-build-format-from-query
         - ref: parse-custom-config  # contains customer specific values
         - ref: parse-param-publish-extensions

@@ -1,0 +1,9 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerBinding
+metadata:
+  name: parse-container-images-repository-namespace-from-query
+  namespace: tekton-pipelines
+spec:
+  params:
+  - name: container-images-repository-namespace
+    value: $(extensions.container-images-repository-namespace)

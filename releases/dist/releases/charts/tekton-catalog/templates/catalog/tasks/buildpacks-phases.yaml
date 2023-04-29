@@ -127,7 +127,7 @@ spec:
     # Copy stack.toml so that it will be accessible to the exporter, since the lifecycle image will not contain it.
     - name: copy-stack-toml
       image: $(params.BUILDER_IMAGE)
-      imagePullPolicy: Always
+      imagePullPolicy: IfNotPresent
       command: ["/bin/sh"]
       args:
         - "-c"
@@ -139,7 +139,7 @@ spec:
 
     - name: detect
       image: $(params.BUILDER_IMAGE)
-      imagePullPolicy: Always
+      imagePullPolicy: IfNotPresent
       command: ["/cnb/lifecycle/detector"]
       args:
         - "-app=$(workspaces.source.path)/$(params.SOURCE_SUBPATH)"
@@ -155,7 +155,7 @@ spec:
 
     - name: analyze
       image: $(params.LIFECYCLE_IMAGE)
-      imagePullPolicy: Always
+      imagePullPolicy: IfNotPresent
       command: ["/cnb/lifecycle/analyzer"]
       args:
         - "-layers=/layers"
@@ -171,7 +171,7 @@ spec:
 
     - name: restore
       image: $(params.LIFECYCLE_IMAGE)
-      imagePullPolicy: Always
+      imagePullPolicy: IfNotPresent
       command: ["/cnb/lifecycle/restorer"]
       args:
         - "-group=/layers/group.toml"
@@ -186,7 +186,7 @@ spec:
 
     - name: build
       image: $(params.BUILDER_IMAGE)
-      imagePullPolicy: Always
+      imagePullPolicy: IfNotPresent
       command: ["/cnb/lifecycle/builder"]
       args:
         - "-app=$(workspaces.source.path)/$(params.SOURCE_SUBPATH)"
@@ -203,7 +203,7 @@ spec:
 
     - name: export
       image: $(params.LIFECYCLE_IMAGE)
-      imagePullPolicy: Always
+      imagePullPolicy: IfNotPresent
       command: ["/cnb/lifecycle/exporter"]
       args:
         - "-app=$(workspaces.source.path)/$(params.SOURCE_SUBPATH)"

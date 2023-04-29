@@ -1,7 +1,7 @@
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: GitRepository
 metadata:
-  name: {{ coalesce .Values.name .Release.Name }}
+  name: k8s-cluster-{{ .Values.cluster.config.name }}-{{ coalesce .Values.name .Release.Name }}
   namespace: {{ coalesce .Values.namespace .Release.Namespace }}
   annotations:
     {{ if (eq .Values.pruneDisabled true) }}
@@ -14,8 +14,39 @@ spec:
   gitImplementation: go-git
   interval: {{ coalesce .Values.interval "1m" }}
   ref:
-    branch: {{ coalesce .Values.ref "main" }}
+    branch: {{ .Values.gitops.ref }}
   secretRef:
     name: {{ coalesce .Values.secretName (printf "%s-git-ssh" (coalesce .Values.name .Release.Name)) }}
   timeout: {{ coalesce .Values.interval "60s" }}
   url: {{ .Values.repository }}
+{{ if .Values.imageUpdateAutomation.enabled }}
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta1
+kind: ImageUpdateAutomation
+metadata:
+  name: k8s-cluster-{{ .Values.cluster.config.name }}-{{ coalesce .Values.name .Release.Name }}
+  namespace: {{ coalesce .Values.namespace .Release.Namespace }}
+  annotations:
+    {{ if .Values.annotations }}
+    {{ toYaml .Values.annotations | indent 4 }}
+    {{ end }}
+spec:
+  interval: {{ coalesce .Values.interval "1m" }}
+  sourceRef:
+    kind: GitRepository
+    name: k8s-cluster-{{ .Values.cluster.config.name }}-{{ coalesce .Values.name .Release.Name }}
+  git:
+    checkout:
+      ref:
+        branch: {{ .Values.gitops.ref }}
+    commit:
+      author:
+        email: {{ coalesce .Values.gitops.bot.user .Values.git.bot.user }}
+        name: {{ coalesce .Values.gitops.bot.name .Values.git.bot.name }}
+      messageTemplate: "gitops: Updates Images in: {{ .Values.cluster.config.repository.path }} (flux-self)"
+    push:
+      branch: {{ .Values.gitops.ref }}
+  update:
+    path: {{ .Values.cluster.config.repository.path }}
+    strategy: Setters
+{{ end }}

@@ -5,10 +5,10 @@ apiVersion: v2
 appVersion: 15.2.0
 dependencies:
 - name: common
-  repository: https://charts.bitnami.com/bitnami
+  repository: oci://registry-1.docker.io/bitnamicharts
   tags:
   - bitnami-common
-  version: 2.x.x
+  version: 2.2.4
 description: PostgreSQL (Postgres) is an open source object-relational database known
   for reliability and data integrity. ACID-compliant, it supports foreign keys, joins,
   views, triggers and stored procedures.
@@ -28,4 +28,4 @@ name: postgresql
 sources:
 - https://github.com/bitnami/containers/tree/main/bitnami/postgresql
 - https://www.postgresql.org/
-version: 12.2.6
+version: 12.2.8

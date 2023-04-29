@@ -12,9 +12,42 @@ spec:
   timeout: 60s
   url: {{ .Values.gitops.repository }}
 
+{{ if .Values.gitops.config.core.enabled }}
+
+{{ if .Values.gitops.config.full.imagePolicy }}
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta1
+kind: ImagePolicy
+metadata:
+  name: kube-core
+spec:
+  imageRepositoryRef:
+    name: kube-core
+  policy:
+    semver:
+      range: '>=0.0.0-0'
+{{ end }}
+{{ if .Values.gitops.config.full.imageRepository }}
+---
+# Source: n9-api/templates/flux/imagerepository.yaml
+apiVersion: image.toolkit.fluxcd.io/v1beta1
+kind: ImageRepository
+metadata:
+  name: kube-core
+spec:
+  image: k8skubecore/kube-core
+  interval: 1h
+  # secretRef:
+  #   name: docker-registry-gcr-admin
+{{ end }}
+
+{{ end }}
+
+
 {{ if (eq .Values.gitops.enabled true) }}
 
 {{ if (eq .Values.gitops.mode "full") }}
+{{ if .Values.gitops.config.full.kustomization.enabled }}
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
 kind: Kustomization
@@ -28,6 +61,8 @@ spec:
   sourceRef:
     kind: GitRepository
     name: self
+{{ end }}
+{{ if .Values.gitops.config.full.imageUpdateAutomation.enabled }}
 ---
 apiVersion: image.toolkit.fluxcd.io/v1beta1
 kind: ImageUpdateAutomation
@@ -52,29 +87,7 @@ spec:
   update:
     path: {{ .Values.cluster.config.repository.path }}
     strategy: Setters
----
-apiVersion: image.toolkit.fluxcd.io/v1beta1
-kind: ImagePolicy
-metadata:
-  name: kube-core
-spec:
-  imageRepositoryRef:
-    name: kube-core
-  policy:
-    semver:
-      range: '>=0.0.0-0'
----
-# Source: n9-api/templates/flux/imagerepository.yaml
-apiVersion: image.toolkit.fluxcd.io/v1beta1
-kind: ImageRepository
-metadata:
-  name: kube-core
-spec:
-  image: neo9sas/kube-core
-  interval: 1h
-  # secretRef:
-  #   name: docker-registry-gcr-admin
-
+{{ end }}
 {{ else if (eq .Values.gitops.mode "releases") }}
 {{ range $releaseName, $releaseConfig := .Values.releases }}
 ---

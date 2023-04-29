@@ -30,7 +30,7 @@ spec:
   steps:
     - name: exec-script
       image: $(params.image)
-      imagePullPolicy: Always
+      imagePullPolicy: IfNotPresent
       command: ["/bin/bash"]
       args:
         - -c

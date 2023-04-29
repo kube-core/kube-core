@@ -1,3 +1,4 @@
+{{- $imagePolicy := printf "%s:%s-%s" .Release.Namespace (include "n9-api.fullname" .) .Values.flux.defaultImagePolicy }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -12,6 +13,7 @@ metadata:
     {{- end }}
   {{- if .Values.deployment.annotations }}
   annotations:
+    flux.kube-core.io/imagepolicy: "{{ coalesce .Values.flux.imagePolicy $imagePolicy }}"
     {{ toYaml .Values.deployment.annotations | indent 4 | trim }}
   {{- end }}
 spec:
@@ -64,7 +66,6 @@ spec:
         - name: {{ include "n9-api.fullname" . }}
           securityContext:
             {{- toYaml .Values.pod.securityContext | nindent 12 }}
-          {{ $imagePolicy := printf "%s:%s-%s" .Release.Namespace (include "n9-api.fullname" .) .Values.flux.defaultImagePolicy }}
           {{- if .Values.image.digest }}
           image: {{ .Values.image.repository }}@{{ .Values.image.digest }}
           {{- else }}

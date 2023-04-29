@@ -13,6 +13,7 @@ spec:
   - name: git-sha
   - name: project-id
   - name: container-images-repository
+  - name: container-images-repository-namespace
   - name: sonar-url
   - name: git-api-endpoint
   - name: continuous-delivery-namespace
@@ -68,6 +69,8 @@ spec:
         value: $(tt.params.project-id)
       - name: container-images-repository
         value: $(tt.params.container-images-repository)
+      - name: container-images-repository-namespace
+        value: $(tt.params.container-images-repository-namespace)
       - name: sonar-url
         value: $(tt.params.sonar-url)
       - name: git-api-endpoint
