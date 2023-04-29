@@ -1,3 +1,10 @@
+cluster: {{ toYaml .Values.cluster | nindent 2 }}
+releases: {{ toYaml .Values.releases | nindent 2 }}
+gitops: {{ toYaml .Values.gitops | nindent 2 }}
+git: {{ toYaml .Values.git | nindent 2 }}
+secrets: {{ toYaml (index .Values.releases "flux" "secrets") | nindent 2 }}
+
+
 {{ if (.Values.servicesList | getOrNil .Release.Name) }}
 name: {{ .Release.Namespace }}
 secretName: {{ coalesce (.Values.servicesList | getOrNil .Release.Name | getOrNil "flux" | getOrNil "secretName") "flux-ssh" }}
