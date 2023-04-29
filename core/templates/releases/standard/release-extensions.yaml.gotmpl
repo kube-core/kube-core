@@ -149,7 +149,7 @@
 {{ $hasEnabledSecrets = true }}
 {{ end }}
 {{ end }}
-{{ if (and (index $release "external-secrets") (or (and $hasEnabledSecrets ($release | getOrNil "external-secrets" | getOrNil "generated" | getOrNil "enabled")))) }}
+{{ if (and (index $release "external-secrets") (or $hasEnabledSecrets ($release | getOrNil "external-secrets" | getOrNil "generated" | getOrNil "enabled"))) }}
 {{ $extensionType := "external-secrets" }}
 {{ $extensionName := (printf "%s-%s" $releaseName $extensionType )}}
 - name: {{ $extensionName }}

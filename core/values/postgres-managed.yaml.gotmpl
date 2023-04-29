@@ -6,10 +6,9 @@
 {{ $sqlApplications := dict }}
 {{ range $applicationName, $application := .Values.applicationsList }}
 {{ $sqlEnabled := ($application | getOrNil "sql" | getOrNil "enabled") }}
-{{ $sqlType := ($application | getOrNil "sql" | getOrNil "type") }}
 {{ $sqlRef := ($application | getOrNil "sql" | getOrNil "ref") }}
-{{ $appEnabled := ($application | getOrNil "enabled") }}
-{{ if (and $sqlEnabled (eq $sqlType "postgres") (eq $sqlRef $releaseName) $appEnabled) }}
+{{ $sqlType := ($application | getOrNil "sql" | getOrNil "type") }}
+{{ if (and $sqlEnabled (eq $sqlType "postgres") (eq $sqlRef $releaseName)) }}
 {{ $_ := set $sqlApplications $applicationName $application }}
 {{ end }}
 {{ end }}
