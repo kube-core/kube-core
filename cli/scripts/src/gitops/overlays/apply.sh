@@ -117,4 +117,15 @@ else
 fi
 fi
 
+if [[ "${run_flux_overlays}" == "true" ]]; then
+    log_info "Applying Flux Overlays..."
+
+    filesList=$(grep -Rl flux.kube-core.io ${configPath} | grep -v ingress-access-operator)
+
+    while read file; do
+        yq -P -i -M '.spec.template.spec.containers[].image line_comment="{\"$imagepolicy\": \""+.metadata.annotations["flux.kube-core.io/imagepolicy"]+"\"}"' $file
+    done <<< "${filesList}"
+fi
+
+
 log_info "Done Applying Overlays!"
