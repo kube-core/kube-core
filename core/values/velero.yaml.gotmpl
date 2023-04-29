@@ -66,11 +66,11 @@ serviceAccount:
       {{ end }}
     labels:
 
+{{ if eq $values.cloud.provider "gcp" }}
 credentials:
-  {{ if eq $values.cloud.provider "gcp" }}
   useSecret: true
   existingSecret: {{ (index $values.releases .Release.Name "secrets" "credentials" "secretRef" "name" ) }}
-  {{ end }}
+{{ end }}
 
 backupsEnabled: true
 snapshotsEnabled: false
