@@ -90,3 +90,15 @@ services:
   flux-repository:
     chart: kube-core/flux-repository
     enabled: false
+    secrets:
+      flux-ssh:
+        description: Git SSH key for cluster
+        crossplaneGenerated: false
+        extraAnnotations: {}
+        extraLabels: {}
+        enabled: true
+        replicateFrom: secrets/flux-ssh
+        secretRef:
+          key: flux-ssh
+          name: flux-ssh
+        type: "Opaque"
