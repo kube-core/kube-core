@@ -67,16 +67,39 @@ vendirReleases=${corePath}/vendir-releases.yaml
 # cat vendir-releases.yaml | yq '.directories[].contents[] | select(.helmChart.repository.url=="https://kube-core.github.io/helm-charts") | [.]'
 
 filter=${1:-""}
+addRepo=${2:-"true"}
+updateRepo=${3:-"true"}
 
 
 cat ${vendirReleases} | yq '.directories[].contents[] | [{"name": .path, "repository": .helmChart.repository.url, "version": .helmChart.version }]' -o json | jq '.[]' | jq -c '[.name, .repository, .version] | @tsv' -r | while read repo url version; do
   echo "Updating chart $repo from repository $url ..."
-  helm repo add $repo $url > /dev/null
-  helm repo update $repo  > /dev/null
+
+
+  if [[ "$addRepo" == "true" ]]; then
+    helm repo add $repo $url > /dev/null
+  else
+    echo "Skipping adding repo update"
+  fi
+
+
+  if [[ "$updateRepo" == "true" ]]; then
+    helm repo update $repo  > /dev/null
+  else
+    echo "Skipping deps update"
+  fi
+
   newVersion=$(helm search repo ${repo}/${repo} -o json | jq -r '.[0].version')
   echo "Current version:" $version
   echo "Latest version:" $newVersion
-  if [[ ! -z "${filter}" ]]; then
+  comparableVersion=$(echo $version | sed 's/./-/')
+  comparableNewVersion=$(echo $newVersion | sed 's/./-/')
+
+  if [[ "$comparableVersion" == "$comparableNewVersion" ]]; then
+    echo "Chart is already up to date"
+    continue
+  fi
+
+  if [[ ! -z "${filter}" && "${filter}" != "false" ]]; then
     if echo $repo | grep -q $filter; then
       yq -i '.directories[].contents |= map(select(.helmChart.name == "'"${repo}"'").helmChart.version="'"${newVersion}"'")' ${vendirReleases}
       echo "Done updating chart $repo from repository $url"
