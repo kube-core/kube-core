@@ -7,11 +7,26 @@ gitops:
   repository: KUBE_CORE_GITOPS_REPOSITORY
   mode: full
   ref: KUBE_CORE_GITOPS_REF
-  path: /config
+  path: /config/gitops
+  kustomizations: []
+    # my-kustomization:
+    #   enabled: true
+    #   path: config/manifests
   refresh: 1m0s #KUBE_CORE_GITOPS_REFRESH
   ssh_key: ./keys/.flux-ssh-key
   autocommit: false #KUBE_CORE_GITOPS_AUTOCOMMIT
   config:
+    full:
+      kustomization:
+        enabled: true
+      imageUpdateAutomation:
+        enabled: true
+    core:
+      enabled: false
+      imagePolicy:
+        enabled: true
+      imageRepository:
+        enabled: true
     build:
       template: default
       templates:
