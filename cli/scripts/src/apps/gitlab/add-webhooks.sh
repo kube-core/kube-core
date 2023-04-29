@@ -60,29 +60,66 @@ check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
 ## Docs Start ##
-## Generates secrets for Tekton/SF features
+## Adds tekton webhooks to all applications in a GiLab group
 ## Docs End ##
 
-log_info "Generating sf secrets..."
-
-secretName="nexus"
-if [[ -f "${keys_path}/.${secretName}" ]]; then
-secret=$(kubectl create secret generic ${secretName} --dry-run=client -o yaml --from-env-file=${keys_path}/.${secretName}  | yq '.metadata |= {"name": "'"${secretName}"'", "namespace": "secrets", "annotations" : {"replicator.v1.mittwald.de/replication-allowed": "true", "replicator.v1.mittwald.de/replication-allowed-namespaces": "*"}}' -)
-echo "${secret}"  > ${secrets_path}/manifests/${secretName}.yaml
+if ! which gitlab >/dev/null; then
+    echo "gitlab is not installed, please install it"
+    exit 2
 fi
 
-secretName="npm-reader"
-if [[ -f "${keys_path}/.${secretName}" ]]; then
-secret=$(kubectl create secret generic ${secretName} --dry-run=client -o yaml --from-file=.npmrc=${keys_path}/.${secretName}  | yq '.metadata |= {"name": "'"${secretName}"'", "namespace": "secrets", "annotations" : {"replicator.v1.mittwald.de/replication-allowed": "true", "replicator.v1.mittwald.de/replication-allowed-namespaces": "*"}}' -)
-echo "${secret}"  > ${secrets_path}/manifests/${secretName}.yaml
+group_id=$1
+url=${2:-"https://app-hooks.tekton-pipelines.$cluster_config_domain"}
+token=$(cat ${git_webhooks_token})
+local_only=${4:-false}
+
+projects=$(gitlab -o json -f id,name group-project list --get-all --group-id $group_id 2> /dev/null | jq)
+project_name=
+project_id=
+hook_id=
+
+check_hook() {
+    hooks=$(gitlab -o json -f id,url project-hook list --project-id $project_id 2> /dev/null)
+    while IFS= read -r hook; do
+        hook_base_url=$(echo $hook | jq -r ".url" | awk -F'?' '{ print $1  }' | sed 's/"//')
+        hook_id=$(echo $hook | jq ".id")
+        base_url=$(echo $url | awk -F'?' '{ print $1  }')
+        if [[ $hook_base_url == $base_url ]]; then
+            update_hook
+        else
+            create_hook
+        fi
+    done <<<  "$(echo $hooks | jq -c ".[]")"
+}
+
+create_hook() {
+    echo "Add hook $url to $project_name"
+    gitlab project-hook create --project-id $project_id --url $url --push-events true --tag-push-events true --merge-requests-events false --enable-ssl-verification true --token $token 2> /dev/null
+}
+
+
+update_hook() {
+    echo "Updating hook on $project_name to $url"
+    gitlab project-hook update --project-id $project_id --id $hook_id --url $url --token $token 2> /dev/null
+}
+
+
+if [ $local_only == true ]; then
+    find apps/ -mindepth 1 -type d | while read serviceDir; do
+        if [[ -d "${serviceDir}/.git" ]]; then
+            project=$(echo $projects | jq ".[] | select(.name == \"$(basename "$serviceDir")\")")
+            if [[ ! -z "${project}" ]]; then
+                project_id=$(echo $project | jq .id)
+                project_name=$(echo $project | jq .name)
+                check_hook
+            fi
+        fi
+    done
+
+else
+    while IFS= read -r line; do
+        project_id=$(echo $line | jq ".id")
+        project_name=$(echo $line | jq ".name")
+        check_hook
+    done <<< "$(echo $projects | jq -c ".[]")"
 fi
-
-
-secretName="npm-publisher"
-if [[ -f "${keys_path}/.${secretName}" ]]; then
-secret=$(kubectl create secret generic ${secretName} --dry-run=client -o yaml --from-file=.npmrc=${keys_path}/.${secretName}  | yq '.metadata |= {"name": "'"${secretName}"'", "namespace": "secrets", "annotations" : {"replicator.v1.mittwald.de/replication-allowed": "true", "replicator.v1.mittwald.de/replication-allowed-namespaces": "*"}}' -)
-echo "${secret}"  > ${secrets_path}/manifests/${secretName}.yaml
-fi
-
-
-log_info "Done Generating sf secrets!"

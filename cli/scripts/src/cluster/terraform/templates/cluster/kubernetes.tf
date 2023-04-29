@@ -1,6 +1,6 @@
 module "gke" {
   source                  = "terraform-google-modules/kubernetes-engine/google//modules/private-cluster"
-  version                 = "23.1.0"
+  version                 = "25.0.0"
   project_id              = var.project
   name                    = var.cluster-short-name
   region                  = var.region
@@ -23,9 +23,8 @@ module "gke" {
   logging_service          = "none"
   enable_shielded_nodes    = false
   identity_namespace       = null
-
   master_authorized_networks = var.master-authorized-networks
-
+  maintenance_start_time   = "00:30"
   dns_cache = true
   enable_vertical_pod_autoscaling = true
 

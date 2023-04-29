@@ -1,7 +1,4 @@
-resource "google_container_registry" "gcr" {
-  project  = var.project
-  location = var.region-shortname
-}
+
 resource "google_project_service" "cloudresourcemanager" {
   project            = var.project
   service            = "cloudresourcemanager.googleapis.com"

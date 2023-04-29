@@ -1,6 +1,6 @@
 #!/bin/bash
 ## Docs Start ##
-## Injects istio in all namespaces. Args: enabled|disabled
+## Adds a label to all namespaces. Args: label value (default: istio-injection enabled)
 ## Docs End ##
 label=${1:-"istio-injection"}
 value=${2:-"enabled"}

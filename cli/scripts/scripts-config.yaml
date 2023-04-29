@@ -1,4 +1,9 @@
 scripts:
+  apps_gitlab_add_webhooks:
+    path: ./src/apps/gitlab/add-webhooks.sh
+    name: apps_gitlab_add_webhooks
+    description: Adds tekton webhooks to all applications in a GiLab group
+    args: ""
   apps_istio_configure_injection:
     path: ./src/apps/istio/configure-injection.sh
     name: apps_istio_configure_injection
@@ -12,13 +17,13 @@ scripts:
   apps_label_all_namespaces:
     path: ./src/apps/label-all-namespaces.sh
     name: apps_label_all_namespaces
-    description: 'Injects istio in all namespaces. '
-    args: enabled|disabled
+    description: 'Adds a label to all namespaces. '
+    args: 'label value (default: istio-injection enabled)'
   apps_label_namespace:
     path: ./src/apps/label-namespace.sh
     name: apps_label_namespace
-    description: 'Injects istio in all namespaces. '
-    args: enabled|disabled
+    description: 'Adds a label to one namespaces. '
+    args: 'namespace label value (default: dev istio-injection enabled)'
   apps_minio_configure_minio:
     path: ./src/apps/minio/configure-minio.sh
     name: apps_minio_configure_minio
@@ -37,18 +42,18 @@ scripts:
   apps_patch_all_ingress_class:
     path: ./src/apps/patch-all-ingress-class.sh
     name: apps_patch_all_ingress_class
-    description: 'Injects istio in all namespaces. '
-    args: enabled|disabled
+    description: 'Patches all ingresses with the input ingress class. '
+    args: ingressClass
   apps_patch_ns_ingress_class:
     path: ./src/apps/patch-ns-ingress-class.sh
     name: apps_patch_ns_ingress_class
-    description: 'Injects istio in all namespaces. '
-    args: enabled|disabled
+    description: 'Patches all ingresses in a namespace with the input ingress class. '
+    args: 'ingressClass namespace (default: nginx dev)'
   apps_rollout_namespace:
     path: ./src/apps/rollout-namespace.sh
     name: apps_rollout_namespace
-    description: 'Injects istio in all namespaces. '
-    args: enabled|disabled
+    description: 'Rolls out all pods and statefulsets in a namespace. '
+    args: namespace
   apps_sentry_sentry_create_projects:
     path: ./src/apps/sentry/sentry-create-projects.sh
     name: apps_sentry_sentry_create_projects
@@ -59,6 +64,11 @@ scripts:
     name: apps_sentry_sentry_get_dsns
     description: 'Generates Sentry DSNs for proejct. '
     args: projectName appName apiKey
+  apps_slack_setup:
+    path: ./src/apps/slack/setup.sh
+    name: apps_slack_setup
+    description: Setup slack webhook secret
+    args: ""
   cloud_gcp_setup_destroy:
     path: ./src/cloud/gcp/setup/destroy.sh
     name: cloud_gcp_setup_destroy
@@ -87,7 +97,7 @@ scripts:
   cloud_gcp_setup_setup:
     path: ./src/cloud/gcp/setup/setup.sh
     name: cloud_gcp_setup_setup
-    description: Sets up Cloud Provider IAM/Secrets. GCP only for now.
+    description: Sets up a GCP cluster
     args: ""
   cloud_gcp_setup_tekton_git:
     path: ./src/cloud/gcp/setup/tekton/git.sh

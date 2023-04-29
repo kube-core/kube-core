@@ -1,6 +1,6 @@
 #!/bin/bash
 ## Docs Start ##
-## Injects istio in all namespaces. Args: enabled|disabled
+## Patches all ingresses with the input ingress class. Args: ingressClass
 ## Docs End ##
 ingressClass=${1:-"nginx"}
 

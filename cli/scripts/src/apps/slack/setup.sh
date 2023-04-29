@@ -60,29 +60,15 @@ check_context "${cluster_config_context}"
 # check_args "$@"
 ## Header End
 ## Docs Start ##
-## Generates secrets for Tekton/SF features
+## Setup slack webhook secret
 ## Docs End ##
 
 log_info "Generating sf secrets..."
 
-secretName="nexus"
+secretName="slack-webhook"
 if [[ -f "${keys_path}/.${secretName}" ]]; then
 secret=$(kubectl create secret generic ${secretName} --dry-run=client -o yaml --from-env-file=${keys_path}/.${secretName}  | yq '.metadata |= {"name": "'"${secretName}"'", "namespace": "secrets", "annotations" : {"replicator.v1.mittwald.de/replication-allowed": "true", "replicator.v1.mittwald.de/replication-allowed-namespaces": "*"}}' -)
 echo "${secret}"  > ${secrets_path}/manifests/${secretName}.yaml
 fi
-
-secretName="npm-reader"
-if [[ -f "${keys_path}/.${secretName}" ]]; then
-secret=$(kubectl create secret generic ${secretName} --dry-run=client -o yaml --from-file=.npmrc=${keys_path}/.${secretName}  | yq '.metadata |= {"name": "'"${secretName}"'", "namespace": "secrets", "annotations" : {"replicator.v1.mittwald.de/replication-allowed": "true", "replicator.v1.mittwald.de/replication-allowed-namespaces": "*"}}' -)
-echo "${secret}"  > ${secrets_path}/manifests/${secretName}.yaml
-fi
-
-
-secretName="npm-publisher"
-if [[ -f "${keys_path}/.${secretName}" ]]; then
-secret=$(kubectl create secret generic ${secretName} --dry-run=client -o yaml --from-file=.npmrc=${keys_path}/.${secretName}  | yq '.metadata |= {"name": "'"${secretName}"'", "namespace": "secrets", "annotations" : {"replicator.v1.mittwald.de/replication-allowed": "true", "replicator.v1.mittwald.de/replication-allowed-namespaces": "*"}}' -)
-echo "${secret}"  > ${secrets_path}/manifests/${secretName}.yaml
-fi
-
 
 log_info "Done Generating sf secrets!"
