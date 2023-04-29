@@ -71,7 +71,6 @@ fi
 group_id=$1
 url=${2:-"https://app-hooks.tekton-pipelines.$cluster_config_domain"}
 token=$(cat ${git_webhooks_token})
-local_only=${4:-false}
 
 projects=$(gitlab -o json -f id,name group-project list --get-all --group-id $group_id 2> /dev/null | jq)
 project_name=
@@ -103,23 +102,8 @@ update_hook() {
     gitlab project-hook update --project-id $project_id --id $hook_id --url $url --token $token 2> /dev/null
 }
 
-
-if [ $local_only == true ]; then
-    find apps/ -mindepth 1 -type d | while read serviceDir; do
-        if [[ -d "${serviceDir}/.git" ]]; then
-            project=$(echo $projects | jq ".[] | select(.name == \"$(basename "$serviceDir")\")")
-            if [[ ! -z "${project}" ]]; then
-                project_id=$(echo $project | jq .id)
-                project_name=$(echo $project | jq .name)
-                check_hook
-            fi
-        fi
-    done
-
-else
-    while IFS= read -r line; do
-        project_id=$(echo $line | jq ".id")
-        project_name=$(echo $line | jq ".name")
-        check_hook
-    done <<< "$(echo $projects | jq -c ".[]")"
-fi
+while IFS= read -r line; do
+    project_id=$(echo $line | jq ".id")
+    project_name=$(echo $line | jq ".name")
+    check_hook
+done <<< "$(echo $projects | jq -c ".[]")"
