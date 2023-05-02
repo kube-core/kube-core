@@ -4,11 +4,15 @@ clusteroutput:
   enabled: false
 deployment:
   enabled: true
+ingress:
+  enabled: true
 project: project
 bucket_name: bucket
 credentials_secret_name: secret-name
 credentials_secret_key: secret-key
 cluster:
+  config:
+    domain: my.domain.com
   common:
     defaultServiceAnnotations: {}
     defaultServiceLabels: {}

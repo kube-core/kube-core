@@ -1,0 +1,24 @@
+{{ if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tekton-logs-server
+  namespace: logging
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: tekton-logs-server.logging.{{ .Values.cluster.config.domain }}
+    http:
+      paths:
+      - backend:
+          service:
+            name: tekton-logs-server
+            port:
+              number: 3000
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - tekton-logs-server.logging.{{ .Values.cluster.config.domain }}
+    secretName: tekton-logs-server-tls
+{{ end }}
