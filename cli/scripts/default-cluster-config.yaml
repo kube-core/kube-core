@@ -86,6 +86,9 @@ cluster:
 config:
   path: ./config
 
+values:
+  path: ./values
+
 keys:
   path: ./keys
 

@@ -62,6 +62,13 @@ $ kube-core generate helmfiles --no-lib --no-core --no-services --defaultEnvs
       allowNo: true,
       default: true,
     }),
+    templatesVersion: Flags.string({
+      description:
+        "Generates v2 templates",
+      hidden: false,
+      required: false,
+      default: "v1",
+    }),
     envs: Flags.string({
       description:
         "A comma separated list of envs to generate. Use it with --applications and/or --services.",
@@ -134,7 +141,7 @@ $ kube-core generate helmfiles --no-lib --no-core --no-services --defaultEnvs
     // Core
     if (flags.core) {
       files = await this.utils.getFilesAsList(
-        upath.join(this.corePath, `core`, `templates`, `generate`, `core`)
+        upath.join(this.corePath, `core`, `templates`, `generate`, flags.templatesVersion, `core`)
       );
       for (let file of files) {
         let { name, ext } = upath.parse(file);
@@ -156,13 +163,13 @@ $ kube-core generate helmfiles --no-lib --no-core --no-services --defaultEnvs
       const localLibDir = upath.join(
         this.clusterConfigDirPath,
         `helmfiles`,
-        `lib`
+        `lib`,
       );
       this.utils.mkdir(localLibDir);
 
       // Getting lib
       files = await this.utils.getFilesAsList(
-        upath.join(this.corePath, "core/templates/lib")
+        upath.join(this.corePath, "core", "templates", "lib", flags.templatesVersion)
       );
       for (let file of files) {
         let { name, ext } = upath.parse(file);
@@ -214,6 +221,14 @@ $ kube-core generate helmfiles --no-lib --no-core --no-services --defaultEnvs
             `services.yaml.gotmpl?ref=v${this.config.version}`,
           ].join("/")
         );
+        fileData = fileData.replaceAll(
+          "KUBE_CORE_HELMFILES_ENVS_REMOTE_PATH",
+          [
+            `git::${this.coreRemotePath}@`,
+            "core",
+            `environments.yaml.gotmpl?ref=v${this.config.version}`,
+          ].join("/")
+        );
 
         if(flags.localRefs) {
           fileData = fileData.replaceAll(
@@ -236,6 +251,10 @@ $ kube-core generate helmfiles --no-lib --no-core --no-services --defaultEnvs
             "KUBE_CORE_HELMFILES_SERVICES_LOCAL_PATH",
             upath.join(this.corePath, "core", "services.yaml.gotmpl")
           );
+          fileData = fileData.replaceAll(
+            "KUBE_CORE_HELMFILES_ENVS_REMOTE_PATH",
+            upath.join(this.corePath, "core", "environments.yaml.gotmpl")
+          );
         }
 
 
@@ -250,7 +269,7 @@ $ kube-core generate helmfiles --no-lib --no-core --no-services --defaultEnvs
 
     if (flags.commons) {
       files = await this.utils.getFilesAsList(
-        upath.join(this.corePath, `core`, `templates`, `generate`, `commons`)
+        upath.join(this.corePath, `core`, `templates`, `generate`, flags.templatesVersion, `commons`)
       );
       for (let file of files) {
         let { name, ext } = upath.parse(file);
@@ -271,14 +290,16 @@ $ kube-core generate helmfiles --no-lib --no-core --no-services --defaultEnvs
     // Envs
     if (flags.applications && envs) {
       files = await this.utils.getFilesAsList(
-        upath.join(this.corePath, `core`, `templates`, `generate`, `envs`)
+        upath.join(this.corePath, `core`, `templates`, `generate`, flags.templatesVersion, `envs`)
       );
+
       for (let file of files) {
         for (let env of envs) {
           let { name, ext } = upath.parse(file);
+          let basePath = `${env}.applications.helmfile.yaml.gotmpl`
           let targetPath = upath.join(
             localDir,
-            `${env}.applications.helmfile.yaml.gotmpl`
+            basePath
           );
           let fileData = await fs.readFile(file, "utf8");
           fileData = fileData.replaceAll(
@@ -301,14 +322,16 @@ $ kube-core generate helmfiles --no-lib --no-core --no-services --defaultEnvs
 
     if (flags.services && envs) {
       files = await this.utils.getFilesAsList(
-        upath.join(this.corePath, `core`, `templates`, `generate`, `envs`)
+        upath.join(this.corePath, `core`, `templates`, `generate`, flags.templatesVersion, `envs`)
       );
+
       for (let file of files) {
         for (let env of envs) {
           let { name, ext } = upath.parse(file);
+          let basePath = `${env}.services.helmfile.yaml.gotmpl`
           let targetPath = upath.join(
             localDir,
-            `${env}.services.helmfile.yaml.gotmpl`
+            basePath
           );
           let fileData = await fs.readFile(file, "utf8");
           fileData = fileData.replaceAll(
@@ -319,7 +342,7 @@ $ kube-core generate helmfiles --no-lib --no-core --no-services --defaultEnvs
           fileData = fileData.replaceAll("KUBE_CORE_RELEASE_TYPE", "service");
           await this.utils.mkdir(upath.parse(targetPath).dir);
           await fs.writeFile(targetPath, fileData);
-          writtenFiles.applications.push(
+          writtenFiles.services.push(
             upath.relative(this.clusterConfigDirPath, targetPath)
           );
         }

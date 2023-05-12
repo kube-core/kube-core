@@ -59,7 +59,7 @@ check_requirements
 # check_args "$@"
 ## Header End
 ## Docs Start ##
-## Generates cluster-config.yaml from helmfile env. Wrapped by CLI: kube-core generate cluster-config
+## Generates cluster-config.yaml from helmfile env. Wrapped by CLI: kube-core cluster setup config
 ## Docs End ##
 
 valuesFolder="${tmpFolder}/values"

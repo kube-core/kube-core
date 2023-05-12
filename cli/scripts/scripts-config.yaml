@@ -1,4 +1,9 @@
 scripts:
+  apps_gitlab_add_cluster_webhooks:
+    path: ./src/apps/gitlab/add-cluster-webhooks.sh
+    name: apps_gitlab_add_cluster_webhooks
+    description: Adds tekton webhooks to all applications in a GiLab group
+    args: ""
   apps_gitlab_add_webhooks:
     path: ./src/apps/gitlab/add-webhooks.sh
     name: apps_gitlab_add_webhooks
@@ -395,7 +400,7 @@ scripts:
     description: Legacy python parser for bash scripts. To replace with CLI.
     args: ""
   utils_generate_scripts_config:
-    path: ./src/utils/generate-scripts-config.sh
+    path: ../cli/scripts/src/utils/generate-scripts-config.sh
     name: utils_generate_scripts_config
     description: Generates scripts-config.yaml
     args: ""
@@ -552,7 +557,7 @@ scripts:
   generate_cluster_config:
     path: ./commands/generate/cluster-config.sh
     name: generate_cluster_config
-    description: 'Generates cluster-config.yaml from helmfile env. Wrapped by CLI: kube-core generate cluster-config'
+    description: 'Generates cluster-config.yaml from helmfile env. Wrapped by CLI: kube-core cluster setup config'
     args: ""
   generate_values:
     path: ./commands/generate/values.sh
@@ -593,4 +598,9 @@ scripts:
     path: ./commands/values/keys.sh
     name: values_keys
     description: 'Gets helmfile env top level keys. Wrapped by: kube-core values keys'
+    args: ""
+  values_reshape:
+    path: ./commands/values/reshape.sh
+    name: values_reshape
+    description: 'Gets all helmfile env values. Wrapped by: kube-core values all'
     args: ""
