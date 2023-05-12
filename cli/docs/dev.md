@@ -11,6 +11,7 @@ Tools for kube-core development.
 * [`kube-core dev releases add local-chart`](#kube-core-dev-releases-add-local-chart)
 * [`kube-core dev releases add release`](#kube-core-dev-releases-add-release)
 * [`kube-core dev releases build`](#kube-core-dev-releases-build)
+* [`kube-core dev releases update`](#kube-core-dev-releases-update)
 
 ## `kube-core dev mode dev`
 
@@ -136,4 +137,19 @@ EXAMPLES
   $ kube-core dev releases build
   # Build everything that matches the filter (grep)
   $ kube-core dev releases build tekton
+```
+
+## `kube-core dev releases update`
+
+Builds kube-core dist
+
+```
+USAGE
+  $ kube-core dev releases update
+
+DESCRIPTION
+  Builds kube-core dist
+
+EXAMPLES
+  $ kube-core dev releases update
 ```

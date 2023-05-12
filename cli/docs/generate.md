@@ -13,25 +13,26 @@ Generate helmfiles to setup your project quickly
 
 ```
 USAGE
-  $ kube-core generate helmfiles [--lib] [--commons] [--core] [--applications] [--services] [--envs <value>]
-    [--defaultEnvs] [--localRefs]
+  $ kube-core generate helmfiles [--lib] [--commons] [--core] [--applications] [--services] [--templatesVersion <value>]
+    [--envs <value>] [--defaultEnvs] [--localRefs]
 
 FLAGS
-  --[no-]applications  Generates applications helmfiles for all environments. Provide --envs or --defaultEnvs with it.
-                       Enabled by default. Use --no-applications to disable.
-  --[no-]commons       Generates common.helmfile.yaml.gotmpl to share common configuration between all helmfiles.
-                       Enabled by default. Use --no-commons to disable.
-  --[no-]core          Generates core, cluster and local helmfiles to allow using kube-core platform. Enabled by
-                       default. Use --no-core to disable.
-  --defaultEnvs        Use it to generate default kube-core envs for a quickstart. Use it with --applications and/or
-                       --services.
-  --envs=<value>...    [default: ] A comma separated list of envs to generate. Use it with --applications and/or
-                       --services.
-  --[no-]lib           Generates helmfiles/lib folder, with templates and utility functions. Enabled by default. Use
-                       --no-lib to disable.
-  --localRefs          Writes down local helmfile refs instead of using KUBE_CORE_LOCAL_CORE_PATH env var
-  --[no-]services      Generates services helmfiles for all environments. Provide --envs or --defaultEnvs with it.
-                       Enabled by default. Use --no-services to disable.
+  --[no-]applications         Generates applications helmfiles for all environments. Provide --envs or --defaultEnvs
+                              with it. Enabled by default. Use --no-applications to disable.
+  --[no-]commons              Generates common.helmfile.yaml.gotmpl to share common configuration between all helmfiles.
+                              Enabled by default. Use --no-commons to disable.
+  --[no-]core                 Generates core, cluster and local helmfiles to allow using kube-core platform. Enabled by
+                              default. Use --no-core to disable.
+  --defaultEnvs               Use it to generate default kube-core envs for a quickstart. Use it with --applications
+                              and/or --services.
+  --envs=<value>...           [default: ] A comma separated list of envs to generate. Use it with --applications and/or
+                              --services.
+  --[no-]lib                  Generates helmfiles/lib folder, with templates and utility functions. Enabled by default.
+                              Use --no-lib to disable.
+  --localRefs                 Writes down local helmfile refs instead of using KUBE_CORE_LOCAL_CORE_PATH env var
+  --[no-]services             Generates services helmfiles for all environments. Provide --envs or --defaultEnvs with
+                              it. Enabled by default. Use --no-services to disable.
+  --templatesVersion=<value>  [default: v1] Generates v2 templates
 
 DESCRIPTION
   Generate helmfiles to setup your project quickly

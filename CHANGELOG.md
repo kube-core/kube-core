@@ -2,11 +2,28 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.13.0](https://github.com/kube-core/kube-core/compare/v0.12.2...v0.13.0)
+
+- core: Reworked all templates and decoupled kube-core state processing from templates [`ad9870e`](https://github.com/kube-core/kube-core/commit/ad9870ed3d3a8afae8cadc06db33fb592deb19d8)
+- releases: Rebuilt releases [`b70aa4b`](https://github.com/kube-core/kube-core/commit/b70aa4bf12fa4777079bc8d7de7357c9bf69298b)
+- cli/commands: Added command to reshape values [`91f2d65`](https://github.com/kube-core/kube-core/commit/91f2d65f38edf417c5058365f4c444a86ca9ba39)
+- core/layers: Updated various layers [`a440312`](https://github.com/kube-core/kube-core/commit/a440312f4c54342a2514e802d27d172c3fb5b712)
+- cli/commands: Added command to generate cluster webhooks [`b161a1a`](https://github.com/kube-core/kube-core/commit/b161a1ab466dace84b9e65e04589e409d6365b41)
+- cli/scripts: Reworked some generation scripts [`0107667`](https://github.com/kube-core/kube-core/commit/0107667a36e26ecb9874ccd37aab83b1cc5f4a07)
+- core/releases: Upgraded tekton-logging to v0.1.1 [`bdfe9a4`](https://github.com/kube-core/kube-core/commit/bdfe9a48d5930c2d8e7644b84c744adfc842e218)
+- cli/scripts: Removed useless condition in add-webhooks [`a73c3aa`](https://github.com/kube-core/kube-core/commit/a73c3aa9b0f8a45334bf3e3870f5964381de1a3b)
+- cli/base: Added valuesList and git status in base command [`f16e859`](https://github.com/kube-core/kube-core/commit/f16e859b74a20068bc206fca1a1fab15964f5981)
+- cli/commands: Added command to update releases [`86c3405`](https://github.com/kube-core/kube-core/commit/86c34059e46fae96dcb593b341e45d9a13b2e4e4)
+- core/values: Fixed velero credentials configuration [`6ecfbb1`](https://github.com/kube-core/kube-core/commit/6ecfbb1528ef553a8e455595541c47b49b3cd5f1)
+
 #### [v0.12.2](https://github.com/kube-core/kube-core/compare/v0.12.1...v0.12.2)
+
+> 29 April 2023
 
 - releases: Rebuilt releases [`b1eea6d`](https://github.com/kube-core/kube-core/commit/b1eea6d509b3fbe8fbb1294aa937d525efb37db5)
 - cli/scripts: Completely reworked cluster setup scripts & Added CLI commands for that [`a2ff285`](https://github.com/kube-core/kube-core/commit/a2ff28542caac90d3fb761d190678f8cf81aa933)
 - core/values: Updated velero configuration [`1c92293`](https://github.com/kube-core/kube-core/commit/1c9229398ea9ad9b368c54a43e986966d9622283)
+- release: v0.12.2 [`df5d249`](https://github.com/kube-core/kube-core/commit/df5d249555ca763e2babef725ca41ca14fa471c7)
 - cli/commands: Added dev/prod/local commands for faster development [`f88ca80`](https://github.com/kube-core/kube-core/commit/f88ca80c018cad623279b7cb220723a291d62129)
 - cli/scripts: Improved update-releases script [`6be6e66`](https://github.com/kube-core/kube-core/commit/6be6e66848ea00ee65cf46db9bfa791700def9b3)
 - core/layers: Shortened CRO naming config [`c0c1546`](https://github.com/kube-core/kube-core/commit/c0c15464a13bfe3d3463ba6ad93ab283d1781c66)

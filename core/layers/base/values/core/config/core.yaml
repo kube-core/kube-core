@@ -10,7 +10,6 @@ core:
   servicesEnabled: false
   applicationsOnly: false
   servicesOnly: false
-
   clusterEnabled: false
   enableCloudMetadataDebug: false
   helmfileName: core
