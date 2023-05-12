@@ -2,13 +2,21 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.13.1](https://github.com/kube-core/kube-core/compare/v0.13.0...v0.13.1)
+
+- cli/docs: Added missing file [`f3471b2`](https://github.com/kube-core/kube-core/commit/f3471b28169d9599247b504683de7b4476a9b23d)
+- cli/scripts: Fixed permissions on new scripts [`62e4a58`](https://github.com/kube-core/kube-core/commit/62e4a585c4205bf67a91064b9fd4b81dff8e8e41)
+
 #### [v0.13.0](https://github.com/kube-core/kube-core/compare/v0.12.2...v0.13.0)
+
+> 12 May 2023
 
 - core: Reworked all templates and decoupled kube-core state processing from templates [`ad9870e`](https://github.com/kube-core/kube-core/commit/ad9870ed3d3a8afae8cadc06db33fb592deb19d8)
 - releases: Rebuilt releases [`b70aa4b`](https://github.com/kube-core/kube-core/commit/b70aa4bf12fa4777079bc8d7de7357c9bf69298b)
 - cli/commands: Added command to reshape values [`91f2d65`](https://github.com/kube-core/kube-core/commit/91f2d65f38edf417c5058365f4c444a86ca9ba39)
 - core/layers: Updated various layers [`a440312`](https://github.com/kube-core/kube-core/commit/a440312f4c54342a2514e802d27d172c3fb5b712)
 - cli/commands: Added command to generate cluster webhooks [`b161a1a`](https://github.com/kube-core/kube-core/commit/b161a1ab466dace84b9e65e04589e409d6365b41)
+- release: v0.13.0 [`88a0ab6`](https://github.com/kube-core/kube-core/commit/88a0ab6dbf5e2c4a46cda567068c52202a2cb15b)
 - cli/scripts: Reworked some generation scripts [`0107667`](https://github.com/kube-core/kube-core/commit/0107667a36e26ecb9874ccd37aab83b1cc5f4a07)
 - core/releases: Upgraded tekton-logging to v0.1.1 [`bdfe9a4`](https://github.com/kube-core/kube-core/commit/bdfe9a48d5930c2d8e7644b84c744adfc842e218)
 - cli/scripts: Removed useless condition in add-webhooks [`a73c3aa`](https://github.com/kube-core/kube-core/commit/a73c3aa9b0f8a45334bf3e3870f5964381de1a3b)
