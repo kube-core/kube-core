@@ -16,10 +16,9 @@ cluster:
       type: KUBE_CORE_CLUSTER_CONFIG_NETWORK_TYPE
       master: KUBE_CORE_CLUSTER_CONFIG_NETWORK_MASTER
       cidr:
-      - name: cluster-range
-        cidr: KUBE_CORE_CLUSTER_CONFIG_CIDR_CLUSTER_RANGE
-      - name: cluster-nat
-        cidr: KUBE_CORE_CLUSTER_CONFIG_CIDR_CLUSTER_NAT
+        cluster:
+          range: KUBE_CORE_CLUSTER_CONFIG_CIDR_CLUSTER_RANGE
+          nat: KUBE_CORE_CLUSTER_CONFIG_CIDR_CLUSTER_NAT
       vpc:
         subnet: "10.KUBE_CORE_NETWORK_CLUSTER_BLOCK.0.0/24"
         pods: "10.KUBE_CORE_NETWORK_CLUSTER_BLOCK.128.0/17"

@@ -489,7 +489,7 @@ releases:
     chart: ../releases/dist/releases/charts/namespace
   trivy:
     shortName: trivy
-    namespace: trivy-server
+    namespace: trivy
     namespaceShortName: trivy
     chart: ../releases/dist/releases/charts/trivy
   app-extensions:

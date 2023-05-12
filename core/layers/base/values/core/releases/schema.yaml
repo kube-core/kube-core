@@ -16,6 +16,8 @@ templates:
     needs: []
     options:
       renderRelease: true
+      parentStateRender: false
+      dedicatedTemplate: false
       renderOptions: true
       renderExtensions: true
       forceNamespace: true
@@ -91,6 +93,8 @@ templates:
     needs: []
     options:
       renderRelease: true
+      parentStateRender: false
+      dedicatedTemplate: false
       renderOptions: true
       renderExtensions: false
       forceNamespace: false
@@ -167,6 +171,8 @@ templates:
     needs: []
     options:
       renderRelease: true
+      parentStateRender: false
+      dedicatedTemplate: false
       renderOptions: true
       renderExtensions: false
       forceNamespace: false
@@ -242,6 +248,8 @@ templates:
     needs: []
     options:
       renderRelease: true
+      parentStateRender: false
+      dedicatedTemplate: false
       renderOptions: true
       renderExtensions: true
       forceNamespace: true
@@ -317,6 +325,85 @@ templates:
     needs: []
     options:
       renderRelease: true
+      parentStateRender: false
+      dedicatedTemplate: false
+      renderOptions: true
+      renderExtensions: true
+      forceNamespace: true
+      forceNamespaceIngressClass: false
+      forceIngressClass: false
+      forceNamespaceVisitorGroup: false
+      forceClusterIssuer: ""
+      forceNamespaceClusterIssuer: false
+      forceVisitorGroups: ""
+      forceNamespaceNodeAffinity: false
+      forceNamespaceNodeSelector: false
+      patchIngresses: false
+      upgradeIngress: false
+      applyDefaultLabelsOnIngress: false
+      applyDefaultAnnotationsOnIngress: false
+      removeIngressClassAnnotation: false
+      removeIngressClassName: false
+      injectReloaderAnnotations: false
+      injectClusterLoggingLabel: false
+      injectDefaultIngressClassName: false
+      injectIngressHost: false
+      injectIngressTls: false
+      injectOauth2ProxyOnIngress: false
+      injectNamespaceOauth2ProxyOnIngress: false
+      injectSatisfyAnyAuthOnIngress: false
+      injectionToEnforcePublicAccessFromIngressAccessOperator: false
+    patches:
+      enabled: false
+      patches: {}
+    release: {}
+    slos: {}
+    monitoring: {}
+    ingress:
+      enabled: false
+    scaling:
+      enabled: false
+    chaos: {}
+    external-secrets:
+    secrets: {}
+    customExtensions: {}
+    extensions:
+      replicatedSecretsEnabled: true
+      dynamicSecretsEnabled: true
+      configmapsEnabled: true
+      extraManifestsEnabled: true
+      rawManifestsEnabled: true
+      externalSecretsEnabled: true
+    extraManifests: {}
+    rawManifests: {}
+    configmaps: {}
+    cloud: {}
+    gitops:
+      enabled: false
+    dynamicSecrets: {}
+    strategicMergePatches: {}
+    transformers: {}
+    values: {}
+    templatedValues: {}
+  environment:
+    config: {}
+    chart: "kube-core/env-config"
+    chartVersion: "latest"
+    enabled: false
+    context: ""
+    extraReleaseValues: []
+    hooks: {}
+    type: "environment"
+    injectCoreValues: false
+    jsonPatches: {}
+    labels: {}
+    manifests: []
+    namespace: "default"
+    needs: []
+    options:
+      renderRelease: true
+      parentStateRender: false
+      dedicatedTemplate: false
       renderOptions: true
       renderExtensions: true
       forceNamespace: true

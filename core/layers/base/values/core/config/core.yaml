@@ -5,8 +5,12 @@ core:
   namespacesEnabled: false
   globalLabelsEnabled: true
   globalHelmMetadataEnabled: true
+  environmentsEnabled: false
   applicationsEnabled: false
   servicesEnabled: false
+  applicationsOnly: false
+  servicesOnly: false
+
   clusterEnabled: false
   enableCloudMetadataDebug: false
   helmfileName: core

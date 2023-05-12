@@ -1,3 +1,5 @@
 environments:
-  dev: {}
   default: {}
+  dev: {}
+environmentsConfig:
+  inheritFromDefaultApp: true

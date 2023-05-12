@@ -498,7 +498,7 @@ releases:
       ingress:
         annotations: {}
         labels: {}
-        subdomain: trivy-server
+        subdomain: trivy
 
   goldilocks:
     config:

@@ -3,7 +3,7 @@ releases:
     hooks:
       - args:
           - -c
-          - |
+          - |-
             # !/bin/bash
             # Wait CRD installation for 60 seconds
             for (( i=0; i <= 60; i++ )); do
@@ -24,7 +24,7 @@ releases:
     hooks:
       - args:
           - -c
-          - |
+          - |-
             # !/bin/bash
             # Wait Provider installation for 60 seconds
             for (( i=0; i <= 60; i++ )); do
