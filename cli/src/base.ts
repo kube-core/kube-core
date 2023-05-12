@@ -18,7 +18,9 @@ export default abstract class CustomCommand extends Command {
   public clusterConfigPath;
   public clusterConfigDirPath;
   public valuesPath;
+  public valuesList;
   public gitopsConfigHasChanges;
+  public gitHasChanges;
   public values;
 
   static stdin: string
@@ -106,6 +108,7 @@ export default abstract class CustomCommand extends Command {
       this.clusterConfigPath = clusterConfigPath;
       this.clusterConfigDirPath = clusterConfigDirPath;
       this.valuesPath = upath.join(clusterConfigDirPath, "values");
+      this.valuesList = await this.utils.getFilesAsList(this.valuesPath)
 
       // let valuesData = await this.utils.loadValuesAsArray(this.valuesPath)
       // console.log(merge(...valuesData))
@@ -113,7 +116,7 @@ export default abstract class CustomCommand extends Command {
 
       // Checking if git workspace is clean
       this.gitopsConfigHasChanges = false;
-      const gitStatus = await this.utils.cliStream(
+      const gitopsConfigStatus = await this.utils.cliStream(
         "git",
         [
           "status",
@@ -122,8 +125,22 @@ export default abstract class CustomCommand extends Command {
         ],
         { maxBuffer: 300_000_000 }
       );
-      if (gitStatus.stdout != "") {
+      if (gitopsConfigStatus.stdout != "") {
         this.gitopsConfigHasChanges = true;
+      }
+      // Checking if git workspace is clean
+      this.gitHasChanges = false;
+      const gitStatus = await this.utils.cliStream(
+        "git",
+        [
+          "status",
+          "--porcelain",
+          upath.join(this.clusterConfigDirPath),
+        ],
+        { maxBuffer: 300_000_000 }
+      );
+      if (gitStatus.stdout != "") {
+        this.gitHasChanges = true;
       }
     }
     // let clusterConfigDirPath = path.join(found, '..')
