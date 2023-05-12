@@ -223,6 +223,7 @@ cluster:
 
         # TODO: Merge those two and make them completely implicit, with possibility to overwrite
         object_key_format: "%{path}-%{time_slice}-%{uuid_flush}-%{index}.%{file_extension}" # GCS
+        tekton_object_key_format: "%{path}/%{time_slice}-%{uuid_flush}-%{index}.%{file_extension}" # GCS
         s3_object_key_format: "%{path}-%{time_slice}-%{uuid_flush}-%{index}.%{file_extension}" # S3
         # object_key_format: "%{path}/%{index}.%{file_extension}" # => 159.log
         # object_key_format: "%{path}/%{time_slice}%{uuid_hash}%{index}.%{file_extension}" => my-api2022081514202.json

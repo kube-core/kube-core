@@ -3,4 +3,4 @@ appVersion: v0.5.7
 description: SLO manager and alert generator
 name: pyrra
 type: application
-version: 0.7.0
+version: 0.7.1

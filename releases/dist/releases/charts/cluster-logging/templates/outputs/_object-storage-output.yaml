@@ -28,6 +28,8 @@ spec:
     force_path_style: "true"
     {{ if (eq .txtLogs true) }}
     s3_object_key_format: {{ .cluster.logging.outputs.config.txtObjectKeyFormat | quote }}
+    {{ else if (eq .type "tekton") }}
+    s3_object_key_format: {{ .cluster.logging.outputs.config.tekton_object_key_format | quote }}
     {{ else }}
     s3_object_key_format: {{ .cluster.logging.outputs.config.s3_object_key_format | quote }}
     {{ end }}
@@ -41,6 +43,8 @@ spec:
     bucket: {{ coalesce .bucket (printf "%s-%s-logs" (coalesce .cluster.logging.config.bucketPrefixOverride .cluster.config.name) .name) }}
     {{ if (eq .txtLogs true) }}
     object_key_format: {{ .cluster.logging.outputs.config.txtObjectKeyFormat | quote }}
+    {{ else if (eq .type "tekton") }}
+    object_key_format: {{ .cluster.logging.outputs.config.tekton_object_key_format | quote }}
     {{ else }}
     object_key_format: {{ .cluster.logging.outputs.config.object_key_format | quote }}
     {{ end }}

@@ -6,13 +6,13 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.11.1
   labels:
     app.kubernetes.io/component: kyverno
-    helm.sh/chart: kyverno-2.7.2
+    helm.sh/chart: kyverno-2.7.3
     app.kubernetes.io/managed-by: Helm
     
     app.kubernetes.io/name: kyverno
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/part-of: kyverno
-    app.kubernetes.io/version: 2.7.2
+    app.kubernetes.io/version: 2.7.3
   name: backgroundscanreports.kyverno.io
 spec:
   group: kyverno.io

@@ -1,5 +1,5 @@
 apiVersion: v2
-appVersion: 1.7.2
+appVersion: 1.7.3
 description: MongoDB Atlas Operator CRDs - Helm chart for installing and upgrading
   Custom Resource Definitions (CRDs) for the Atlas Operator.
 home: https://github.com/mongodb/mongodb-atlas-kubernetes
@@ -16,4 +16,4 @@ maintainers:
   name: MongoDB
 name: mongodb-atlas-operator-crds
 type: application
-version: 1.7.2
+version: 1.7.3
