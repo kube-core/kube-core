@@ -1,5 +1,68 @@
-{{ $releaseNamespace := .Release.Namespace }}
-{{ $releaseName := .Release.Name }}
+{{/* Release Header - Start */}}
+
+{{/* Common Variables */}}
+{{ $values := (coalesce (. | getOrNil "values") (. | getOrNil "Values")) }}
+{{ $release := (. | getOrNil "item") }}
+{{ $releaseNamespace := (coalesce ($release | getOrNil "namespace") (. | getOrNil "Release" | getOrNil "Namespace")) }}
+{{ $releaseName := (coalesce ($release | getOrNil "name") (. | getOrNil "Release" | getOrNil "Name")) }}
+
+{{/* Releases Variables */}}
+{{ $coreReleases := ($values | getOrNil "releases") }}
+{{ $clusterReleases := ($values | getOrNil "clusterReleases") }}
+{{ $environments := ($values | getOrNil "environments") }}
+{{ $environment := ($environments | getOrNil $releaseNamespace) }}
+{{ $applications := (coalesce ($environment | getOrNil "applications") ($values | getOrNil "applications")) }}
+{{ $services := (coalesce ($environment | getOrNil "services") ($values | getOrNil "services")) }}
+
+{{/* Applications Variables */}}
+{{ $application := ($applications | getOrNil $releaseName) }}
+{{ $service := ($services | getOrNil $releaseName) }}
+
+{{/* Services Variables */}}
+{{ $service := ($services | getOrNil $releaseName) }}
+
+{{/* Core Releases */}}
+{{ $coreRelease := ($coreReleases | getOrNil $releaseName) }}
+
+{{/* Cluster Releases */}}
+{{ $clusterRelease := ($clusterReleases | getOrNil $releaseName) }}
+
+{{/* Release Variables */}}
+{{ $release := (coalesce (. | getOrNil "item") $application $service $clusterRelease $coreRelease) }}
+{{ $releaseType := (coalesce ($release | getOrNil "type") "unknown") }}
+
+{{ if and $release $coreRelease }}
+{{ $release = ((eq $coreRelease.name $release.name) | ternary (mergeOverwrite (deepCopy $coreRelease) $release) ($release)) }}
+{{ end }}
+
+{{ if ($release | getOrNil "injectCoreValuesFromRelease") }}
+{{ $release = (mergeOverwrite ((deepCopy $coreReleases) | getOrNil ($release | getOrNil "injectCoreValuesFromRelease")) $release) }}
+{{ end }}
+
+{{/* Extensions Variables */}}
+{{ $extensionType := (coalesce (. | getOrNil "extensionType") "unknown") }}
+{{ $extension := (coalesce ($release | getOrNil $extensionType) ($release | getOrNil ($extensionType | camelcase | untitle)) ) }}
+
+{{/* Template Variables */}}
+{{ $templateValues := (dict "coreValues" $values "releaseValues" $extension "parentReleaseValues" $release "releaseNamespace" $releaseNamespace "releaseName" $releaseName) }}
+
+{{/* Release Header - End */}}
+{{ $releaseSubdomain := ($coreReleases | getOrNil $releaseName | getOrNil "config" | getOrNil "ingress" | getOrNil "subdomain") }}
+{{ $releaseDomain := ($release.metadata.config.domain) }}
+{{ $serviceDomain := ($release.metadata.config.domain) }}
+{{ $cookieDomain := $release.metadata.config.namespaceDomain }}
+{{ $redirectDomain := $releaseDomain }}
+{{ $isService := false }}
+
+{{ if (eq $releaseNamespace "oauth2-proxy") }}
+{{ $releaseDomain = printf "%s.%s" $releaseSubdomain $release.metadata.config.clusterDomain }}
+{{ $cookieDomain = $release.metadata.config.clusterDomain }}
+{{ else }}
+{{ $isService = true }}
+{{ $releaseDomain = printf "%s.%s" $releaseSubdomain $release.metadata.config.namespaceDomain }}
+{{ end }}
+{{ $redirectDomain = $releaseDomain }}
+
 
 ingress:
   enabled: true
@@ -10,24 +73,16 @@ ingress:
   {{- if .Values.cluster.common.defaultIngressAnnotations }}
     {{ toYaml .Values.cluster.common.defaultIngressAnnotations | nindent 4 }}
   {{- end }}
-  {{- if (index .Values.releases .Release.Name "config" "ingress" "annotations") }}
-    {{ toYaml (index .Values.releases .Release.Name "config" "ingress" "annotations") | nindent 4 }}
+  {{- if ($release | getOrNil "config" | getOrNil "ingress" | getOrNil "annotations") }}
+    {{ toYaml ($release | getOrNil "config" | getOrNil "ingress" | getOrNil "annotations") | nindent 4 }}
   {{- end }}
-  {{- if eq (index .Values.releases $releaseName "namespace") $releaseNamespace }}
+
   hosts:
-    - {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
+    - {{ $releaseDomain }}
   tls:
-    - secretName: {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") | replace "." "-"}}-tls
+    - secretName: {{ $releaseDomain | replace "." "-"}}-tls
       hosts:
-        - {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
-  {{- else }}
-  hosts:
-    - {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ $releaseNamespace }}.{{ .Values.cluster.config.domain }}
-  tls:
-    - secretName: {{ printf "%s-%s" (index .Values.releases .Release.Name "config" "ingress" "subdomain") $releaseNamespace | replace "." "-"}}-tls
-      hosts:
-        - {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ $releaseNamespace }}.{{ .Values.cluster.config.domain }}
-  {{- end }}
+        - {{ $releaseDomain }}
 
 replicaCount: 2
 podDisruptionBudget:
@@ -40,27 +95,20 @@ config:
 
 extraArgs:
   provider: oidc
-  oidc-issuer-url: {{ printf "https://%s.%s/" (index .Values.releases "dex" "config" "ingress" "subdomain") ( .Values.cluster.config.domain ) | quote }}
+  oidc-issuer-url: {{ printf "https://%s.%s/" ($coreReleases | getOrNil "dex" | getOrNil "config" | getOrNil "ingress" | getOrNil "subdomain") ( $release.metadata.config.clusterDomain) | quote }}
   scope: openid email profile
-  email-domain: {{ (index .Values.releases .Release.Name "config" "rules" "emailDomain") | quote }}
-  cookie-expire: {{ (index .Values.releases .Release.Name "config" "rules" "cookieExpiration") }}
+  email-domain: {{ ($release | getOrNil "config" | getOrNil "rules" | getOrNil "emailDomain") | quote }}
+  cookie-expire: {{ coalesce ($release | getOrNil "config" | getOrNil "rules" | getOrNil "cookieExpiration") "12h" }}
   reverse-proxy: true
   upstream: static://202
   pass-user-headers: true
   pass-authorization-header: true
   set-authorization-header: true
   set-xauthrequest: true
-  {{- if eq (index .Values.releases $releaseName "namespace") $releaseNamespace }}
-  redirect-url: {{ printf "https://%s.%s/oauth2/callback" (index .Values.releases .Release.Name "config" "ingress" "subdomain") .Values.cluster.config.domain }}
-  whitelist-domain: {{ coalesce (index .Values.releases .Release.Name "config" "rules" "allowedDomainRedirection") (printf "*.%s" .Values.cluster.config.domain) | quote }}
-  cookie-domain: {{ coalesce (index .Values.releases .Release.Name "config" "rules" "cookieDomain") (printf ".%s" .Values.cluster.config.domain) | quote }}
-  cookie-name: {{ printf "oauth_%s" .Values.cluster.config.domain | replace "." "_" }}
-  {{- else }}
-  redirect-url: {{ printf "https://%s.%s.%s/oauth2/callback" (index .Values.releases .Release.Name "config" "ingress" "subdomain") $releaseNamespace .Values.cluster.config.domain }}
-  whitelist-domain: {{ coalesce (index .Values.releases .Release.Name "config" "rules" "allowedDomainRedirection") (printf "*.%s.%s" $releaseNamespace .Values.cluster.config.domain) | quote }}
-  cookie-domain: {{ coalesce (index .Values.releases .Release.Name "config" "rules" "cookieDomain") (printf ".%s.%s" $releaseNamespace .Values.cluster.config.domain ) | quote }}
-  cookie-name: {{ printf "oauth_%s-%s" $releaseNamespace .Values.cluster.config.domain | replace "." "_" }}
-  {{- end }}
+  redirect-url: {{ printf "https://%s/oauth2/callback" $redirectDomain }}
+  whitelist-domain: {{ coalesce (index $release "config" "rules" "allowedDomainRedirection") (printf "*.%s" $cookieDomain) | quote }}
+  cookie-domain: {{ coalesce (index $release "config" "rules" "cookieDomain") (printf ".%s" $cookieDomain) | quote }}
+  cookie-name: {{ printf "oauth_%s" $cookieDomain | replace "." "_" }}
 
 proxyVarsAsSecrets: false
 
@@ -68,23 +116,23 @@ extraEnv:
   - name: OAUTH2_PROXY_CLIENT_ID
     valueFrom:
       secretKeyRef:
-        name: {{ (index .Values.releases .Release.Name "secrets" "default-oauth2-client" "secretRef" "name" ) }}
+        name: {{ ($release | getOrNil "secrets" | getOrNil "default-oauth2-client"  | getOrNil "secretRef" | getOrNil "name" ) }}
         key: DEFAULT_STATIC_CLIENT_ID
   - name: OAUTH2_PROXY_CLIENT_SECRET
     valueFrom:
       secretKeyRef:
-        name: {{ (index .Values.releases .Release.Name "secrets" "default-oauth2-client" "secretRef" "name" ) }}
+        name: {{ ($release | getOrNil "secrets" | getOrNil "default-oauth2-client"  | getOrNil "secretRef" | getOrNil "name" ) }}
         key: DEFAULT_STATIC_CLIENT_SECRET
   - name: OAUTH2_PROXY_COOKIE_SECRET
     valueFrom:
       secretKeyRef:
-        name: {{ printf "%s-dynamic-secrets-%s" .Release.Name (index .Values.releases .Release.Name "dynamicSecrets" "oauth2-cookie-secret" "secretRef" "name" ) }}
+        name: {{ printf "%s-dynamic-secrets-%s" .Release.Name ($release | getOrNil "dynamicSecrets" | getOrNil "oauth2-cookie-secret" | getOrNil "secretRef" | getOrNil "name" ) }}
         key: OAUTH2_PROXY_COOKIE_SECRET
 
 
 
 metrics:
-  enabled: {{ index .Values.releases .Release.Name "config" "metrics" "enabled" }}
+  enabled: {{ $release | getOrNil "config" | getOrNil "metrics" | getOrNil "enabled" }}
   servicemonitor:
-    enabled: {{ coalesce (index .Values.releases .Release.Name "config" "metrics" "serviceMonitor" "enabled") .Values.core.packages.monitoring.enabled }}
+    enabled: {{ coalesce ($release | getOrNil "config" | getOrNil "metrics" | getOrNil "serviceMonitor" | getOrNil "enabled") .Values.core.packages.monitoring.enabled }}
     interval: 30s

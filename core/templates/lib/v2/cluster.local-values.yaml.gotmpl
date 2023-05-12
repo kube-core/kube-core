@@ -1,0 +1,15 @@
+{{ $defaultClusterValuesFolder := "../values/cluster" }}
+
+{{- $clusterValuesFolders := (coalesce (env "KUBE_CORE_CLUSTER_LOCAL_VALUES_FOLDERS") $defaultClusterValuesFolder) }}
+{{- if $clusterValuesFolders }}
+{{- range ($clusterValuesFolders | splitList ",") }}
+{{ tpl (readFile "./lib/printfiles.functions.yaml.gotmpl") (dict "path" .) }}
+{{- end }}
+{{- end }}
+
+{{- $clusterValuesPaths := (coalesce (env "KUBE_CORE_CLUSTER_LOCAL_VALUES_PATHS") "") }}
+{{ if $clusterValuesPaths }}
+{{- range ($clusterValuesPaths | splitList ",") }}
+- {{ . }}
+{{- end }}
+{{- end }}

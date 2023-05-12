@@ -1,0 +1,18 @@
+environments:
+  default:
+    values:
+    {{ tpl (readFile "./lib/platform.remote-values.yaml.gotmpl" ) . | nindent 4 }}
+    {{ tpl (readFile "./lib/platform.local-values.yaml.gotmpl" ) . | nindent 4 }}
+    {{ tpl (readFile "./lib/platform.override-values.yaml.gotmpl" ) . | nindent 4 }}
+    {{ tpl (readFile "./lib/cluster.remote-values.yaml.gotmpl" ) . | nindent 4 }}
+    {{ tpl (readFile "./lib/cluster.local-values.yaml.gotmpl" ) . | nindent 4 }}
+    {{ tpl (readFile "./lib/cluster.override-values.yaml.gotmpl" ) . | nindent 4 }}
+    {{ tpl (readFile "./lib/core.remote-values.yaml.gotmpl" ) . | nindent 4 }}
+    {{ tpl (readFile "./lib/core.local-values.yaml.gotmpl" ) . | nindent 4 }}
+    {{ tpl (readFile "./lib/core.override-values.yaml.gotmpl" ) . | nindent 4 }}
+---
+{{ tpl (readFile "./commons.yaml.gotmpl" ) . }}
+{{ $values := .Values }}
+{{ $env := "KUBE_CORE_ENV_NAME" }}
+{{ $type := "KUBE_CORE_RELEASE_TYPE" }}
+{{ tpl (readFile "./lib/env.template.yaml.gotmpl") (dict "Values" .Values "env" $env "type" $type) }}

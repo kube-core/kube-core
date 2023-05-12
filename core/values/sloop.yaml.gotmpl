@@ -1,3 +1,53 @@
+{{/* Release Header - Start */}}
+
+{{/* Common Variables */}}
+{{ $values := (coalesce (. | getOrNil "values") (. | getOrNil "Values")) }}
+{{ $release := (. | getOrNil "item") }}
+{{ $releaseNamespace := (coalesce ($release | getOrNil "namespace") (. | getOrNil "Release" | getOrNil "Namespace")) }}
+{{ $releaseName := (coalesce ($release | getOrNil "name") (. | getOrNil "Release" | getOrNil "Name")) }}
+
+{{/* Releases Variables */}}
+{{ $coreReleases := ($values | getOrNil "releases") }}
+{{ $clusterReleases := ($values | getOrNil "clusterReleases") }}
+{{ $environments := ($values | getOrNil "environments") }}
+{{ $environment := ($environments | getOrNil $releaseNamespace) }}
+{{ $applications := (coalesce ($environment | getOrNil "applications") ($values | getOrNil "applications")) }}
+{{ $services := (coalesce ($environment | getOrNil "services") ($values | getOrNil "services")) }}
+
+{{/* Applications Variables */}}
+{{ $application := ($applications | getOrNil $releaseName) }}
+{{ $service := ($services | getOrNil $releaseName) }}
+
+{{/* Services Variables */}}
+{{ $service := ($services | getOrNil $releaseName) }}
+
+{{/* Core Releases */}}
+{{ $coreRelease := ($coreReleases | getOrNil $releaseName) }}
+
+{{/* Cluster Releases */}}
+{{ $clusterRelease := ($clusterReleases | getOrNil $releaseName) }}
+
+{{/* Release Variables */}}
+{{ $release := (coalesce (. | getOrNil "item") $application $service $clusterRelease $coreRelease) }}
+{{ $releaseType := (coalesce ($release | getOrNil "type") "unknown") }}
+
+{{ if and $release $coreRelease }}
+{{ $release = ((eq $coreRelease.name $release.name) | ternary (mergeOverwrite (deepCopy $coreRelease) $release) ($release)) }}
+{{ end }}
+
+{{ if ($release | getOrNil "injectCoreValuesFromRelease") }}
+{{ $release = (mergeOverwrite ((deepCopy $coreReleases) | getOrNil ($release | getOrNil "injectCoreValuesFromRelease")) $release) }}
+{{ end }}
+
+{{/* Extensions Variables */}}
+{{ $extensionType := (coalesce (. | getOrNil "extensionType") "unknown") }}
+{{ $extension := (coalesce ($release | getOrNil $extensionType) ($release | getOrNil ($extensionType | camelcase | untitle)) ) }}
+
+{{/* Template Variables */}}
+{{ $templateValues := (dict "coreValues" $values "releaseValues" $extension "parentReleaseValues" $release "releaseNamespace" $releaseNamespace "releaseName" $releaseName) }}
+
+{{/* Release Header - End */}}
+cluster: {{ toYaml $values.cluster | nindent 2 }}
 serviceAccountName: sloop
 name: sloop
 replicas: 1
@@ -34,26 +84,26 @@ readinessProbe:
   successThreshold: 1
 ingress:
   enabled: true
-  host: {{ .Values.releases.sloop.config.ingress.subdomain }}.{{ .Values.cluster.config.domain }}
+  host: {{ $release.config.ingress.subdomain }}.{{ .Values.cluster.config.domain }}
   annotations:
     forecastle.stakater.com/icon: https://github.com/salesforce/sloop/raw/master/other/sloop_logo_color_small_notext.png
   {{- if .Values.cluster.common.defaultIngressAnnotations }}
     {{ toYaml .Values.cluster.common.defaultIngressAnnotations | nindent 4 }}
   {{- end }}
-  {{- if .Values.releases.sloop.config.ingress.annotations }}
-    {{ toYaml .Values.releases.sloop.config.ingress.annotations | nindent 4 }}
+  {{- if $release.config.ingress.annotations }}
+    {{ toYaml $release.config.ingress.annotations | nindent 4 }}
   {{- end }}
   labels:
   {{ if .Values.cluster.common.defaultIngressLabels }}
     {{ toYaml .Values.cluster.common.defaultIngressLabels | nindent 4 }}
   {{- end }}
-  {{- if .Values.releases.sloop.config.ingress.labels }}
-    {{ toYaml .Values.releases.sloop.config.ingress.labels | nindent 4 }}
+  {{- if $release.config.ingress.labels }}
+    {{ toYaml $release.config.ingress.labels | nindent 4 }}
   {{- end }}
   tls:
-    - secretName: {{ .Values.releases.sloop.config.ingress.subdomain | replace "." "-"}}-tls
+    - secretName: {{ $release.config.ingress.subdomain | replace "." "-"}}-tls
       hosts:
-        - {{ .Values.releases.sloop.config.ingress.subdomain }}.{{ .Values.cluster.config.domain }}
+        - {{ $release.config.ingress.subdomain }}.{{ .Values.cluster.config.domain }}
 config: |-
   {
     "maxDiskMb": 8192,

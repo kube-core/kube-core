@@ -2,17 +2,11 @@
 {{- $releases := .Values.applications }}
 
 {{- range $releaseName, $release := $releases }}
-{{ $release := (mergeOverwrite (deepCopy $values.templates.application) $release) }}
 {{- if $release.enabled -}}
-
-{{ $_ := set $release "type" "application" }}
-{{ $_ := set $release "name" $releaseName }}
-{{ $_ := set $release "namespace" $values.applicationsConfig.namespace }}
-{{ $_ := (tpl (readFile "templates/releases/standard/release-variables.yaml.gotmpl") (dict "item" $release "values" $values)) }}
-{{ $_ := set $.Values.releases $release.name $release }}
-
 {{- tpl (readFile "templates/releases/standard/release.yaml.gotmpl") (dict "item" $release "values" $values "releaseName" $releaseName "releaseNamespace" $values.applicationsConfig.namespace "releaseContext" $values.applicationsConfig.context) }}
 {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") (dict "item" $release "values" $values "releaseName" $releaseName "releaseNamespace" $values.applicationsConfig.namespace "releaseContext" $values.applicationsConfig.context) }}
+
 {{- tpl (readFile "templates/releases/standard/release-extensions.yaml.gotmpl") (dict "item" $release "values" $values "releaseName" $releaseName "releaseNamespace" $values.applicationsConfig.namespace "releaseContext" $values.applicationsConfig.context) }}
+
 {{- end -}}
 {{- end -}}

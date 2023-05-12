@@ -1,0 +1,194 @@
+{{ $values := .Values }}
+{{ $helmfileName := "local" }}
+{{ $helmfilePath := (printf "./%s.helmfile.yaml.gotmpl" $helmfileName) }}
+{{ $kubeCoreLocalPath := (env "KUBE_CORE_LOCAL_CORE_PATH" ) }}
+{{ $kubeCoreLocalHelmfilePath := (env "KUBE_CORE_HELMFILES_HELMFILE_NAME_LOCAL_PATH" ) }}
+{{ if (or (env "KUBE_CORE_DEV") ($values | getOrNil "devMode")) }}
+{{ if $kubeCoreLocalHelmfilePath }}
+{{ $helmfilePath = $kubeCoreLocalHelmfilePath }}
+{{ else if $kubeCoreLocalPath }}
+{{ $helmfilePath = (printf "%s/%s.yaml.gotmpl" $kubeCoreLocalPath $helmfileName) }}
+{{ else }}
+{{ $helmfilePath = (printf "KUBE_CORE_HELMFILES_HELMFILE_NAME_LOCAL_PATH" ) }}
+{{ end }}
+{{ else }}
+{{ $remotePath := ($values | getOrNil "org" | getOrNil "core" | getOrNil "helmfiles" | getOrNil $helmfileName | getOrNil "remotePath") }}
+{{ $version := ($values | getOrNil "org" | getOrNil "core" | getOrNil "version") }}
+{{ $remote := ($values | getOrNil "org" | getOrNil "core" | getOrNil "remotePath") }}
+{{ if $remotePath }}
+{{ $helmfilePath = $remotePath }}
+{{ else if (and $version $remote) }}
+{{ $helmfilePath = (printf "%s/core/%s.yaml.gotmpl?ref=%s" $remote $helmfileName $version) }}
+{{ else }}
+{{ $helmfilePath = (printf "KUBE_CORE_HELMFILES_HELMFILE_NAME_REMOTE_PATH") }}
+{{ end }}
+{{ end }}
+helmfiles:
+- path: {{ $helmfilePath }}
+  values:
+  # Core Values
+  {{ tpl (readFile "./lib/core.remote-values.yaml.gotmpl") . | nindent 2 }}
+  {{ tpl (readFile "./lib/core.local-values.yaml.gotmpl") . | nindent 2 }}
+  {{ tpl (readFile "./lib/core.override-values.yaml.gotmpl") . | nindent 2 }}
+
+  # Platform Values
+  {{ tpl (readFile "./lib/platform.remote-values.yaml.gotmpl") . | nindent 2 }}
+  {{ tpl (readFile "./lib/platform.local-values.yaml.gotmpl") . | nindent 2 }}
+  {{ tpl (readFile "./lib/platform.override-values.yaml.gotmpl") . | nindent 2 }}
+
+  # Injecting cluster core config
+  - core:
+      helmfileName: {{ $helmfileName }}
+      clusterEnabled: true
+      releasesEnabled: false
+      applicationsEnabled: false
+      releasesRawEnabled: false
+      namespacesEnabled: false
+
+      {{ $entries := readDirEntries "../local/configmaps-releases/" }}
+      {{ $clusterWideManifests := false }}
+      {{ range $item := $entries }}
+      {{ if $item.IsDir }}
+      {{ $subEntries := readDirEntries (printf "../local/configmaps-releases/%s/configmaps" $item.Name) }}
+  - clusterReleases:
+      local-configmaps-{{ $item.Name }}:
+        enabled: true
+        chart: kube-core/raw
+        labels:
+          type: local-configmaps
+        disableCoreValuesLayer: true
+        namespace: {{ $item.Name }}
+        templatedValues: |
+          nameOverride: local-configmaps
+          manifests: {{ ((tpl (readFile "./lib/readfilesdata.functions.yaml.gotmpl") (dict "path" (printf  "../local/configmaps-releases/%s/configmaps" $item.Name) "values" $values))) | nindent 10 }}
+      {{ else }}
+      {{ $clusterWideManifests = true }}
+      {{ end }}
+      {{ end }}
+      {{ if $clusterWideManifests }}
+  - clusterReleases:
+      local-configmaps-cluster-wide:
+        enabled: true
+        chart: kube-core/raw
+        labels:
+          type: local-configmaps
+        disableCoreValuesLayer: true
+        namespace: cluster-wide-resources
+        templatedValues: |
+          nameOverride: local-configmaps
+          manifests:
+          {{ range $item := $entries }}
+          {{ if not $item.IsDir }}
+          {{ if contains ".yaml" $item.Name }}
+          {{ $baseName := (split ".yaml" $item.Name)._0 }}
+          - {{ (readFile (printf "../local/configmaps-releases/%s" $item.Name)) | indent 12 | trim }}
+          {{ end }}
+          {{ end }}
+          {{ end }}
+      {{ end }}
+
+      {{ $entries := readDirEntries "../local/secrets-releases/" }}
+      {{ $clusterWideManifests := false }}
+      {{ range $item := $entries }}
+      {{ if $item.IsDir }}
+      {{ $subEntries := readDirEntries (printf "../local/secrets-releases/%s/secrets" $item.Name) }}
+  - clusterReleases:
+      local-secrets-{{ $item.Name }}:
+        enabled: true
+        chart: kube-core/raw
+        labels:
+          type: local-secrets
+        disableCoreValuesLayer: true
+        namespace: {{ $item.Name }}
+        templatedValues: |
+          nameOverride: local-secrets
+          manifests: {{ ((tpl (readFile "./lib/readfilesdata.functions.yaml.gotmpl") (dict "path" (printf  "../local/secrets-releases/%s/secrets" $item.Name) "values" $values))) | nindent 10 }}
+        transformers:
+        - apiVersion: builtin
+          kind: AnnotationsTransformer
+          metadata:
+            name: disable-kube-core-restore-on-build
+          annotations:
+            build.kube-core.io/restore-secret: false
+          fieldSpecs:
+          - path: metadata/annotations
+            kind: SealedSecret
+            create: true
+      {{ else }}
+      {{ $clusterWideManifests = true }}
+      {{ end }}
+      {{ end }}
+      {{ if $clusterWideManifests }}
+  - clusterReleases:
+      local-secrets-cluster-wide:
+        enabled: true
+        chart: kube-core/raw
+        labels:
+          type: local-secrets
+        disableCoreValuesLayer: true
+        namespace: cluster-wide-resources
+        templatedValues: |
+          nameOverride: local-secrets
+          manifests:
+          {{ range $item := $entries }}
+          {{ if not $item.IsDir }}
+          {{ if contains ".yaml" $item.Name }}
+          {{ $baseName := (split ".yaml" $item.Name)._0 }}
+          - {{ (readFile (printf "../local/secrets-releases/%s" $item.Name)) | indent 12 | trim }}
+          {{ end }}
+          {{ end }}
+          {{ end }}
+        transformers:
+        - apiVersion: builtin
+          kind: AnnotationsTransformer
+          metadata:
+            name: disable-kube-core-restore-on-build
+          annotations:
+            build.kube-core.io/restore-secret: false
+          fieldSpecs:
+          - path: metadata/annotations
+            kind: SealedSecret
+            create: true
+      {{ end }}
+
+      {{ $entries := readDirEntries "../local/releases/" }}
+      {{ $clusterWideManifests := false }}
+      {{ range $item := $entries }}
+      {{ if $item.IsDir }}
+      {{ $subEntries := readDirEntries (printf "../local/releases/%s" $item.Name) }}
+  - clusterReleases:
+      local-releases-{{ $item.Name }}:
+        enabled: true
+        chart: kube-core/raw
+        labels:
+          type: local-releases
+        disableCoreValuesLayer: true
+        namespace: {{ $item.Name }}
+        templatedValues: |
+          nameOverride: local-releases
+          manifests: {{ ((tpl (readFile "./lib/readfilesdata.functions.yaml.gotmpl") (dict "path" (printf  "../local/releases/%s" $item.Name) "values" $values))) | nindent 10 }}
+      {{ else }}
+      {{ $clusterWideManifests = true }}
+      {{ end }}
+      {{ end }}
+      {{ if $clusterWideManifests }}
+  - clusterReleases:
+      local-releases-cluster-wide:
+        enabled: true
+        chart: kube-core/raw
+        labels:
+          type: local-releases
+        disableCoreValuesLayer: true
+        namespace: cluster-wide-resources
+        templatedValues: |
+          nameOverride: local-releases
+          manifests:
+          {{ range $item := $entries }}
+          {{ if not $item.IsDir }}
+          {{ if contains ".yaml" $item.Name }}
+          {{ $baseName := (split ".yaml" $item.Name)._0 }}
+          - {{ (readFile (printf "../local/releases/%s" $item.Name)) | indent 12 | trim }}
+          {{ end }}
+          {{ end }}
+          {{ end }}
+      {{ end }}

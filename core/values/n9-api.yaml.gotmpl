@@ -1,29 +1,75 @@
-{{ $values := .Values }}
-{{ $releases := (merge $values.releases $values.applications $values.services )}}
-{{ $releaseNamespace := .Release.Namespace }}
-{{ $releaseName := .Release.Name }}
-{{ $mainReleaseName := .Release.Name }}
-{{ $release := ($releases | getOrNil $releaseName) }}
-{{ $currentRelease := $release }}
+{{/* Release Header - Start */}}
 
-{{ $releaseSqlRef := $currentRelease | getOrNil "sql" | getOrNil "ref" }}
-{{ $releaseSqlEnabled := ($currentRelease | getOrNil "sql" | getOrNil "enabled") }}
-{{ $releaseExternalSecretsSqlEnabled := ($currentRelease | getOrNil "external-secrets" | getOrNil "sql" | getOrNil "enabled") }}
+{{/* Common Variables */}}
+{{ $values := (coalesce (. | getOrNil "values") (. | getOrNil "Values")) }}
+{{ $release := (. | getOrNil "item") }}
+{{ $releaseNamespace := (coalesce ($release | getOrNil "namespace") (. | getOrNil "Release" | getOrNil "Namespace")) }}
+{{ $releaseName := (coalesce ($release | getOrNil "name") (. | getOrNil "Release" | getOrNil "Name")) }}
 
-{{ $releaseMongodbRef := $currentRelease | getOrNil "mongodb" | getOrNil "ref" }}
-{{ $releaseMongodbEnabled := ($currentRelease | getOrNil "mongodb" | getOrNil "enabled") }}
-{{ $releaseExternalSecretsMongodbEnabled := ($currentRelease | getOrNil "external-secrets" | getOrNil "mongodb" | getOrNil "enabled") }}
+{{/* Releases Variables */}}
+{{ $coreReleases := ($values | getOrNil "releases") }}
+{{ $clusterReleases := ($values | getOrNil "clusterReleases") }}
+{{ $environments := ($values | getOrNil "environments") }}
+{{ $environment := ($environments | getOrNil $releaseNamespace) }}
+{{ $applications := (coalesce ($environment | getOrNil "applications") ($values | getOrNil "applications")) }}
+{{ $services := (coalesce ($environment | getOrNil "services") ($values | getOrNil "services")) }}
+
+{{/* Applications Variables */}}
+{{ $application := ($applications | getOrNil $releaseName) }}
+{{ $service := ($services | getOrNil $releaseName) }}
+
+{{/* Services Variables */}}
+{{ $service := ($services | getOrNil $releaseName) }}
+
+{{/* Core Releases */}}
+{{ $coreRelease := ($coreReleases | getOrNil $releaseName) }}
+
+{{/* Cluster Releases */}}
+{{ $clusterRelease := ($clusterReleases | getOrNil $releaseName) }}
+
+{{/* Release Variables */}}
+{{ $release := (coalesce (. | getOrNil "item") $application $service $clusterRelease $coreRelease) }}
+{{ $releaseType := (coalesce ($release | getOrNil "type") "unknown") }}
+
+{{ if and $release $coreRelease }}
+{{ $release = ((eq $coreRelease.name $release.name) | ternary (mergeOverwrite (deepCopy $coreRelease) $release) ($release)) }}
+{{ end }}
+
+{{ if ($release | getOrNil "injectCoreValuesFromRelease") }}
+{{ $release = (mergeOverwrite ((deepCopy $coreReleases) | getOrNil ($release | getOrNil "injectCoreValuesFromRelease")) $release) }}
+{{ end }}
+
+{{/* Extensions Variables */}}
+{{ $extensionType := (coalesce (. | getOrNil "extensionType") "unknown") }}
+{{ $extension := (coalesce ($release | getOrNil $extensionType) ($release | getOrNil ($extensionType | camelcase | untitle)) ) }}
+
+{{/* Template Variables */}}
+{{ $templateValues := (dict "coreValues" $values "releaseValues" $extension "parentReleaseValues" $release "releaseNamespace" $releaseNamespace "releaseName" $releaseName) }}
+
+{{/* Release Header - End */}}
+
+
+{{ $istio := (index $coreReleases "istio-discovery" "enabled" )}}
+
+{{ $releaseSql := ($release | getOrNil "sql") }}
+{{ $releaseSqlRef := ($releaseSql | getOrNil "ref") }}
+{{ $releaseSqlEnabled := ($releaseSql | getOrNil "enabled") }}
+{{ $releaseExternalSecretsSqlEnabled := ($release | getOrNil "external-secrets" | getOrNil "sql" | getOrNil "enabled") }}
+
+{{ $releaseMongodb := ($release  | getOrNil "mongodb") }}
+{{ $releaseMongodbRef := ($releaseMongodb | getOrNil "ref") }}
+{{ $releaseMongodbEnabled := ($releaseMongodb | getOrNil "enabled") }}
+{{ $releaseExternalSecretsMongodbEnabled := ($release | getOrNil "external-secrets" | getOrNil "mongodb" | getOrNil "enabled") }}
+
 {{ $rabbitmq := ($release | getOrNil "rabbitmq") }}
+
 {{ $defaultReplicaCount := 2 }}
-
-
-{{ $sqlEnabled := ($release | getOrNil "sql" | getOrNil "enabled") }}
-{{ $sqlType := ($release | getOrNil "sql" | getOrNil "type") }}
-{{ $sqlRef := ($release | getOrNil "sql" | getOrNil "ref") }}
-
 {{ if (eq $releaseNamespace "dev") }}
 {{ $defaultReplicaCount = 1 }}
 {{ end }}
+
+istio:
+  enabled: {{ $istio }}
 
 name:
   appNameOverride: {{ $releaseName }}
@@ -60,10 +106,6 @@ resources:
 
 logging:
   enabled: true
-
-ingress:
-  enabled: true
-
 # monitoring:
 #   rules:
 #     enabled: false
@@ -157,7 +199,7 @@ pod:
       {{ end }}
 
       {{ if ($release) }}
-      {{ if (and ($release | getOrNil "external-secrets") ($release | getOrNil "mongodb" | getOrNil "enabled")) }}
+      {{ if (and ($release | getOrNil "external-secrets") ($releaseMongodb | getOrNil "enabled")) }}
       {{ $mongodbServiceRef := (printf "%s-svc" $releaseMongodbRef) }}
       {{ $mongodbServicePort := "27017" }}
       {{ $prefix := "DATABASE" }}
@@ -171,12 +213,12 @@ pod:
       {{ $passwordKey := (printf ("%s_PASSWORD") $prefix) }}
       {{ $uriKey := (printf ("%s_URI") $prefix) }}
 
-      {{ $hostKey = (coalesce ($currentRelease | getOrNil "mongodb" | getOrNil "secretMappings" | getOrNil $hostKey) $hostKey) }}
-      {{ $portKey = (coalesce ($currentRelease | getOrNil "mongodb" | getOrNil "secretMappings" | getOrNil $portKey) $portKey) }}
-      {{ $databaseNameKey = (coalesce ($currentRelease | getOrNil "mongodb" | getOrNil "secretMappings" | getOrNil $databaseNameKey) $databaseNameKey) }}
-      {{ $usernameKey = (coalesce ($currentRelease | getOrNil "mongodb" | getOrNil "secretMappings" | getOrNil $usernameKey) $usernameKey) }}
-      {{ $passwordKey = (coalesce ($currentRelease | getOrNil "mongodb" | getOrNil "secretMappings" | getOrNil $passwordKey) $passwordKey) }}
-      {{ $uriKey = (coalesce ($currentRelease | getOrNil "mongodb" | getOrNil "secretMappings" | getOrNil $uriKey) $uriKey) }}
+      {{ $hostKey = (coalesce ($releaseMongodb | getOrNil "secretMappings" | getOrNil $hostKey) $hostKey) }}
+      {{ $portKey = (coalesce ($releaseMongodb | getOrNil "secretMappings" | getOrNil $portKey) $portKey) }}
+      {{ $databaseNameKey = (coalesce ($releaseMongodb | getOrNil "secretMappings" | getOrNil $databaseNameKey) $databaseNameKey) }}
+      {{ $usernameKey = (coalesce ($releaseMongodb | getOrNil "secretMappings" | getOrNil $usernameKey) $usernameKey) }}
+      {{ $passwordKey = (coalesce ($releaseMongodb | getOrNil "secretMappings" | getOrNil $passwordKey) $passwordKey) }}
+      {{ $uriKey = (coalesce ($releaseMongodb | getOrNil "secretMappings" | getOrNil $uriKey) $uriKey) }}
       - secretName: {{ $releaseName }}-mongodb
         secretKey: {{ $hostKey }}
       - secretName: {{ $releaseName }}-mongodb
@@ -190,8 +232,8 @@ pod:
       - secretName: {{ $releaseName }}-mongodb
         secretKey: {{ $uriKey }}
       {{ end }}
-      {{ if (and ($release | getOrNil "external-secrets") ($release | getOrNil "sql" | getOrNil "enabled")) }}
-      {{ $sqlServiceRef := (printf "%s-%s" $releaseNamespace $currentRelease.sql.ref) }}
+      {{ if (and ($release | getOrNil "external-secrets") ($releaseSql | getOrNil "enabled")) }}
+      {{ $sqlServiceRef := (printf "%s-%s" $releaseNamespace $release.sql.ref) }}
       {{ $sqlServicePort := "5432" }}
       {{ $prefix := "DATABASE" }}
       {{ if (or $releaseMongodbEnabled) }}
@@ -204,12 +246,12 @@ pod:
       {{ $passwordKey := (printf ("%s_PASSWORD") $prefix) }}
       {{ $uriKey := (printf ("%s_URI") $prefix) }}
 
-      {{ $hostKey = (coalesce ($currentRelease | getOrNil "sql" | getOrNil "secretMappings" | getOrNil $hostKey) $hostKey) }}
-      {{ $portKey = (coalesce ($currentRelease | getOrNil "sql" | getOrNil "secretMappings" | getOrNil $portKey) $portKey) }}
-      {{ $databaseNameKey = (coalesce ($currentRelease | getOrNil "sql" | getOrNil "secretMappings" | getOrNil $databaseNameKey) $databaseNameKey) }}
-      {{ $usernameKey = (coalesce ($currentRelease | getOrNil "sql" | getOrNil "secretMappings" | getOrNil $usernameKey) $usernameKey) }}
-      {{ $passwordKey = (coalesce ($currentRelease | getOrNil "sql" | getOrNil "secretMappings" | getOrNil $passwordKey) $passwordKey) }}
-      {{ $uriKey = (coalesce ($currentRelease | getOrNil "sql" | getOrNil "secretMappings" | getOrNil $uriKey) $uriKey) }}
+      {{ $hostKey = (coalesce ($releaseSql | getOrNil "secretMappings" | getOrNil $hostKey) $hostKey) }}
+      {{ $portKey = (coalesce ($releaseSql | getOrNil "secretMappings" | getOrNil $portKey) $portKey) }}
+      {{ $databaseNameKey = (coalesce ($releaseSql | getOrNil "secretMappings" | getOrNil $databaseNameKey) $databaseNameKey) }}
+      {{ $usernameKey = (coalesce ($releaseSql | getOrNil "secretMappings" | getOrNil $usernameKey) $usernameKey) }}
+      {{ $passwordKey = (coalesce ($releaseSql | getOrNil "secretMappings" | getOrNil $passwordKey) $passwordKey) }}
+      {{ $uriKey = (coalesce ($releaseSql | getOrNil "secretMappings" | getOrNil $uriKey) $uriKey) }}
       - secretName: {{ $releaseName }}-sql
         secretKey: {{ $hostKey }}
       - secretName: {{ $releaseName }}-sql
@@ -225,8 +267,8 @@ pod:
       {{ end }}
       {{ if (and ($release | getOrNil "external-secrets") ($rabbitmq | getOrNil "enabled")) }}
       {{ $rabbitmqVhost := (coalesce ($rabbitmq | getOrNil "vhost") "apps") }}
-      {{ $rabbitmqClusterRef := (coalesce ($rabbitmq | getOrNil "ref") (printf "%s-rabbitmq" $mainReleaseName)) }}
-      {{ $rabbitmqSecretRefTemplate := (printf "rabbitmq-user-%s-rabbitmq-cluster-%s-%s-creds" $rabbitmqClusterRef $releaseNamespace $mainReleaseName) }}
+      {{ $rabbitmqClusterRef := (coalesce ($rabbitmq | getOrNil "ref") (printf "%s-rabbitmq" $releaseName)) }}
+      {{ $rabbitmqSecretRefTemplate := (printf "rabbitmq-user-%s-rabbitmq-cluster-%s-%s-creds" $rabbitmqClusterRef $releaseNamespace $releaseName) }}
 
       {{ $rabbitmqServiceRef := (printf "%s" $rabbitmqClusterRef) }}
       {{ $rabbitmqServicePort := "5672" }}
@@ -238,12 +280,12 @@ pod:
       {{ $passwordKey := (printf ("%s_PASSWORD") $prefix) }}
       {{ $uriKey := (printf ("%s_URI") $prefix) }}
 
-      {{ $hostKey = (coalesce ($currentRelease | getOrNil "rabbitmq" | getOrNil "secretMappings" | getOrNil $hostKey) $hostKey) }}
-      {{ $portKey = (coalesce ($currentRelease | getOrNil "rabbitmq" | getOrNil "secretMappings" | getOrNil $portKey) $portKey) }}
-      {{ $vhostKey = (coalesce ($currentRelease | getOrNil "rabbitmq" | getOrNil "secretMappings" | getOrNil $vhostKey) $vhostKey) }}
-      {{ $usernameKey = (coalesce ($currentRelease | getOrNil "rabbitmq" | getOrNil "secretMappings" | getOrNil $usernameKey) $usernameKey) }}
-      {{ $passwordKey = (coalesce ($currentRelease | getOrNil "rabbitmq" | getOrNil "secretMappings" | getOrNil $passwordKey) $passwordKey) }}
-      {{ $uriKey = (coalesce ($currentRelease | getOrNil "rabbitmq" | getOrNil "secretMappings" | getOrNil $uriKey) $uriKey) }}
+      {{ $hostKey = (coalesce ($release | getOrNil "rabbitmq" | getOrNil "secretMappings" | getOrNil $hostKey) $hostKey) }}
+      {{ $portKey = (coalesce ($release | getOrNil "rabbitmq" | getOrNil "secretMappings" | getOrNil $portKey) $portKey) }}
+      {{ $vhostKey = (coalesce ($release | getOrNil "rabbitmq" | getOrNil "secretMappings" | getOrNil $vhostKey) $vhostKey) }}
+      {{ $usernameKey = (coalesce ($release | getOrNil "rabbitmq" | getOrNil "secretMappings" | getOrNil $usernameKey) $usernameKey) }}
+      {{ $passwordKey = (coalesce ($release | getOrNil "rabbitmq" | getOrNil "secretMappings" | getOrNil $passwordKey) $passwordKey) }}
+      {{ $uriKey = (coalesce ($release | getOrNil "rabbitmq" | getOrNil "secretMappings" | getOrNil $uriKey) $uriKey) }}
       - secretName: {{ $releaseName }}-rabbitmq
         secretKey: {{ $hostKey }}
       - secretName: {{ $releaseName }}-rabbitmq
@@ -266,6 +308,10 @@ ingress:
       paths:
         - path: /
           pathType: ImplementationSpecific
+  annotations:
+    nginx.ingress.kubernetes.io/service-upstream: "true"
+    nginx.ingress.kubernetes.io/upstream-vhost: "{{ $releaseName }}.{{ $releaseNamespace }}.svc.cluster.local"
+  labels:
 
 metrics:
   enabled: false

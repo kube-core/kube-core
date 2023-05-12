@@ -1,16 +1,55 @@
-{{/* Release Values Templates Header - START */}}
+{{/* Release Header - Start */}}
+
+{{/* Common Variables */}}
 {{ $values := (coalesce (. | getOrNil "values") (. | getOrNil "Values")) }}
-{{ $release := (index $values.releases .Release.Name) }}
-{{ $releaseName := .Release.Name }}
-{{ $releaseNamespace := .Release.Namespace }}
-{{ $releaseType := $release.type }}
+{{ $release := (. | getOrNil "item") }}
+{{ $releaseNamespace := (coalesce ($release | getOrNil "namespace") (. | getOrNil "Release" | getOrNil "Namespace")) }}
+{{ $releaseName := (coalesce ($release | getOrNil "name") (. | getOrNil "Release" | getOrNil "Name")) }}
 
-{{ $_ := set $release "name" $releaseName }}
-{{ $_ := set $release "namespace" $releaseNamespace }}
-{{ (tpl (readFile "../templates/releases/standard/variables/release-variables-config.yaml.gotmpl") (dict "item" $release "values" $values)) }}
-{{ (tpl (readFile "../templates/releases/standard/variables/release-variables-cloud.yaml.gotmpl") (dict "item" $release "values" $values)) }}
-{{/* Release Values Templates Header - END */}}
+{{/* Releases Variables */}}
+{{ $coreReleases := ($values | getOrNil "releases") }}
+{{ $clusterReleases := ($values | getOrNil "clusterReleases") }}
+{{ $environments := ($values | getOrNil "environments") }}
+{{ $environment := ($environments | getOrNil $releaseNamespace) }}
+{{ $applications := (coalesce ($environment | getOrNil "applications") ($values | getOrNil "applications")) }}
+{{ $services := (coalesce ($environment | getOrNil "services") ($values | getOrNil "services")) }}
 
+{{/* Applications Variables */}}
+{{ $application := ($applications | getOrNil $releaseName) }}
+{{ $service := ($services | getOrNil $releaseName) }}
+
+{{/* Services Variables */}}
+{{ $service := ($services | getOrNil $releaseName) }}
+
+{{/* Core Releases */}}
+{{ $coreRelease := ($coreReleases | getOrNil $releaseName) }}
+
+{{/* Cluster Releases */}}
+{{ $clusterRelease := ($clusterReleases | getOrNil $releaseName) }}
+
+{{/* Release Variables */}}
+{{ $release := (coalesce (. | getOrNil "item") $application $service $clusterRelease $coreRelease) }}
+{{ $releaseType := (coalesce ($release | getOrNil "type") "unknown") }}
+
+{{ if and $release $coreRelease }}
+{{ $release = ((eq $coreRelease.name $release.name) | ternary (mergeOverwrite (deepCopy $coreRelease) $release) ($release)) }}
+{{ end }}
+
+{{ if ($release | getOrNil "injectCoreValuesFromRelease") }}
+{{ $release = (mergeOverwrite ((deepCopy $coreReleases) | getOrNil ($release | getOrNil "injectCoreValuesFromRelease")) $release) }}
+{{ end }}
+
+{{/* Extensions Variables */}}
+{{ $extensionType := (coalesce (. | getOrNil "extensionType") "unknown") }}
+{{ $extension := (coalesce ($release | getOrNil $extensionType) ($release | getOrNil ($extensionType | camelcase | untitle)) ) }}
+
+{{/* Template Variables */}}
+{{ $templateValues := (dict "coreValues" $values "releaseValues" $extension "parentReleaseValues" $release "releaseNamespace" $releaseNamespace "releaseName" $releaseName) }}
+
+{{/* Release Header - End */}}
+
+{{ $coreRelease := (index $values.releases "nginx-ingress-controller") }}
+{{ $isIstio := false }}
 {{ if (and (eq $releaseName "nginx-ingress-controller") (eq $releaseNamespace "nginx-ingress")) }}
 ingressClassResource:
   name: {{ $values.cluster.common.defaultIngressClass }}
@@ -23,6 +62,7 @@ extraArgs:
   ingress-class: {{ $values.cluster.common.defaultIngressClass }}
 fullnameOverride: nginx-ingress-controller
 {{ else if (and (eq $releaseName "nginx-istio-ingress-controller") (eq $releaseNamespace "nginx-istio-ingress")) }}
+{{ $isIstio = true }}
 ingressClassResource:
   name: {{ $values.cluster.common.defaultIngressClass }}-istio
   enabled: true
@@ -34,6 +74,7 @@ extraArgs:
   ingress-class: {{ $values.cluster.common.defaultIngressClass }}-istio
 fullnameOverride: nginx-istio-ingress-controller
 {{ else if (and (eq $releaseName "nginx-istio-ingress-controller") (not (eq $releaseNamespace "nginx-istio-ingress"))) }}
+{{ $isIstio = true }}
 ingressClassResource:
   name: {{ $values.cluster.common.defaultIngressClass }}-istio-{{ $releaseNamespace }}
   enabled: true
@@ -57,42 +98,30 @@ extraArgs:
 fullnameOverride: nginx-ingress-controller-{{ $releaseNamespace }}
 {{ end }}
 
+kind: Deployment
 
-
-## DaemonSet or Deployment
-##
-{{ if and (index $release "config" "ha") (eq $values.cloud.provider "aws") }}
-kind: DaemonSet
-daemonset:
-  useHostPort: false
-  hostPorts:
-    http: 80
-    https: 443
-{{ else }}
-kind: {{ index $release "config" "kind" }}
-{{ end }}
 ## Number of replicas
 ##
-replicaCount: {{ index $release "config" "replicaCount" }}
-minAvailable: {{ index $release "config" "minAvailable" }}
+replicaCount: {{ index $coreRelease "config" "replicaCount" }}
+minAvailable: {{ index $coreRelease "config" "minAvailable" }}
 
-autoscaling: {{ toYaml (index $release "config" "autoscaling") | nindent 2 }}
+autoscaling: {{ toYaml (index $coreRelease "config" "autoscaling") | nindent 2 }}
 
 ## Required on CNI based K8s installations, since CNI and hostport don't mix yet.
 ## Can be deprecated once https://github.com/kubernetes/kubernetes/issues/23920 is merged
 ##
-hostNetwork: {{ index $release "config" "hostNetwork" }}
+hostNetwork: {{ index $coreRelease "config" "hostNetwork" }}
 
 ## Optionally, change this to ClusterFirstWithHostNet in case you have 'hostNetwork: true'.
 ## By default, while using host network, name resolution uses the host's DNS. If you wish nginx-controller
 ## to keep resolving names inside the k8s network, use ClusterFirstWithHostNet.
 ##
-dnsPolicy: {{ index $release "config" "dnsPolicy" }}
+dnsPolicy: {{ index $coreRelease "config" "dnsPolicy" }}
 
 ## Required only if defaultBackend.enabled = false
 ## Must be <namespace>/<service_name>
 ##
-defaultBackendService: {{ index $release "config" "defaultBackendService" }}
+defaultBackendService: {{ index $coreRelease "config" "defaultBackendService" }}
 
 ## Bare-metal considerations via the host network
 ## ref: https://kubernetes.github.io/ingress-nginx/deploy/baremetal/#via-the-host-network
@@ -105,7 +134,7 @@ reportNodeInternalIp: false
 ## the ingress will be bound to via DNS
 ##
 publishService:
-  enabled: {{ index $release "config" "publishServiceEnabled" }}
+  enabled: true
   ## Allows overriding of the publish service to bind to
   ## Must be <namespace>/<service_name>
   ##
@@ -114,7 +143,7 @@ publishService:
 service:
   ## Service type
   ##
-  type: {{ index $release "config" "serviceType" }}
+  type: LoadBalancer
   ## Service ports
   ##
   ports:
@@ -164,7 +193,6 @@ service:
   ## loadBalancerIP (optional, cloud specific)
   ## ref: http://kubernetes.io/docs/user-guide/services/#type-loadbalancer
   ##
-  loadBalancerIP: {{ index $release "config" "loadBalancerIP" }}
 
   ## Load Balancer sources
   ## https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/#restrict-access-for-loadbalancer-service
@@ -174,18 +202,18 @@ service:
   ## Set external traffic policy to: "Local" to preserve source IP on providers supporting it
   ## Ref: https://kubernetes.io/docs/tutorials/services/source-ip/#source-ip-for-services-with-typeloadbalancer
   ##
-  externalTrafficPolicy: {{ index $release "config" "externalTrafficPolicy" }}
+  externalTrafficPolicy: Local
   healthCheckNodePort: 0
 
 
 metrics:
-  enabled: {{ or (index $release "config" "metrics" "enabled") ($values.releases.kps.enabled) }}
+  enabled: {{ ($values.releases.kps.enabled) }}
   serviceMonitor:
-    enabled: {{ or (index $release "config" "metrics" "serviceMonitor" "enabled") $values.core.packages.monitoring.enabled ($values.releases.kps.enabled) }}
+    enabled: {{ ($values.releases.kps.enabled) }}
     interval: 15s
     namespace: {{ $releaseNamespace }}
 
-{{ if index $release "config" "istioAnnotations" }}
+{{ if $isIstio }}
 podAnnotations:
   prometheus.io/port: '10254'
   prometheus.io/scrape: 'true'
@@ -193,13 +221,13 @@ podAnnotations:
   traffic.sidecar.istio.io/includeInboundPorts: ""
   traffic.sidecar.istio.io/excludeInboundPorts: "80,443"
   # Exclude outbound traffic to kubernetes master from redirection.
-  traffic.sidecar.istio.io/excludeOutboundIPRanges: {{ index $release "config" "clusterIP" }}
+  traffic.sidecar.istio.io/excludeOutboundIPRanges: {{ coalesce ($coreRelease | getOrNil "config" | getOrNil "clusterIP") "0.0.0.0/0" }}
   sidecar.istio.io/inject: 'true'
 {{ end }}
 
-tolerations: {{ toYaml (index $release "config" "tolerations") | nindent 2 }}
-nodeSelector: {{ toYaml (index $release "config" "nodeSelector") | nindent 2 }}
-affinity: {{ toYaml (index $release "config" "affinity") | nindent 2 }}
+tolerations: {{ toYaml (index $coreRelease "config" "tolerations") | nindent 2 }}
+nodeSelector: {{ toYaml (index $coreRelease "config" "nodeSelector") | nindent 2 }}
+affinity: {{ toYaml (index $coreRelease "config" "affinity") | nindent 2 }}
 
 pdb:
   create: true

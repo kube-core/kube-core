@@ -1,0 +1,4 @@
+{{ $values := .Values }}
+{{ range ($values | getOrNil "org" | getOrNil "platform" | getOrNil "values") }}
+- {{ . }}
+{{ end }}

@@ -1,0 +1,52 @@
+{{- $values := .Values -}}
+{{- $environments := ($values | getOrNil "environments") -}}
+
+{{- $context := $values.cluster.config.context -}}
+{{- range $envName, $env := $environments -}}
+{{- if (not (eq $envName "default"))  -}}
+{{- if ($env | getOrNil "enabled") -}}
+{{- $applications := ($env | getOrNil "applications") -}}
+{{- $services := ($env | getOrNil "services") -}}
+
+{{- if and $values.core.environmentsEnabled (not $values.core.applicationsOnly) (not $values.core.servicesOnly) -}}
+{{- $templateValues := (dict "item" $env "values" $values "releaseName" $envName "releaseNamespace" $envName "releaseContext" $context) -}}
+{{- tpl (readFile "templates/releases/standard/release.yaml.gotmpl") $templateValues -}}
+{{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") $templateValues -}}
+{{- tpl (readFile "templates/releases/standard/release-extensions.yaml.gotmpl") $templateValues -}}
+{{- end -}}
+
+{{- range $applicationName, $application := ($env | getOrNil "applications") -}}
+{{- if (not (eq $applicationName "default"))  -}}
+{{- if ($application | getOrNil "enabled") -}}
+{{- $templateValues := (dict "item" $application "values" $values "releaseName" $applicationName "releaseNamespace" $envName "releaseContext" $context) -}}
+{{- if $values.core.applicationsEnabled -}}
+{{- tpl (readFile "templates/releases/standard/release.yaml.gotmpl") $templateValues -}}
+{{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") $templateValues -}}
+{{- tpl (readFile "templates/releases/standard/release-extensions.yaml.gotmpl") $templateValues -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{- range $serviceName, $service := ($env | getOrNil "services") -}}
+{{- if (not (eq $serviceName "default"))  -}}
+{{- if ($service | getOrNil "enabled") -}}
+{{- $templateValues := (dict "item" $service "values" $values "releaseName" $serviceName "releaseNamespace" $envName "releaseContext" $context) -}}
+{{- if $values.core.servicesEnabled -}}
+{{- tpl (readFile "templates/releases/standard/release.yaml.gotmpl") $templateValues -}}
+{{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") $templateValues -}}
+{{- tpl (readFile "templates/releases/standard/release-extensions.yaml.gotmpl") $templateValues -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+# - name: test-env
+#   chart: kube-core/raw
+#   values:
+#   - ./values/values.yaml.gotmpl

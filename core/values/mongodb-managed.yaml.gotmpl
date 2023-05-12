@@ -1,8 +1,55 @@
-{{ $releaseName := .Release.Name }}
-{{ $releaseNamespace := .Release.Namespace }}
-{{ $values := .Values }}
-{{ $defaultReplicaCount := 3 }}
+{{/* Release Header - Start */}}
 
+{{/* Common Variables */}}
+{{ $values := (coalesce (. | getOrNil "values") (. | getOrNil "Values")) }}
+{{ $release := (. | getOrNil "item") }}
+{{ $releaseNamespace := (coalesce ($release | getOrNil "namespace") (. | getOrNil "Release" | getOrNil "Namespace")) }}
+{{ $releaseName := (coalesce ($release | getOrNil "name") (. | getOrNil "Release" | getOrNil "Name")) }}
+
+{{/* Releases Variables */}}
+{{ $coreReleases := ($values | getOrNil "releases") }}
+{{ $clusterReleases := ($values | getOrNil "clusterReleases") }}
+{{ $environments := ($values | getOrNil "environments") }}
+{{ $environment := ($environments | getOrNil $releaseNamespace) }}
+{{ $applications := (coalesce ($environment | getOrNil "applications") ($values | getOrNil "applications")) }}
+{{ $services := (coalesce ($environment | getOrNil "services") ($values | getOrNil "services")) }}
+
+{{/* Applications Variables */}}
+{{ $application := ($applications | getOrNil $releaseName) }}
+{{ $service := ($services | getOrNil $releaseName) }}
+
+{{/* Services Variables */}}
+{{ $service := ($services | getOrNil $releaseName) }}
+
+{{/* Core Releases */}}
+{{ $coreRelease := ($coreReleases | getOrNil $releaseName) }}
+
+{{/* Cluster Releases */}}
+{{ $clusterRelease := ($clusterReleases | getOrNil $releaseName) }}
+
+{{/* Release Variables */}}
+{{ $release := (coalesce (. | getOrNil "item") $application $service $clusterRelease $coreRelease) }}
+{{ $releaseType := (coalesce ($release | getOrNil "type") "unknown") }}
+
+{{ if and $release $coreRelease }}
+{{ $release = ((eq $coreRelease.name $release.name) | ternary (mergeOverwrite (deepCopy $coreRelease) $release) ($release)) }}
+{{ end }}
+
+{{ if ($release | getOrNil "injectCoreValuesFromRelease") }}
+{{ $release = (mergeOverwrite ((deepCopy $coreReleases) | getOrNil ($release | getOrNil "injectCoreValuesFromRelease")) $release) }}
+{{ end }}
+
+{{/* Extensions Variables */}}
+{{ $extensionType := (coalesce (. | getOrNil "extensionType") "unknown") }}
+{{ $extension := (coalesce ($release | getOrNil $extensionType) ($release | getOrNil ($extensionType | camelcase | untitle)) ) }}
+
+{{/* Template Variables */}}
+{{ $templateValues := (dict "coreValues" $values "releaseValues" $extension "parentReleaseValues" $release "releaseNamespace" $releaseNamespace "releaseName" $releaseName) }}
+
+{{/* Release Header - End */}}
+
+
+{{ $defaultReplicaCount := 3 }}
 {{ if (eq $releaseNamespace "dev") }}
 {{ $defaultReplicaCount = 1 }}
 {{ end }}
@@ -18,12 +65,11 @@ users:
       - name: userAdminAnyDatabase
       - name: readWriteAnyDatabase
       - name: dbAdminAnyDatabase
-
-{{ range $applicationName, $application := .Values.applicationsList }}
-{{ if ($application | getOrNil "mongodb" | getOrNil "enabled") }}
-{{ if (eq ($application | getOrNil "mongodb" | getOrNil "ref") $releaseName) }}
-  - name: {{ $applicationName }}
-    db: {{ $applicationName }}
+{{ range $appName, $app := $applications }}
+{{ if ($app | getOrNil "mongodb" | getOrNil "enabled") }}
+{{ if (eq ($app | getOrNil "mongodb" | getOrNil "ref") $releaseName) }}
+  - name: {{ $appName }}
+    db: {{ $appName }}
     roles:
       - name: readWrite
 {{ end }}

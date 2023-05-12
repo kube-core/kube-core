@@ -1,0 +1,78 @@
+{{/* Release Header - Start */}}
+
+{{/* Common Variables */}}
+{{ $values := (coalesce (. | getOrNil "values") (. | getOrNil "Values")) }}
+{{ $release := (. | getOrNil "item") }}
+{{ $releaseNamespace := (coalesce ($release | getOrNil "namespace") (. | getOrNil "Release" | getOrNil "Namespace")) }}
+{{ $releaseName := (coalesce ($release | getOrNil "name") (. | getOrNil "Release" | getOrNil "Name")) }}
+
+{{/* Releases Variables */}}
+{{ $coreReleases := ($values | getOrNil "releases") }}
+{{ $clusterReleases := ($values | getOrNil "clusterReleases") }}
+{{ $environments := ($values | getOrNil "environments") }}
+{{ $environment := ($environments | getOrNil $releaseNamespace) }}
+{{ $applications := (coalesce ($environment | getOrNil "applications") ($values | getOrNil "applications")) }}
+{{ $services := (coalesce ($environment | getOrNil "services") ($values | getOrNil "services")) }}
+
+{{/* Applications Variables */}}
+{{ $application := ($applications | getOrNil $releaseName) }}
+{{ $service := ($services | getOrNil $releaseName) }}
+
+{{/* Services Variables */}}
+{{ $service := ($services | getOrNil $releaseName) }}
+
+{{/* Core Releases */}}
+{{ $coreRelease := ($coreReleases | getOrNil $releaseName) }}
+
+{{/* Cluster Releases */}}
+{{ $clusterRelease := ($clusterReleases | getOrNil $releaseName) }}
+
+{{/* Release Variables */}}
+{{ $release := (coalesce (. | getOrNil "item") $application $service $clusterRelease $coreRelease) }}
+{{ $releaseType := (coalesce ($release | getOrNil "type") "unknown") }}
+
+{{ if and $release $coreRelease }}
+{{ $release = ((eq $coreRelease.name $release.name) | ternary (mergeOverwrite (deepCopy $coreRelease) $release) ($release)) }}
+{{ end }}
+
+{{ if ($release | getOrNil "injectCoreValuesFromRelease") }}
+{{ $release = (mergeOverwrite ((deepCopy $coreReleases) | getOrNil ($release | getOrNil "injectCoreValuesFromRelease")) $release) }}
+{{ end }}
+
+{{/* Extensions Variables */}}
+{{ $extensionType := (coalesce (. | getOrNil "extensionType") "unknown") }}
+{{ $extension := (coalesce ($release | getOrNil $extensionType) ($release | getOrNil ($extensionType | camelcase | untitle)) ) }}
+
+{{/* Template Variables */}}
+{{ $templateValues := (dict "coreValues" $values "releaseValues" $extension "parentReleaseValues" $release "releaseNamespace" $releaseNamespace "releaseName" $releaseName) }}
+
+{{/* Release Header - End */}}
+
+resources:
+  {{ $extensionListKey := "list" }}
+  {{ $extensionList := (coalesce ($extension | getOrNil $extensionListKey) (dict $releaseName $extension)) }}
+  keda-scaledobject:
+  {{ range $resourceName, $resourceConfig := $extensionList }}
+    {{- $resourceNameTemplate := (printf "%s-%s" $releaseName $resourceName) }}
+    {{- if eq $releaseName $resourceName }}
+    {{- $resourceNameTemplate = $releaseName }}
+    {{- end }}
+    {{ $resourceNameTemplate }}: {{ toYaml $resourceConfig | nindent 6 }}
+      namespace: {{ $releaseNamespace }}
+      {{ if (not $resourceConfig | getOrNil "targetName") }}
+      targetName: {{ $releaseName }}
+      {{ end }}
+      prometheusEndpoint: {{ $release.metadata.config.monitoring.metricsEndpoint }}
+      scaleTargetRef:
+        {{ if $resourceConfig | getOrNil "scaleTargetRefApiVersion" }}
+        apiVersion: {{ $resourceConfig.scaleTargetRefApiVersion }}
+        {{ end }}
+        {{ if $resourceConfig | getOrNil "scaleTargetRefKind" }}
+        kind: {{ $resourceConfig.scaleTargetRefKind }}
+        {{ end }}
+        {{ if ($resourceConfig | getOrNil "scaleTargetRefName") }}
+        name: {{ $resourceConfig.scaleTargetRefName }}
+        {{ else }}
+        name: {{ $releaseName }}
+        {{ end }}
+  {{ end }}

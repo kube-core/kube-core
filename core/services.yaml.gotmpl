@@ -2,14 +2,27 @@
 
 {{ tpl (readFile "./templates/base/environments.yaml.gotmpl") . }}
 ---
-{{ tpl (readFile "./templates/base/repositories.yaml.gotmpl") . }}
-
-{{ tpl (readFile "./templates/base/helm-defaults.yaml.gotmpl") . }}
-
-{{ tpl (readFile "./templates/base/common-labels.yaml.gotmpl") . }}
-{{ tpl (readFile "./templates/base/common-labels-services.yaml.gotmpl") . }}
-
-{{ tpl (readFile "./templates/releases/standard/helmfiles.yaml.gotmpl") . }}
-
-releases:
-{{ tpl (readFile "./templates/base/all-releases.yaml.gotmpl") . }}
+{{ $helmfileName := (.Values.core.helmfileName | split ".") }}
+{{ $environments := .Values.environments }}
+{{ if $helmfileName }}
+{{ $envName := $helmfileName._0 }}
+{{ $envType := $helmfileName._1 }}
+{{ $env := ($environments | getOrNil $envName | getOrNil $envType ) }}
+{{ $_ := set .Values "environments" (dict $envName (dict $envType $env) ) }}
+{{ $_ := set .Values.core "helmfilePath" $envType  }}
+{{ end }}
+helmfiles:
+- path: ./layer.helmfile.yaml.gotmpl
+  values:
+  - core:
+      helmfileName: "services"
+      releasesEnabled: false
+      releasesRawEnabled: false
+      namespacesEnabled: false
+      servicesEnabled: true
+      servicesOnly: true
+      applicationsEnabled: false
+      environmentsEnabled: true
+      clusterEnabled: false
+  - {{ toYaml .Values | nindent 4 }}
+  - environments: {{ toYaml $environments | nindent 6 }}

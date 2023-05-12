@@ -1,0 +1,85 @@
+{{- $values := .Values }}
+{{- $coreReleases := .Values.releases }}
+{{- $clusterReleases := .Values.clusterReleases }}
+
+{{- range $coreReleaseName, $coreRelease := $coreReleases }}
+{{ $coreRelease := (mergeOverwrite (deepCopy $values.templates.release) $coreRelease) }}
+{{ $_ := set $coreRelease "type" "release" }}
+{{ $_ := set $coreRelease "name" $coreReleaseName }}
+{{ $_ := set $coreRelease "namespace" $coreRelease.namespace }}
+{{ $_ := (tpl (readFile "templates/releases/standard/release-variables.yaml.gotmpl") (dict "item" $coreRelease "values" $values)) }}
+{{ $_ := set $.Values.releases $coreReleaseName $coreRelease }}
+{{ $_ := set $coreReleases $coreReleaseName $coreRelease }}
+{{- end -}}
+
+
+{{ range $clusterReleaseName, $clusterRelease := $clusterReleases }}
+{{ $clusterRelease = (mergeOverwrite (deepCopy $values.templates.release) $clusterRelease) }}
+{{ $_ := set $clusterRelease "type" "cluster" }}
+{{ $_ := set $clusterRelease "name" $clusterReleaseName }}
+{{ $_ := set $clusterReleases $clusterReleaseName $clusterRelease }}
+{{ end }}
+
+
+{{- $environments := ($values | getOrNil "environments") }}
+
+{{- range $envName, $env := $environments }}
+{{- $env := (mergeOverwrite (deepCopy $values.templates.environment) $env) }}
+{{ $isEnvEnabled := ($env | getOrNil "enabled") }}
+{{ $inheritFromDefaultEnv := ($env | getOrNil "inheritFromDefaultEnv") }}
+
+{{ $defaultEnv := ($values | getOrNil "environmentsConfig" | getOrNil "default") }}
+{{ if (and $defaultEnv $inheritFromDefaultEnv) }}
+{{ $env = (mergeOverwrite (deepCopy $defaultEnv) $env) }}
+{{ end }}
+
+{{- $envValues := (mergeOverwrite (deepCopy $values) $env.config ) }}
+{{ $_ := set $env "config" $envValues }}
+
+{{ $applications := ($env | getOrNil "applications") }}
+{{ $services := ($env | getOrNil "services") }}
+
+{{- if (not (eq $envName "default"))  -}}
+{{- $namespace := $envName -}}
+{{- $context := (coalesce $env.context $envValues.cluster.config.context) -}}
+{{ $_ := set $env "type" "environment" }}
+{{ $_ := set $env "name" $envName }}
+{{ $_ := set $env "namespace" $namespace }}
+{{ $_ := (tpl (readFile "templates/releases/standard/release-variables.yaml.gotmpl") (dict "item" $env "values" $envValues)) }}
+{{ $_ := set $.Values.environments $envName $env }}
+{{ $_ := set $environments $envName $env }}
+
+{{ range $applicationName, $application := $applications }}
+{{ $inheritFromDefaultApp := (coalesce ($application | getOrNil "inheritFromDefaultApp") ($env | getOrNil "inheritFromDefaultApp") ($values | getOrNil "environmentsConfig" | getOrNil "inheritFromDefaultApp")) }}
+{{ $defaultApp := ($env | getOrNil "applicationsConfig" | getOrNil "default") }}
+{{ if and $defaultApp $inheritFromDefaultApp }}
+{{ $application = (mergeOverwrite (deepCopy $values.templates.application) (deepCopy $defaultApp) ($application)) }}
+{{ else }}
+{{ $application = (mergeOverwrite (deepCopy $values.templates.application) $application) }}
+{{ end }}
+{{ $_ := set $application "type" "application" }}
+{{ $_ := set $application "name" $applicationName }}
+{{ $_ := set $application "namespace" $namespace }}
+{{ $_ := (tpl (readFile "templates/releases/standard/release-variables.yaml.gotmpl") (dict "item" $application "values" $envValues)) }}
+{{ $_ := set $.Values.applications $applicationName $application }}
+{{ $_ := set $applications $applicationName $application }}
+{{- end -}}
+
+{{ range $serviceName, $service := $services }}
+{{ $inheritFromDefaultApp := (coalesce ($service | getOrNil "inheritFromDefaultApp") ($env | getOrNil "inheritFromDefaultApp") ($values | getOrNil "environmentsConfig" | getOrNil "inheritFromDefaultApp")) }}
+{{ $defaultApp := ($env | getOrNil "servicesConfig" | getOrNil "default") }}
+{{ if and $defaultApp $inheritFromDefaultApp }}
+{{ $service = (mergeOverwrite (deepCopy $values.templates.service) (deepCopy $defaultApp) ($service)) }}
+{{ else }}
+{{ $service = (mergeOverwrite (deepCopy $values.templates.service) $service) }}
+{{ end }}
+{{ $_ := set $service "type" "service" }}
+{{ $_ := set $service "name" $serviceName }}
+{{ $_ := set $service "namespace" $namespace }}
+{{ $_ := (tpl (readFile "templates/releases/standard/release-variables.yaml.gotmpl") (dict "item" $service "values" $envValues)) }}
+{{ $_ := set $.Values.services $serviceName $service }}
+{{ $_ := set $services $serviceName $service }}
+{{- end -}}
+
+{{- end -}}
+{{- end -}}

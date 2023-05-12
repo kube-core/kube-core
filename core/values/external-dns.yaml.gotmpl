@@ -1,46 +1,96 @@
+{{/* Release Header - Start */}}
+
+{{/* Common Variables */}}
+{{ $values := (coalesce (. | getOrNil "values") (. | getOrNil "Values")) }}
+{{ $release := (. | getOrNil "item") }}
+{{ $releaseNamespace := (coalesce ($release | getOrNil "namespace") (. | getOrNil "Release" | getOrNil "Namespace")) }}
+{{ $releaseName := (coalesce ($release | getOrNil "name") (. | getOrNil "Release" | getOrNil "Name")) }}
+
+{{/* Releases Variables */}}
+{{ $coreReleases := ($values | getOrNil "releases") }}
+{{ $clusterReleases := ($values | getOrNil "clusterReleases") }}
+{{ $environments := ($values | getOrNil "environments") }}
+{{ $environment := ($environments | getOrNil $releaseNamespace) }}
+{{ $applications := (coalesce ($environment | getOrNil "applications") ($values | getOrNil "applications")) }}
+{{ $services := (coalesce ($environment | getOrNil "services") ($values | getOrNil "services")) }}
+
+{{/* Applications Variables */}}
+{{ $application := ($applications | getOrNil $releaseName) }}
+{{ $service := ($services | getOrNil $releaseName) }}
+
+{{/* Services Variables */}}
+{{ $service := ($services | getOrNil $releaseName) }}
+
+{{/* Core Releases */}}
+{{ $coreRelease := ($coreReleases | getOrNil $releaseName) }}
+
+{{/* Cluster Releases */}}
+{{ $clusterRelease := ($clusterReleases | getOrNil $releaseName) }}
+
+{{/* Release Variables */}}
+{{ $release := (coalesce (. | getOrNil "item") $application $service $clusterRelease $coreRelease) }}
+{{ $releaseType := (coalesce ($release | getOrNil "type") "unknown") }}
+
+{{ if and $release $coreRelease }}
+{{ $release = ((eq $coreRelease.name $release.name) | ternary (mergeOverwrite (deepCopy $coreRelease) $release) ($release)) }}
+{{ end }}
+
+{{ if ($release | getOrNil "injectCoreValuesFromRelease") }}
+{{ $release = (mergeOverwrite ((deepCopy $coreReleases) | getOrNil ($release | getOrNil "injectCoreValuesFromRelease")) $release) }}
+{{ end }}
+
+{{/* Extensions Variables */}}
+{{ $extensionType := (coalesce (. | getOrNil "extensionType") "unknown") }}
+{{ $extension := (coalesce ($release | getOrNil $extensionType) ($release | getOrNil ($extensionType | camelcase | untitle)) ) }}
+
+{{/* Template Variables */}}
+{{ $templateValues := (dict "coreValues" $values "releaseValues" $extension "parentReleaseValues" $release "releaseNamespace" $releaseNamespace "releaseName" $releaseName) }}
+
+{{/* Release Header - End */}}
+
 ## DNS provider where the DNS records will be created. Available providers are:
 ## - alibabacloud, aws, azure, azure-private-dns, cloudflare, coredns, designate, digitalocean, google, hetzner, infoblox, linode, rfc2136, transip
 ##
-{{ if eq .Values.cloud.provider "gcp" }}
+{{ if eq $values.cloud.provider "gcp" }}
 provider: "google"
-{{ else if eq .Values.cloud.provider "aws" }}
+{{ else if eq $values.cloud.provider "aws" }}
 provider: "aws"
 {{ end }}
 
 
-{{ if eq .Values.cloud.provider "gcp" }}
+{{ if eq $values.cloud.provider "gcp" }}
 ## Google configuration to be set via arguments/env. variables
 ##
 google:
   ## Google Project to use
   ##
-  project: {{ .Values.cloud.project }}
+  project: {{ $values.cloud.project }}
   ## Google Application Credentials
   ##
-  serviceAccountSecret: {{ (index .Values.releases .Release.Name "secrets" "credentials" "secretRef" "name") }}
-  serviceAccountSecretKey: {{ (index .Values.releases .Release.Name "secrets" "credentials" "secretRef" "key") }}
+  serviceAccountSecret: {{ (index $release "secrets" "credentials" "secretRef" "name") }}
+  serviceAccountSecretKey: {{ (index $release "secrets" "credentials" "secretRef" "key") }}
   serviceAccountKey: null
-{{ else if eq .Values.cloud.provider "aws"}}
+{{ else if eq $values.cloud.provider "aws"}}
 ## AWS configuration to be set via arguments/env. variables
 ##
 aws:
-  region: {{ .Values.cloud.default.location }}
+  region: {{ $values.cloud.default.location }}
 serviceAccount:
   create: true
   annotations:
-    eks.amazonaws.com/role-arn: {{ index .Values.releases .Release.Name "config" "role-arn" }}
+    eks.amazonaws.com/role-arn: {{ index $release "config" "role-arn" }}
   ## @param serviceAccount.automountServiceAccountToken Automount API credentials for a service account.
   ##
 {{ end }}
 ## Limit possible target zones by domain suffixes (optional)
 ##
 domainFilters:
-- {{ .Values.cluster.config.domain }}
-{{ range $key, $value := .Values.cluster.config.additionnalDomains }}
+- {{ $values.cluster.config.domain }}
+{{ range $key, $value := $values.cluster.config.additionnalDomains }}
 - {{ toYaml $value }}
 {{ end }}
 
-txtOwnerId: {{ .Values.cluster.config.name }}
+txtOwnerId: {{ $values.cluster.config.name }}
 
 ## Adjust the interval for DNS updates
 ##
@@ -63,4 +113,4 @@ registry: "txt"
 
 ## Replica count
 ##
-replicaCount: {{ index .Values.releases .Release.Name "config" "replicaCount" }}
+replicaCount: {{ index $release "config" "replicaCount" }}

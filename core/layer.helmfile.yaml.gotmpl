@@ -1,0 +1,6 @@
+
+{{ tpl (readFile "./state.yaml.gotmpl" ) . }}
+helmfiles:
+- path: ./target.yaml.gotmpl
+  values:
+  - {{ toYaml .Values | nindent 4 }}

@@ -10,6 +10,7 @@
 {{ $isApplication := (eq $release.type "application") }}
 {{ $isService := (eq $release.type "service") }}
 {{ $isCluster := (eq $release.type "cluster") }}
+{{ $isEnvironment := (eq $release.type "environment") }}
 
 {{ $chartPath := (coalesce $release.chart (printf "kube-core/%s" $releaseName)) }}
 {{ $chartName := ((splitList "/" $chartPath) | last) }}
@@ -52,12 +53,16 @@
 {{- else if (and (or $isApplication) $chartExistsInDist $chartRepoIsCore $chartIsAppChart) }}
 {{ $valuesName = "n9-api" }}
 {{ $renderValues = true }}
-{{- else if (and (or $isService $isCluster) $valuesTemplateExistForChart $chartRepoIsCore (not $disableCoreValuesLayer)) }}
+{{- else if (and (or $isService $isCluster $isEnvironment) $valuesTemplateExistForChart $chartRepoIsCore (not $disableCoreValuesLayer)) }}
 {{ $valuesName = $chartName }}
 {{ $renderValues = true }}
 {{- end }}
 
 {{ $valuesPath := (printf "./values/%s.yaml.gotmpl" $valuesName) }}
+{{ $valuesTypePath := (printf "./values/%s.%s.yaml.gotmpl" $valuesName $release.type) }}
+{{ if $release.options.dedicatedTemplate }}
+{{ $valuesPath = $valuesTypePath }}
+{{ end }}
 - name: {{ .releaseName }}
   namespace: {{ .releaseNamespace }}
   chart: {{ $chartPath }}
@@ -78,6 +83,15 @@
   {{- end }}
   {{ if $renderValues }}
   - {{ $valuesPath }}
+  {{ if $release.options.parentStateRender }}
+  {{ $templatedValues :=  (tpl (readFile $valuesPath) .) }}
+  {{ if $templatedValues }}
+  - {{ $templatedValues | nindent 4 }}
+  {{ end }}
+  {{ end }}
+  {{ if (and (not $release.options.dedicatedTemplate) (isFile $valuesTypePath)) }}
+  - {{ $valuesTypePath }}
+  {{ end }}
   {{ end }}
   {{- if $release.extraReleaseValues }} {{/*# Adding extra values (not in $release.release because of toYaml above)*/}}
   {{- range $release.extraReleaseValues }}

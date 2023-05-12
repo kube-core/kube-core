@@ -1,7 +1,3 @@
-{{- if .Values.core.installCRDs -}}
-{{ tpl (readFile "templates/releases/standard/crds.yaml.gotmpl") . }}
-{{- end -}}
-
 {{- if .Values.core.releasesEnabled -}}
 
 {{ tpl (readFile "templates/releases/standard/releases.yaml.gotmpl") . }}
@@ -12,11 +8,15 @@
 
 {{- end -}}
 
-{{- if .Values.core.applicationsEnabled -}}
+{{- if .Values.core.environmentsEnabled -}}
+{{ tpl (readFile "templates/releases/standard/environments.yaml.gotmpl") . }}
+{{- end -}}
+
+{{- if (and (not .Values.core.environmentsEnabled) .Values.core.applicationsEnabled) -}}
 {{ tpl (readFile "templates/releases/standard/applications.yaml.gotmpl") . }}
 {{- end -}}
 
-{{- if .Values.core.servicesEnabled -}}
+{{- if (and (not .Values.core.environmentsEnabled) .Values.core.servicesEnabled) -}}
 {{ tpl (readFile "templates/releases/standard/services.yaml.gotmpl") . }}
 {{- end -}}
 

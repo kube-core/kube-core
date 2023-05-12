@@ -1,0 +1,5 @@
+{{ $values := .Values }}
+helmfiles:
+- path: "./{{ coalesce ($values.core | getOrNil "helmfilePath") $values.core.helmfileName }}.target.yaml.gotmpl"
+  values:
+  - {{ toYaml .Values | nindent 4 }}

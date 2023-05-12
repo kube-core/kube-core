@@ -1,19 +1,11 @@
-{{ $values := .Values }}
-{{- $releases := .Values.clusterReleases }}
+{{- $values := .Values }}
+{{- $releases := .Values.releases }}
+{{ $clusterReleases := .Values.clusterReleases }}
 
-{{- range $releaseName, $release := $releases }}
-{{ $release := (mergeOverwrite (deepCopy $values.templates.release) $release) }}
+{{- range $releaseName, $release := $clusterReleases }}
 {{- if $release.enabled -}}
-
-{{ $_ := set $release "type" "cluster" }}
-{{ $_ := set $release "name" $releaseName }}
-{{ $_ := set $release "namespace" $release.namespace }}
-{{ $_ := (tpl (readFile "templates/releases/standard/release-variables.yaml.gotmpl") (dict "item" $release "values" $values)) }}
-{{ $_ := set $.Values.releases $release.name $release }}
-
 {{- tpl (readFile "templates/releases/standard/release.yaml.gotmpl") (dict "item" $release "values" $values "releaseName" $releaseName "releaseNamespace" $release.namespace "releaseContext" $values.cluster.config.context) }}
 {{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") (dict "item" $release "values" $values "releaseName" $releaseName "releaseNamespace" $release.namespace "releaseContext" $values.cluster.config.context) }}
 {{- tpl (readFile "templates/releases/standard/release-extensions.yaml.gotmpl") (dict "item" $release "values" $values "releaseName" $releaseName "releaseNamespace" $release.namespace "releaseContext" $values.cluster.config.context) }}
-
 {{- end -}}
 {{- end -}}

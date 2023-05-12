@@ -1,6 +1,57 @@
-{{ $aws := (eq $.Values.cloud.provider "aws" ) }}
-{{ $gcp := (eq $.Values.cloud.provider "gcp" ) }}
-{{ $provider :=  $.Values.cloud.provider }}
+{{/* Release Header - Start */}}
+
+{{/* Common Variables */}}
+{{ $values := (coalesce (. | getOrNil "values") (. | getOrNil "Values")) }}
+{{ $release := (. | getOrNil "item") }}
+{{ $releaseNamespace := (coalesce ($release | getOrNil "namespace") (. | getOrNil "Release" | getOrNil "Namespace")) }}
+{{ $releaseName := (coalesce ($release | getOrNil "name") (. | getOrNil "Release" | getOrNil "Name")) }}
+
+{{/* Releases Variables */}}
+{{ $coreReleases := ($values | getOrNil "releases") }}
+{{ $clusterReleases := ($values | getOrNil "clusterReleases") }}
+{{ $environments := ($values | getOrNil "environments") }}
+{{ $environment := ($environments | getOrNil $releaseNamespace) }}
+{{ $applications := (coalesce ($environment | getOrNil "applications") ($values | getOrNil "applications")) }}
+{{ $services := (coalesce ($environment | getOrNil "services") ($values | getOrNil "services")) }}
+
+{{/* Applications Variables */}}
+{{ $application := ($applications | getOrNil $releaseName) }}
+{{ $service := ($services | getOrNil $releaseName) }}
+
+{{/* Services Variables */}}
+{{ $service := ($services | getOrNil $releaseName) }}
+
+{{/* Core Releases */}}
+{{ $coreRelease := ($coreReleases | getOrNil $releaseName) }}
+
+{{/* Cluster Releases */}}
+{{ $clusterRelease := ($clusterReleases | getOrNil $releaseName) }}
+
+{{/* Release Variables */}}
+{{ $release := (coalesce (. | getOrNil "item") $application $service $clusterRelease $coreRelease) }}
+{{ $releaseType := (coalesce ($release | getOrNil "type") "unknown") }}
+
+{{ if and $release $coreRelease }}
+{{ $release = ((eq $coreRelease.name $release.name) | ternary (mergeOverwrite (deepCopy $coreRelease) $release) ($release)) }}
+{{ end }}
+
+{{ if ($release | getOrNil "injectCoreValuesFromRelease") }}
+{{ $release = (mergeOverwrite ((deepCopy $coreReleases) | getOrNil ($release | getOrNil "injectCoreValuesFromRelease")) $release) }}
+{{ end }}
+
+{{/* Extensions Variables */}}
+{{ $extensionType := (coalesce (. | getOrNil "extensionType") "unknown") }}
+{{ $extension := (coalesce ($release | getOrNil $extensionType) ($release | getOrNil ($extensionType | camelcase | untitle)) ) }}
+
+{{/* Template Variables */}}
+{{ $templateValues := (dict "coreValues" $values "releaseValues" $extension "parentReleaseValues" $release "releaseNamespace" $releaseNamespace "releaseName" $releaseName) }}
+
+{{/* Release Header - End */}}
+
+
+{{ $aws := (eq $values.cloud.provider "aws" ) }}
+{{ $gcp := (eq $values.cloud.provider "gcp" ) }}
+{{ $provider :=  $values.cloud.provider }}
 
 manifests:
 {{ if $gcp }}
@@ -9,39 +60,39 @@ manifests:
     metadata:
       name: {{ $provider }}
     spec:
-      projectID: {{ .Values.cloud.project }}
+      projectID: {{ $values.cloud.project }}
       credentials:
         source: Secret
         secretRef:
-          namespace: {{ .Release.Namespace }}
-          name: {{ index .Values.releases "crossplane" "secrets" "credentials" "secretRef" "name" }}
-          key: {{ index .Values.releases "crossplane" "secrets" "credentials" "secretRef" "key" }}
+          namespace: {{ $releaseNamespace }}
+          name: {{ index $coreReleases "crossplane" "secrets" "credentials" "secretRef" "name" }}
+          key: {{ index $coreReleases "crossplane" "secrets" "credentials" "secretRef" "key" }}
 
   - apiVersion: gcp.upbound.io/v1beta1
     kind: ProviderConfig
     metadata:
       name: upbound-{{ $provider }}
     spec:
-      projectID: {{ .Values.cloud.project }}
+      projectID: {{ $values.cloud.project }}
       credentials:
         source: Secret
         secretRef:
-          namespace: {{ .Release.Namespace }}
-          name: {{ index .Values.releases "crossplane" "secrets" "credentials" "secretRef" "name" }}
-          key: {{ index .Values.releases "crossplane" "secrets" "credentials" "secretRef" "key" }}
+          namespace: {{ $releaseNamespace }}
+          name: {{ index $coreReleases "crossplane" "secrets" "credentials" "secretRef" "name" }}
+          key: {{ index $coreReleases "crossplane" "secrets" "credentials" "secretRef" "key" }}
 
   - apiVersion: gcp.jet.crossplane.io/v1alpha1
     kind: ProviderConfig
     metadata:
       name: jet-gcp
     spec:
-      projectID: {{ .Values.cloud.project }}
+      projectID: {{ $values.cloud.project }}
       credentials:
         source: Secret
         secretRef:
-          namespace: {{ .Release.Namespace }}
-          name: {{ index .Values.releases "crossplane" "secrets" "credentials" "secretRef" "name" }}
-          key: {{ index .Values.releases "crossplane" "secrets" "credentials" "secretRef" "key" }}
+          namespace: {{ $releaseNamespace }}
+          name: {{ index $coreReleases "crossplane" "secrets" "credentials" "secretRef" "name" }}
+          key: {{ index $coreReleases "crossplane" "secrets" "credentials" "secretRef" "key" }}
 
 {{ else if $aws }}
   - apiVersion: gcp.upbound.io/v1beta1
@@ -52,9 +103,9 @@ manifests:
       credentials:
         source: Secret
         secretRef:
-          namespace: {{ .Release.Namespace }}
-          name: {{ index .Values.releases "crossplane" "secrets" "credentials" "secretRef" "name" }}
-          key: {{ index .Values.releases "crossplane" "secrets" "credentials" "secretRef" "key" }}
+          namespace: {{ $releaseNamespace }}
+          name: {{ index $coreReleases "crossplane" "secrets" "credentials" "secretRef" "name" }}
+          key: {{ index $coreReleases "crossplane" "secrets" "credentials" "secretRef" "key" }}
 {{ else }}
   - kind: ConfigMap
     apiVersion: v1
@@ -62,5 +113,5 @@ manifests:
       name: crossplane-provider-config
     data:
       crossplane-provider-config.yaml: |
-        warning: crossplane-provider-config only works with .Values.cloud.provider equal to aws or gcp.
+        warning: crossplane-provider-config only works with $values.cloud.provider equal to aws or gcp.
 {{ end }}

@@ -1,0 +1,17 @@
+{{ tpl (readFile "./templates/base/bases.yaml.gotmpl") . }}
+
+{{ tpl (readFile "./templates/base/environments.yaml.gotmpl") . }}
+---
+helmfiles:
+- path: ./layer.helmfile.yaml.gotmpl
+  values:
+  - {{ toYaml .Values | nindent 4 }}
+  - core:
+      helmfileName: "full"
+      releasesEnabled: true
+      releasesRawEnabled: true
+      namespacesEnabled: false
+      applicationsEnabled: true
+      servicesEnabled: true
+      environmentsEnabled: true
+      clusterEnabled: true

@@ -1,0 +1,125 @@
+{{/* Release Header - Start */}}
+
+{{/* Common Variables */}}
+{{ $values := (coalesce (. | getOrNil "values") (. | getOrNil "Values")) }}
+{{ $release := (. | getOrNil "item") }}
+{{ $releaseNamespace := (coalesce ($release | getOrNil "namespace") (. | getOrNil "Release" | getOrNil "Namespace")) }}
+{{ $releaseName := (coalesce ($release | getOrNil "name") (. | getOrNil "Release" | getOrNil "Name")) }}
+
+{{/* Releases Variables */}}
+{{ $coreReleases := ($values | getOrNil "releases") }}
+{{ $clusterReleases := ($values | getOrNil "clusterReleases") }}
+{{ $environments := ($values | getOrNil "environments") }}
+{{ $environment := ($environments | getOrNil $releaseNamespace) }}
+{{ $applications := (coalesce ($environment | getOrNil "applications") ($values | getOrNil "applications")) }}
+{{ $services := (coalesce ($environment | getOrNil "services") ($values | getOrNil "services")) }}
+
+{{/* Applications Variables */}}
+{{ $application := ($applications | getOrNil $releaseName) }}
+{{ $service := ($services | getOrNil $releaseName) }}
+
+{{/* Services Variables */}}
+{{ $service := ($services | getOrNil $releaseName) }}
+
+{{/* Core Releases */}}
+{{ $coreRelease := ($coreReleases | getOrNil $releaseName) }}
+
+{{/* Cluster Releases */}}
+{{ $clusterRelease := ($clusterReleases | getOrNil $releaseName) }}
+
+{{/* Release Variables */}}
+{{ $release := (coalesce (. | getOrNil "item") $application $service $clusterRelease $coreRelease) }}
+{{ $releaseType := (coalesce ($release | getOrNil "type") "unknown") }}
+
+{{ if and $release $coreRelease }}
+{{ $release = ((eq $coreRelease.name $release.name) | ternary (mergeOverwrite (deepCopy $coreRelease) $release) ($release)) }}
+{{ end }}
+
+{{ if ($release | getOrNil "injectCoreValuesFromRelease") }}
+{{ $release = (mergeOverwrite ((deepCopy $coreReleases) | getOrNil ($release | getOrNil "injectCoreValuesFromRelease")) $release) }}
+{{ end }}
+
+{{/* Extensions Variables */}}
+{{ $extensionType := (coalesce (. | getOrNil "extensionType") "unknown") }}
+{{ $extension := (coalesce ($release | getOrNil $extensionType) ($release | getOrNil ($extensionType | camelcase | untitle)) ) }}
+
+{{/* Template Variables */}}
+{{ $templateValues := (dict "coreValues" $values "releaseValues" $extension "parentReleaseValues" $release "releaseNamespace" $releaseNamespace "releaseName" $releaseName) }}
+
+{{/* Release Header - End */}}
+
+
+{{ $serviceAccountName := (printf "patch-operator-admin-%s-%s" $releaseNamespace $releaseName )}}
+
+manifests:
+{{ if (not (eq $releaseNamespace "patch-operator")) }}
+- apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    name: {{ $serviceAccountName }}
+  secrets:
+  - name: {{ $serviceAccountName }}
+- apiVersion: v1
+  kind: Secret
+  metadata:
+    name: {{ $serviceAccountName }}
+    annotations:
+      kubernetes.io/service-account.name: {{ $serviceAccountName }}
+  type: kubernetes.io/service-account-token
+  data: {}
+
+
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: ClusterRoleBinding
+  metadata:
+    name: {{ $serviceAccountName }}
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: ClusterRole
+    name: cluster-admin
+  subjects:
+  - kind: ServiceAccount
+    name: {{ $serviceAccountName }}
+    namespace: {{ $releaseNamespace }}
+{{ end }}
+
+{{ if $extension.patches }}
+- apiVersion: redhatcop.redhat.io/v1alpha1
+  kind: Patch
+  metadata:
+    name: {{ $releaseName }}
+  spec:
+    serviceAccountRef:
+      name: {{ $serviceAccountName }}
+    patches:
+    {{ range $key, $patch := $extension.patches }}
+      {{ $key }}:
+        {{ if (eq ($patch | getOrNil "templated") true) }}
+        targetObjectRef:
+          namespace: {{ coalesce ($patch.targetObjectRef | getOrNil "namespace") $releaseNamespace }}
+          {{ if ($patch | getOrNil "namespaceSuffix") }}
+          name: {{ coalesce ($patch.targetObjectRef | getOrNil "name") $releaseName }}-{{ $releaseNamespace }}
+          {{ else if ($patch | getOrNil "namespacePrefix") }}
+          name: {{ $releaseNamespace }}-{{ coalesce ($patch.targetObjectRef | getOrNil "name") $releaseName }}
+          {{ else }}
+          name: {{ coalesce ($patch.targetObjectRef | getOrNil "name") $releaseName }}
+          {{ end }}
+          kind: {{ coalesce ($patch.targetObjectRef | getOrNil "kind") "deployment" }}
+          apiVersion: {{ coalesce ($patch.targetObjectRef | getOrNil "apiVersion") "v1" }}
+        {{ else }}
+        targetObjectRef: {{ toYaml $patch.targetObjectRef | nindent 10 }}
+        {{ end }}
+
+
+        sourceObjectRefs: {{ toYaml $patch.sourceObjectRefs | nindent 10 }}
+
+        patchType: {{ coalesce (getOrNil "patchType" $patch) "application/strategic-merge-patch+json" }}
+        {{ if $patch | getOrNil "templatedPatchTemplate" }}
+        patchTemplate: |-
+          {{ $patch.templatedPatchTemplate | nindent 10 }}
+        {{ else }}
+        patchTemplate: |-
+          {{ toYaml $patch.patchTemplate | nindent 10 }}
+        {{ end }}
+    {{ end }}
+{{ end }}

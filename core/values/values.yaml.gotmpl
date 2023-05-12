@@ -1,0 +1,7 @@
+manifests:
+- kind: ConfigMap
+  apiVersion: v1
+  metadata:
+    name:
+    namespace: default
+  data: {{ toYaml (index .Values.environments.dev.applications "nk-api") | nindent 4 }}

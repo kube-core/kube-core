@@ -21,7 +21,7 @@
     manifests: legacy
   values:
   # - "{{ ($releaseName | replace "-manifests" "") }}"
-  - "./values/release-manifests.yaml.gotmpl"
+  - {{ (tpl (readFile "values/extensions/release-manifests.yaml.gotmpl") .) | nindent 4 }}
 {{ end }}
 
 {{ if (and $release.configmaps (not (eq $release.extensions.configmapsEnabled false))) }}
@@ -40,7 +40,7 @@
     type: configmaps
   values:
   # - "./values/release-secrets.yaml.gotmpl"
-  - {{ (tpl (readFile "values/release-configmaps.yaml.gotmpl") .) | nindent 4 }}
+  - {{ (tpl (readFile "values/extensions/release-configmaps.yaml.gotmpl") .) | nindent 4 }}
 {{ end }}
 
 {{ if (and $release.extraManifests (not (eq $release.extensions.extraManifestsEnabled false))) }}
@@ -60,7 +60,7 @@
     manifests: extra
   values:
   # - "./values/release-secrets.yaml.gotmpl"
-  - {{ (tpl (readFile "values/release-extra-manifests.yaml.gotmpl") .) | nindent 4 }}
+  - {{ (tpl (readFile "values/extensions/release-extra-manifests.yaml.gotmpl") .) | nindent 4 }}
 {{ end }}
 
 {{ if (and $release.rawManifests (not (eq $release.extensions.rawManifestsEnabled false))) }}
@@ -80,7 +80,7 @@
     manifests: raw
   values:
   # - "./values/release-secrets.yaml.gotmpl"
-  - {{ (tpl (readFile "values/release-raw-manifests.yaml.gotmpl") .) | nindent 4 }}
+  - {{ (tpl (readFile "values/extensions/release-raw-manifests.yaml.gotmpl") .) | nindent 4 }}
 {{ end }}
 
 
@@ -109,7 +109,7 @@
     type: secrets
   values:
   # - "./values/release-secrets.yaml.gotmpl"
-  - {{ (tpl (readFile "values/release-secrets.yaml.gotmpl") .) | nindent 4 }}
+  - {{ (tpl (readFile "values/extensions/release-secrets.yaml.gotmpl") .) | nindent 4 }}
 {{ end }}
 {{ end }}
 
@@ -138,7 +138,7 @@
     type: dynamic-secrets
   values:
   # - "./values/release-dynamic-secrets.yaml.gotmpl"
-  - {{ (tpl (readFile "values/release-dynamic-secrets.yaml.gotmpl") .) | nindent 4 }}
+  - {{ (tpl (readFile "values/extensions/release-dynamic-secrets.yaml.gotmpl") .) | nindent 4 }}
 {{ end }}
 {{ end }}
 
@@ -165,7 +165,7 @@
     type: secrets
   values:
   # - "./values/release-external-secrets.yaml.gotmpl"
-  - {{ (tpl (readFile "values/release-external-secrets.yaml.gotmpl") .) | nindent 4 }}
+  - {{ (tpl (readFile "values/extensions/release-external-secrets.yaml.gotmpl") .) | nindent 4 }}
 {{ end }}
 {{ end }}
 
@@ -185,7 +185,7 @@
     type: patches
   values:
   # - "./values/release-patches.yaml.gotmpl"
-  - {{ (tpl (readFile "values/release-patches.yaml.gotmpl") .) | nindent 4 }}
+  - {{ (tpl (readFile "values/extensions/release-patches.yaml.gotmpl") .) | nindent 4 }}
 {{ end }}
 
 {{ if $release.scaling.enabled }}
@@ -204,7 +204,7 @@
     type: scaling
   values:
   # - "./values/release-scaling.yaml.gotmpl"
-  - {{ (tpl (readFile "values/release-scaling.yaml.gotmpl") .) | nindent 4 }}
+  - {{ (tpl (readFile "values/extensions/release-scaling.yaml.gotmpl") .) | nindent 4 }}
 {{ end }}
 
 {{ if $release.gitops.enabled }}
@@ -241,7 +241,7 @@
     type: cloud
   values:
   # - "./values/release-cloud.yaml.gotmpl"
-  - {{ (tpl (readFile "values/release-cloud.yaml.gotmpl") .) | nindent 4 }}
+  - {{ (tpl (readFile "values/extensions/release-cloud.yaml.gotmpl") .) | nindent 4 }}
 {{ end }}
 
 
@@ -265,7 +265,7 @@
     type: rabbitmq
   values:
   # - "./values/release-cloud.yaml.gotmpl"
-  - {{ (tpl (readFile "values/release-rabbitmq-config.yaml.gotmpl") .) | nindent 4 }}
+  - {{ (tpl (readFile "values/extensions/release-rabbitmq-config.yaml.gotmpl") .) | nindent 4 }}
 
 {{ end }}
 
@@ -289,7 +289,7 @@
     type: "custom-extensions"
   values:
   # - "./values/release-cloud.yaml.gotmpl"
-  - {{ (tpl (readFile "values/release-custom-extensions.yaml.gotmpl") .) | nindent 4 }}
+  - {{ (tpl (readFile "values/extensions/release-custom-extensions.yaml.gotmpl") .) | nindent 4 }}
 
 {{ end }}
 
@@ -313,7 +313,7 @@
     type: "slos"
   values:
   # - "./values/release-cloud.yaml.gotmpl"
-  - {{ (tpl (readFile "values/release-slos.yaml.gotmpl") .) | nindent 4 }}
+  - {{ (tpl (readFile "values/extensions/release-slos.yaml.gotmpl") .) | nindent 4 }}
 
 {{ end }}
 
@@ -337,7 +337,7 @@
     type: "monitoring"
   values:
   # - "./values/release-cloud.yaml.gotmpl"
-  - {{ (tpl (readFile "values/release-monitoring.yaml.gotmpl") .) | nindent 4 }}
+  - {{ (tpl (readFile "values/extensions/release-monitoring.yaml.gotmpl") .) | nindent 4 }}
 
 {{ end }}
 
@@ -361,7 +361,7 @@
     type: "chaos"
   values:
   # - "./values/release-cloud.yaml.gotmpl"
-  - {{ (tpl (readFile "values/release-chaos.yaml.gotmpl") .) | nindent 4 }}
+  - {{ (tpl (readFile "values/extensions/release-chaos.yaml.gotmpl") .) | nindent 4 }}
 
 {{ end }}
 
@@ -400,7 +400,7 @@
     type: "slack"
   values:
   # - "./values/release-cloud.yaml.gotmpl"
-  - {{ (tpl (readFile "values/release-slack.yaml.gotmpl") .) | nindent 4 }}
+  - {{ (tpl (readFile "values/extensions/release-slack.yaml.gotmpl") .) | nindent 4 }}
 
 {{ end }}
 
@@ -425,6 +425,6 @@
     type: "ingress"
   values:
   # - "./values/release-cloud.yaml.gotmpl"
-  - {{ (tpl (readFile "values/release-ingress.yaml.gotmpl") .) | nindent 4 }}
+  - {{ (tpl (readFile "values/extensions/release-ingress.yaml.gotmpl") .) | nindent 4 }}
 
 {{ end }}

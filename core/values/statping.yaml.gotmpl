@@ -1,3 +1,54 @@
+{{/* Release Header - Start */}}
+
+{{/* Common Variables */}}
+{{ $values := (coalesce (. | getOrNil "values") (. | getOrNil "Values")) }}
+{{ $release := (. | getOrNil "item") }}
+{{ $releaseNamespace := (coalesce ($release | getOrNil "namespace") (. | getOrNil "Release" | getOrNil "Namespace")) }}
+{{ $releaseName := (coalesce ($release | getOrNil "name") (. | getOrNil "Release" | getOrNil "Name")) }}
+
+{{/* Releases Variables */}}
+{{ $coreReleases := ($values | getOrNil "releases") }}
+{{ $clusterReleases := ($values | getOrNil "clusterReleases") }}
+{{ $environments := ($values | getOrNil "environments") }}
+{{ $environment := ($environments | getOrNil $releaseNamespace) }}
+{{ $applications := (coalesce ($environment | getOrNil "applications") ($values | getOrNil "applications")) }}
+{{ $services := (coalesce ($environment | getOrNil "services") ($values | getOrNil "services")) }}
+
+{{/* Applications Variables */}}
+{{ $application := ($applications | getOrNil $releaseName) }}
+{{ $service := ($services | getOrNil $releaseName) }}
+
+{{/* Services Variables */}}
+{{ $service := ($services | getOrNil $releaseName) }}
+
+{{/* Core Releases */}}
+{{ $coreRelease := ($coreReleases | getOrNil $releaseName) }}
+
+{{/* Cluster Releases */}}
+{{ $clusterRelease := ($clusterReleases | getOrNil $releaseName) }}
+
+{{/* Release Variables */}}
+{{ $release := (coalesce (. | getOrNil "item") $application $service $clusterRelease $coreRelease) }}
+{{ $releaseType := (coalesce ($release | getOrNil "type") "unknown") }}
+
+{{ if and $release $coreRelease }}
+{{ $release = ((eq $coreRelease.name $release.name) | ternary (mergeOverwrite (deepCopy $coreRelease) $release) ($release)) }}
+{{ end }}
+
+{{ if ($release | getOrNil "injectCoreValuesFromRelease") }}
+{{ $release = (mergeOverwrite ((deepCopy $coreReleases) | getOrNil ($release | getOrNil "injectCoreValuesFromRelease")) $release) }}
+{{ end }}
+
+{{/* Extensions Variables */}}
+{{ $extensionType := (coalesce (. | getOrNil "extensionType") "unknown") }}
+{{ $extension := (coalesce ($release | getOrNil $extensionType) ($release | getOrNil ($extensionType | camelcase | untitle)) ) }}
+
+{{/* Template Variables */}}
+{{ $templateValues := (dict "coreValues" $values "releaseValues" $extension "parentReleaseValues" $release "releaseNamespace" $releaseNamespace "releaseName" $releaseName) }}
+
+{{/* Release Header - End */}}
+cluster: {{ toYaml $values.cluster | nindent 2 }}
+
 image:
   # -- image repository
   repository: statping/statping
@@ -8,9 +59,9 @@ image:
 
 env:
   # -- Name of the Statping instance
-  NAME: {{ .Values.project.name }}-statping
+  NAME: {{ $values.cluster.config.name }}-statping
   # -- Description of the Statping instance
-  DESCRIPTION: This is a Statping instance on {{ .Values.project.name }}
+  DESCRIPTION: This is a Statping instance on {{ $values.cluster.config.name }}
 {{/*
   # -- Set the container timezone
   TZ: UTC
@@ -24,11 +75,11 @@ env:
   # -- Enable ssl_mode for postgres (To enable use `require`)
   POSTGRES_SSLMODE: "disable"
   # -- Postgres database user name
-  DB_USER: "{{ .Values.postgresql.postgresqlUsername }}"
+  DB_USER: "{{ $values.postgresql.postgresqlUsername }}"
   # -- Postgres database password
-  DB_PASS: "{{ .Values.postgresql.postgresqlPassword }}"
+  DB_PASS: "{{ $values.postgresql.postgresqlPassword }}"
   # -- Postgres database name
-  DB_DATABASE: "{{ .Values.postgresql.postgresqlDatabase }}"
+  DB_DATABASE: "{{ $values.postgresql.postgresqlDatabase }}"
   # -- Use CDN for static context from third-parties
   USE_CDN: false
   # -- Disable logs from appearing and writing to disk
@@ -61,24 +112,24 @@ ingress:
   main:
     enabled: true
     annotations:
-    {{ if .Values.cluster.common.defaultIngressAnnotations }}
-        {{ toYaml .Values.cluster.common.defaultIngressAnnotations | nindent 6 }}
+    {{ if $values.cluster.common.defaultIngressAnnotations }}
+        {{ toYaml $values.cluster.common.defaultIngressAnnotations | nindent 6 }}
     {{- end }}
-    {{- if (index .Values.releases .Release.Name "config" "ingress" "annotations") }}
-        {{ toYaml (index .Values.releases .Release.Name "config" "ingress" "annotations") | nindent 6 }}
+    {{- if (index $release "config" "ingress" "annotations") }}
+        {{ toYaml (index $release "config" "ingress" "annotations") | nindent 6 }}
     {{- end }}
     labels:
-    {{ if .Values.cluster.common.defaultIngressLabels }}
-        {{ toYaml .Values.cluster.common.defaultIngressLabels | nindent 6 }}
+    {{ if $values.cluster.common.defaultIngressLabels }}
+        {{ toYaml $values.cluster.common.defaultIngressLabels | nindent 6 }}
     {{- end }}
-    {{- if (index .Values.releases .Release.Name "config" "ingress" "labels") }}
-        {{ toYaml (index .Values.releases .Release.Name "config" "ingress" "labels") | nindent 6 }}
+    {{- if (index $release "config" "ingress" "labels") }}
+        {{ toYaml (index $release "config" "ingress" "labels") | nindent 6 }}
     {{- end }}
     hosts:
-      - host: {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
+      - host: {{ (index $release "config" "ingress" "subdomain") }}.{{ $values.cluster.config.domain }}
         paths:
           - path: /
     tls:
-      - secretName: {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") | replace "." "-"}}-tls
+      - secretName: {{ (index $release "config" "ingress" "subdomain") | replace "." "-"}}-tls
         hosts:
-          - {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
+          - {{ (index $release "config" "ingress" "subdomain") }}.{{ $values.cluster.config.domain }}

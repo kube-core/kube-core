@@ -1,9 +1,0 @@
-{{ $values := .values }}
-{{ $releases := (merge $values.releases $values.applications $values.services )}}
-{{ $releaseNamespace := .releaseNamespace }}
-
-{{ $mainReleaseName := (.releaseName | replace "-raw-manifests" "") }}
-{{ $mainRelease := ($releases | getOrNil $mainReleaseName) }}
-{{ $currentRelease := ($releases | getOrNil .releaseName) }}
-
-manifests: {{ toYaml (index $releases $mainReleaseName "rawManifests") | nindent 2 }}

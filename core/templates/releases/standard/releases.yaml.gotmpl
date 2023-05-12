@@ -1,18 +1,11 @@
 {{ $values := .Values }}
-{{- $releases := .Values.releases }}
+{{- $coreReleases := .Values.releases }}
 
-{{- range $releaseName, $release := $releases }}
-{{- if $release.enabled -}}
-{{ $release := (mergeOverwrite (deepCopy $values.templates.release) $release) }}
-
-{{ $_ := set $release "type" "release" }}
-{{ $_ := set $release "name" $releaseName }}
-{{ $_ := set $release "namespace" $release.namespace }}
-{{ $_ := (tpl (readFile "templates/releases/standard/release-variables.yaml.gotmpl") (dict "item" $release "values" $values)) }}
-{{ $_ := set $.Values.releases $release.name $release }}
-
-{{- tpl (readFile "templates/releases/standard/release.yaml.gotmpl") (dict "item" $release "values" $values "releaseName" $releaseName "releaseNamespace" $release.namespace "releaseContext" $values.cluster.config.context) }}
-{{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") (dict "item" $release "values" $values "releaseName" $releaseName "releaseNamespace" $release.namespace "releaseContext" $values.cluster.config.context) }}
-{{- tpl (readFile "templates/releases/standard/release-extensions.yaml.gotmpl") (dict "item" $release "values" $values "releaseName" $releaseName "releaseNamespace" $release.namespace "releaseContext" $values.cluster.config.context) }}
+{{- range $coreReleaseName, $coreRelease := $coreReleases }}
+{{- if $coreRelease.enabled -}}
+{{ $templateValues := (dict "item" $coreRelease "values" $values "releaseName" $coreReleaseName "releaseNamespace" $coreRelease.namespace "releaseContext" $values.cluster.config.context) }}
+{{- tpl (readFile "templates/releases/standard/release.yaml.gotmpl") $templateValues }}
+{{- tpl (readFile "templates/releases/standard/release-options.yaml.gotmpl") $templateValues }}
+{{- tpl (readFile "templates/releases/standard/release-extensions.yaml.gotmpl") $templateValues }}
 {{- end -}}
 {{- end -}}

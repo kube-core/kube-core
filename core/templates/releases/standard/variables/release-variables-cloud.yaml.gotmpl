@@ -4,6 +4,7 @@
 
 {{/* Release Variables */}}
 {{ $release := .item }}
+
 {{ $releaseName := $release.name }}
 {{ $releaseNamespace := $release.namespace }}
 {{ $releaseType := $release.type }}
@@ -119,7 +120,7 @@
 {{ $_ := set $namingConfig.cloud.short "appOrPlatform" (coalesce ($releaseNamingConfig.cloud.short.appOrPlatform) ($appOrPlatformDict.short.type | getOrNil $releaseType) ($coreNamingConfig.cloud.short.appOrPlatform))}}
 {{ end }}
 
-{{ $_ := set $namingConfig.release.full "context" (coalesce $release.context $values.cluster.config.context) }}
+{{ $_ := set $namingConfig.release.full "context" (coalesce ($release | getOrNil "context") $values.cluster.config.context) }}
 {{ $_ := set $namingConfig.release.full "namespace" $releaseNamespace }}
 {{ $_ := set $namingConfig.release.full "name" $releaseName }}
 {{ $_ := set $namingConfig.release.full "appOrPlatform" ($appOrPlatformDict.type | getOrNil $releaseType) }}
@@ -160,6 +161,8 @@
 {{ $releaseType = "app" }}
 {{ else if (eq $release.type "service") }}
 {{ $releaseType = "svc" }}
+{{ else }}
+{{ $releaseType = "x" }}
 {{ end }}
 
 {{ $autoShortName := "" }}

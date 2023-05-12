@@ -39,7 +39,7 @@
 {{ $cloudEnabled := (and $cloudEnabled $releaseCloud $releaseCloudEnabled) }}
 
 {{/* Monitoring Variables */}}
-{{ $monitoringEnabled := ($release.monitoring | getOrNil "enabled") }}
+{{ $monitoringEnabled := ($release | getOrNil "monitoring" | getOrNil "enabled") }}
 {{ $metricsEndpoint := "" }}
 {{ $metricsIngress := "" }}
 

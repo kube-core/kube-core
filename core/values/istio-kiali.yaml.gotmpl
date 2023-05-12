@@ -1,17 +1,55 @@
-{{/* Release Values Templates Header - START */}}
-{{ $values := (coalesce (. | getOrNil "values") (. | getOrNil "Values")) }}
-{{ $release := (index $values.releases .Release.Name) }}
-{{ $releaseName := .Release.Name }}
-{{ $releaseNamespace := .Release.Namespace }}
-{{ $releaseType := $release.type }}
+{{/* Release Header - Start */}}
 
-{{ $_ := set $release "name" $releaseName }}
-{{ $_ := set $release "namespace" $releaseNamespace }}
-{{ (tpl (readFile "../templates/releases/standard/variables/release-variables-config.yaml.gotmpl") (dict "item" $release "values" $values)) }}
-{{ (tpl (readFile "../templates/releases/standard/variables/release-variables-cloud.yaml.gotmpl") (dict "item" $release "values" $values)) }}
-{{/* Release Values Templates Header - END */}}
-{{ $jaegerSubdomain := (coalesce ((index $values.releases "istio-jaeger" "ingress") | getOrNil "subDomainOverride") ((index $values.releases "istio-jaeger" "ingress") | getOrNil "subDomain") "jaeger.istio-system")  }}
-{{ $grafanaSubdomain := (coalesce ((index $values.releases "istio-grafana" "ingress") | getOrNil "subDomainOverride") ((index $values.releases "istio-grafana" "ingress") | getOrNil "subDomain") "grafana.istio-system")  }}
+{{/* Common Variables */}}
+{{ $values := (coalesce (. | getOrNil "values") (. | getOrNil "Values")) }}
+{{ $release := (. | getOrNil "item") }}
+{{ $releaseNamespace := (coalesce ($release | getOrNil "namespace") (. | getOrNil "Release" | getOrNil "Namespace")) }}
+{{ $releaseName := (coalesce ($release | getOrNil "name") (. | getOrNil "Release" | getOrNil "Name")) }}
+
+{{/* Releases Variables */}}
+{{ $coreReleases := ($values | getOrNil "releases") }}
+{{ $clusterReleases := ($values | getOrNil "clusterReleases") }}
+{{ $environments := ($values | getOrNil "environments") }}
+{{ $environment := ($environments | getOrNil $releaseNamespace) }}
+{{ $applications := (coalesce ($environment | getOrNil "applications") ($values | getOrNil "applications")) }}
+{{ $services := (coalesce ($environment | getOrNil "services") ($values | getOrNil "services")) }}
+
+{{/* Applications Variables */}}
+{{ $application := ($applications | getOrNil $releaseName) }}
+{{ $service := ($services | getOrNil $releaseName) }}
+
+{{/* Services Variables */}}
+{{ $service := ($services | getOrNil $releaseName) }}
+
+{{/* Core Releases */}}
+{{ $coreRelease := ($coreReleases | getOrNil $releaseName) }}
+
+{{/* Cluster Releases */}}
+{{ $clusterRelease := ($clusterReleases | getOrNil $releaseName) }}
+
+{{/* Release Variables */}}
+{{ $release := (coalesce (. | getOrNil "item") $application $service $clusterRelease $coreRelease) }}
+{{ $releaseType := (coalesce ($release | getOrNil "type") "unknown") }}
+
+{{ if and $release $coreRelease }}
+{{ $release = ((eq $coreRelease.name $release.name) | ternary (mergeOverwrite (deepCopy $coreRelease) $release) ($release)) }}
+{{ end }}
+
+{{ if ($release | getOrNil "injectCoreValuesFromRelease") }}
+{{ $release = (mergeOverwrite ((deepCopy $coreReleases) | getOrNil ($release | getOrNil "injectCoreValuesFromRelease")) $release) }}
+{{ end }}
+
+{{/* Extensions Variables */}}
+{{ $extensionType := (coalesce (. | getOrNil "extensionType") "unknown") }}
+{{ $extension := (coalesce ($release | getOrNil $extensionType) ($release | getOrNil ($extensionType | camelcase | untitle)) ) }}
+
+{{/* Template Variables */}}
+{{ $templateValues := (dict "coreValues" $values "releaseValues" $extension "parentReleaseValues" $release "releaseNamespace" $releaseNamespace "releaseName" $releaseName) }}
+
+{{/* Release Header - End */}}
+
+{{ $jaegerSubdomain := (coalesce ((index $coreReleases "istio-jaeger" "ingress") | getOrNil "subDomainOverride") ((index $coreReleases "istio-jaeger" "ingress") | getOrNil "subDomain") "jaeger.istio-system")  }}
+{{ $grafanaSubdomain := (coalesce ((index $coreReleases "istio-grafana" "ingress") | getOrNil "subDomainOverride") ((index $coreReleases "istio-grafana" "ingress") | getOrNil "subDomain") "grafana.istio-system")  }}
 cluster: {{ toYaml .Values.cluster | nindent 4 }}
 spec:
   deployment:

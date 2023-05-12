@@ -1,3 +1,54 @@
+{{/* Release Header - Start */}}
+
+{{/* Common Variables */}}
+{{ $values := (coalesce (. | getOrNil "values") (. | getOrNil "Values")) }}
+{{ $release := (. | getOrNil "item") }}
+{{ $releaseNamespace := (coalesce ($release | getOrNil "namespace") (. | getOrNil "Release" | getOrNil "Namespace")) }}
+{{ $releaseName := (coalesce ($release | getOrNil "name") (. | getOrNil "Release" | getOrNil "Name")) }}
+
+{{/* Releases Variables */}}
+{{ $coreReleases := ($values | getOrNil "releases") }}
+{{ $clusterReleases := ($values | getOrNil "clusterReleases") }}
+{{ $environments := ($values | getOrNil "environments") }}
+{{ $environment := ($environments | getOrNil $releaseNamespace) }}
+{{ $applications := (coalesce ($environment | getOrNil "applications") ($values | getOrNil "applications")) }}
+{{ $services := (coalesce ($environment | getOrNil "services") ($values | getOrNil "services")) }}
+
+{{/* Applications Variables */}}
+{{ $application := ($applications | getOrNil $releaseName) }}
+{{ $service := ($services | getOrNil $releaseName) }}
+
+{{/* Services Variables */}}
+{{ $service := ($services | getOrNil $releaseName) }}
+
+{{/* Core Releases */}}
+{{ $coreRelease := ($coreReleases | getOrNil $releaseName) }}
+
+{{/* Cluster Releases */}}
+{{ $clusterRelease := ($clusterReleases | getOrNil $releaseName) }}
+
+{{/* Release Variables */}}
+{{ $release := (coalesce (. | getOrNil "item") $application $service $clusterRelease $coreRelease) }}
+{{ $releaseType := (coalesce ($release | getOrNil "type") "unknown") }}
+
+{{ if and $release $coreRelease }}
+{{ $release = ((eq $coreRelease.name $release.name) | ternary (mergeOverwrite (deepCopy $coreRelease) $release) ($release)) }}
+{{ end }}
+
+{{ if ($release | getOrNil "injectCoreValuesFromRelease") }}
+{{ $release = (mergeOverwrite ((deepCopy $coreReleases) | getOrNil ($release | getOrNil "injectCoreValuesFromRelease")) $release) }}
+{{ end }}
+
+{{/* Extensions Variables */}}
+{{ $extensionType := (coalesce (. | getOrNil "extensionType") "unknown") }}
+{{ $extension := (coalesce ($release | getOrNil $extensionType) ($release | getOrNil ($extensionType | camelcase | untitle)) ) }}
+
+{{/* Template Variables */}}
+{{ $templateValues := (dict "coreValues" $values "releaseValues" $extension "parentReleaseValues" $release "releaseNamespace" $releaseNamespace "releaseName" $releaseName) }}
+
+{{/* Release Header - End */}}
+cluster: {{ toYaml $values.cluster | nindent 2 }}
+
 replicaCount: 1
 
 port: 80
@@ -15,25 +66,25 @@ service:
 ingress:
   enabled: true
   annotations:
-  {{ if .Values.cluster.common.defaultIngressAnnotations }}
-    {{ toYaml .Values.cluster.common.defaultIngressAnnotations | nindent 4 }}
+  {{ if $values.cluster.common.defaultIngressAnnotations }}
+    {{ toYaml $values.cluster.common.defaultIngressAnnotations | nindent 4 }}
   {{- end }}
-  {{- if (index .Values.releases .Release.Name "config" "ingress" "annotations") }}
-    {{ toYaml (index .Values.releases .Release.Name "config" "ingress" "annotations") | nindent 4 }}
+  {{- if (index $release "config" "ingress" "annotations") }}
+    {{ toYaml (index $release "config" "ingress" "annotations") | nindent 4 }}
   {{- end }}
   labels:
-  {{ if .Values.cluster.common.defaultIngressLabels }}
-    {{ toYaml .Values.cluster.common.defaultIngressLabels | nindent 4 }}
+  {{ if $values.cluster.common.defaultIngressLabels }}
+    {{ toYaml $values.cluster.common.defaultIngressLabels | nindent 4 }}
   {{- end }}
-  {{- if (index .Values.releases .Release.Name "config" "ingress" "labels") }}
-    {{ toYaml (index .Values.releases .Release.Name "config" "ingress" "labels") | nindent 4 }}
+  {{- if (index $release "config" "ingress" "labels") }}
+    {{ toYaml (index $release "config" "ingress" "labels") | nindent 4 }}
   {{- end }}
   tls:
-    - secretName: {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") | replace "." "-"}}-tls
+    - secretName: {{ (index $release "config" "ingress" "subdomain") | replace "." "-"}}-tls
       hosts:
-        - {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
+        - {{ (index $release "config" "ingress" "subdomain") }}.{{ $values.cluster.config.domain }}
   hosts:
-    - {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
+    - {{ (index $release "config" "ingress" "subdomain") }}.{{ $values.cluster.config.domain }}
 
 persistence:
   enabled: true
@@ -44,9 +95,9 @@ persistence:
   # annotations: {}
   # existingClaim:
 
-tolerations: {{ toYaml (index .Values.releases .Release.Name "scheduling" "tolerations") | nindent 2 }}
-nodeSelector: {{ toYaml (index .Values.releases .Release.Name "scheduling" "nodeSelector") | nindent 2 }}
-affinity: {{ toYaml (index .Values.releases .Release.Name "scheduling" "affinity") | nindent 2 }}
+tolerations: {{ toYaml (index $release "scheduling" "tolerations") | nindent 2 }}
+nodeSelector: {{ toYaml (index $release "scheduling" "nodeSelector") | nindent 2 }}
+affinity: {{ toYaml (index $release "scheduling" "affinity") | nindent 2 }}
 
 database:
   type: SQLITE
@@ -65,14 +116,14 @@ internalAddress:
 kubernetesUrl: https://kubernetes.default.svc
 jobPlatform: KUBERNETES
 apiVersion: v1
-delayRunnerMs: {{ index .Values.releases .Release.Name "config" "delayRunnerMs" }}
-runnerDockerImage: {{ index .Values.releases .Release.Name "config" "runnerDockerImage" }}
-runnerCpu: {{ index .Values.releases .Release.Name "config" "runnerCpu" }}
-runnerMemory: {{ index .Values.releases .Release.Name "config" "runnerMemory" }}
-intervalCleanupFinishedContainers: {{ index .Values.releases .Release.Name "config" "intervalCleanupFinishedContainers" }}
-customRunnerDefinition: {{ toYaml (index .Values.releases .Release.Name "config" "customRunnerDefinition") | nindent 2 }}
-allowInsecureTls: {{ index .Values.releases .Release.Name "config" "allowInsecureTls" }}
-skipInternalAddressCheck: {{ index .Values.releases .Release.Name "config" "skipInternalAddressCheck" }}
+delayRunnerMs: {{ index $release "config" "delayRunnerMs" }}
+runnerDockerImage: {{ index $release "config" "runnerDockerImage" }}
+runnerCpu: {{ index $release "config" "runnerCpu" }}
+runnerMemory: {{ index $release "config" "runnerMemory" }}
+intervalCleanupFinishedContainers: {{ index $release "config" "intervalCleanupFinishedContainers" }}
+customRunnerDefinition: {{ toYaml (index $release "config" "customRunnerDefinition") | nindent 2 }}
+allowInsecureTls: {{ index $release "config" "allowInsecureTls" }}
+skipInternalAddressCheck: {{ index $release "config" "skipInternalAddressCheck" }}
 serviceAccount:
   create: true
 rbac:

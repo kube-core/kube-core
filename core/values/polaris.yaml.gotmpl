@@ -1,33 +1,84 @@
+{{/* Release Header - Start */}}
+
+{{/* Common Variables */}}
+{{ $values := (coalesce (. | getOrNil "values") (. | getOrNil "Values")) }}
+{{ $release := (. | getOrNil "item") }}
+{{ $releaseNamespace := (coalesce ($release | getOrNil "namespace") (. | getOrNil "Release" | getOrNil "Namespace")) }}
+{{ $releaseName := (coalesce ($release | getOrNil "name") (. | getOrNil "Release" | getOrNil "Name")) }}
+
+{{/* Releases Variables */}}
+{{ $coreReleases := ($values | getOrNil "releases") }}
+{{ $clusterReleases := ($values | getOrNil "clusterReleases") }}
+{{ $environments := ($values | getOrNil "environments") }}
+{{ $environment := ($environments | getOrNil $releaseNamespace) }}
+{{ $applications := (coalesce ($environment | getOrNil "applications") ($values | getOrNil "applications")) }}
+{{ $services := (coalesce ($environment | getOrNil "services") ($values | getOrNil "services")) }}
+
+{{/* Applications Variables */}}
+{{ $application := ($applications | getOrNil $releaseName) }}
+{{ $service := ($services | getOrNil $releaseName) }}
+
+{{/* Services Variables */}}
+{{ $service := ($services | getOrNil $releaseName) }}
+
+{{/* Core Releases */}}
+{{ $coreRelease := ($coreReleases | getOrNil $releaseName) }}
+
+{{/* Cluster Releases */}}
+{{ $clusterRelease := ($clusterReleases | getOrNil $releaseName) }}
+
+{{/* Release Variables */}}
+{{ $release := (coalesce (. | getOrNil "item") $application $service $clusterRelease $coreRelease) }}
+{{ $releaseType := (coalesce ($release | getOrNil "type") "unknown") }}
+
+{{ if and $release $coreRelease }}
+{{ $release = ((eq $coreRelease.name $release.name) | ternary (mergeOverwrite (deepCopy $coreRelease) $release) ($release)) }}
+{{ end }}
+
+{{ if ($release | getOrNil "injectCoreValuesFromRelease") }}
+{{ $release = (mergeOverwrite ((deepCopy $coreReleases) | getOrNil ($release | getOrNil "injectCoreValuesFromRelease")) $release) }}
+{{ end }}
+
+{{/* Extensions Variables */}}
+{{ $extensionType := (coalesce (. | getOrNil "extensionType") "unknown") }}
+{{ $extension := (coalesce ($release | getOrNil $extensionType) ($release | getOrNil ($extensionType | camelcase | untitle)) ) }}
+
+{{/* Template Variables */}}
+{{ $templateValues := (dict "coreValues" $values "releaseValues" $extension "parentReleaseValues" $release "releaseNamespace" $releaseNamespace "releaseName" $releaseName) }}
+
+{{/* Release Header - End */}}
+cluster: {{ toYaml $values.cluster | nindent 2 }}
+
 dashboard:
   enable: true
   replicas: 1
   service:
     type: ClusterIP
     annotations:
-      {{ toYaml .Values.cluster.common.defaultServiceAnnotations | indent 6 | trim }}
+      {{ toYaml $values.cluster.common.defaultServiceAnnotations | indent 6 | trim }}
   ingress:
     enabled: true
     hosts:
-    - {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
+    - {{ (index $release "config" "ingress" "subdomain") }}.{{ $values.cluster.config.domain }}
     annotations:
       forecastle.stakater.com/icon: https://github.com/FairwindsOps/polaris/blob/master/docs/.vuepress/public/img/polaris-logo.png?raw=true
-    {{ if .Values.cluster.common.defaultIngressAnnotations }}
-      {{ toYaml .Values.cluster.common.defaultIngressAnnotations | nindent 6 }}
+    {{ if $values.cluster.common.defaultIngressAnnotations }}
+      {{ toYaml $values.cluster.common.defaultIngressAnnotations | nindent 6 }}
     {{- end }}
-    {{- if (index .Values.releases .Release.Name "config" "ingress" "annotations") }}
-      {{ toYaml (index .Values.releases .Release.Name "config" "ingress" "annotations") | nindent 6 }}
+    {{- if (index $release "config" "ingress" "annotations") }}
+      {{ toYaml (index $release "config" "ingress" "annotations") | nindent 6 }}
     {{- end }}
     labels:
-    {{ if .Values.cluster.common.defaultIngressLabels }}
-      {{ toYaml .Values.cluster.common.defaultIngressLabels | nindent 6 }}
+    {{ if $values.cluster.common.defaultIngressLabels }}
+      {{ toYaml $values.cluster.common.defaultIngressLabels | nindent 6 }}
     {{- end }}
-    {{- if (index .Values.releases .Release.Name "config" "ingress" "labels") }}
-      {{ toYaml (index .Values.releases .Release.Name "config" "ingress" "labels") | nindent 6 }}
+    {{- if (index $release "config" "ingress" "labels") }}
+      {{ toYaml (index $release "config" "ingress" "labels") | nindent 6 }}
     {{- end }}
     tls:
-      - secretName: {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") | replace "." "-"}}-tls
+      - secretName: {{ (index $release "config" "ingress" "subdomain") | replace "." "-"}}-tls
         hosts:
-          - {{ (index .Values.releases .Release.Name "config" "ingress" "subdomain") }}.{{ .Values.cluster.config.domain }}
+          - {{ (index $release "config" "ingress" "subdomain") }}.{{ $values.cluster.config.domain }}
 
 
 webhook:
@@ -42,4 +93,3 @@ audit:
   enable: false
   cleanup: false
   outputURL: ""
-
