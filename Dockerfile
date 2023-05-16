@@ -1,4 +1,4 @@
-FROM node:16-alpine
+FROM node:18-alpine
 WORKDIR /app/kube-core
 
 RUN apk update && apk add --no-cache --update \
@@ -13,7 +13,7 @@ RUN apk update && apk add --no-cache --update \
 RUN wget -O /usr/local/bin/yq "https://github.com/mikefarah/yq/releases/download/v4.25.1/yq_linux_amd64" && \
     chmod a+x /usr/local/bin/yq
 
-RUN npm install -g yalc
+RUN npm install -g yalc@1.0.0-pre.53
 
 ENV PYTHONUNBUFFERED=1
 
@@ -28,17 +28,17 @@ RUN curl -sSL https://sdk.cloud.google.com | bash
 ENV PATH $PATH:/root/google-cloud-sdk/bin
 
 RUN curl -sLS https://get.arkade.dev | sh
-RUN arkade get kubectl
+RUN arkade get kubectl -v v1.24.2
 RUN mv /root/.arkade/bin/kubectl /usr/local/bin/
 
 RUN wget -q https://github.com/devops-works/binenv/releases/latest/download/binenv_linux_amd64 -O binenv
 RUN chmod +x binenv && \
     mv binenv /usr/local/bin && \
     binenv update && \
-    binenv install binenv 0.19.3
+    binenv install binenv
 
-RUN binenv install trivy 0.30.4 && \
-    mv /root/.binenv/binaries/trivy/0.30.4 /usr/local/bin/trivy && \
+RUN binenv install trivy 0.40.0 && \
+    mv /root/.binenv/binaries/trivy/0.40.0 /usr/local/bin/trivy && \
     chmod a+x /usr/local/bin/trivy
 
 # GitOps dependencies
@@ -46,10 +46,10 @@ RUN apk add file
 
 RUN pip install PyYaml
 
-RUN binenv install helm 3.8.0 && \
+RUN binenv install helm 3.11.3 && \
 mv ~/.binenv/helm /usr/local/bin/
 
-RUN binenv install helmfile 0.150.0 && \
+RUN binenv install helmfile 0.153.1 && \
 mv ~/.binenv/helmfile /usr/local/bin/
 
 # RUN wget -q https://github.com/roboll/helmfile/releases/download/v0.144.0/helmfile_linux_386 -O helmfile
