@@ -1,0 +1,8 @@
+{{ $values := .Values }}
+helmfiles:
+- path: ./layer.helmfile.yaml.gotmpl
+  values:
+  - {{ toYaml $values | nindent 4 }}
+  {{ if (and ($values | getOrNil "localValuesPaths") ($values | getOrNil "localValuesBasePath")) }}
+  - {{ exec "bash" (list "-c" (printf "./scripts/local-values.sh '%s' '%s'" $values.localValuesPaths  $values.localValuesBasePath )) | nindent 4 | trim }}
+  {{ end }}

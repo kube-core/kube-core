@@ -434,6 +434,21 @@ scripts:
     name: utils_read_core_path
     description: 'Prints: corePath'
     args: ""
+  utils_read_local_values_json:
+    path: ./src/utils/read-local-values-json.sh
+    name: utils_read_local_values_json
+    description: 'Prints: Reads local values and merge them into a single JSON object'
+    args: ""
+  utils_read_local_values_stream:
+    path: ./src/utils/read-local-values-stream.sh
+    name: utils_read_local_values_stream
+    description: 'Prints: Reads local values and stream then as JSON lines'
+    args: ""
+  utils_read_local_values_yaml:
+    path: ./src/utils/read-local-values-yaml.sh
+    name: utils_read_local_values_yaml
+    description: 'Prints: Reads local values and merge them into a single YAML object'
+    args: ""
   utils_test:
     path: ./src/utils/test.sh
     name: utils_test

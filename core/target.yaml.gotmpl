@@ -1,5 +1,32 @@
 {{ $values := .Values }}
+{{ if (and (env "KUBE_CORE_STATE_DEBUG_KEY") (eq (env "KUBE_CORE_STATE_DEBUG") "true")) }}
+releases:
+- name: state-debug
+  chart: kube-core/raw
+  namespace: kube-core
+  values:
+  - manifests:
+    - kind: ConfigMap
+      apiVersion: v1
+      metadata:
+        name: state-debug
+        namespace: kube-core
+      data:
+        state-debug.yaml: |
+          {{ toYaml (.Values | getOrNil (env "KUBE_CORE_STATE_DEBUG_KEY")) | nindent 10 }}
+    {{ if (env "KUBE_CORE_STATE_DEBUG_LOCAL_VALUES") }}
+    - kind: ConfigMap
+      apiVersion: v1
+      metadata:
+        name: local-values-debug
+        namespace: kube-core
+      data:
+        local-values-debug.yaml: |
+          {{ exec "bash" (list "-c" (printf "./scripts/local-values.sh '%s' '%s'" $values.localValuesPaths  $values.localValuesBasePath )) | nindent 10 | trim }}
+    {{ end }}
+{{ else }}
 helmfiles:
 - path: "./{{ coalesce ($values.core | getOrNil "helmfilePath") $values.core.helmfileName }}.target.yaml.gotmpl"
   values:
   - {{ toYaml .Values | nindent 4 }}
+{{ end }}

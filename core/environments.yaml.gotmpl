@@ -3,7 +3,7 @@
 {{ tpl (readFile "./templates/base/environments.yaml.gotmpl") . }}
 ---
 helmfiles:
-- path: ./layer.helmfile.yaml.gotmpl
+- path: ./base.helmfile.yaml.gotmpl
   values:
   - core:
       helmfileName: "environments"

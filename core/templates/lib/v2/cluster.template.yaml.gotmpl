@@ -48,3 +48,23 @@ helmfiles:
       applicationsEnabled: false
       releasesRawEnabled: false
       namespacesEnabled: false
+  {{ $values := false }}
+  {{ $valuesFiles := false }}
+  {{ $entries := (readDirEntries "../") }}
+  {{ range $k, $v := $entries }}
+  {{ if and $v.IsDir (eq $v.Name "local")}}
+  {{ $subEntries := (readDirEntries (printf "../%s" $v.Name)) }}
+  {{ range $k1, $v1 := $subEntries }}
+  {{ if and $v1.IsDir (eq $v1.Name "values") }}
+  {{ $values = true }}
+  {{ $files := (readDirEntries (printf "../%s/%s" $v.Name $v1.Name)) }}
+  {{ $valuesFiles = (gt ($files | len) 0) }}
+  {{ end }}
+  {{ end }}
+  {{ end }}
+  {{ end }}
+  {{ if and $values $valuesFiles }}
+  - localValuesPaths: |
+      {{ exec "bash" (list "-c" (printf "find ../local/values/ -type f | xargs realpath | jq --raw-input '.' | jq -s -c")) | indent 6 | trim }}
+    localValuesBasePath: {{ exec "bash" (list "-c" (printf "realpath ../")) | trim }}
+  {{ end }}
