@@ -2,9 +2,18 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.13.2](https://github.com/kube-core/kube-core/compare/v0.13.1...v0.13.2)
+
+- core/layers: Reworked default layers [`5b99940`](https://github.com/kube-core/kube-core/commit/5b999405b1ffc72f01a5757e7cd7fdce07b5b6b2)
+- core/templates: Added support for local/values input [`e855c11`](https://github.com/kube-core/kube-core/commit/e855c11a7861006f89b0d6f185689181c64e7999)
+- docker: Updated some dependencies versions [`31ab27b`](https://github.com/kube-core/kube-core/commit/31ab27baf1d0d7c6eee3d1c7212e3b13ca9181fd)
+
 #### [v0.13.1](https://github.com/kube-core/kube-core/compare/v0.13.0...v0.13.1)
 
+> 12 May 2023
+
 - cli/docs: Added missing file [`f3471b2`](https://github.com/kube-core/kube-core/commit/f3471b28169d9599247b504683de7b4476a9b23d)
+- release: v0.13.1 [`11e88eb`](https://github.com/kube-core/kube-core/commit/11e88eb08dfec51f12a3e49600dee46a5bd14980)
 - cli/scripts: Fixed permissions on new scripts [`62e4a58`](https://github.com/kube-core/kube-core/commit/62e4a585c4205bf67a91064b9fd4b81dff8e8e41)
 
 #### [v0.13.0](https://github.com/kube-core/kube-core/compare/v0.12.2...v0.13.0)
