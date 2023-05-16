@@ -53,7 +53,7 @@
   {{- if .item.options.injectDefaultIngressClassName }}
       - op: replace
         path: "/spec/ingressClassName"
-        value: "{{ coalesce $values.applicationsConfig.defaultIngressClass $values.servicesConfig.defaultIngressClass $values.cluster.common.defaultIngressClass }}"
+        value: "{{ $values.cluster.common.defaultIngressClass }}"
   {{ end }}
 
   {{- if .item.options.forceNamespaceIngressClass}}

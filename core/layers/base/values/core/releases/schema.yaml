@@ -462,28 +462,6 @@ templates:
     transformers: {}
     values: {}
     templatedValues: {}
-envConfig:
-  namespace: apps
-  defaultIngressClass: ""
-  domain: ""
-  bucketPrefix: ""
-  context: ""
-applications: {}
-applicationsList: {}
-applicationsConfig:
-  namespace: apps
-  defaultIngressClass: ""
-  domain: ""
-  bucketPrefix: ""
-  context: ""
-services: {}
-servicesList: {}
-servicesConfig:
-  namespace: apps
-  defaultIngressClass: ""
-  domain: ""
-  bucketPrefix: ""
-  context: ""
 clusterReleases: {}
 clusterRepositories: []
 releases:

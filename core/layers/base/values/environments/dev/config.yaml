@@ -1,0 +1,68 @@
+environments:
+  dev:
+    enabled: false
+    applicationsConfig:
+      default:
+        enabled: true
+        cloud:
+          enabled: true
+          bucket:
+            enabled: true
+          naming:
+            enabled: true
+        options:
+          renderRelease: true
+          renderOptions: true
+          renderExtensions: true
+          forceNamespace: true
+          forceNamespaceIngressClass: true
+          forceNamespaceVisitorGroup: false
+          forceClusterIssuer: ""
+          forceVisitorGroups: ""
+          forceNamespaceNodeAffinity: false
+          forceNamespaceNodeSelector: false
+          patchIngresses: true
+          upgradeIngress: false
+          applyDefaultLabelsOnIngress: true
+          applyDefaultAnnotationsOnIngress: true
+          removeIngressClassAnnotation: false
+          removeIngressClassName: false
+          injectReloaderAnnotations: true
+          injectClusterLoggingLabel: true
+          injectDefaultIngressClassName: true
+          injectIngressHost: true
+          injectIngressTls: true
+          injectOauth2ProxyOnIngress: false
+          injectNamespaceOauth2ProxyOnIngress: false
+          injectSatisfyAnyAuthOnIngress: false
+          injectionToEnforcePublicAccessFromIngressAccessOperator: false
+          forceNamespaceClusterIssuer: letsencrypt-dns-production-gcp
+    servicesConfig:
+      default:
+        options:
+          renderRelease: true
+          renderOptions: true
+          renderExtensions: true
+          forceNamespace: true
+          forceNamespaceIngressClass: true
+          forceNamespaceVisitorGroup: false
+          forceClusterIssuer: ""
+          forceVisitorGroups: ""
+          forceNamespaceNodeAffinity: false
+          forceNamespaceNodeSelector: false
+          patchIngresses: false
+          upgradeIngress: false
+          applyDefaultLabelsOnIngress: true
+          applyDefaultAnnotationsOnIngress: true
+          removeIngressClassAnnotation: false
+          removeIngressClassName: false
+          injectReloaderAnnotations: true
+          injectClusterLoggingLabel: true
+          injectDefaultIngressClassName: true
+          injectIngressHost: true
+          injectIngressTls: true
+          injectOauth2ProxyOnIngress: false
+          injectNamespaceOauth2ProxyOnIngress: false
+          injectSatisfyAnyAuthOnIngress: false
+          injectionToEnforcePublicAccessFromIngressAccessOperator: false
+          forceNamespaceClusterIssuer: letsencrypt-dns-production-gcp

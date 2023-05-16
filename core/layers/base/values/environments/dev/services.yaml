@@ -1,0 +1,139 @@
+environments:
+  dev:
+    services:
+      istio-ingress-config:
+        enabled: false
+        inheritFromDefaultApp: true
+        chart: kube-core/istio-ingress-config
+      nginx-ingress-controller:
+        enabled: false
+        options:
+          injectReloaderAnnotations: true
+          injectClusterLoggingLabel: true
+        inheritFromDefaultApp: true
+        chart: kube-core/nginx-ingress-controller
+        scaling:
+          enabled: false
+          namespaceSuffix: true
+          minReplicaCount: 3
+          maxReplicaCount: 9
+          cpuAvg:
+            enabled: true
+          memoryAvg:
+            enabled: true
+          ingressControllerAccessFreq:
+            istio: false
+            enabled: true
+        monitoring:
+          enabled: false
+          namespaceSuffix: true
+          cpuAvg:
+            enabled: true
+            container: controller
+          memoryAvg:
+            enabled: true
+            container: controller
+          ingressControllerAccessFreq:
+            enabled: true
+            istio: false
+            container: controller
+      nginx-istio-ingress-controller:
+        enabled: false
+        inheritFromDefaultApp: true
+        chart: kube-core/nginx-ingress-controller
+        scaling:
+          enabled: false
+          namespaceSuffix: true
+          minReplicaCount: 3
+          maxReplicaCount: 9
+          cpuAvg:
+            enabled: true
+          memoryAvg:
+            enabled: true
+          ingressControllerAccessFreq:
+            istio: true
+            enabled: true
+        monitoring:
+          enabled: false
+          namespaceSuffix: true
+          cpuAvg:
+            enabled: true
+            container: controller
+          memoryAvg:
+            enabled: true
+            container: controller
+          ingressControllerAccessFreq:
+            enabled: false
+            istio: true
+            container: controller
+        patches:
+          enabled: true
+          patches:
+            patch-nginx-istio-ingress-clusterip:
+              name: patch-nginx-istio-ingress-clusterip
+              templated: true
+              namespaceSuffix: true
+              targetObjectRef:
+                apiVersion: apps/v1
+                kind: Deployment
+                name: nginx-istio-ingress-controller
+              templatedPatchTemplate: |-
+                spec:
+                  template:
+                    metadata:
+                      annotations:
+                        traffic.sidecar.istio.io/excludeOutboundIPRanges: {{(index . 1).spec.clusterIP}}/24
+              sourceObjectRefs:
+                - apiVersion: v1
+                  kind: Service
+                  name: kubernetes
+                  namespace: default
+      oauth2-proxy:
+        enabled: false
+        inheritFromDefaultApp: true
+        chart: kube-core/oauth2-proxy
+      flux-repository:
+        inheritFromDefaultApp: true
+        chart: kube-core/flux-repository
+        enabled: false
+      apps-mongodb:
+        inheritFromDefaultApp: true
+        chart: kube-core/mongodb-managed
+        enabled: false
+      services-mongodb:
+        inheritFromDefaultApp: true
+        chart: kube-core/mongodb-managed
+        enabled: false
+      apps-rabbitmq:
+        enabled: false
+        inheritFromDefaultApp: true
+        chart: kube-core/rabbitmq-managed
+        options:
+          patchIngresses: true
+      services-rabbitmq:
+        enabled: false
+        inheritFromDefaultApp: true
+        chart: kube-core/rabbitmq-managed
+        options:
+          patchIngresses: true
+          injectReloaderAnnotations: true
+          injectClusterLoggingLabel: true
+          injectDefaultIngressClassName: true
+          injectIngressHost: true
+          injectIngressTls: true
+      apps-postgres:
+        enabled: false
+        inheritFromDefaultApp: true
+        chart: kube-core/postgres-managed
+      apps-cdn:
+        inheritFromDefaultApp: true
+        chart: kube-core/raw
+        enabled: false
+      services-cdn:
+        inheritFromDefaultApp: true
+        chart: kube-core/crossplane-cloud
+        enabled: false
+      env-config:
+        inheritFromDefaultApp: true
+        chart: kube-core/env-config
+        enabled: false

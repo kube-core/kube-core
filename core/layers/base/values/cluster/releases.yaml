@@ -1,0 +1,9 @@
+clusterReleases:
+  cluster-nginx:
+    chart: kube-core/nginx
+    namespace: nginx
+    values:
+      metrics:
+        enabled: true
+        serviceMonitor:
+          enabled: false

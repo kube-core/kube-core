@@ -152,7 +152,7 @@ pod:
   env:
     secrets:
       {{ if ($release | getOrNil "envFromSecret") }}
-      {{ range (index .Values.applicationsList $releaseName "envFromSecret") }}
+      {{ range (index $releaseName "envFromSecret") }}
       - secretName: {{ $releaseName }}
         secretKey: {{ . }}
       {{ end }}
@@ -302,9 +302,9 @@ pod:
       {{ end }}
 
 ingress:
-  className: "{{ coalesce $values.applicationsConfig.defaultIngressClass $values.servicesConfig.defaultIngressClass $values.cluster.common.defaultIngressClass }}"
+  className: "{{ coalesce $values.cluster.common.defaultIngressClass }}"
   hosts:
-    - host: {{ .Release.Name }}.{{ .Release.Namespace }}.{{ coalesce $values.applicationsConfig.domain $values.servicesConfig.domain $values.cluster.config.domain }}
+    - host: {{ .Release.Name }}.{{ .Release.Namespace }}.{{ coalesce $values.cluster.config.domain }}
       paths:
         - path: /
           pathType: ImplementationSpecific

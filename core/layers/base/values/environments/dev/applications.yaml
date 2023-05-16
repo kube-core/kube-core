@@ -1,0 +1,8 @@
+environments:
+  dev:
+    applications:
+      demo-app:
+        enabled: false
+        values:
+          ingress:
+            enabled: true

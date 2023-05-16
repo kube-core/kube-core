@@ -57,23 +57,12 @@ export default class GenerateValues extends BaseCommand {
       layersTemplate = "core/layers/quickstart"
     }
 
-    await this.mergeCoreLayersWithLocalLayers(`${layersTemplate}/values/cluster/config`, `cluster/config`);
-    await this.mergeCoreLayersWithLocalLayers(`${layersTemplate}/values/cluster/releases`, `cluster/releases`);
-
+    await this.mergeCoreLayersWithLocalLayers(`${layersTemplate}/values/cluster`, `cluster`);
     await this.mergeCoreLayersWithLocalLayers(`${layersTemplate}/values/core/cluster`, `core/cluster`);
     await this.mergeCoreLayersWithLocalLayers(`${layersTemplate}/values/core/config`, `core/config`);
     await this.mergeCoreLayersWithLocalLayers(`${layersTemplate}/values/core/releases`, `core/releases`);
+    await this.mergeCoreLayersWithLocalLayers(`${layersTemplate}/values/environments/dev`, `environments/dev`);
 
-    await this.mergeCoreLayersWithLocalLayers(`${layersTemplate}/values/platform/config`, `platform/config`);
-    await this.mergeCoreLayersWithLocalLayers(`${layersTemplate}/values/platform/environments`, `platform/environments`);
-    await this.mergeCoreLayersWithLocalLayers(`${layersTemplate}/values/platform/applications`, `platform/applications`);
-    await this.mergeCoreLayersWithLocalLayers(`${layersTemplate}/values/platform/services`, `platform/services`);
-
-    await this.mergeCoreLayersWithLocalLayers(`${layersTemplate}/values/envs/default/applications`, `envs/default/applications`);
-    await this.mergeCoreLayersWithLocalLayers(`${layersTemplate}/values/envs/default/services`, `envs/default/services`);
-
-    await this.mergeCoreLayersWithLocalLayers(`${layersTemplate}/values/envs/dev/applications`, `envs/dev/applications`);
-    await this.mergeCoreLayersWithLocalLayers(`${layersTemplate}/values/envs/dev/services`, `envs/dev/services`);
 
   }
 

@@ -80,7 +80,7 @@
 cluster: {{ toYaml $values.cluster | nindent 2 }}
 cloud: {{ toYaml $values.cloud | nindent 2 }}
 
-{{ $ingressClassName := (coalesce $values.applicationsConfig.defaultIngressClass $values.servicesConfig.defaultIngressClass $values.cluster.common.defaultIngressClass) }}
+{{ $ingressClassName := (coalesce $values.cluster.common.defaultIngressClass) }}
 resources:
 
   {{ if (eq ($rabbitmq | getOrNil "type") "dedicated") }}

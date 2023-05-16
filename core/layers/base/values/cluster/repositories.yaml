@@ -1,0 +1,5 @@
+clusterRepositories:
+- name: kube-core
+  url: https://kube-core.github.io/helm-charts
+- name: bitnami
+  url: https://charts.bitnami.com/bitnami

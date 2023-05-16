@@ -55,15 +55,18 @@
 ####################
 
 ####################
+# Cluster Releases
+# Defines cluster releases config
+- ./layers/base/values/cluster/releases.yaml
+- ./layers/base/values/cluster/repositories.yaml
+
+####################
 # Applications
 # Defines environments config
-- ./layers/base/values/platform/environments/environments.yaml
-# Defines applications config
-- ./layers/base/values/platform/applications/applications-schema.yaml
-- ./layers/base/values/platform/applications/applications-config.yaml
-# Defines services config
-- ./layers/base/values/platform/services/services-schema.yaml
-- ./layers/base/values/platform/services/services-config.yaml
+# - ./layers/base/values/environments/environments.yaml
+- ./layers/base/values/environments/dev/config.yaml
+- ./layers/base/values/environments/dev/applications.yaml
+- ./layers/base/values/environments/dev/services.yaml
 
 ####################
 # END - Releases   #

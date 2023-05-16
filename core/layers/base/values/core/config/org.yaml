@@ -5,3 +5,10 @@ org:
   repository: KUBE_CORE_ORG_REPOSITORY
   ref: KUBE_CORE_ORG_REF
   path: KUBE_CORE_ORG_PATH
+  # Use this to reference values for your org
+  core:
+    values: []
+  cluster:
+    values: []
+  platform:
+    values: []

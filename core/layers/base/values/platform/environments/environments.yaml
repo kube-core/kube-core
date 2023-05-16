@@ -1,5 +1,0 @@
-environments:
-  default: {}
-  dev: {}
-environmentsConfig:
-  inheritFromDefaultApp: true

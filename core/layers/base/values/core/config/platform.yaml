@@ -5,3 +5,5 @@ platform:
   repository: KUBE_CORE_PLATFORM_REPOSITORY
   ref: KUBE_CORE_PLATFORM_REF
   path: KUBE_CORE_PLATFORM_PATH
+environmentsConfig:
+  inheritFromDefaultApp: true
