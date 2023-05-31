@@ -152,7 +152,7 @@ pod:
   env:
     secrets:
       {{ if ($release | getOrNil "envFromSecret") }}
-      {{ range (index $releaseName "envFromSecret") }}
+      {{ range (index $release "envFromSecret") }}
       - secretName: {{ $releaseName }}
         secretKey: {{ . }}
       {{ end }}
