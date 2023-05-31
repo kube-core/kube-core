@@ -48,5 +48,5 @@
 
 {{/* Release Header - End */}}
 
-{{ $data := (dict "applications" $applications "services" $services "environmentsConfig" $values.environmentsConfig) }}
-data: {{ toYaml $environments | nindent 4 }}
+data:
+  env-config.yaml: ""
