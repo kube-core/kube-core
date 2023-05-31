@@ -23,6 +23,9 @@ USAGE
 DESCRIPTION
   Generates cluster-config.yaml from core values.
 
+ALIASES
+  $ kube-core generate cluster-config
+
 EXAMPLES
   $ kube-core cluster setup config
 ```

@@ -33,7 +33,7 @@ $ npm install -g @kube-core/cli
 $ kube-core COMMAND
 running command...
 $ kube-core (--version)
-@kube-core/cli/0.13.2 win32-x64 node-v18.12.0
+@kube-core/cli/0.13.3 win32-x64 node-v18.12.0
 $ kube-core --help [COMMAND]
 USAGE
   $ kube-core COMMAND

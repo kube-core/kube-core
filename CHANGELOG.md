@@ -2,1055 +2,1064 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.13.3](https://github.com/kube-core/kube-core/compare/v0.13.2...v0.13.3)
+
+- cli: Fixed a few bugs [`f4dae54`](https://github.com/kube-core/kube-core/commit/f4dae54df985edf93f0cf1f536b0c286f7ab4905)
+- releases/env-config: Disabled env-config injection by default [`e30dbb9`](https://github.com/kube-core/kube-core/commit/e30dbb9bc4084539e7298a572d755285bff8da2b)
+- values/n9-api: Fixed env injection from release named secret [`33dafca`](https://github.com/kube-core/kube-core/commit/33dafca6a305b66137ef1c6cec9198ddbd6571d3)
+
 #### [v0.13.2](https://github.com/kube-core/kube-core/compare/v0.13.1...v0.13.2)
 
-- core/layers: Reworked default layers [`5b99940`](https://github.com/kube-core/kube-core/commit/5b999405b1ffc72f01a5757e7cd7fdce07b5b6b2)
-- core/templates: Added support for local/values input [`e855c11`](https://github.com/kube-core/kube-core/commit/e855c11a7861006f89b0d6f185689181c64e7999)
-- docker: Updated some dependencies versions [`31ab27b`](https://github.com/kube-core/kube-core/commit/31ab27baf1d0d7c6eee3d1c7212e3b13ca9181fd)
+> 16 May 2023
+
+- core/layers: Reworked default layers [`7e66dd1`](https://github.com/kube-core/kube-core/commit/7e66dd153957d184a7acbbac275962c3fd5da581)
+- core/templates: Added support for local/values input [`f76cde2`](https://github.com/kube-core/kube-core/commit/f76cde255727fa5e3b5bbb9b3a40a0a9ebb30d20)
+- release: v0.13.2 [`3715eed`](https://github.com/kube-core/kube-core/commit/3715eedc1991cbd9a5a7c5e19ef23783caeb7195)
+- docker: Updated some dependencies versions [`49e3838`](https://github.com/kube-core/kube-core/commit/49e38388d46e0008c3a19da8983b1e2ddbb813f3)
 
 #### [v0.13.1](https://github.com/kube-core/kube-core/compare/v0.13.0...v0.13.1)
 
 > 12 May 2023
 
-- cli/docs: Added missing file [`f3471b2`](https://github.com/kube-core/kube-core/commit/f3471b28169d9599247b504683de7b4476a9b23d)
-- release: v0.13.1 [`11e88eb`](https://github.com/kube-core/kube-core/commit/11e88eb08dfec51f12a3e49600dee46a5bd14980)
-- cli/scripts: Fixed permissions on new scripts [`62e4a58`](https://github.com/kube-core/kube-core/commit/62e4a585c4205bf67a91064b9fd4b81dff8e8e41)
+- cli/docs: Added missing file [`5fb21a9`](https://github.com/kube-core/kube-core/commit/5fb21a9c4b8d0b7e8aefbe0e6a402abc3bc6146a)
+- release: v0.13.1 [`265b2be`](https://github.com/kube-core/kube-core/commit/265b2be8879a3c8e57a84a863f5826ce1c6216a1)
+- cli/scripts: Fixed permissions on new scripts [`59b30e5`](https://github.com/kube-core/kube-core/commit/59b30e5f60b158b07ed38f153f37e5ca67e3e9d3)
 
 #### [v0.13.0](https://github.com/kube-core/kube-core/compare/v0.12.2...v0.13.0)
 
 > 12 May 2023
 
-- core: Reworked all templates and decoupled kube-core state processing from templates [`ad9870e`](https://github.com/kube-core/kube-core/commit/ad9870ed3d3a8afae8cadc06db33fb592deb19d8)
-- releases: Rebuilt releases [`b70aa4b`](https://github.com/kube-core/kube-core/commit/b70aa4bf12fa4777079bc8d7de7357c9bf69298b)
-- cli/commands: Added command to reshape values [`91f2d65`](https://github.com/kube-core/kube-core/commit/91f2d65f38edf417c5058365f4c444a86ca9ba39)
-- core/layers: Updated various layers [`a440312`](https://github.com/kube-core/kube-core/commit/a440312f4c54342a2514e802d27d172c3fb5b712)
-- cli/commands: Added command to generate cluster webhooks [`b161a1a`](https://github.com/kube-core/kube-core/commit/b161a1ab466dace84b9e65e04589e409d6365b41)
-- release: v0.13.0 [`88a0ab6`](https://github.com/kube-core/kube-core/commit/88a0ab6dbf5e2c4a46cda567068c52202a2cb15b)
-- cli/scripts: Reworked some generation scripts [`0107667`](https://github.com/kube-core/kube-core/commit/0107667a36e26ecb9874ccd37aab83b1cc5f4a07)
-- core/releases: Upgraded tekton-logging to v0.1.1 [`bdfe9a4`](https://github.com/kube-core/kube-core/commit/bdfe9a48d5930c2d8e7644b84c744adfc842e218)
-- cli/scripts: Removed useless condition in add-webhooks [`a73c3aa`](https://github.com/kube-core/kube-core/commit/a73c3aa9b0f8a45334bf3e3870f5964381de1a3b)
-- cli/base: Added valuesList and git status in base command [`f16e859`](https://github.com/kube-core/kube-core/commit/f16e859b74a20068bc206fca1a1fab15964f5981)
-- cli/commands: Added command to update releases [`86c3405`](https://github.com/kube-core/kube-core/commit/86c34059e46fae96dcb593b341e45d9a13b2e4e4)
-- core/values: Fixed velero credentials configuration [`6ecfbb1`](https://github.com/kube-core/kube-core/commit/6ecfbb1528ef553a8e455595541c47b49b3cd5f1)
+- core: Reworked all templates and decoupled kube-core state processing from templates [`e080aa9`](https://github.com/kube-core/kube-core/commit/e080aa95b2014517c5730a573f7f12cafeddd85d)
+- releases: Rebuilt releases [`440a30f`](https://github.com/kube-core/kube-core/commit/440a30f2d52d9dcd7e8e59a0407df4ffc0942695)
+- cli/commands: Added command to reshape values [`00381a1`](https://github.com/kube-core/kube-core/commit/00381a1df5c17c4e5e1a70c7a30b8b25ea1ec158)
+- core/layers: Updated various layers [`73c56e5`](https://github.com/kube-core/kube-core/commit/73c56e54504825b10976a19d4de47bbb6e7d298d)
+- cli/commands: Added command to generate cluster webhooks [`f72d585`](https://github.com/kube-core/kube-core/commit/f72d58533f6ea3228b47228b871d5e46f9283f4a)
+- release: v0.13.0 [`75e7ade`](https://github.com/kube-core/kube-core/commit/75e7adef7610c7d96bd6dc974cb1fabdbb46f5ee)
+- cli/scripts: Reworked some generation scripts [`cbf9aa6`](https://github.com/kube-core/kube-core/commit/cbf9aa690b0b05c9774c007cda4fa6e1dc282732)
+- core/releases: Upgraded tekton-logging to v0.1.1 [`f274afc`](https://github.com/kube-core/kube-core/commit/f274afc52b9a904d70b83ea9ae05010c25b4e159)
+- cli/scripts: Removed useless condition in add-webhooks [`888759a`](https://github.com/kube-core/kube-core/commit/888759a7836278278e2b0f0022c4470bad5c5eb5)
+- cli/base: Added valuesList and git status in base command [`de77449`](https://github.com/kube-core/kube-core/commit/de77449176cd895b8a457d8528ff7c26b56d1c1e)
+- cli/commands: Added command to update releases [`344b6a2`](https://github.com/kube-core/kube-core/commit/344b6a24bbbaf673d810569eb916ad8549c51da2)
+- core/values: Fixed velero credentials configuration [`72a0f7a`](https://github.com/kube-core/kube-core/commit/72a0f7a9ffe964b1c44608e1016d06ccc2fb4079)
 
 #### [v0.12.2](https://github.com/kube-core/kube-core/compare/v0.12.1...v0.12.2)
 
 > 29 April 2023
 
-- releases: Rebuilt releases [`b1eea6d`](https://github.com/kube-core/kube-core/commit/b1eea6d509b3fbe8fbb1294aa937d525efb37db5)
-- cli/scripts: Completely reworked cluster setup scripts & Added CLI commands for that [`a2ff285`](https://github.com/kube-core/kube-core/commit/a2ff28542caac90d3fb761d190678f8cf81aa933)
-- core/values: Updated velero configuration [`1c92293`](https://github.com/kube-core/kube-core/commit/1c9229398ea9ad9b368c54a43e986966d9622283)
-- release: v0.12.2 [`df5d249`](https://github.com/kube-core/kube-core/commit/df5d249555ca763e2babef725ca41ca14fa471c7)
-- cli/commands: Added dev/prod/local commands for faster development [`f88ca80`](https://github.com/kube-core/kube-core/commit/f88ca80c018cad623279b7cb220723a291d62129)
-- cli/scripts: Improved update-releases script [`6be6e66`](https://github.com/kube-core/kube-core/commit/6be6e66848ea00ee65cf46db9bfa791700def9b3)
-- core/layers: Shortened CRO naming config [`c0c1546`](https://github.com/kube-core/kube-core/commit/c0c15464a13bfe3d3463ba6ad93ab283d1781c66)
-- core/layers: Added cluster network configuration in values [`97f1ade`](https://github.com/kube-core/kube-core/commit/97f1adee080f7ff133038609a2fff7a5f6fb9af0)
-- cli/commands: Added gitops:overlays:apply to apply overlays on gitops config [`2a27d66`](https://github.com/kube-core/kube-core/commit/2a27d66c73f163d96a8ab7106a745d1b9520f24a)
-- core/layers: Added more options for gitops config [`de563d0`](https://github.com/kube-core/kube-core/commit/de563d07d1e30616277f199468b98716ce17a447)
-- core/releases: Added default alertmanager inhibitrules for gke clusters [`14adb6b`](https://github.com/kube-core/kube-core/commit/14adb6bf14928540280fa2d37332b1dcf4969151)
-- core/releases: Improved oauth2 proxy default cookie configuration [`9fcf848`](https://github.com/kube-core/kube-core/commit/9fcf848cea9470ddd18624da3dde30fbbb458f79)
-- core/layers: Added flux-ssh secret replication for flux-repository [`8b0e24e`](https://github.com/kube-core/kube-core/commit/8b0e24e24e37843b80a154f3a5d58ea1972696fd)
-- cli/scripts: Added flux.kube-core.io annotation to rewrite flux imagepolicies after kubectl slice [`3186b25`](https://github.com/kube-core/kube-core/commit/3186b25a6220c79cab3f81031eb5ff9ffdbe208f)
-- core/layers: Removed useless secret on CRO [`26fc59a`](https://github.com/kube-core/kube-core/commit/26fc59ab99cda2e3b10ce81e12a5eb1b791e765d)
-- core/values: Fixed some templating bugs [`ed3925c`](https://github.com/kube-core/kube-core/commit/ed3925ce748f9984a00fbd6f22b3317cb93031ef)
-- core/values: Added some values injection in flux-repository [`94259df`](https://github.com/kube-core/kube-core/commit/94259df6b1092094974dbb3f5d5f0262178b80bf)
-- core/layers: Fixed GCP IAM for tekton and CRO [`8cc98b3`](https://github.com/kube-core/kube-core/commit/8cc98b38cf2687a3011aebd8256c45f62493e111)
+- releases: Rebuilt releases [`44cd3a5`](https://github.com/kube-core/kube-core/commit/44cd3a57af8f1f5caf08b4473da6139c4b587ff3)
+- cli/scripts: Completely reworked cluster setup scripts & Added CLI commands for that [`d90c989`](https://github.com/kube-core/kube-core/commit/d90c989d4354d24afcb7b8ba3292c0667f13acdd)
+- core/values: Updated velero configuration [`cf28518`](https://github.com/kube-core/kube-core/commit/cf28518a32cfa9dc4b2aabe986bb873561b2127f)
+- release: v0.12.2 [`1e36bce`](https://github.com/kube-core/kube-core/commit/1e36bce1c747ea196405c01b4d8f24619e816dec)
+- cli/commands: Added dev/prod/local commands for faster development [`ba3ae7d`](https://github.com/kube-core/kube-core/commit/ba3ae7de460e3142d55a57b50f8e422bb3f869e8)
+- cli/scripts: Improved update-releases script [`d1b696a`](https://github.com/kube-core/kube-core/commit/d1b696a240ce5d0a83f8d7c291c84eea2b008f08)
+- core/layers: Shortened CRO naming config [`0a8e2e0`](https://github.com/kube-core/kube-core/commit/0a8e2e0f62e7e367dfd664daf1c96a8726c27d4e)
+- core/layers: Added cluster network configuration in values [`8707bb9`](https://github.com/kube-core/kube-core/commit/8707bb91c58be2795a3ec9c132faab995583818c)
+- cli/commands: Added gitops:overlays:apply to apply overlays on gitops config [`905924f`](https://github.com/kube-core/kube-core/commit/905924fc5c769b634d3c6ec5804acedbd35fc6e4)
+- core/layers: Added more options for gitops config [`0c924f4`](https://github.com/kube-core/kube-core/commit/0c924f44ce774c903254e25770a712da3a67a9f7)
+- core/releases: Added default alertmanager inhibitrules for gke clusters [`5b85c4d`](https://github.com/kube-core/kube-core/commit/5b85c4ded7013a7a6ef2f70c6f91417411619956)
+- core/releases: Improved oauth2 proxy default cookie configuration [`338528f`](https://github.com/kube-core/kube-core/commit/338528fe8bf05908722e1d571930508f9f26b082)
+- core/layers: Added flux-ssh secret replication for flux-repository [`88d0753`](https://github.com/kube-core/kube-core/commit/88d0753a02f087ed6324dc511af46213eb4cd451)
+- cli/scripts: Added flux.kube-core.io annotation to rewrite flux imagepolicies after kubectl slice [`e10638d`](https://github.com/kube-core/kube-core/commit/e10638d6a546fd59b88593a3eed6e590155e69d3)
+- core/layers: Removed useless secret on CRO [`866cfea`](https://github.com/kube-core/kube-core/commit/866cfea322a3adcdbedf59b9723930d03c52bba5)
+- core/values: Fixed some templating bugs [`1c3bd12`](https://github.com/kube-core/kube-core/commit/1c3bd1263d23e951a9049c95511f297a92fa11f7)
+- core/values: Added some values injection in flux-repository [`fbdf6cf`](https://github.com/kube-core/kube-core/commit/fbdf6cfc976cb22473a066ee0daca864467760a4)
+- core/layers: Fixed GCP IAM for tekton and CRO [`3741a1d`](https://github.com/kube-core/kube-core/commit/3741a1dd70a0b1e3f1df58d254f4826f746d5c92)
 
 #### [v0.12.1](https://github.com/kube-core/kube-core/compare/v0.12.0...v0.12.1)
 
 > 24 April 2023
 
-- cli/scripts: Updated some scripts [`4712c03`](https://github.com/kube-core/kube-core/commit/4712c03d6e828a92dbc90eeb6a884120099632ce)
-- release: v0.12.1 [`1a9b4a6`](https://github.com/kube-core/kube-core/commit/1a9b4a6fb8e8680a98d9039ca6242e2a45a43f99)
-- cli/commands: Fixed generate:values command [`9ced61e`](https://github.com/kube-core/kube-core/commit/9ced61e2a74f6e0607c290704d4bba5d83560d96)
-- core/values: Specify default index template in cluster-logging [`a0b383d`](https://github.com/kube-core/kube-core/commit/a0b383d797db0e3bc846cd59a9513287a1bf75a2)
-- core/templates: Disabled ServiceAccount name length validation for release-cloud [`a2b1336`](https://github.com/kube-core/kube-core/commit/a2b1336b73e2e856085c3558d580b5257a00c91c)
-- workflows/sync-dist: Fixed wrong synced path for dist-manifests [`758693a`](https://github.com/kube-core/kube-core/commit/758693aa8505f48d2b5abb195745f5acb2ce1a14)
-- repo: Added releases/local to .gitignore [`7220db8`](https://github.com/kube-core/kube-core/commit/7220db8c77920f4aa8190671aa0004eff847f82b)
+- cli/scripts: Updated some scripts [`0a8e8a1`](https://github.com/kube-core/kube-core/commit/0a8e8a151a4e1503bd4c375a1dba6351f775481a)
+- release: v0.12.1 [`8312332`](https://github.com/kube-core/kube-core/commit/831233209ccca47853827aa0f4e7d63f177980b7)
+- cli/commands: Fixed generate:values command [`47f14d9`](https://github.com/kube-core/kube-core/commit/47f14d9cb5b0cb804a2246bf3dd2b1380a707975)
+- core/values: Specify default index template in cluster-logging [`75a1290`](https://github.com/kube-core/kube-core/commit/75a12906306cc1834aa3f4909f97be8a0d51f667)
+- core/templates: Disabled ServiceAccount name length validation for release-cloud [`cf20b8d`](https://github.com/kube-core/kube-core/commit/cf20b8d9fccd734e12842719d2bacba2e10380cf)
+- workflows/sync-dist: Fixed wrong synced path for dist-manifests [`290edf3`](https://github.com/kube-core/kube-core/commit/290edf3feb4d29ec1775559f697bfdaffa395928)
+- repo: Added releases/local to .gitignore [`a4ef169`](https://github.com/kube-core/kube-core/commit/a4ef1699d5429f9db2805f99575a7df6068819c0)
 
 #### [v0.12.0](https://github.com/kube-core/kube-core/compare/v0.11.24...v0.12.0)
 
 > 23 April 2023
 
-- releases: Updated all core dependencies [`dd6fa4e`](https://github.com/kube-core/kube-core/commit/dd6fa4eaf3a5f2817e5155e41c524eab1ce7e705)
-- releases: Removed all local releases [`e602fc4`](https://github.com/kube-core/kube-core/commit/e602fc40aaaa630a27257bf82fc071760c021fc8)
-- cli/scripts: Updated terraform cluster generation [`3255e1b`](https://github.com/kube-core/kube-core/commit/3255e1b425803321cf226c1453baa2674463d24d)
-- cli/scripts: Added update-releases script to upgrade all core dependencies [`58cabea`](https://github.com/kube-core/kube-core/commit/58cabea460b94527d79eeb36bc8d73b264ab33bc)
-- cli/scripts: Updated prod mode script [`f7021b1`](https://github.com/kube-core/kube-core/commit/f7021b1c9ce8cb0bc034f38bace64c67bdd07cef)
-- workflows/sync-dist: Added dist-manifest repo to sync [`4ad5d05`](https://github.com/kube-core/kube-core/commit/4ad5d050420c13071196cafc953535bc377eb50c)
-- releases: Updated some releases [`5d8aad7`](https://github.com/kube-core/kube-core/commit/5d8aad7e86a8b4734720fddae531665cb043a7f2)
-- release: v0.12.0 [`4e3aa92`](https://github.com/kube-core/kube-core/commit/4e3aa920b9a8a1fcc3e89de23178ad1d93aeb563)
-- repo/actions: Renamed crds-charts repo to dist-crds [`e2e9aee`](https://github.com/kube-core/kube-core/commit/e2e9aeebbea8037c58debd248a8ad2662a134290)
-- dockerfile: Updated arkade cli install [`753a1de`](https://github.com/kube-core/kube-core/commit/753a1dee82268105ed9ff5c16f032e8dd96816ed)
+- releases: Updated all core dependencies [`00915a5`](https://github.com/kube-core/kube-core/commit/00915a55e71e3e9267a8d872b0895d4474aefdb1)
+- releases: Removed all local releases [`15b5f3d`](https://github.com/kube-core/kube-core/commit/15b5f3ddd892d8a4d15f3d813fb208922f8778c5)
+- cli/scripts: Updated terraform cluster generation [`287b08f`](https://github.com/kube-core/kube-core/commit/287b08f8659984b664144a68adfc26a3301805a1)
+- cli/scripts: Added update-releases script to upgrade all core dependencies [`abc11e1`](https://github.com/kube-core/kube-core/commit/abc11e1fb4a119152b167dc824135efad6318d14)
+- cli/scripts: Updated prod mode script [`c2ba05a`](https://github.com/kube-core/kube-core/commit/c2ba05a84c6db42027dbb7c807cc23a12ed5cb1f)
+- workflows/sync-dist: Added dist-manifest repo to sync [`464c00a`](https://github.com/kube-core/kube-core/commit/464c00ad1509f5c35fe7de199c75028429d68ab6)
+- releases: Updated some releases [`80aa769`](https://github.com/kube-core/kube-core/commit/80aa769ee876541d974071b923bd8c57d23326b4)
+- release: v0.12.0 [`968b337`](https://github.com/kube-core/kube-core/commit/968b3375adb986b7d64341fb83050ba3fed7237d)
+- repo/actions: Renamed crds-charts repo to dist-crds [`46cc525`](https://github.com/kube-core/kube-core/commit/46cc525b56559d0de595d7a6cb3f1ef7a307596e)
+- dockerfile: Updated arkade cli install [`f543dd4`](https://github.com/kube-core/kube-core/commit/f543dd40bd85ccaa15a57f21fe034bd31fd037f7)
 
 #### [v0.11.24](https://github.com/kube-core/kube-core/compare/v0.11.23...v0.11.24)
 
 > 18 April 2023
 
-- release: v0.11.24 [`e095e38`](https://github.com/kube-core/kube-core/commit/e095e38a17629909b199b999f59e0980dec9397a)
-- core/layers: Fixed sidecar-cleaner not in schema [`560b647`](https://github.com/kube-core/kube-core/commit/560b64744c8af3b6a4f8286a9ee21c18489ea49c)
+- release: v0.11.24 [`4a5962a`](https://github.com/kube-core/kube-core/commit/4a5962a4790ce612c938c9c6145599649650173f)
+- core/layers: Fixed sidecar-cleaner not in schema [`0ed27e3`](https://github.com/kube-core/kube-core/commit/0ed27e36335997ed403fe274af16e5a26072178b)
 
 #### [v0.11.23](https://github.com/kube-core/kube-core/compare/v0.11.22...v0.11.23)
 
 > 18 April 2023
 
-- releases/cluster-logging: Added custom default ILM policy [`4064db7`](https://github.com/kube-core/kube-core/commit/4064db7b909330ded1869e620035f85a1b653fc7)
-- release: v0.11.23 [`4ea5738`](https://github.com/kube-core/kube-core/commit/4ea5738a1519568d7c3e81c1bf96202d0571d310)
+- releases/cluster-logging: Added custom default ILM policy [`df995a3`](https://github.com/kube-core/kube-core/commit/df995a38e9fee680f99d09e6a4a4dff9966bf3ac)
+- release: v0.11.23 [`418e182`](https://github.com/kube-core/kube-core/commit/418e1826009add44b0ead3b8cecb89bd1d6a124d)
 
 #### [v0.11.22](https://github.com/kube-core/kube-core/compare/v0.11.21...v0.11.22)
 
 > 18 April 2023
 
-- releases: Upgraded istio integration [`bc1105a`](https://github.com/kube-core/kube-core/commit/bc1105a056a8dc5a54321c8a3566c43c83055415)
-- releases/istio: Fixed istio releases [`0853364`](https://github.com/kube-core/kube-core/commit/08533648cba3fcb643712f5c426d71e8f6fb1b9c)
-- releases/app-extensions: Added ingress integration & Upgraded some resources [`16f8f57`](https://github.com/kube-core/kube-core/commit/16f8f5776077a6e228eabaa023aaf8c21f57022a)
-- core/layers: Updated layers to improve istio integration [`c3e1754`](https://github.com/kube-core/kube-core/commit/c3e1754e89b5ff6bcf62d216b5914aceeeffc1fb)
-- core/releases: Updated and added cloud integration for chartmuseum [`0ea536c`](https://github.com/kube-core/kube-core/commit/0ea536cb891bc12b5c0ac38873876dd56ae848a0)
-- cli/scripts: Added some utility scripts [`4e01917`](https://github.com/kube-core/kube-core/commit/4e01917722e076c11a546c5d1bac0c0422f50872)
-- core/templates: Reworked scaling extension integration [`4737315`](https://github.com/kube-core/kube-core/commit/4737315fbb11c768a898cf8d006118b630745815)
-- releases/kps: Fixed some templating issues [`1bded2f`](https://github.com/kube-core/kube-core/commit/1bded2f0bc95d6a24e9be932f9312a081101b941)
-- release: v0.11.22 [`38b06cd`](https://github.com/kube-core/kube-core/commit/38b06cd9848256d92873accf8d4f2b91dd30427f)
-- releases/app-extensions: Added extraPrometheusTriggers on ScaledObject [`56a02ac`](https://github.com/kube-core/kube-core/commit/56a02acc80eae915e2a4fe6a433f72e07248ad11)
-- core/releases: Added chartmuseum dashboard to monitoring grafana [`69e8aa6`](https://github.com/kube-core/kube-core/commit/69e8aa6316b1ca581ed586c9cdcc87cd6f634852)
-- core/releases: Added config key for nginx-ingress LB IP & default resources requests [`d71677f`](https://github.com/kube-core/kube-core/commit/d71677f7e9918937fd9af29aeac3fd9a5a227c1e)
-- releases/app-extensions: Added SlackChannel [`40ea7e4`](https://github.com/kube-core/kube-core/commit/40ea7e43190bd9be33539fd4a126d9bb44c43808)
-- cli/scripts: Allowed files folder in charts dist build [`d49dbd3`](https://github.com/kube-core/kube-core/commit/d49dbd356138c7a221b87634c9bb079e21343cf8)
+- releases: Upgraded istio integration [`9c5fd00`](https://github.com/kube-core/kube-core/commit/9c5fd005e159a6eae66af52c8bd73bc32898bb57)
+- releases/istio: Fixed istio releases [`55c7c94`](https://github.com/kube-core/kube-core/commit/55c7c94b68c74bf7272af502618b9fbe6b3975be)
+- releases/app-extensions: Added ingress integration & Upgraded some resources [`96801c0`](https://github.com/kube-core/kube-core/commit/96801c0338a001f02174e8b71523fe5ff873111f)
+- core/layers: Updated layers to improve istio integration [`09ba9ab`](https://github.com/kube-core/kube-core/commit/09ba9ab49a059068ad0e96743cd5b0af825f2ab2)
+- core/releases: Updated and added cloud integration for chartmuseum [`ff4b18e`](https://github.com/kube-core/kube-core/commit/ff4b18e6dddf8b23c2e0199b18e504b710549f48)
+- cli/scripts: Added some utility scripts [`4ddb2bb`](https://github.com/kube-core/kube-core/commit/4ddb2bba5163f7eaf189baee2294df62cc66d34a)
+- core/templates: Reworked scaling extension integration [`d4fa0cd`](https://github.com/kube-core/kube-core/commit/d4fa0cda78af2ef3c87f0ca640abb340a6f54c9c)
+- releases/kps: Fixed some templating issues [`9716954`](https://github.com/kube-core/kube-core/commit/9716954e0d1972daa1640bdcdb3857dc7ed75f9f)
+- release: v0.11.22 [`82a678f`](https://github.com/kube-core/kube-core/commit/82a678f893840e83c2c2ce98e306859826864b4f)
+- releases/app-extensions: Added extraPrometheusTriggers on ScaledObject [`76aad2a`](https://github.com/kube-core/kube-core/commit/76aad2a0c6e14e21e4b2ba7c8efdc85c17d105d5)
+- core/releases: Added chartmuseum dashboard to monitoring grafana [`5cba3e4`](https://github.com/kube-core/kube-core/commit/5cba3e4cb1d0de6fc397d5781aca5d1db1e47cc5)
+- core/releases: Added config key for nginx-ingress LB IP & default resources requests [`8210aff`](https://github.com/kube-core/kube-core/commit/8210aff52115f2e5b273988b83664b3f9f60fc31)
+- releases/app-extensions: Added SlackChannel [`e6fd4e3`](https://github.com/kube-core/kube-core/commit/e6fd4e310844b0ef9510baa8da5441a6afc35363)
+- cli/scripts: Allowed files folder in charts dist build [`8033c2e`](https://github.com/kube-core/kube-core/commit/8033c2eca56536ccd26deb10cf1e74fedd9a0379)
 
 #### [v0.11.21](https://github.com/kube-core/kube-core/compare/v0.11.20...v0.11.21)
 
 > 7 April 2023
 
-- releases/nginx-ingress-controller: Upgraded chart to v9.5.1 [`76a8e62`](https://github.com/kube-core/kube-core/commit/76a8e6295f5d7bc40a9e2f5eb30b48d835c88541)
-- release: v0.11.21 [`473cff4`](https://github.com/kube-core/kube-core/commit/473cff4dc794ce7cc28263495dfb142e9fe0ae8b)
+- releases/nginx-ingress-controller: Upgraded chart to v9.5.1 [`059b2fe`](https://github.com/kube-core/kube-core/commit/059b2fecd7db29393e79fd1a63be8a4db1ad9aa8)
+- release: v0.11.21 [`16599c1`](https://github.com/kube-core/kube-core/commit/16599c14e21805ba861328e0cbd178ffeeb5f3b8)
 
 #### [v0.11.20](https://github.com/kube-core/kube-core/compare/v0.11.19...v0.11.20)
 
 > 27 March 2023
 
-- core/templates: Reworked values injection to allow remote sources [`c25c03c`](https://github.com/kube-core/kube-core/commit/c25c03c0707e73c2acfaf274954e7861a064817d)
-- release: v0.11.20 [`1eb4ff2`](https://github.com/kube-core/kube-core/commit/1eb4ff2f178a8b604fa713e3d69dc280c132783e)
-- releases/logging-stack: Fixed some wrong default values [`3be154c`](https://github.com/kube-core/kube-core/commit/3be154c1bedfa0eb32a59fb948d7530aae686b60)
-- releases/cluster-logging: Changed default log key to message for containerd runtime [`9143a72`](https://github.com/kube-core/kube-core/commit/9143a72f76198185af5566b6a74541950108fbef)
-- core/values: Fixed GCP permissions for estafette releases [`824ff90`](https://github.com/kube-core/kube-core/commit/824ff90d0dedbcc38ffe57bf3fbd01480f6545b0)
-- cli/scripts: Added helmfile key to kube-core generate cluster-config [`9424cf1`](https://github.com/kube-core/kube-core/commit/9424cf1e84f30c013440f15f7b5f568fa09c09a8)
+- core/templates: Reworked values injection to allow remote sources [`79f83d4`](https://github.com/kube-core/kube-core/commit/79f83d43481f45abb03fbfadb5998754690c3222)
+- release: v0.11.20 [`cf7c1ad`](https://github.com/kube-core/kube-core/commit/cf7c1ad52e8003216dc035c41a2ab232ef0d9940)
+- releases/logging-stack: Fixed some wrong default values [`e8d9bf3`](https://github.com/kube-core/kube-core/commit/e8d9bf39b67d2f7a44d9b410e487ccb495bfe052)
+- releases/cluster-logging: Changed default log key to message for containerd runtime [`7cc21b6`](https://github.com/kube-core/kube-core/commit/7cc21b6bb29165fb34fba8c0e7a9de614cdef747)
+- core/values: Fixed GCP permissions for estafette releases [`5e0d5cf`](https://github.com/kube-core/kube-core/commit/5e0d5cf861087d1f99070b439844a7d8cebcba81)
+- cli/scripts: Added helmfile key to kube-core generate cluster-config [`cbcab75`](https://github.com/kube-core/kube-core/commit/cbcab75498d8c232b64093403c31d0bc9912eaf1)
 
 #### [v0.11.19](https://github.com/kube-core/kube-core/compare/v0.11.18...v0.11.19)
 
 > 22 February 2023
 
-- releases/kps: Upgraded to v1.1.1 [`93705e8`](https://github.com/kube-core/kube-core/commit/93705e8ea7b17d2dcdc842fee894da01f259b41d)
-- core/templates: Added metricsIngress and implemented it in values templates [`0cd0423`](https://github.com/kube-core/kube-core/commit/0cd042326f9c6b172ac3a45026dbedc460c1f858)
-- core/values: Upgraded release-scaling to use dynamic metricsEndpoint [`f49e8e4`](https://github.com/kube-core/kube-core/commit/f49e8e437aaf2fb4fccd3b0474e9bc04ef966d10)
-- core/templates: Added monitoring.metricsEndpoint in release.metadata.config [`4cec5a3`](https://github.com/kube-core/kube-core/commit/4cec5a319c3af4dca45ee9e9b303a5e1eabe0b8e)
-- release: v0.11.19 [`72d9e95`](https://github.com/kube-core/kube-core/commit/72d9e95d431dfddd16efb965bb43ec3583859d5f)
-- core/layers: Changed thanos ingresses subdomain [`a7639b6`](https://github.com/kube-core/kube-core/commit/a7639b6ed901924c70e00002630f3ebe3f921499)
-- core/layers: Disabled default SLOs on nginx-ingress-controller [`922feb3`](https://github.com/kube-core/kube-core/commit/922feb3c7bf6b373bbbb3a628f7a921daf04d0fa)
-- core/values: Added support for ContainerStatusUnknown cleanup in system-jobs [`6dad518`](https://github.com/kube-core/kube-core/commit/6dad51817e2e01d4297fb696ff197a3be2c6d89b)
-- core/layers: Added thanosQueryEndpoint and thanosQueryFrontendEndpoint in cluster.monitoring [`662b190`](https://github.com/kube-core/kube-core/commit/662b190d0673bbc10b7e44fba8e1c2001b186ac8)
-- core/values: Made sure queryFrontend is enabled by default on kps [`04a92d4`](https://github.com/kube-core/kube-core/commit/04a92d4f4636e2d1466c6fcff0f7d353fd1f4bb6)
+- releases/kps: Upgraded to v1.1.1 [`2ecdc28`](https://github.com/kube-core/kube-core/commit/2ecdc28288546b3719ac61f85b35250bc22d31f0)
+- core/templates: Added metricsIngress and implemented it in values templates [`14fb480`](https://github.com/kube-core/kube-core/commit/14fb480c7860aef3b0e049a04e43cd9698e0104e)
+- core/values: Upgraded release-scaling to use dynamic metricsEndpoint [`1d68269`](https://github.com/kube-core/kube-core/commit/1d682699b668fceff544d1b4fbb9d6256dcdd8a0)
+- core/templates: Added monitoring.metricsEndpoint in release.metadata.config [`cf82149`](https://github.com/kube-core/kube-core/commit/cf821499d54a750ebe00ea9f328c19f153929ad9)
+- release: v0.11.19 [`1790381`](https://github.com/kube-core/kube-core/commit/17903819871b82ba68e66d1bab33c7b5ed45d983)
+- core/layers: Changed thanos ingresses subdomain [`edfd31f`](https://github.com/kube-core/kube-core/commit/edfd31f11be0fa1bbe24d976d5ec835d3fff6557)
+- core/layers: Disabled default SLOs on nginx-ingress-controller [`e29e455`](https://github.com/kube-core/kube-core/commit/e29e4554d0c0458655b2eccb1b748f5160d6d5f9)
+- core/values: Added support for ContainerStatusUnknown cleanup in system-jobs [`8629051`](https://github.com/kube-core/kube-core/commit/8629051d302f8fe0ac0df057c11cb6c618fdda1b)
+- core/layers: Added thanosQueryEndpoint and thanosQueryFrontendEndpoint in cluster.monitoring [`2fd3789`](https://github.com/kube-core/kube-core/commit/2fd37896b8a3f3af02145f5b0fceb98b3241e2b9)
+- core/values: Made sure queryFrontend is enabled by default on kps [`7a70921`](https://github.com/kube-core/kube-core/commit/7a709219088eb1f06ac7b0824763418b4c2e2bf9)
 
 #### [v0.11.18](https://github.com/kube-core/kube-core/compare/v0.11.17...v0.11.18)
 
 > 16 February 2023
 
-- releases/kps: Upgraded to v1.1.0 [`c345273`](https://github.com/kube-core/kube-core/commit/c3452735eebb636550c16d361924812c222ed9aa)
-- releases: Added slack-operator [`785c9d9`](https://github.com/kube-core/kube-core/commit/785c9d981a1952faa46309a1ddc446858cd618ab)
-- core/layers: Improved default monitoring configuration [`91e1177`](https://github.com/kube-core/kube-core/commit/91e11770aec3ad50a73938f5fb18e5dd3ed74e29)
-- core/templates: Reworked robusta and slack-operator integration [`6d1fb49`](https://github.com/kube-core/kube-core/commit/6d1fb49e1b6dc294bdee6d14279152bf9d238d79)
-- release: v0.11.18 [`c1f2a94`](https://github.com/kube-core/kube-core/commit/c1f2a94c4e13e940acbcb5610e9c147a1683519c)
-- core/layers: Changed pyrra endpoint to thanos-query by default [`b92ff5b`](https://github.com/kube-core/kube-core/commit/b92ff5b084f1a3f125dac467c1ddc9220f30c7d1)
+- releases/kps: Upgraded to v1.1.0 [`7a67a66`](https://github.com/kube-core/kube-core/commit/7a67a669f8da1c2270c2c89a74163474d691527a)
+- releases: Added slack-operator [`7693a18`](https://github.com/kube-core/kube-core/commit/7693a18b7830ba9c15d4b44941718df6ffad1555)
+- core/layers: Improved default monitoring configuration [`1bce943`](https://github.com/kube-core/kube-core/commit/1bce943f3b6754094112e9aea1b089850bac9819)
+- core/templates: Reworked robusta and slack-operator integration [`65ff7f0`](https://github.com/kube-core/kube-core/commit/65ff7f0d016d337b6064990ff631ad94291521ad)
+- release: v0.11.18 [`48388dc`](https://github.com/kube-core/kube-core/commit/48388dc756cbeba190f1c729ffb6d8f119d88422)
+- core/layers: Changed pyrra endpoint to thanos-query by default [`f5ced65`](https://github.com/kube-core/kube-core/commit/f5ced657fa18da81c4f7dc03004d9260d8973132)
 
 #### [v0.11.17](https://github.com/kube-core/kube-core/compare/v0.11.16...v0.11.17)
 
 > 12 February 2023
 
-- releases: Migrated crossplane-cloud to app-extensions [`535288a`](https://github.com/kube-core/kube-core/commit/535288a5634922ea69850b776b80e38a3f843d7a)
-- release: v0.11.17 [`944058c`](https://github.com/kube-core/kube-core/commit/944058c57fb9f45180886a15f948f53796d564cd)
-- releases: Rebuilt releases [`9ae661b`](https://github.com/kube-core/kube-core/commit/9ae661bf2e6834ec75debc942349f4713bd4ae04)
-- core/templates: Fixed wrong .release.enabled conditions [`9c94b34`](https://github.com/kube-core/kube-core/commit/9c94b34d6b6df2942294460bbc8f8f7ebac9e03c)
+- releases: Migrated crossplane-cloud to app-extensions [`50a992d`](https://github.com/kube-core/kube-core/commit/50a992dc9883a63363b870e40635d8eee151100d)
+- release: v0.11.17 [`7b4a40d`](https://github.com/kube-core/kube-core/commit/7b4a40df8b785148e62268457e20be5adbe0070f)
+- releases: Rebuilt releases [`9adf73f`](https://github.com/kube-core/kube-core/commit/9adf73fc4f6970759a864b7f5632654247e48d94)
+- core/templates: Fixed wrong .release.enabled conditions [`c9ebc34`](https://github.com/kube-core/kube-core/commit/c9ebc34a59e1991af2dc96b75ba42c8d0ead65af)
 
 #### [v0.11.16](https://github.com/kube-core/kube-core/compare/v0.11.15...v0.11.16)
 
 > 10 February 2023
 
-- core/templates: Improved stability of some releases with default core values [`a158659`](https://github.com/kube-core/kube-core/commit/a158659a4dd8628cf4080e3a521cd97918c664b9)
-- release: v0.11.16 [`2317e26`](https://github.com/kube-core/kube-core/commit/2317e26c5ed0de3cba8f49b083e4e713661ccf9c)
+- core/templates: Improved stability of some releases with default core values [`d5570ce`](https://github.com/kube-core/kube-core/commit/d5570ce03ece0e66de130e7f1eee14ab9c067461)
+- release: v0.11.16 [`c7ad4e7`](https://github.com/kube-core/kube-core/commit/c7ad4e7b602f205d4b9a860d3c2d26b3615bbc40)
 
 #### [v0.11.15](https://github.com/kube-core/kube-core/compare/v0.11.14...v0.11.15)
 
 > 10 February 2023
 
-- releases: Added linkerd2 [`c9f4556`](https://github.com/kube-core/kube-core/commit/c9f45566ca78e5c0e2f500d4e8993dd7efa8c280)
-- core/templates: Refactored release variables [`2b0a0a4`](https://github.com/kube-core/kube-core/commit/2b0a0a40d31a55ca3ed529c5404c761fa6f27aff)
-- core/values: Refactored some templates [`dcd5721`](https://github.com/kube-core/kube-core/commit/dcd572188b9419f3cfeab68c22fe0952a9e70cfe)
-- core/layers: Improved default configuration for cloud releases [`c275423`](https://github.com/kube-core/kube-core/commit/c2754235335150b116de9ae94a92cb8c2e1f5672)
-- release: v0.11.15 [`b9ead95`](https://github.com/kube-core/kube-core/commit/b9ead95335252b0afc4f490ed09da97708afc4bb)
-- core/values: Added replicator annotations on external-secrets [`c6c3349`](https://github.com/kube-core/kube-core/commit/c6c334984a231ea117689a09ec9ae3f0df6a3e65)
-- core/releases: Restrained default roles for kps & velero cloud service accounts [`96f042f`](https://github.com/kube-core/kube-core/commit/96f042f2373e620f47bcb3ac5dc125071fcc7bf8)
-- core/releases: Remapped bucket adminRef for releases cloud [`39fdec4`](https://github.com/kube-core/kube-core/commit/39fdec488c752f861be6c4ab5c0566c4c5b7b72d)
+- releases: Added linkerd2 [`fb7612a`](https://github.com/kube-core/kube-core/commit/fb7612a03aed88e4a0a5a1d3bcf0b954f07b2ed6)
+- core/templates: Refactored release variables [`50c15ea`](https://github.com/kube-core/kube-core/commit/50c15ea7e8ec6f66ab1d05588154f9b558ded1fe)
+- core/values: Refactored some templates [`47acfae`](https://github.com/kube-core/kube-core/commit/47acfae01d48960cb6446898346084d6501037d1)
+- core/layers: Improved default configuration for cloud releases [`d6e417e`](https://github.com/kube-core/kube-core/commit/d6e417eaec20fc6ed3669bd488aa1b1726fe629c)
+- release: v0.11.15 [`177840a`](https://github.com/kube-core/kube-core/commit/177840a21c7cd90d2749f477303d5928499ddb97)
+- core/values: Added replicator annotations on external-secrets [`4d701de`](https://github.com/kube-core/kube-core/commit/4d701de7a1e926306a1b43ea2703cbce484343ca)
+- core/releases: Restrained default roles for kps & velero cloud service accounts [`0e43bba`](https://github.com/kube-core/kube-core/commit/0e43bba83fa0295b41c6c7205a878fe325f9b815)
+- core/releases: Remapped bucket adminRef for releases cloud [`e11aad7`](https://github.com/kube-core/kube-core/commit/e11aad73ea0cccb5120577b45c29baa269d2a449)
 
 #### [v0.11.14](https://github.com/kube-core/kube-core/compare/v0.11.13...v0.11.14)
 
 > 7 February 2023
 
-- releases: Rebuilt releases [`6f015c9`](https://github.com/kube-core/kube-core/commit/6f015c975a1e2c2b00db0ab556fc116ea51724b0)
-- release: v0.11.14 [`cab8fb1`](https://github.com/kube-core/kube-core/commit/cab8fb12a76c645b973696cf3413214106f7e310)
-- releases/crds: Fixed namespaces in CRDs to default [`783c790`](https://github.com/kube-core/kube-core/commit/783c7909111a92480bfe914ff80d904eec928cc7)
-- release: v0.11.14 [`6cdb8e3`](https://github.com/kube-core/kube-core/commit/6cdb8e34e34f4f984aa0723aaf51e0c4ed490edd)
-- core/releases: Updated default admin roles for crossplane-cloud bucketpolicy [`b101891`](https://github.com/kube-core/kube-core/commit/b101891eab4d1898c82611234ed04ed887029b2a)
+- releases: Rebuilt releases [`64d85ad`](https://github.com/kube-core/kube-core/commit/64d85adbe06f22796f75811e6785fbb556fcafb2)
+- release: v0.11.14 [`325a387`](https://github.com/kube-core/kube-core/commit/325a387b969c3b40bdae40d7f9aa940f51864538)
+- releases/crds: Fixed namespaces in CRDs to default [`a2acdd7`](https://github.com/kube-core/kube-core/commit/a2acdd7ace2c63680cd8df0d392e490adac0d8b3)
+- release: v0.11.14 [`eb5c00e`](https://github.com/kube-core/kube-core/commit/eb5c00e3775b86ce380fc031b24900df577ce856)
+- core/releases: Updated default admin roles for crossplane-cloud bucketpolicy [`07b1f59`](https://github.com/kube-core/kube-core/commit/07b1f596e90352bd87d851ce161f5f250e2fd9e0)
 
 #### [v0.11.13](https://github.com/kube-core/kube-core/compare/v0.11.12...v0.11.13)
 
 > 7 February 2023
 
-- core/templates: Added release integrations for scaling, monitoring, chaos, and slos [`270292c`](https://github.com/kube-core/kube-core/commit/270292c0aa238083ab0183cc9ea4a41e35bd97e5)
-- releases: Removed oauth2-proxy from local releases [`45b6949`](https://github.com/kube-core/kube-core/commit/45b69491c3cd71f76c5eae0ac3e1c42e1206f69c)
-- releases/app-extensions: Improved main template loop and reworked resources [`fdf029c`](https://github.com/kube-core/kube-core/commit/fdf029cca5a826187998e42e0ff211fa8d47b98e)
-- releases: Added scaling & SRE resources to app-extensions [`0df84f2`](https://github.com/kube-core/kube-core/commit/0df84f2104e7adab17e34ec247eb22d272be4cf0)
-- core/templates: Added more integrations with app-extensions [`ce46b06`](https://github.com/kube-core/kube-core/commit/ce46b06c4aa0db72ad78930635c1fc19b94fa4cf)
-- release: v0.11.13 [`b7f9101`](https://github.com/kube-core/kube-core/commit/b7f9101e21083c97b2da16de133223be922b1747)
+- core/templates: Added release integrations for scaling, monitoring, chaos, and slos [`7795221`](https://github.com/kube-core/kube-core/commit/7795221b73eda0f4500f20e0630312b62e195c27)
+- releases: Removed oauth2-proxy from local releases [`9abcf84`](https://github.com/kube-core/kube-core/commit/9abcf84bad5be41850a15b36c21b6e5657674663)
+- releases/app-extensions: Improved main template loop and reworked resources [`6d9e91a`](https://github.com/kube-core/kube-core/commit/6d9e91a803fb49fafc8649e29d477598acf2c44c)
+- releases: Added scaling & SRE resources to app-extensions [`561c0be`](https://github.com/kube-core/kube-core/commit/561c0bef120acb1cee2c0e1e55c8c32eb7aaf8f0)
+- core/templates: Added more integrations with app-extensions [`e9d60ad`](https://github.com/kube-core/kube-core/commit/e9d60add500d8c4b424dbca094dcc08ff0e7d914)
+- release: v0.11.13 [`4763999`](https://github.com/kube-core/kube-core/commit/476399997fb81f5bb4b9153c6c6c0492e791afbf)
 
 #### [v0.11.12](https://github.com/kube-core/kube-core/compare/v0.11.11...v0.11.12)
 
 > 2 February 2023
 
-- core/layers: Fixed kps secrets [`ec71a86`](https://github.com/kube-core/kube-core/commit/ec71a86aae9aec1ceb14846ea102b092f16bf4d6)
-- release: v0.11.12 [`64b657f`](https://github.com/kube-core/kube-core/commit/64b657f991a93d78ba0751f14d4cee0654d1ace5)
+- core/layers: Fixed kps secrets [`3458fc9`](https://github.com/kube-core/kube-core/commit/3458fc9954bd3eacbca8b4202502bd33679ecda9)
+- release: v0.11.12 [`756e4df`](https://github.com/kube-core/kube-core/commit/756e4dfc49f7e5e6644d793e347c11230bbd5158)
 
 #### [v0.11.11](https://github.com/kube-core/kube-core/compare/v0.11.10...v0.11.11)
 
 > 1 February 2023
 
-- release: v0.11.11 [`dc65ceb`](https://github.com/kube-core/kube-core/commit/dc65ceb391ef8b3bcb0da69dbc11e53c304b6be5)
-- releases/tekton-catalog: Regenerated release files [`93daa01`](https://github.com/kube-core/kube-core/commit/93daa01a356bdc917f19507712759e2226db2f5f)
+- release: v0.11.11 [`ff31cf9`](https://github.com/kube-core/kube-core/commit/ff31cf9b984081123bf8ef05ef370090e7ba991e)
+- releases/tekton-catalog: Regenerated release files [`b5f01d5`](https://github.com/kube-core/kube-core/commit/b5f01d5b6fda61376aa048a48a3882ba2dc9f4bb)
 
 #### [v0.11.10](https://github.com/kube-core/kube-core/compare/v0.11.9...v0.11.10)
 
 > 1 February 2023
 
-- releases/tekton-catalog: Upgraded kube-core pipeline [`83d6d6c`](https://github.com/kube-core/kube-core/commit/83d6d6c4a6ae5dcf426b94e978cde1b1985d4cee)
-- release: v0.11.10 [`e52af28`](https://github.com/kube-core/kube-core/commit/e52af28a4e74febaf086b403dcef3e28ecf34a6c)
+- releases/tekton-catalog: Upgraded kube-core pipeline [`ceb7bf6`](https://github.com/kube-core/kube-core/commit/ceb7bf6f945fc12d088c948ef625d92ab502d897)
+- release: v0.11.10 [`8faded5`](https://github.com/kube-core/kube-core/commit/8faded519ef5cb151e1899360974d28d1813b574)
 
 #### [v0.11.9](https://github.com/kube-core/kube-core/compare/v0.11.8...v0.11.9)
 
 > 1 February 2023
 
-- releases: Fixed cluster-logging, tekton and tekton-logging integration [`eadffe5`](https://github.com/kube-core/kube-core/commit/eadffe5b6319e40adb300bcae621b6116898364d)
-- releases/nginx-ingress-controller: Upgraded chart to v9.3.26 [`540bc30`](https://github.com/kube-core/kube-core/commit/540bc305adbff3eaa20e46f2c4612faf13b52e9f)
-- releases/tekton: Fixed secrets not being injected on SAs [`1ec8743`](https://github.com/kube-core/kube-core/commit/1ec874381900ead72e5f4737f96450c7146322a9)
-- release: v0.11.9 [`f8606c9`](https://github.com/kube-core/kube-core/commit/f8606c91e41f88a4535446c19b251e092f6e53b9)
+- releases: Fixed cluster-logging, tekton and tekton-logging integration [`956e533`](https://github.com/kube-core/kube-core/commit/956e533aa8cc7eb980f1b4e3041382d318c5ffcc)
+- releases/nginx-ingress-controller: Upgraded chart to v9.3.26 [`cce3500`](https://github.com/kube-core/kube-core/commit/cce35005ca73a97dd826031d65cc89617c4d12ee)
+- releases/tekton: Fixed secrets not being injected on SAs [`1e4157d`](https://github.com/kube-core/kube-core/commit/1e4157d9c5df6eda7a004a009fb39095f726304a)
+- release: v0.11.9 [`9c0ce88`](https://github.com/kube-core/kube-core/commit/9c0ce889242cb1694805c534081f1d490ed2bf42)
 
 #### [v0.11.8](https://github.com/kube-core/kube-core/compare/v0.11.7...v0.11.8)
 
 > 31 January 2023
 
-- release: v0.11.8 [`cebb918`](https://github.com/kube-core/kube-core/commit/cebb9180044ab1ffeb726eda74aa34ebcf9a6252)
-- core/values: Updated secrets references for dex & oauth2-proxy [`4d3eada`](https://github.com/kube-core/kube-core/commit/4d3eada797587dfc40c68cbef99507133d6ae49f)
+- release: v0.11.8 [`ac1d621`](https://github.com/kube-core/kube-core/commit/ac1d62159f576dc3cb9b5b57a43bf9fb5d69e5df)
+- core/values: Updated secrets references for dex & oauth2-proxy [`686489d`](https://github.com/kube-core/kube-core/commit/686489d41bffcc9fb6da506a49c048ea67943039)
 
 #### [v0.11.7](https://github.com/kube-core/kube-core/compare/v0.11.6...v0.11.7)
 
 > 30 January 2023
 
-- releases: Rebuilt releases [`e81540e`](https://github.com/kube-core/kube-core/commit/e81540e02ccf6373f567f6f2b9c9224a30615102)
-- releases: Upgraded some tekton resources [`ba7c900`](https://github.com/kube-core/kube-core/commit/ba7c9006dd4ad111fd9116a70414ad6b83790447)
-- core/values: Upgraded external-secrets template to use release metadata [`03aff13`](https://github.com/kube-core/kube-core/commit/03aff138a5a03a5d9bcaa5a0abf819e0814d5e29)
-- core/templates: Reworked clusterReleases to use same template as other release types [`8e6516e`](https://github.com/kube-core/kube-core/commit/8e6516eedae1fe7b138e485686de5a28a498d14b)
-- release: v0.11.7 [`c58234a`](https://github.com/kube-core/kube-core/commit/c58234aaec9e84d6e1d9407655099aadf1317289)
-- core/values: Changed default goldilocks requests/limits [`41ce4f3`](https://github.com/kube-core/kube-core/commit/41ce4f3533ea5a95903b0e29e2855a5c8757e0a3)
-- core/layers: Fixed kps external-secrets [`7bd7ab4`](https://github.com/kube-core/kube-core/commit/7bd7ab45a8e18e5c7e0208ca74724b964e5262ae)
-- core/layers: Fixed dynamicSecrets config for dex & oauth2proxy [`26e122f`](https://github.com/kube-core/kube-core/commit/26e122f0e4a8c99e344613f470236a6a7645bcde)
-- core/templates: Fixed release.hooks not working since options rework [`f981150`](https://github.com/kube-core/kube-core/commit/f9811507c4d8c896394aad6ba74daddb0b5be8d7)
-- core/templates: Added upgradeIngressPortIsHttp option [`1ab9c46`](https://github.com/kube-core/kube-core/commit/1ab9c4627fc917084c7674163f5d1af598003b22)
-- core/layers: Fixed chaos-mesh ingress version [`6e3cddf`](https://github.com/kube-core/kube-core/commit/6e3cddfe88f7a36eda08f08fb5f5fffecd2af620)
+- releases: Rebuilt releases [`d34a703`](https://github.com/kube-core/kube-core/commit/d34a703ee47296653acc1d1a0f9f3990632ac963)
+- releases: Upgraded some tekton resources [`825b674`](https://github.com/kube-core/kube-core/commit/825b6745639369e3831b137d16bf1196b0bbc8bb)
+- core/values: Upgraded external-secrets template to use release metadata [`de89379`](https://github.com/kube-core/kube-core/commit/de893791aa819ad68c0edf5e7d2e3de56a2e98ff)
+- core/templates: Reworked clusterReleases to use same template as other release types [`5564cbf`](https://github.com/kube-core/kube-core/commit/5564cbf7d9d279958cd19b196665e66bc1bb86cb)
+- release: v0.11.7 [`64e2d78`](https://github.com/kube-core/kube-core/commit/64e2d7897b822bef59e685986b571fa8e961f6a4)
+- core/values: Changed default goldilocks requests/limits [`0460b53`](https://github.com/kube-core/kube-core/commit/0460b53f56c6051ba5b60fcc222b2359377d838d)
+- core/layers: Fixed kps external-secrets [`ab53851`](https://github.com/kube-core/kube-core/commit/ab538516bae6a416e3e6f003183897306d0ad212)
+- core/layers: Fixed dynamicSecrets config for dex & oauth2proxy [`8879089`](https://github.com/kube-core/kube-core/commit/88790895921a201fb0678acfaf92f3c4ec88686b)
+- core/templates: Fixed release.hooks not working since options rework [`29fb465`](https://github.com/kube-core/kube-core/commit/29fb46507cbf9d714d79231c1b631da9d0e17491)
+- core/templates: Added upgradeIngressPortIsHttp option [`40341f0`](https://github.com/kube-core/kube-core/commit/40341f0ad379ead70919fe844f26777c6b5ec8ce)
+- core/layers: Fixed chaos-mesh ingress version [`273129f`](https://github.com/kube-core/kube-core/commit/273129fe1935552d5318946ebb15b97983db1234)
 
 #### [v0.11.6](https://github.com/kube-core/kube-core/compare/v0.11.5...v0.11.6)
 
 > 29 January 2023
 
-- release: v0.11.6 [`f356da8`](https://github.com/kube-core/kube-core/commit/f356da87b8a16bda54db8f84d1f571c99bf543c1)
-- core/releases: Homogenized variables used in cloud releases [`310b8ae`](https://github.com/kube-core/kube-core/commit/310b8ae1e1de5cc1847774785fb0bd83e0169a27)
-- core/releases: Activated options by default to patch sloop ingress [`a7e10af`](https://github.com/kube-core/kube-core/commit/a7e10afa1add359ac5f2f9c7211cd5e19581d601)
-- core/layers: Removed common defaultIngressAnnotations which is not useful to any release [`03758fb`](https://github.com/kube-core/kube-core/commit/03758fb1fb50059c51a3ef18d49a4fb682b78da4)
-- core/layers: Added a default ingressclass for defaultService expose-annotations [`1c0ac21`](https://github.com/kube-core/kube-core/commit/1c0ac21da06c6839a55ca1815debca9d93123e47)
+- release: v0.11.6 [`19a867a`](https://github.com/kube-core/kube-core/commit/19a867a0628ab8f4d50de81ccd9098171d1f0cf0)
+- core/releases: Homogenized variables used in cloud releases [`f5ed37e`](https://github.com/kube-core/kube-core/commit/f5ed37e73f0f8988ce911306a61d632047bfde6c)
+- core/releases: Activated options by default to patch sloop ingress [`8698ac1`](https://github.com/kube-core/kube-core/commit/8698ac1fb6cc71410989110fd5021b30f8fa4a01)
+- core/layers: Removed common defaultIngressAnnotations which is not useful to any release [`2213495`](https://github.com/kube-core/kube-core/commit/221349519c95498dd6841fe1851aff699e24761f)
+- core/layers: Added a default ingressclass for defaultService expose-annotations [`72e3e2b`](https://github.com/kube-core/kube-core/commit/72e3e2b518f3af90d9d91f5ad66210e02412d0be)
 
 #### [v0.11.5](https://github.com/kube-core/kube-core/compare/v0.11.4...v0.11.5)
 
 > 23 January 2023
 
-- core/templates: Integrated cluster & tetkton logging with release-cloud [`7a5d584`](https://github.com/kube-core/kube-core/commit/7a5d5847b25579291dbeb01d92bd53b316b7afef)
-- release: v0.11.5 [`f906f30`](https://github.com/kube-core/kube-core/commit/f906f306a339957e52872de2eba242148728bc49)
-- core/values: Fixed postgresql resource naming issues [`a835efd`](https://github.com/kube-core/kube-core/commit/a835efd3ea9ad658eae0886f09035301c18cf189)
-- core/releases: Added condition to recordset generated by cloud releases [`657b263`](https://github.com/kube-core/kube-core/commit/657b2638cee68e57fddaff08d3f449fac78a35f3)
-- releases/goldilocks: Updated default options [`681fd34`](https://github.com/kube-core/kube-core/commit/681fd34510811df3b9b42df58be9a8b30d24bbcc)
-- releases/nginx-ingress-controller: Added controllerClass [`0d3a341`](https://github.com/kube-core/kube-core/commit/0d3a34110ac860349439d978b8cb39f8f29da0c7)
-- core/templates: Fixed release-cloud bad condition on backendBucket [`e6c3093`](https://github.com/kube-core/kube-core/commit/e6c30932ba05d4ad483116e93f6b7df7ad8149a1)
+- core/templates: Integrated cluster & tetkton logging with release-cloud [`9a58e49`](https://github.com/kube-core/kube-core/commit/9a58e498f07c29d92e9e16b9a3fd8d4ca5652d76)
+- release: v0.11.5 [`da4d3cc`](https://github.com/kube-core/kube-core/commit/da4d3cc1a6214107bfb0d4699fda801037039c3a)
+- core/values: Fixed postgresql resource naming issues [`e2ce907`](https://github.com/kube-core/kube-core/commit/e2ce907dc3ee28f20e5e4db4464e889fedde2827)
+- core/releases: Added condition to recordset generated by cloud releases [`187389a`](https://github.com/kube-core/kube-core/commit/187389a04060ae5c98b05aca182c536054371250)
+- releases/goldilocks: Updated default options [`6492115`](https://github.com/kube-core/kube-core/commit/6492115bb314296c39b6487ab31cb7edc516124a)
+- releases/nginx-ingress-controller: Added controllerClass [`7a1ba0a`](https://github.com/kube-core/kube-core/commit/7a1ba0ac517695b638cd02a7ae05fa254dff561c)
+- core/templates: Fixed release-cloud bad condition on backendBucket [`19e8ef2`](https://github.com/kube-core/kube-core/commit/19e8ef24e78f768454350d8ddcbd37e52fb763f9)
 
 #### [v0.11.4](https://github.com/kube-core/kube-core/compare/v0.11.3...v0.11.4)
 
 > 21 January 2023
 
-- release: v0.11.4 [`b286298`](https://github.com/kube-core/kube-core/commit/b28629881ac370e6dc8b6a8e941a9b584639a1e5)
-- core/values: Fixed serviceAccount adminReference for bucketPolicy in cloud releases [`9e10702`](https://github.com/kube-core/kube-core/commit/9e10702cec4db0df31263b05db72dfb54e6eaf4f)
+- release: v0.11.4 [`8abc4e6`](https://github.com/kube-core/kube-core/commit/8abc4e6931e0f7ecfc90b1094f7a60c4e960392e)
+- core/values: Fixed serviceAccount adminReference for bucketPolicy in cloud releases [`9ed3abb`](https://github.com/kube-core/kube-core/commit/9ed3abb8836e06d6979873e4a0a9872e1aeb084c)
 
 #### [v0.11.3](https://github.com/kube-core/kube-core/compare/v0.11.2...v0.11.3)
 
 > 21 January 2023
 
-- core/templates: Reworked release-variables and optimized values merge on releases [`9ef01e8`](https://github.com/kube-core/kube-core/commit/9ef01e864a075f5ce5de9b9cfe4ab019ab67a2eb)
-- core/templates: Moved naming metadata to release variables [`ec2ffdc`](https://github.com/kube-core/kube-core/commit/ec2ffdcf3633271c7cac359f489d3f5c0564ea75)
-- core/values: Updated velero to use cloud naming [`b1207ae`](https://github.com/kube-core/kube-core/commit/b1207ae2899e0e3da33dad142c1611d89137f44f)
-- core/templates: Reworked release template [`5ea8a13`](https://github.com/kube-core/kube-core/commit/5ea8a13b1d6c58e9b3815f27c3264bf4d9480c0f)
-- release: v0.11.3 [`fa72fee`](https://github.com/kube-core/kube-core/commit/fa72fee57f0e09950edbd3fba28b891a2956ccaa)
-- core/templates: Fixed transformers not being applied on local-secrets [`2d56b3e`](https://github.com/kube-core/kube-core/commit/2d56b3e44fed557d1e5286d6d1c05112457c9fbf)
+- core/templates: Reworked release-variables and optimized values merge on releases [`b4c2c49`](https://github.com/kube-core/kube-core/commit/b4c2c49fd6fdbd95734bd2dfd36708092ce46002)
+- core/templates: Moved naming metadata to release variables [`95618f4`](https://github.com/kube-core/kube-core/commit/95618f460243016fafa54dcf249f5604252b7866)
+- core/values: Updated velero to use cloud naming [`4937083`](https://github.com/kube-core/kube-core/commit/4937083113d9668e611b7f14a246a904356683a6)
+- core/templates: Reworked release template [`140a6cc`](https://github.com/kube-core/kube-core/commit/140a6cc86a174aebf3b78152779fcdad97caafdd)
+- release: v0.11.3 [`62de68b`](https://github.com/kube-core/kube-core/commit/62de68b282436fb8274931684356c8d7be855157)
+- core/templates: Fixed transformers not being applied on local-secrets [`56bd889`](https://github.com/kube-core/kube-core/commit/56bd8897ae61dfe40fdafeff4337aac2c7c3b587)
 
 #### [v0.11.2](https://github.com/kube-core/kube-core/compare/v0.11.1...v0.11.2)
 
 > 20 January 2023
 
-- core/layers: Changed all patches for applications and services options to false by default [`0e40825`](https://github.com/kube-core/kube-core/commit/0e40825fb5c459d5e59ef546ea66d530e68f22ec)
-- release: v0.11.2 [`04aa351`](https://github.com/kube-core/kube-core/commit/04aa351b3ccb69230d2de5e8d0d149b582ecea9b)
-- core/templates: Fixed merge behavior for default application and services options [`926af4c`](https://github.com/kube-core/kube-core/commit/926af4c6457d100942654bdd7b2db9b35dda9b74)
-- core/templates: Added app & services options injection specific to an env [`53e725c`](https://github.com/kube-core/kube-core/commit/53e725c98c432ba113f289bf961a49cd70b9f721)
-- core/templates: Disabled injectIngressHost/Tls,forceNamespaceIngressClass by default for applications & services [`87ccee3`](https://github.com/kube-core/kube-core/commit/87ccee3020403f528e7cfac1c1cb5bbf5d3a4f33)
+- core/layers: Changed all patches for applications and services options to false by default [`66e8b8c`](https://github.com/kube-core/kube-core/commit/66e8b8c036aa6c467f1ec0c930d54cc54dd09d1b)
+- release: v0.11.2 [`4b21636`](https://github.com/kube-core/kube-core/commit/4b21636c6a1edc5de37839d58f36e288664d2fce)
+- core/templates: Fixed merge behavior for default application and services options [`d89eeaf`](https://github.com/kube-core/kube-core/commit/d89eeafea69558caaebc73e2c410bfe7f1d30c50)
+- core/templates: Added app & services options injection specific to an env [`af97044`](https://github.com/kube-core/kube-core/commit/af97044571ec1ab3c5c08aa78d660b1d4737a8df)
+- core/templates: Disabled injectIngressHost/Tls,forceNamespaceIngressClass by default for applications & services [`9c3c6a2`](https://github.com/kube-core/kube-core/commit/9c3c6a25f4dc1c6cabe84e79d25e6ab879c4fb78)
 
 #### [v0.11.1](https://github.com/kube-core/kube-core/compare/v0.11.0...v0.11.1)
 
 > 19 January 2023
 
-- release: v0.11.1 [`317cc60`](https://github.com/kube-core/kube-core/commit/317cc6000ffbeaebc37a4ed58bcd7df9c382045e)
-- cli/scripts: Added helmfile.concurrency parameter to mitigate concurrent I/O issues [`be67be6`](https://github.com/kube-core/kube-core/commit/be67be6209d6be1099170c5179bc3a5b9d507131)
+- release: v0.11.1 [`a2de29c`](https://github.com/kube-core/kube-core/commit/a2de29c22e7de30245e34b3447f293d47aa963e9)
+- cli/scripts: Added helmfile.concurrency parameter to mitigate concurrent I/O issues [`81bf76b`](https://github.com/kube-core/kube-core/commit/81bf76b9e278420c6385651141f67e1264f5eee2)
 
 #### [v0.11.0](https://github.com/kube-core/kube-core/compare/v0.10.0...v0.11.0)
 
 > 19 January 2023
 
-- releases: Upgrades & Regeneration [`c8ea7e0`](https://github.com/kube-core/kube-core/commit/c8ea7e05dd276d68fd3adf71f01ab73fa91271d7)
-- core/layers: Removed generate folder [`ef93fcd`](https://github.com/kube-core/kube-core/commit/ef93fcdf1005511ae6793bdcc14cd41705cb2a0f)
-- releases: Added goldilocks [`bd8deb4`](https://github.com/kube-core/kube-core/commit/bd8deb496c4a0890811153e316a91dace6e5086a)
-- releases: Reworked postgres & Added integrations with releases [`2ecc0ff`](https://github.com/kube-core/kube-core/commit/2ecc0ff3d405574b97feba6898f55c78b967a595)
-- releases: Various linting fixes & Regeneration [`5b16249`](https://github.com/kube-core/kube-core/commit/5b162499877b3f8c6c3ed4d8fa0b14358d6e699b)
-- releases: Removed some useless releases [`562a8a1`](https://github.com/kube-core/kube-core/commit/562a8a11aca11c39e760946fc47e4939ab422dfb)
-- core: Reworked releases, applications & services [`511afcf`](https://github.com/kube-core/kube-core/commit/511afcf69eea75f4b4e4104cbe27d211a9f7d6a3)
-- releases/tekton: Added logs persistance [`339eac9`](https://github.com/kube-core/kube-core/commit/339eac967a0d3f12745e312e34b964d0fc9d0768)
-- releases: Added opencost [`5d6fc81`](https://github.com/kube-core/kube-core/commit/5d6fc8149a3179d3d6f941ce418ea7f7171c997e)
-- cli/build: Replaced local build outputs with releases by default [`4fb73aa`](https://github.com/kube-core/kube-core/commit/4fb73aac661c7955874e8a4731d5c02711424226)
-- core/layers: Migrated tekton values to config [`f760c75`](https://github.com/kube-core/kube-core/commit/f760c75ab5776679ca9259fe569e0de14885d2da)
-- release: v0.11.0 [`b8e199e`](https://github.com/kube-core/kube-core/commit/b8e199e3e4b0e04ea1e6896bc480f45d3b99568b)
-- core/values: Fixed tekton values template [`6169f7b`](https://github.com/kube-core/kube-core/commit/6169f7b99f93f4bcbcc35ac64e065c4416b43e78)
-- core/values: Removed kps namespace for rabbitmq-operator service monitor [`8a5147c`](https://github.com/kube-core/kube-core/commit/8a5147ce89a657ca315aaae8de1efd5c246a10da)
+- releases: Upgrades & Regeneration [`370c8df`](https://github.com/kube-core/kube-core/commit/370c8dfccb826b42920cd6687aa069daa5bf416e)
+- core/layers: Removed generate folder [`909ba3d`](https://github.com/kube-core/kube-core/commit/909ba3dbe7fab4a2aea3347ef2fbd309e8f10ebb)
+- releases: Added goldilocks [`a283841`](https://github.com/kube-core/kube-core/commit/a283841967c3e69d61828d74b551adb6d300a6cb)
+- releases: Reworked postgres & Added integrations with releases [`ab9d1e7`](https://github.com/kube-core/kube-core/commit/ab9d1e7964c4f987a4edca59c422f042f290b8cc)
+- releases: Various linting fixes & Regeneration [`0609958`](https://github.com/kube-core/kube-core/commit/0609958e412a4dd76bf4cd079413f744248b4744)
+- releases: Removed some useless releases [`80b0926`](https://github.com/kube-core/kube-core/commit/80b0926506c518cafe47fea0b8e96b63a67b527f)
+- core: Reworked releases, applications & services [`0b32857`](https://github.com/kube-core/kube-core/commit/0b32857065e841f2ec9ef4937dda8615e2a5dfd5)
+- releases/tekton: Added logs persistance [`1e35ca2`](https://github.com/kube-core/kube-core/commit/1e35ca2e0aa59a2cfa247685a782a0cd354fd83a)
+- releases: Added opencost [`9f61c5a`](https://github.com/kube-core/kube-core/commit/9f61c5a943cb4969b280fbc636dd2366e3462e05)
+- cli/build: Replaced local build outputs with releases by default [`2d49433`](https://github.com/kube-core/kube-core/commit/2d49433e9b29dbc890fd7d840cedeae6664cdf79)
+- core/layers: Migrated tekton values to config [`0e1e777`](https://github.com/kube-core/kube-core/commit/0e1e77753bbf1b3420cc5311b1f02a92ea1c047f)
+- release: v0.11.0 [`4b97f21`](https://github.com/kube-core/kube-core/commit/4b97f2119f97fb69d0d4f9e70f7e26bff58e1bbb)
+- core/values: Fixed tekton values template [`b9b3f47`](https://github.com/kube-core/kube-core/commit/b9b3f470d099ad82912cef642d6d647c37db0615)
+- core/values: Removed kps namespace for rabbitmq-operator service monitor [`7b8d434`](https://github.com/kube-core/kube-core/commit/7b8d43437d0d5fa8fa65a42a0286fc8ed36d3ade)
 
 #### [v0.10.0](https://github.com/kube-core/kube-core/compare/v0.9.3...v0.10.0)
 
 > 12 January 2023
 
-- core/templates: Removed releasesCustom feature completely [`c73d298`](https://github.com/kube-core/kube-core/commit/c73d2985daf6b600112cc2a29ee127e1e3fe1740)
-- core/templates: Removed some unused template [`15378d8`](https://github.com/kube-core/kube-core/commit/15378d858d57c950e4f4a0a626417925aeb84a15)
-- core/templates: Updated raw releases to include release-options template [`55cb1a2`](https://github.com/kube-core/kube-core/commit/55cb1a27f13de5a973c277e1b826728e67ce34c4)
-- core/templates: Updated namespace releases to include release-options template [`c8c523b`](https://github.com/kube-core/kube-core/commit/c8c523bc54357f071f2cc6c3ea8097aa154e01b9)
-- release: v0.10.0 [`7d3aba6`](https://github.com/kube-core/kube-core/commit/7d3aba6e599b1cd3f9a0589e54ed7e1f4b121691)
+- core/templates: Removed releasesCustom feature completely [`5e166a8`](https://github.com/kube-core/kube-core/commit/5e166a8268a52a95496b631a0c0e438fd3247d89)
+- core/templates: Removed some unused template [`db4dc4c`](https://github.com/kube-core/kube-core/commit/db4dc4c915284acb24a808a4ecc3370d0d65befa)
+- core/templates: Updated raw releases to include release-options template [`1fb20c3`](https://github.com/kube-core/kube-core/commit/1fb20c3ab1d3d9a3326fb7a28140554e98f9aaf0)
+- core/templates: Updated namespace releases to include release-options template [`a24df8a`](https://github.com/kube-core/kube-core/commit/a24df8ae325b2b098abff8584478e0f8be1f048b)
+- release: v0.10.0 [`e4affc4`](https://github.com/kube-core/kube-core/commit/e4affc41e2a4c1884f56873435d5fd895a3ec386)
 
 #### [v0.9.3](https://github.com/kube-core/kube-core/compare/v0.9.2...v0.9.3)
 
 > 10 January 2023
 
-- release: v0.9.3 [`b50a72e`](https://github.com/kube-core/kube-core/commit/b50a72ec92ab072ef1a5e676449b489a7e68a7d9)
-- core/templates: Fixed broken condition & Added extraValues for applications [`055c9af`](https://github.com/kube-core/kube-core/commit/055c9af69fc14a83ce91151834fa2f9250de9913)
+- release: v0.9.3 [`c4b9296`](https://github.com/kube-core/kube-core/commit/c4b929655af76388efdb94888ec706593b0652e7)
+- core/templates: Fixed broken condition & Added extraValues for applications [`b348442`](https://github.com/kube-core/kube-core/commit/b3484425c3af3dc77017105633ddca3ad1a568a9)
 
 #### [v0.9.2](https://github.com/kube-core/kube-core/compare/v0.9.1...v0.9.2)
 
 > 7 January 2023
 
-- releases: Added app-extensions chart [`289b639`](https://github.com/kube-core/kube-core/commit/289b639618ac2ed1461509bb8273988aa2f15de1)
-- core/templates: Reworked extensions and options [`574c7a5`](https://github.com/kube-core/kube-core/commit/574c7a5a23c76ef42d35ccde2ff54cb9225787d2)
-- core/values: Improved app integration with extensions and services [`a7802a1`](https://github.com/kube-core/kube-core/commit/a7802a10b1f8f7af99b2e7c1693870b72dc1f27a)
-- core/templates: Added rabbitmq extension [`522d045`](https://github.com/kube-core/kube-core/commit/522d0458d0228ea7aa5eb2c563c5980f0485aa8f)
-- core/layers: Updated some default release options [`ffb6e75`](https://github.com/kube-core/kube-core/commit/ffb6e7522228cc4660ff21c54fd4a5deba9233c6)
-- core/releases: Added possibility to specify serviceaccountkeyname for cloud releases [`7694ccb`](https://github.com/kube-core/kube-core/commit/7694ccb0a86cee5565dcd5ad4183ba71283022a7)
-- core/templates: Added env options injection on applications and services [`33527a0`](https://github.com/kube-core/kube-core/commit/33527a03aa97d9901efc4b9591dafe2f2d676001)
-- release: v0.9.2 [`21b119e`](https://github.com/kube-core/kube-core/commit/21b119eac9c5dbb4d7554e55485a83a9a260eabb)
+- releases: Added app-extensions chart [`099d613`](https://github.com/kube-core/kube-core/commit/099d613f70127d50adadddbda0ea713617f4f411)
+- core/templates: Reworked extensions and options [`279fd54`](https://github.com/kube-core/kube-core/commit/279fd5463e195ca2b13895baa39ae81ddb2e7715)
+- core/values: Improved app integration with extensions and services [`e654963`](https://github.com/kube-core/kube-core/commit/e6549638bdae5fd4594befb828f32f066b25318b)
+- core/templates: Added rabbitmq extension [`ab3c68f`](https://github.com/kube-core/kube-core/commit/ab3c68ff724e1f97a9f550d017bb9bda6c3c8384)
+- core/layers: Updated some default release options [`8f49dc4`](https://github.com/kube-core/kube-core/commit/8f49dc4ee7fca11dcfe2af5565066b49b5fcef28)
+- core/releases: Added possibility to specify serviceaccountkeyname for cloud releases [`191aa60`](https://github.com/kube-core/kube-core/commit/191aa6077cdc82d69058dbb823b9c948c6eaa234)
+- core/templates: Added env options injection on applications and services [`53d4034`](https://github.com/kube-core/kube-core/commit/53d4034a9d8a98edbc48a255916c1942414ca98b)
+- release: v0.9.2 [`afcb5fe`](https://github.com/kube-core/kube-core/commit/afcb5fe82f2a51655a89db811fd3c06152711c2c)
 
 #### [v0.9.1](https://github.com/kube-core/kube-core/compare/v0.9.0...v0.9.1)
 
 > 2 January 2023
 
-- releases: Upgraded nginx-ingress-controller to v9.3.24 [`61d43e5`](https://github.com/kube-core/kube-core/commit/61d43e52eb65787b23e19d3b065b57d3ec03e570)
-- release: v0.9.1 [`d9e3ec8`](https://github.com/kube-core/kube-core/commit/d9e3ec84ab48bac7fb56c78fb1fa972c3fe4968c)
-- core/values: Fixed rabbitmq conditions in n9-api templates [`ea94965`](https://github.com/kube-core/kube-core/commit/ea949658ff98c3d60fd922215dc6b39256dd3964)
-- cli: Fixed version bump in scripts:exec dev_utils_bump [`c1e327f`](https://github.com/kube-core/kube-core/commit/c1e327fc80d9a2c34e49368a2a06fba49e23a656)
-- core/values: Added fullnameOverride including namespace for NIC deployments [`031170a`](https://github.com/kube-core/kube-core/commit/031170a470f9207bdef003b69dd2b4dfa5297a07)
+- releases: Upgraded nginx-ingress-controller to v9.3.24 [`b14a451`](https://github.com/kube-core/kube-core/commit/b14a4518b62c82b5720b6572f6b52c6cededb573)
+- release: v0.9.1 [`18d5ffc`](https://github.com/kube-core/kube-core/commit/18d5ffcea138c719ec5445ab2bbd59055f73c9f6)
+- core/values: Fixed rabbitmq conditions in n9-api templates [`3fd6acb`](https://github.com/kube-core/kube-core/commit/3fd6acbad0f824b7d5bb120ce5599438a16ca213)
+- cli: Fixed version bump in scripts:exec dev_utils_bump [`e3a9770`](https://github.com/kube-core/kube-core/commit/e3a977037358f9134c5fb437bd7872ef2ff3ec35)
+- core/values: Added fullnameOverride including namespace for NIC deployments [`dd0c5dd`](https://github.com/kube-core/kube-core/commit/dd0c5ddfb8f1e44a4271e2c9f100a103919f619a)
 
 #### [v0.9.0](https://github.com/kube-core/kube-core/compare/v0.8.0...v0.9.0)
 
 > 2 January 2023
 
-- release: v0.9.0 [`d7b47c1`](https://github.com/kube-core/kube-core/commit/d7b47c1f750c2fdf4a123e138ec8cd47911c26e5)
-- core/layers: Refactored core layers [`961c27e`](https://github.com/kube-core/kube-core/commit/961c27ee1d7da6514e9d2ab502202624b39f3c48)
-- core/releases: Updated crossplane-cloud local chart [`65e05dc`](https://github.com/kube-core/kube-core/commit/65e05dc9472c5348ce6f3794793fb192674bde66)
-- core/templates: Added some extensions & Improved n9-api release extensions integration [`430cdcd`](https://github.com/kube-core/kube-core/commit/430cdcd81691ed85abf23b09ec335e78aeaa772f)
-- releases: Upgraded some releases [`f49f1ed`](https://github.com/kube-core/kube-core/commit/f49f1ed103111ccd884a2dfe6330a3583c9b5f79)
-- core/releases: Added cdn as a ressource for releases-cloud & updated releases-cloud with a default naming convention [`e38cc63`](https://github.com/kube-core/kube-core/commit/e38cc632729bdb626f503c5c40cd760bfc568d29)
-- core/layers: Removed some unused layers [`41135b7`](https://github.com/kube-core/kube-core/commit/41135b7dfaedd4250b7b4fbd372b75a5024b09d4)
-- releases/logging-stack: Added support to provision any Kibana objects through config [`384f162`](https://github.com/kube-core/kube-core/commit/384f162d25b53bd5515fb569af6f811c6ce8ebec)
-- core/layers: Added short names for every release and namespace [`5d38d6c`](https://github.com/kube-core/kube-core/commit/5d38d6c12d56fc23010ca9217d541acffcbc1172)
-- cli/commands: Updated generate:values to work with reworked layers [`667208a`](https://github.com/kube-core/kube-core/commit/667208a3b83212a5630b7449953499cbe67e77ca)
-- core/templates: Added release-variables to inject metadata in releases [`df04eea`](https://github.com/kube-core/kube-core/commit/df04eea00d7c34f51b202ba17cf1a307135093ba)
-- releases: Rebuilt all releases [`e96e1c3`](https://github.com/kube-core/kube-core/commit/e96e1c39081c4c0246369c0d741e157476871c49)
-- core/releases: Updated releases cloud variable in use for naming template [`40da754`](https://github.com/kube-core/kube-core/commit/40da754360849dd32f9855c0f4206c753cbdfd7d)
-- core/values: Reworked release-cloud template [`419d777`](https://github.com/kube-core/kube-core/commit/419d77793feb0aefdbc74bda7cd8961a84034ef5)
-- core/templates: Changed extensions release annotations [`6907c29`](https://github.com/kube-core/kube-core/commit/6907c29dad6a9ea27f257ee33fda38e1475c7498)
-- core/releases: Added naming config to extensions [`96491d1`](https://github.com/kube-core/kube-core/commit/96491d18447c7358b514c3bf7c0f589099d4f888)
-- core/layers: Added cloud.naming configuration [`0f9ec46`](https://github.com/kube-core/kube-core/commit/0f9ec46fb2d3ced2f1f4a1226e630cc1f30b68b1)
-- release: v0.9.0 [`369bf37`](https://github.com/kube-core/kube-core/commit/369bf37833c9e07b61e0e14af4a37541e3f7c6ad)
-- core/values: Added integration between release-patches and release-cloud [`0de3ee3`](https://github.com/kube-core/kube-core/commit/0de3ee34747247281ff4c6338e2d9b033fcada4c)
-- core/templates: Added cloud naming integration on core releases [`ecc0136`](https://github.com/kube-core/kube-core/commit/ecc0136d1961b3471d590131c4d3242f64e92ec3)
-- cli/scripts: Fixed broken path in some dev commands [`f20fb6c`](https://github.com/kube-core/kube-core/commit/f20fb6c1117809163a0318e3422750b1faec6222)
-- core/releases: Updated releases-cloud recordset usage and naming [`7c9ec16`](https://github.com/kube-core/kube-core/commit/7c9ec16d3532f5d1bd9772d14aba282eb8e9c02b)
-- core/templates: Added release-cloud integration on services [`8f355a1`](https://github.com/kube-core/kube-core/commit/8f355a11c214228655e23db7e734fcaba1c00ef9)
-- core/templates: Reworked application template & Added release-variables [`8d084e1`](https://github.com/kube-core/kube-core/commit/8d084e16eb1a48b762868a09be8d6a43df7f0a46)
-- core/releases: Fixed crossplane-cloud chart & few naming typo [`ec62534`](https://github.com/kube-core/kube-core/commit/ec625342178a3c8b5387aa9b5195978557b12ad9)
-- core/templates: Added dedicated templating for cloud resource with specific naming requirement [`657f799`](https://github.com/kube-core/kube-core/commit/657f7994bd3898217b82f256d7293c903e689a01)
-- core/templates: Added more options for naming in variables template [`b77a967`](https://github.com/kube-core/kube-core/commit/b77a967bcc521be5f5e0ff6aa1c3e3977385004b)
-- core/values: Fixed some templating issues in release-cloud [`d646c72`](https://github.com/kube-core/kube-core/commit/d646c72db9f861b9184187e9732f099ae2380ae2)
-- core/templates: Reworked application release template [`8a4a3fd`](https://github.com/kube-core/kube-core/commit/8a4a3fd32efee75b93dc35c3f63a778cefd50570)
-- core/releases: Reworked application & service release template [`834fb26`](https://github.com/kube-core/kube-core/commit/834fb260fa6e7b191d1f10bfceddffac226c4306)
-- core/layers: Added crossplane cloud integration for container-registry-operator [`137cd14`](https://github.com/kube-core/kube-core/commit/137cd147a2c543cb89321ae22ad833307017063e)
-- core/layers: Added some default values in otherwise empty files [`03ed29a`](https://github.com/kube-core/kube-core/commit/03ed29a28607e6e535fccc713a8e7c45482ff49b)
-- core/values: Fixed wrong condition on release-cloud BucketPolicies [`6df9566`](https://github.com/kube-core/kube-core/commit/6df956601978bfbd1893870d8aabe7e91712a778)
-- core/values: Fixed mongodb-operator watchNamespace default value [`db76d18`](https://github.com/kube-core/kube-core/commit/db76d18a762e9099a15485f5616d98cbdbeab16a)
-- core/layers: Fixed some default permissions in release-cloud [`f9554d6`](https://github.com/kube-core/kube-core/commit/f9554d6b75e3cf42e869b58fcf38fb138330af5c)
-- core/layers: Added global option to enable cloud naming debug [`83515f0`](https://github.com/kube-core/kube-core/commit/83515f01ce4dc08d82cb108ab5a982ae5a508baf)
+- release: v0.9.0 [`a5a0aeb`](https://github.com/kube-core/kube-core/commit/a5a0aeba601ba58f0d0d8dd4abf025535c5eaab6)
+- core/layers: Refactored core layers [`2b7bdc5`](https://github.com/kube-core/kube-core/commit/2b7bdc53f65576de45582720ee42957f69c7e3c6)
+- core/releases: Updated crossplane-cloud local chart [`9d6b84e`](https://github.com/kube-core/kube-core/commit/9d6b84ee6178c73951bbc3eea26ab38eab04e9c9)
+- core/templates: Added some extensions & Improved n9-api release extensions integration [`2c1d00e`](https://github.com/kube-core/kube-core/commit/2c1d00e508bc247d93375baaa201ec5948124507)
+- releases: Upgraded some releases [`e2d1d09`](https://github.com/kube-core/kube-core/commit/e2d1d09408065d9b2f367626138f2ffc8826c4e7)
+- core/releases: Added cdn as a ressource for releases-cloud & updated releases-cloud with a default naming convention [`08a5b1f`](https://github.com/kube-core/kube-core/commit/08a5b1f9429d9f3e9aa93d3066776bc17437ccdc)
+- core/layers: Removed some unused layers [`05f6b55`](https://github.com/kube-core/kube-core/commit/05f6b558e883262473112fdaf2cde4aea8cf5020)
+- releases/logging-stack: Added support to provision any Kibana objects through config [`50beebf`](https://github.com/kube-core/kube-core/commit/50beebf56cd62fe7fb78420a1d1da8a13dba3452)
+- core/layers: Added short names for every release and namespace [`229ba04`](https://github.com/kube-core/kube-core/commit/229ba04ebac89ec4d076340ad1057704f9bf5d17)
+- cli/commands: Updated generate:values to work with reworked layers [`003a40f`](https://github.com/kube-core/kube-core/commit/003a40f35434df485ae5576ee605d6e2483e24e2)
+- core/templates: Added release-variables to inject metadata in releases [`56b39c9`](https://github.com/kube-core/kube-core/commit/56b39c93c87b665a00682f85af7156083c8e773f)
+- releases: Rebuilt all releases [`af995d7`](https://github.com/kube-core/kube-core/commit/af995d77240b160614ccceacf9733a12722f5f28)
+- core/releases: Updated releases cloud variable in use for naming template [`83c7b52`](https://github.com/kube-core/kube-core/commit/83c7b526893996a86b0edb79318b2e4efac3f252)
+- core/values: Reworked release-cloud template [`56007ec`](https://github.com/kube-core/kube-core/commit/56007ec538ae41e42d7268d7ee7eaf250f77d50c)
+- core/templates: Changed extensions release annotations [`30c4628`](https://github.com/kube-core/kube-core/commit/30c4628bea5dc2770c4b43a73af4c68ff7fc8120)
+- core/releases: Added naming config to extensions [`96953c5`](https://github.com/kube-core/kube-core/commit/96953c51bcb99a26c5e7e0f88c423e79f6296e09)
+- core/layers: Added cloud.naming configuration [`11f236e`](https://github.com/kube-core/kube-core/commit/11f236e954e59ba2243bbef661a419f2ec00216b)
+- release: v0.9.0 [`09df79a`](https://github.com/kube-core/kube-core/commit/09df79ad3968f35aeef9b27861042d360737892e)
+- core/values: Added integration between release-patches and release-cloud [`974b529`](https://github.com/kube-core/kube-core/commit/974b5293507f5c8e89339f3b1480028ce82e6177)
+- core/templates: Added cloud naming integration on core releases [`3537a7b`](https://github.com/kube-core/kube-core/commit/3537a7b6062bcfba9f4553664a067d95e1244492)
+- cli/scripts: Fixed broken path in some dev commands [`19882bc`](https://github.com/kube-core/kube-core/commit/19882bcdc6593f5ce7a79d53d77cda50eb9ebc5a)
+- core/releases: Updated releases-cloud recordset usage and naming [`2b1b7e2`](https://github.com/kube-core/kube-core/commit/2b1b7e21e483c1bc9a54ad6e7449e947c9a56a2b)
+- core/templates: Added release-cloud integration on services [`8a63636`](https://github.com/kube-core/kube-core/commit/8a636368178f9942c3a44e5d7649748bbcc741eb)
+- core/templates: Reworked application template & Added release-variables [`c974268`](https://github.com/kube-core/kube-core/commit/c97426850617b5c0b4a96b41154fa2b0e66d283a)
+- core/releases: Fixed crossplane-cloud chart & few naming typo [`d2c7eda`](https://github.com/kube-core/kube-core/commit/d2c7eda53d771b6d6d5d1c446445cfb5e236f7d9)
+- core/templates: Added dedicated templating for cloud resource with specific naming requirement [`dce3f34`](https://github.com/kube-core/kube-core/commit/dce3f340eb8d4986a1d2d14a45f4ada6efacb8d1)
+- core/templates: Added more options for naming in variables template [`31da093`](https://github.com/kube-core/kube-core/commit/31da093d00ab3def31e23abf2d68f92142785bbe)
+- core/values: Fixed some templating issues in release-cloud [`aaea2a8`](https://github.com/kube-core/kube-core/commit/aaea2a8a8274c962681e410e9ecff8f866447fbe)
+- core/templates: Reworked application release template [`e3ad468`](https://github.com/kube-core/kube-core/commit/e3ad4684a2872f2c063293e2f70e069a478a25e8)
+- core/releases: Reworked application & service release template [`da49c16`](https://github.com/kube-core/kube-core/commit/da49c1643fee59d551a2d5949a4d293be04931f2)
+- core/layers: Added crossplane cloud integration for container-registry-operator [`7e9ca2e`](https://github.com/kube-core/kube-core/commit/7e9ca2e0e6534184b54305946a82a1af2bbfcd6d)
+- core/layers: Added some default values in otherwise empty files [`4afb548`](https://github.com/kube-core/kube-core/commit/4afb54852935afd237b3534eeeb86fcc00a5a894)
+- core/values: Fixed wrong condition on release-cloud BucketPolicies [`378f3bc`](https://github.com/kube-core/kube-core/commit/378f3bcb2f7ded27a01517746e01d167a9d873f5)
+- core/values: Fixed mongodb-operator watchNamespace default value [`d482e92`](https://github.com/kube-core/kube-core/commit/d482e92f7fa1ca98f49b14967bd8699d6fb9ebcf)
+- core/layers: Fixed some default permissions in release-cloud [`3c3acca`](https://github.com/kube-core/kube-core/commit/3c3acca719701dff49fea5b80f55be228bc49bf0)
+- core/layers: Added global option to enable cloud naming debug [`2c9c95f`](https://github.com/kube-core/kube-core/commit/2c9c95ff6b9055026e31d8bd7fd443d7566fd516)
 
 #### [v0.8.0](https://github.com/kube-core/kube-core/compare/v0.7.9...v0.8.0)
 
 > 22 November 2022
 
-- core/releases: Added crossplane-cloud chart and releases [`26a9227`](https://github.com/kube-core/kube-core/commit/26a92276f77300640d4cf179ac1272745efb2b90)
-- cli/scripts: Updated cloud setup script to use crossplane [`34276a7`](https://github.com/kube-core/kube-core/commit/34276a7f68a84a323762c5d982d3fdbaf73d706a)
-- core/releases: Upgraded prometheus-adapter [`76d2083`](https://github.com/kube-core/kube-core/commit/76d2083d99ff21632ad79e5053b866b21aab0d41)
-- release: v0.8.0 [`a0df9a9`](https://github.com/kube-core/kube-core/commit/a0df9a9b29c73454655b53fa04431edff1d119c9)
-- cli/commands: Fixed typo in gitops:config:index docs [`054aa91`](https://github.com/kube-core/kube-core/commit/054aa91181c7a91ec7e90ee3b4182745759d4a99)
+- core/releases: Added crossplane-cloud chart and releases [`8507060`](https://github.com/kube-core/kube-core/commit/85070609b616348029160435a07a6a75f5b64370)
+- cli/scripts: Updated cloud setup script to use crossplane [`ef11812`](https://github.com/kube-core/kube-core/commit/ef11812e87b85e1ba209ac838e0d48a6728b423d)
+- core/releases: Upgraded prometheus-adapter [`934a2e5`](https://github.com/kube-core/kube-core/commit/934a2e52f05798e5297a44978a2c45b11540b791)
+- release: v0.8.0 [`d326f76`](https://github.com/kube-core/kube-core/commit/d326f768a7d73d200b864a045bed33c19a56f6ea)
+- cli/commands: Fixed typo in gitops:config:index docs [`4471db7`](https://github.com/kube-core/kube-core/commit/4471db7aa8fec477dddbf41acfec4b77837d1d53)
 
 #### [v0.7.9](https://github.com/kube-core/kube-core/compare/v0.7.8...v0.7.9)
 
 > 17 November 2022
 
-- release: v0.7.9 [`3cb6e59`](https://github.com/kube-core/kube-core/commit/3cb6e59f0fa7a7183c23d1bf55aa80449dea8490)
-- core/options: Added options.forceNamespaceByKind [`590611f`](https://github.com/kube-core/kube-core/commit/590611f5e9e51bd7f7ca956e83e5541a49ce69c1)
-- core/templates: Fixed empty clusterReleases merge behavior [`6ed9623`](https://github.com/kube-core/kube-core/commit/6ed962354af7e00873d18081451d76ce3c567ac2)
-- core/values: Changed cert-manager leaderElection namespace [`30a3f5e`](https://github.com/kube-core/kube-core/commit/30a3f5e2921ffc7e65362ed968d8072a8da8f70a)
-- core/globals: Disabled namespaces by default [`ead87de`](https://github.com/kube-core/kube-core/commit/ead87de9ecbaacf9ecade3d20e3b416ec7e5d85f)
+- release: v0.7.9 [`6cf791e`](https://github.com/kube-core/kube-core/commit/6cf791ef4b32e866334e09cf6033b6057b98b3af)
+- core/options: Added options.forceNamespaceByKind [`4317b70`](https://github.com/kube-core/kube-core/commit/4317b709bac78b8df00645c2b4279f6b748e4e18)
+- core/templates: Fixed empty clusterReleases merge behavior [`b2ed4e2`](https://github.com/kube-core/kube-core/commit/b2ed4e28660b762adf22dd8c506219e599db7fbf)
+- core/values: Changed cert-manager leaderElection namespace [`f5386b7`](https://github.com/kube-core/kube-core/commit/f5386b7b6e4ddbf43c2c820b6154ef7746becf6b)
+- core/globals: Disabled namespaces by default [`8212e4e`](https://github.com/kube-core/kube-core/commit/8212e4eaa72c2232c634e119b1db6dbb0ba0ced4)
 
 #### [v0.7.8](https://github.com/kube-core/kube-core/compare/v0.7.7...v0.7.8)
 
 > 14 November 2022
 
-- release: v0.7.8 [`c1c576d`](https://github.com/kube-core/kube-core/commit/c1c576d2d2cc51d669759c3bd900d3efa2d50ee4)
-- cli/commands: Fixed wrong path for generated helmfiles [`2355713`](https://github.com/kube-core/kube-core/commit/2355713ff6a63a3624f4a684cee02b7e1c713b9f)
+- release: v0.7.8 [`e633b65`](https://github.com/kube-core/kube-core/commit/e633b6514c6a3109cef10d0519637f4590307a89)
+- cli/commands: Fixed wrong path for generated helmfiles [`a2a58d8`](https://github.com/kube-core/kube-core/commit/a2a58d8a4ad92f097d6e814f6699a869c38ac117)
 
 #### [v0.7.7](https://github.com/kube-core/kube-core/compare/v0.7.6...v0.7.7)
 
 > 14 November 2022
 
-- cli/commands: Added import:manifests command [`1509347`](https://github.com/kube-core/kube-core/commit/1509347354b8ffb6813da702eb35f7316f544903)
-- release: v0.7.7 [`f28bce8`](https://github.com/kube-core/kube-core/commit/f28bce83cc357b765f1b97f6b196f7e87ca412ab)
-- core/templates: Fixed issues with local releases generation [`182520c`](https://github.com/kube-core/kube-core/commit/182520c5e586c525798804a2331aa93ed9fd2a2b)
-- github/actions: Added automatic release on tag [`998dca0`](https://github.com/kube-core/kube-core/commit/998dca0ec0b962f814c915a0041a7190b21eef66)
-- core/values: Added nameOverride on raw values template [`b436b2a`](https://github.com/kube-core/kube-core/commit/b436b2a3385fe725d2e234ce7ea37e0f2d98dee6)
+- cli/commands: Added import:manifests command [`9060f8c`](https://github.com/kube-core/kube-core/commit/9060f8cff86cbdc23969a30240ce59297768c318)
+- release: v0.7.7 [`9ab8b2d`](https://github.com/kube-core/kube-core/commit/9ab8b2dcdfe92ad7458f10544c5532742c6d71a8)
+- core/templates: Fixed issues with local releases generation [`27c7652`](https://github.com/kube-core/kube-core/commit/27c765230467776d9246af447eb91f8d7ec2d044)
+- github/actions: Added automatic release on tag [`cc5967e`](https://github.com/kube-core/kube-core/commit/cc5967ecd892084a9ea753e3255e9e1755a84c81)
+- core/values: Added nameOverride on raw values template [`69feb55`](https://github.com/kube-core/kube-core/commit/69feb55eeb84c98e5ae76610cd7f63a458c1c3c0)
 
 #### [v0.7.6](https://github.com/kube-core/kube-core/compare/v0.7.5...v0.7.6)
 
 > 12 November 2022
 
-- release: v0.7.6 [`f394cb4`](https://github.com/kube-core/kube-core/commit/f394cb4e0b735e533026816e96aac7957ff4a063)
-- core/releases: Removed default secrets for mongodb atlas operator [`0bc4851`](https://github.com/kube-core/kube-core/commit/0bc485124359dc835adcf30e9ad399865d47b262)
+- release: v0.7.6 [`a566708`](https://github.com/kube-core/kube-core/commit/a56670887a38c43a2cbd87e04439a385d8d33317)
+- core/releases: Removed default secrets for mongodb atlas operator [`d81c65b`](https://github.com/kube-core/kube-core/commit/d81c65b01eb4729e9f48b70af1321535c005d234)
 
 #### [v0.7.5](https://github.com/kube-core/kube-core/compare/v0.7.4...v0.7.5)
 
 > 11 November 2022
 
-- core/templates: Reworked helmfiles, fixed local paths for dev [`aad7f95`](https://github.com/kube-core/kube-core/commit/aad7f9556982a529481ba96655d6354dff6c8e52)
-- release: v0.7.5 [`7e96090`](https://github.com/kube-core/kube-core/commit/7e96090b97338cfb4740de882c15e56beba0f7b1)
-- cli/commands: Added flag to toggle color output on diff [`a6d481d`](https://github.com/kube-core/kube-core/commit/a6d481d4ad4481fdd308d56102ce28641c5cb87d)
-- cli/docs: Fixed some wrong examples [`9e65279`](https://github.com/kube-core/kube-core/commit/9e652798c8fd67731595a556e4d7b3f9df5d18c4)
-- cli/commands: Fixed inverted diff result on gitops:config:diff [`caf36bd`](https://github.com/kube-core/kube-core/commit/caf36bdee8080f3bbe76a31d830c69ec55b2ef1d)
+- core/templates: Reworked helmfiles, fixed local paths for dev [`647d521`](https://github.com/kube-core/kube-core/commit/647d521fe72efeffcf4199d56a410ae8e6e11f4a)
+- release: v0.7.5 [`af9e14d`](https://github.com/kube-core/kube-core/commit/af9e14d145dbddaf59fc0569cfc2015948e98cf4)
+- cli/commands: Added flag to toggle color output on diff [`7d5f945`](https://github.com/kube-core/kube-core/commit/7d5f9453c36d8c9f4405331545868c62ea971c5d)
+- cli/docs: Fixed some wrong examples [`b2c73e1`](https://github.com/kube-core/kube-core/commit/b2c73e17d51fa2dfb11b49041824b7eebaa9e9fa)
+- cli/commands: Fixed inverted diff result on gitops:config:diff [`b9239aa`](https://github.com/kube-core/kube-core/commit/b9239aa311792a0cfda39b0540d7aed655d3bbad)
 
 #### [v0.7.4](https://github.com/kube-core/kube-core/compare/v0.7.3...v0.7.4)
 
 > 10 November 2022
 
-- releases/tekton: Upgraded app-hooks EventListener [`0db8c08`](https://github.com/kube-core/kube-core/commit/0db8c086d618ecc1569df8bbad49f8605bb29357)
-- release: v0.7.4 [`da1ca7b`](https://github.com/kube-core/kube-core/commit/da1ca7b883051656f4a167e8c882ec7e0e277378)
+- releases/tekton: Upgraded app-hooks EventListener [`411b618`](https://github.com/kube-core/kube-core/commit/411b618c02e94e918348845be5bf36f708ad1fcf)
+- release: v0.7.4 [`d0ee353`](https://github.com/kube-core/kube-core/commit/d0ee353c42006ec8c4e2742c08ec5cd5a5004394)
 
 #### [v0.7.3](https://github.com/kube-core/kube-core/compare/v0.7.2...v0.7.3)
 
 > 10 November 2022
 
-- cli/commands: Moved logic to parse stdin from base command class to a dedicated one [`a5f55d0`](https://github.com/kube-core/kube-core/commit/a5f55d0925fd136a1c13e54c1e526ebb3565a533)
-- release: v0.7.3 [`ab68d79`](https://github.com/kube-core/kube-core/commit/ab68d79236046478b2bd4fc59161b1280e1700ab)
+- cli/commands: Moved logic to parse stdin from base command class to a dedicated one [`2d5de31`](https://github.com/kube-core/kube-core/commit/2d5de310de9a1ccf3eac789b8f17878e979d01d4)
+- release: v0.7.3 [`90c5d92`](https://github.com/kube-core/kube-core/commit/90c5d929a7bb6bdcc899ceac8d6fcce1318d92fd)
 
 #### [v0.7.2](https://github.com/kube-core/kube-core/compare/v0.7.1...v0.7.2)
 
 > 10 November 2022
 
-- core/releases: Reworked oauth2-proxy to permit multiple deployment as a service [`374783e`](https://github.com/kube-core/kube-core/commit/374783e2a2d5501f704de2285c1bbeb1ad20aae3)
-- releases: Added trivy [`288fe0f`](https://github.com/kube-core/kube-core/commit/288fe0f58ef83fcadf2a0d678991ca928f1a8192)
-- cli/commands: Removed some outdated files [`17523ac`](https://github.com/kube-core/kube-core/commit/17523ac8fa4aca25051379067c73aa75bc9475e0)
-- releases: Rebuilt all releases [`87c0c8b`](https://github.com/kube-core/kube-core/commit/87c0c8becc684e753e29068d55b36fd21f49bafe)
-- releases/tekton-catalog: Adds garden deploy projects pipeline [`22e33db`](https://github.com/kube-core/kube-core/commit/22e33dbd08b6a3473f89df8db6fae3b84091cf0f)
-- core/templates: Added option to inject namespaced oauth2-proxy on ingress [`355bd41`](https://github.com/kube-core/kube-core/commit/355bd41d0ed14a953bc166e95aba7a841d6f53f3)
-- cli/commands: Added absorb command [`1a984e8`](https://github.com/kube-core/kube-core/commit/1a984e866c866df00c534c8c2d7a9dc8f67a9cec)
-- releases/tekton-catalog: Adds new pipeline to deploy keycloak themes [`a21e241`](https://github.com/kube-core/kube-core/commit/a21e2417df7c4a56690c955bf47c74cdb8e8ae29)
-- release: v0.7.2 [`085e833`](https://github.com/kube-core/kube-core/commit/085e833c8a4eaf49e30ef8087f0634826b5a1a50)
-- cli/lib: Added some functions in utils to wrap kubectl [`a970a7f`](https://github.com/kube-core/kube-core/commit/a970a7f95b7ac0837e56e3e3c67d2dd34dbabe7c)
-- cli/commands: Added stdin piping capabilities for all commands [`0ccc8b7`](https://github.com/kube-core/kube-core/commit/0ccc8b7d825a0c4c4e363561a71ced0b8efd964b)
-- core/releases: Enabled storage as k8s crd for dex [`0313ff3`](https://github.com/kube-core/kube-core/commit/0313ff36e964859da7e1e7dfe7348f939d9cf7d7)
-- releases/tekton-catalog: Added configuration keys for trivy [`58b6a6b`](https://github.com/kube-core/kube-core/commit/58b6a6bc8fd8ca6623f12718009aa38c3f32bd49)
-- core/values: Enabled certificate owner ref by default for cert-manager [`ce79dfa`](https://github.com/kube-core/kube-core/commit/ce79dfa076ae1b767dcddd2a2929d2eb0e135d36)
-- releases/container-registry-operator: Updated deployment [`fed7cf8`](https://github.com/kube-core/kube-core/commit/fed7cf80b08445d331b017a28030760b1a12cbb4)
+- core/releases: Reworked oauth2-proxy to permit multiple deployment as a service [`1f50929`](https://github.com/kube-core/kube-core/commit/1f50929a69e37f65d3d80c02e99945f0b9164e94)
+- releases: Added trivy [`4df960e`](https://github.com/kube-core/kube-core/commit/4df960e5d24c485769a21c9eacbdac02b1739b92)
+- cli/commands: Removed some outdated files [`70eaacc`](https://github.com/kube-core/kube-core/commit/70eaacc5945e6ba9c606510a8dbd6e749f5bfd41)
+- releases: Rebuilt all releases [`84f0681`](https://github.com/kube-core/kube-core/commit/84f0681a16749b98619fd2e9c78a72113826dd45)
+- releases/tekton-catalog: Adds garden deploy projects pipeline [`c3919f1`](https://github.com/kube-core/kube-core/commit/c3919f1fddf413f0f6fda092aa2f869ea6d13bc0)
+- core/templates: Added option to inject namespaced oauth2-proxy on ingress [`c26a910`](https://github.com/kube-core/kube-core/commit/c26a910fcb29503f7fc0bde89360688accb47bbd)
+- cli/commands: Added absorb command [`80c800b`](https://github.com/kube-core/kube-core/commit/80c800bd326bb5ef65a03da90525d15a30771bc8)
+- releases/tekton-catalog: Adds new pipeline to deploy keycloak themes [`89b8fae`](https://github.com/kube-core/kube-core/commit/89b8faee63f19c730dbac720914fb561f1cabc93)
+- release: v0.7.2 [`272c5a9`](https://github.com/kube-core/kube-core/commit/272c5a96882b188c6ef77e661ff209ce1fa44d3c)
+- cli/lib: Added some functions in utils to wrap kubectl [`cff4859`](https://github.com/kube-core/kube-core/commit/cff485925b4a366f92b9a12c304c0b6cac93827b)
+- cli/commands: Added stdin piping capabilities for all commands [`93fbc24`](https://github.com/kube-core/kube-core/commit/93fbc2419a38ce22196b3be8c55b49076cf949fd)
+- core/releases: Enabled storage as k8s crd for dex [`d22b1aa`](https://github.com/kube-core/kube-core/commit/d22b1aa298a56c5a33ef9c083279559b3b3e26fa)
+- releases/tekton-catalog: Added configuration keys for trivy [`5d7fea8`](https://github.com/kube-core/kube-core/commit/5d7fea8ace7c74cb14dc614efa40716dc7284d30)
+- core/values: Enabled certificate owner ref by default for cert-manager [`682ac69`](https://github.com/kube-core/kube-core/commit/682ac699398bfa76a761844453fef8e197eba311)
+- releases/container-registry-operator: Updated deployment [`53c1200`](https://github.com/kube-core/kube-core/commit/53c12008ecb40d640c0002107f0ddf3703673cf7)
 
 #### [v0.7.1](https://github.com/kube-core/kube-core/compare/v0.7.0...v0.7.1)
 
 > 7 November 2022
 
-- cli/commads: Added some generation capabilities for values and local folders [`1c79283`](https://github.com/kube-core/kube-core/commit/1c79283578d9fe2e06903787b28ac1d70bd2ab9c)
-- core/templates: Added checks to only generate namespaces from enabled core releases [`1e59bdf`](https://github.com/kube-core/kube-core/commit/1e59bdffd3994b66589c27eebbe32334bb8ef15f)
-- cli/docs: Updated docs [`cc1c9d4`](https://github.com/kube-core/kube-core/commit/cc1c9d45c5caff6a49d3b9086858e30a842e6874)
-- release: v0.7.1 [`9727703`](https://github.com/kube-core/kube-core/commit/9727703449e1c27cba705022922b284ab9281b56)
-- cli/commands: Fixed gitops:config:diff checks on filtered data [`33d085e`](https://github.com/kube-core/kube-core/commit/33d085ee1c70b10d0aab46ac7bcfa23f7d269fa2)
-- core/layers: Changed default config of ingress-access-operator [`0baa13b`](https://github.com/kube-core/kube-core/commit/0baa13b204ff8d5bfd9af2e82a3fc47f7b82fa9e)
+- cli/commads: Added some generation capabilities for values and local folders [`9748f3a`](https://github.com/kube-core/kube-core/commit/9748f3aba4d448b75c4ecd3289a630566d00f6a2)
+- core/templates: Added checks to only generate namespaces from enabled core releases [`098ba6a`](https://github.com/kube-core/kube-core/commit/098ba6a605b5565a635312a2fd0080a126516b5a)
+- cli/docs: Updated docs [`b6a85a1`](https://github.com/kube-core/kube-core/commit/b6a85a10746e711117ac76f2bc2447cc8c2844f6)
+- release: v0.7.1 [`4dad634`](https://github.com/kube-core/kube-core/commit/4dad6349cf18dc0fbd0e42ea389df79bef648181)
+- cli/commands: Fixed gitops:config:diff checks on filtered data [`df3ddf0`](https://github.com/kube-core/kube-core/commit/df3ddf09ec9804223a3208606fc2d86ec47f7085)
+- core/layers: Changed default config of ingress-access-operator [`aa8b664`](https://github.com/kube-core/kube-core/commit/aa8b6648271a199f4b6391aa25e2dd1abf019eee)
 
 #### [v0.7.0](https://github.com/kube-core/kube-core/compare/v0.6.8...v0.7.0)
 
 > 7 November 2022
 
-- cli/commands: Introduced formatting [`0012a7e`](https://github.com/kube-core/kube-core/commit/0012a7e079e901c3567df8e2d4120441c495cc8b)
-- cli/docs: Updated docs generation [`41d9cfa`](https://github.com/kube-core/kube-core/commit/41d9cfa67019c7b62af3eea86a05301661530639)
-- core/layers: Reworked all layers [`a6426b2`](https://github.com/kube-core/kube-core/commit/a6426b2e76fdc4c9e93fb5643aa4ec9c0ead808d)
-- cli/package: Added some libs [`6ca7569`](https://github.com/kube-core/kube-core/commit/6ca756979bca1ec4bddbf9e32cf093ae39aeff05)
-- cli/commands: Reworked generate:helmfiles [`2f5f9b0`](https://github.com/kube-core/kube-core/commit/2f5f9b090ed7e6682e5cc2c24464aa204c7ab9e5)
-- core/templates: Reworked templates [`28f30c2`](https://github.com/kube-core/kube-core/commit/28f30c271d3960d1ef8aadd29ac01925416843e4)
-- core/templates: Added templates for generate command [`771603c`](https://github.com/kube-core/kube-core/commit/771603c86175a8bd35570a1a67f45c73746a6049)
-- core/templates: Added templates lib in core [`f4e2c79`](https://github.com/kube-core/kube-core/commit/f4e2c7982f7b9e307493f6a71680194cf636a91d)
-- cli/commands: Added commands: gitops config find|read|search [`56688cc`](https://github.com/kube-core/kube-core/commit/56688cc1ce7796e8943f26e8233c031740db4044)
-- cli: Preparing release [`476623b`](https://github.com/kube-core/kube-core/commit/476623b9bc146520d88d930104009f208a2ac6a5)
-- cli/commands: Removed some unused files [`96efa4b`](https://github.com/kube-core/kube-core/commit/96efa4bbb39a1e1950d15cbf50247a6071ab5d58)
-- cli/commands: Added experimental hot-reload command [`0c953cd`](https://github.com/kube-core/kube-core/commit/0c953cdc1ceb4b9169733b98090c6f80d0355d35)
-- cli/utils: Added some functions to utils [`36a203c`](https://github.com/kube-core/kube-core/commit/36a203c3f4f697f071d59812cd5a15b8b62f5c60)
-- cli/commands: Added kube-core gitops config diff [`6df216a`](https://github.com/kube-core/kube-core/commit/6df216a9cbdaedfbb2687c14355376c9bc6c346b)
-- cli/scripts: Removed gitops/process.sh [`ad7ecfd`](https://github.com/kube-core/kube-core/commit/ad7ecfd7234e3dfcba532a4c12651a1e2c5e156a)
-- cli/commands: Updated config search to use index if available [`d8364df`](https://github.com/kube-core/kube-core/commit/d8364dfe0a1267fa985da90a89c5b4c611ca5a89)
-- cli/scripts: Removed slicing and added code from removed gitops/process.sh in cluster/process.sh [`ee9f64d`](https://github.com/kube-core/kube-core/commit/ee9f64d277a4494ac8a55a6b84af654f3f910b7f)
-- cli/scripts: Reworked build workflow to start by local config first and then proceed with helmfile templating [`055d9a9`](https://github.com/kube-core/kube-core/commit/055d9a90970d8fed08baefc261310daebbd4c9fd)
-- cli/commands: Added kube-core gitops config index [`2d60b6e`](https://github.com/kube-core/kube-core/commit/2d60b6e06f46a8683e51eaa91527d8785b0a2243)
-- cli/commands: Updated some docs [`c85423b`](https://github.com/kube-core/kube-core/commit/c85423bd3c3849c00c6c9068054b474f6039a362)
-- cli/commands: Added command generate helmfiles [`941baed`](https://github.com/kube-core/kube-core/commit/941baed01d4f070ba7ec71fe944d3ed6fc04090c)
-- cli/commands: Updated generate values to allow merge from core over local [`248637f`](https://github.com/kube-core/kube-core/commit/248637fb924e372026a34e9a85660b4acca587b6)
-- release: v0.7.0 [`c20ab9f`](https://github.com/kube-core/kube-core/commit/c20ab9f06e0282efdadbf707e6afb22a5634ee32)
-- cli/base: Migrated some common logic in base command class [`0c95c04`](https://github.com/kube-core/kube-core/commit/0c95c048f799905ffa99bb7583f7ac8358ce2f94)
-- cli/scripts: Moved slicing to cluster/build.sh [`e052004`](https://github.com/kube-core/kube-core/commit/e0520042b916a300df0af683607ae2e9cebf5de3)
-- cli/commands: Added properties to get current cluster resources [`583d0ac`](https://github.com/kube-core/kube-core/commit/583d0ac45c689bbc4e0f0d75452a7716dd7b97d6)
-- core/releases: Added startupProbe to secret-generator release [`534aedd`](https://github.com/kube-core/kube-core/commit/534aedd8514245a649203b941f0dd01bb7f4f78a)
-- cli/scripts: Added original secret metadata on sealed version [`b58b5c2`](https://github.com/kube-core/kube-core/commit/b58b5c2a833b8d79abfee31660997fc6ede18ef5)
-- cli/commands: Added comments and logs on generate values [`f952093`](https://github.com/kube-core/kube-core/commit/f952093a2f5258090a3a8e1503c00d6cc8d0f288)
-- cli/lib: Replaced js-yaml by yaml [`a59aeed`](https://github.com/kube-core/kube-core/commit/a59aeed3a650453610f996c3434bb8d580d3a85b)
-- core/templates: Added clusterRepositories support [`a3b9f6b`](https://github.com/kube-core/kube-core/commit/a3b9f6bf9bdd114e3142aefb5a24deec5714d7ed)
-- cli/commands: Removed color output on gitops config read as it breaks post-processing [`71bf0b4`](https://github.com/kube-core/kube-core/commit/71bf0b455d47f938eec63ea46008a327fce31326)
-- cli/libs: Added loadash [`9db674f`](https://github.com/kube-core/kube-core/commit/9db674f6ae298fddddbbf73a7120eab2e18bc298)
-- core/templates: Fixed helmfileName value for lib templates [`ec7f841`](https://github.com/kube-core/kube-core/commit/ec7f841404af68ce7318af82b84d46146fb1379e)
-- cli/scripts: Fixed kube-core build all --filter [`81588e6`](https://github.com/kube-core/kube-core/commit/81588e638e9a8574d2bcb5b1b926e8e14c557978)
-- docker: Added gron v0.7.1 [`33ab2df`](https://github.com/kube-core/kube-core/commit/33ab2dfba3d5e7673ea371f6145bdb6bdeb52b47)
-- releases/n9-api: Removed kubeVersion constraint [`2bd05f1`](https://github.com/kube-core/kube-core/commit/2bd05f1397cf0bbeabfcf31a3a6ddf044b61c2b0)
-- cli/scripts: Added toggle in cluster-config to  autoseal secrets [`6fbf026`](https://github.com/kube-core/kube-core/commit/6fbf0269a59afc1f7cc58bded997bd6dcf571442)
+- cli/commands: Introduced formatting [`5cf9f47`](https://github.com/kube-core/kube-core/commit/5cf9f4791eacf8fa8c507309f60935401217b731)
+- cli/docs: Updated docs generation [`0fd4284`](https://github.com/kube-core/kube-core/commit/0fd428413acebd19ac271d9aae5e4c3abd8c8244)
+- core/layers: Reworked all layers [`2d95ba6`](https://github.com/kube-core/kube-core/commit/2d95ba67ae0ebf32d55029e338390afc776cf325)
+- cli/package: Added some libs [`d13bb11`](https://github.com/kube-core/kube-core/commit/d13bb11087d8b94ee474a5f921e4017425da8413)
+- cli/commands: Reworked generate:helmfiles [`798891d`](https://github.com/kube-core/kube-core/commit/798891dff4cd7bf2210964d66611935234af2a4a)
+- core/templates: Reworked templates [`39037f6`](https://github.com/kube-core/kube-core/commit/39037f6842ef895e6bb249ee7c2f794af2d9fce4)
+- core/templates: Added templates for generate command [`d06cb47`](https://github.com/kube-core/kube-core/commit/d06cb47822f721ee9bba38c63c32926bf3ff3025)
+- core/templates: Added templates lib in core [`7748973`](https://github.com/kube-core/kube-core/commit/77489735d76bc2993dd0eda7db1b4c168955cb86)
+- cli/commands: Added commands: gitops config find|read|search [`6d621c0`](https://github.com/kube-core/kube-core/commit/6d621c07ff6b33a694891c26206c0348b4089e1e)
+- cli: Preparing release [`50c48e7`](https://github.com/kube-core/kube-core/commit/50c48e73485c6f8fde2d26f1cebdbdef690b4302)
+- cli/commands: Removed some unused files [`ed2aba6`](https://github.com/kube-core/kube-core/commit/ed2aba65773bfb5bff735403011f4775f8dcd513)
+- cli/commands: Added experimental hot-reload command [`e951642`](https://github.com/kube-core/kube-core/commit/e951642defa7b550ec0ca60c050611845bca62a1)
+- cli/utils: Added some functions to utils [`b1f1e39`](https://github.com/kube-core/kube-core/commit/b1f1e39b3fa92e3710d4ecb5d2906d1cb04e87cc)
+- cli/commands: Added kube-core gitops config diff [`c3f0bba`](https://github.com/kube-core/kube-core/commit/c3f0bbaeee9a4b8bd0a200553488c4806c8c2522)
+- cli/scripts: Removed gitops/process.sh [`f8a0e65`](https://github.com/kube-core/kube-core/commit/f8a0e654689277f285fdea84f843f1d4708d7903)
+- cli/commands: Updated config search to use index if available [`9fa6e0d`](https://github.com/kube-core/kube-core/commit/9fa6e0d828eb86cf145ac71f0474839ca25cf5d0)
+- cli/scripts: Removed slicing and added code from removed gitops/process.sh in cluster/process.sh [`95bb340`](https://github.com/kube-core/kube-core/commit/95bb3407c166491035847b13f06dd31b059cca3a)
+- cli/scripts: Reworked build workflow to start by local config first and then proceed with helmfile templating [`a490960`](https://github.com/kube-core/kube-core/commit/a4909600e1bf5b8aaca53f781d442834a1f4791f)
+- cli/commands: Added kube-core gitops config index [`9ee78bf`](https://github.com/kube-core/kube-core/commit/9ee78bfee200dc6f04807501b3c4fb6c745d58d2)
+- cli/commands: Updated some docs [`923fc7a`](https://github.com/kube-core/kube-core/commit/923fc7a8165319dd4451cd7c652962cc02ce5180)
+- cli/commands: Added command generate helmfiles [`8c5f4e6`](https://github.com/kube-core/kube-core/commit/8c5f4e633ef7cd1da3d5f9dbf1c001360b82c7d2)
+- cli/commands: Updated generate values to allow merge from core over local [`ba38899`](https://github.com/kube-core/kube-core/commit/ba3889922a3ea06f0b39d06d2d58e73ef82d17fe)
+- release: v0.7.0 [`8d7ca33`](https://github.com/kube-core/kube-core/commit/8d7ca33b650c3a1a39ae63ca764438b1a8cb33e9)
+- cli/base: Migrated some common logic in base command class [`7dae391`](https://github.com/kube-core/kube-core/commit/7dae391015cbb30e89bb1a60b444c6cb9c0dae50)
+- cli/scripts: Moved slicing to cluster/build.sh [`0ba283f`](https://github.com/kube-core/kube-core/commit/0ba283f22842a727fe58a10bb1f4ac06e73145bf)
+- cli/commands: Added properties to get current cluster resources [`16304c4`](https://github.com/kube-core/kube-core/commit/16304c438f66534870c751a04effa99374c31456)
+- core/releases: Added startupProbe to secret-generator release [`f95747a`](https://github.com/kube-core/kube-core/commit/f95747aff888e2a5723d31efa794bbb72c546fb7)
+- cli/scripts: Added original secret metadata on sealed version [`8492f3f`](https://github.com/kube-core/kube-core/commit/8492f3f117aea78866dae02a824d68b995f5bf5e)
+- cli/commands: Added comments and logs on generate values [`67fc638`](https://github.com/kube-core/kube-core/commit/67fc6383673fc238322c3ca5b837176ebc1ae9e8)
+- cli/lib: Replaced js-yaml by yaml [`5aa0eec`](https://github.com/kube-core/kube-core/commit/5aa0eece48c5899b49072fcdff3eae7d1faea644)
+- core/templates: Added clusterRepositories support [`4b3e9bb`](https://github.com/kube-core/kube-core/commit/4b3e9bb633e54cd94d609819ed4106a1b684417a)
+- cli/commands: Removed color output on gitops config read as it breaks post-processing [`06d2707`](https://github.com/kube-core/kube-core/commit/06d2707bacec40964c22f63e7d168122c4fc0677)
+- cli/libs: Added loadash [`1c63417`](https://github.com/kube-core/kube-core/commit/1c63417e4ae38feb0593e7160a1c60d68a9e27f4)
+- core/templates: Fixed helmfileName value for lib templates [`6eef109`](https://github.com/kube-core/kube-core/commit/6eef109348fc021dfdb2ad387cc76bbc14bb0205)
+- cli/scripts: Fixed kube-core build all --filter [`1a65386`](https://github.com/kube-core/kube-core/commit/1a65386e1bc98b5ff558da3d6c4f696e456cc792)
+- docker: Added gron v0.7.1 [`f767450`](https://github.com/kube-core/kube-core/commit/f767450d641ca6ceab7fd9cac83dd81234fa048f)
+- releases/n9-api: Removed kubeVersion constraint [`51462bb`](https://github.com/kube-core/kube-core/commit/51462bb6ac816637443874b3cbf90bffa8397198)
+- cli/scripts: Added toggle in cluster-config to  autoseal secrets [`b2c6148`](https://github.com/kube-core/kube-core/commit/b2c614809ecccca033774708b181b83ef4a7652e)
 
 #### [v0.6.8](https://github.com/kube-core/kube-core/compare/v0.6.7...v0.6.8)
 
 > 21 October 2022
 
-- release: v0.6.8 [`e87f465`](https://github.com/kube-core/kube-core/commit/e87f4653a32be8d170e823615f4384ef749ccc27)
-- core/templates: Added chartVersion support in release template [`2f87b47`](https://github.com/kube-core/kube-core/commit/2f87b47014ed03ccb37da0c4234777616f0e0726)
+- release: v0.6.8 [`89471ce`](https://github.com/kube-core/kube-core/commit/89471ce010243aa8891837cdfe5523790c04bdac)
+- core/templates: Added chartVersion support in release template [`edb37ee`](https://github.com/kube-core/kube-core/commit/edb37ee442fd22711606feac159add74db0fc876)
 
 #### [v0.6.7](https://github.com/kube-core/kube-core/compare/v0.6.6...v0.6.7)
 
 > 21 October 2022
 
-- core/envs: Added forceVisitorGroups and forceNamespaceVisitorGroup options [`a1dc2b2`](https://github.com/kube-core/kube-core/commit/a1dc2b25267df2d39e134d7e4f7a03155c772cd6)
-- release: v0.6.7 [`9765e4f`](https://github.com/kube-core/kube-core/commit/9765e4f0f3836c70a12b896f5cbf68490dd45772)
+- core/envs: Added forceVisitorGroups and forceNamespaceVisitorGroup options [`8b37d9f`](https://github.com/kube-core/kube-core/commit/8b37d9f01750bf0501071f60d145f0eb8a65d59a)
+- release: v0.6.7 [`b3945ca`](https://github.com/kube-core/kube-core/commit/b3945ca405058ee509b94c7e0d60131e22c4b0c7)
 
 #### [v0.6.6](https://github.com/kube-core/kube-core/compare/v0.6.5...v0.6.6)
 
 > 21 October 2022
 
-- core/envs: Added forceNamespaceIngressClass option [`833db4e`](https://github.com/kube-core/kube-core/commit/833db4e83408b29cb6ba197f4563966f39cb5787)
-- core/values: Updated n9-api values template [`d1fee55`](https://github.com/kube-core/kube-core/commit/d1fee554ac893e0b492cd190f61f6aad40eb797e)
-- release: v0.6.6 [`9f59967`](https://github.com/kube-core/kube-core/commit/9f5996780611161416fba64c88d892d83b493031)
+- core/envs: Added forceNamespaceIngressClass option [`c4e6076`](https://github.com/kube-core/kube-core/commit/c4e6076dc2afa98c9a46346aa6649b98c8849653)
+- core/values: Updated n9-api values template [`94449d9`](https://github.com/kube-core/kube-core/commit/94449d93795989e8f561f30df63daabb2f887b4d)
+- release: v0.6.6 [`9aa9eed`](https://github.com/kube-core/kube-core/commit/9aa9eedb44bcac8336310ade88115fa93a5d16c7)
 
 #### [v0.6.5](https://github.com/kube-core/kube-core/compare/v0.6.4...v0.6.5)
 
 > 20 October 2022
 
-- core/templates: Fixed missing if in some templates [`176708c`](https://github.com/kube-core/kube-core/commit/176708c7c97d9af9c8d298e5c273f1f48e85539d)
-- release: v0.6.5 [`06fc623`](https://github.com/kube-core/kube-core/commit/06fc6239fd3b794443ff8606542511928510a602)
+- core/templates: Fixed missing if in some templates [`f3185cc`](https://github.com/kube-core/kube-core/commit/f3185ccb5b40fb28afd2536e063eb82c19cdb500)
+- release: v0.6.5 [`7becc3f`](https://github.com/kube-core/kube-core/commit/7becc3febf2d96c07bf7a825cf3ed26043b56e9c)
 
 #### [v0.6.4](https://github.com/kube-core/kube-core/compare/v0.6.3...v0.6.4)
 
 > 20 October 2022
 
-- release: v0.6.4 [`a4174df`](https://github.com/kube-core/kube-core/commit/a4174dfe6ccf9217ba06ebe00175a100aeebb442)
-- core/templates: Fixed missing if in node-affinity template [`7bd8645`](https://github.com/kube-core/kube-core/commit/7bd8645ff580a010f116e67e5ebf2f7f7251ac35)
+- release: v0.6.4 [`bb2c553`](https://github.com/kube-core/kube-core/commit/bb2c553a1a73f16494648cb861d318205f23e773)
+- core/templates: Fixed missing if in node-affinity template [`64b27b3`](https://github.com/kube-core/kube-core/commit/64b27b34e5d71fecbb0f220011ad2ddbb24bf35f)
 
 #### [v0.6.3](https://github.com/kube-core/kube-core/compare/v0.6.2...v0.6.3)
 
 > 20 October 2022
 
-- core/templates: Added forceNamespaceNodeSelector and forceNamespaceNodeAffinity options for all releases [`2084a3e`](https://github.com/kube-core/kube-core/commit/2084a3e1718c5446d9d24781636d2f59aba92ea3)
-- cli/dev: Added test kubectl apply on file events [`88c4d75`](https://github.com/kube-core/kube-core/commit/88c4d75b5dff54c8311f6a7044e3711ddc10cfe1)
-- release: v0.6.3 [`45310a1`](https://github.com/kube-core/kube-core/commit/45310a108b09e92a58b9f2c3d5c333f836ecf801)
-- cli/package: Added upath for better cross-platform path capabilities [`53e2c44`](https://github.com/kube-core/kube-core/commit/53e2c4403399350870024a0f4083746247c18616)
+- core/templates: Added forceNamespaceNodeSelector and forceNamespaceNodeAffinity options for all releases [`b17b376`](https://github.com/kube-core/kube-core/commit/b17b376b078120cb07b3170bed57b1758677caf9)
+- cli/dev: Added test kubectl apply on file events [`93293d3`](https://github.com/kube-core/kube-core/commit/93293d341ead23b15ca495b2ca03f47808d1f647)
+- release: v0.6.3 [`c52ce68`](https://github.com/kube-core/kube-core/commit/c52ce68ae2e02c285a3f37c6ad39f5f3045655ce)
+- cli/package: Added upath for better cross-platform path capabilities [`064c222`](https://github.com/kube-core/kube-core/commit/064c222e11698cb453ef45d5eaafc49e3f45e564)
 
 #### [v0.6.2](https://github.com/kube-core/kube-core/compare/v0.6.1...v0.6.2)
 
 > 19 October 2022
 
-- releases: Rebuilt all releases [`741715f`](https://github.com/kube-core/kube-core/commit/741715ff382844ed641f97437a5ca7bfb9227b56)
-- core/values: Simplified templating of nginx-ingress-controller values [`3f24ce7`](https://github.com/kube-core/kube-core/commit/3f24ce7ec9af8ad0323d95ca6974d193564dc532)
-- release: v0.6.2 [`896f0c0`](https://github.com/kube-core/kube-core/commit/896f0c0c4f0323e01005a98c64bfd3237e75fe08)
-- core/envs: Added some label injections [`6171bd7`](https://github.com/kube-core/kube-core/commit/6171bd77001bed7ca93813e3359e7a20dbc80c77)
-- cli/scripts: Fixed wrong path for auto-generated releases input folders [`328ec32`](https://github.com/kube-core/kube-core/commit/328ec32599becff135b7506f6604c142a95076b6)
-- core/templates: Fixed namespaces generation [`1560496`](https://github.com/kube-core/kube-core/commit/156049689402489a56987334e450d069df648a8c)
-- cli/scripts: Changed slicing template to use release.kube-core.io/namespace instead of .metadata.namespace [`5b412c2`](https://github.com/kube-core/kube-core/commit/5b412c2812f7ae8199f51db27b104c16a34e1142)
+- releases: Rebuilt all releases [`8bbe1fb`](https://github.com/kube-core/kube-core/commit/8bbe1fb1b87568eeb94caec81008704508cb00f9)
+- core/values: Simplified templating of nginx-ingress-controller values [`6129267`](https://github.com/kube-core/kube-core/commit/6129267d34eef59917949bfa8a8bb26db50ba998)
+- release: v0.6.2 [`a2dc824`](https://github.com/kube-core/kube-core/commit/a2dc82450dda1a43dbfb256c57463d6ac7492d44)
+- core/envs: Added some label injections [`2bbd985`](https://github.com/kube-core/kube-core/commit/2bbd9854939c09a1cf92d95b6e0a5d2f8721a588)
+- cli/scripts: Fixed wrong path for auto-generated releases input folders [`8be810e`](https://github.com/kube-core/kube-core/commit/8be810e641ebadedc55633746786da8fafd47888)
+- core/templates: Fixed namespaces generation [`79e840d`](https://github.com/kube-core/kube-core/commit/79e840dc8e23a41c64182446c9bf330d0cc031a6)
+- cli/scripts: Changed slicing template to use release.kube-core.io/namespace instead of .metadata.namespace [`c5c85e9`](https://github.com/kube-core/kube-core/commit/c5c85e9c9a090d29c81bd975a429c7d1449a8d36)
 
 #### [v0.6.1](https://github.com/kube-core/kube-core/compare/v0.6.0...v0.6.1)
 
 > 19 October 2022
 
-- core/releases: Added the possibility to manage namespaces as releases [`80a3353`](https://github.com/kube-core/kube-core/commit/80a3353b8ea601d0ae238d65513790653a42dde5)
-- cli/scripts: Complete rework of build logic [`5c2d6dd`](https://github.com/kube-core/kube-core/commit/5c2d6dd77b296f9906aace3dd5a8ab11a36e5d7f)
-- core/templates: Standardized and improved a few templates [`6099a28`](https://github.com/kube-core/kube-core/commit/6099a28d17375e10d6445e8f7cbb5a90d2fa056f)
-- core/releases: Added gitops.enabled on releases to generate a flux Kustomization [`815132b`](https://github.com/kube-core/kube-core/commit/815132b71ada0f0a04422ea51d71852d77da1e56)
-- release: v0.6.1 [`6697a77`](https://github.com/kube-core/kube-core/commit/6697a7732efde5d1396a258b53447ab55d41c200)
-- cli/scripts: Changed test config files path in default-cluster-config.yaml [`ef6d4f9`](https://github.com/kube-core/kube-core/commit/ef6d4f96cc56ccd1529f4c10aff969101f5ca07e)
+- core/releases: Added the possibility to manage namespaces as releases [`d71fa70`](https://github.com/kube-core/kube-core/commit/d71fa7077abff28e1d737ebff3860ed92f51f93e)
+- cli/scripts: Complete rework of build logic [`fef5cdd`](https://github.com/kube-core/kube-core/commit/fef5cdd7af36f0f21d67721fd1174ecec965584d)
+- core/templates: Standardized and improved a few templates [`7e1dbfd`](https://github.com/kube-core/kube-core/commit/7e1dbfddf8a504819e95b4b9249e4a654a41c55c)
+- core/releases: Added gitops.enabled on releases to generate a flux Kustomization [`86681c9`](https://github.com/kube-core/kube-core/commit/86681c991410abf9e42e30b9285ef756c6822990)
+- release: v0.6.1 [`71cd0e0`](https://github.com/kube-core/kube-core/commit/71cd0e055aafc76620569a4219e227c15dda1970)
+- cli/scripts: Changed test config files path in default-cluster-config.yaml [`41579bd`](https://github.com/kube-core/kube-core/commit/41579bd04637bc4839c692ed5846404b5f5fab94)
 
 #### [v0.6.0](https://github.com/kube-core/kube-core/compare/v0.5.7...v0.6.0)
 
 > 16 October 2022
 
-- core/templates: Added forceNamespace, templatedValues & Various fixes/improvements in core templates [`26bf03a`](https://github.com/kube-core/kube-core/commit/26bf03aabcbd7a3ba8fce24b4b410cb916fd9947)
-- cli/scripts: Reworked build to use a single helmfile template process instead of one for each release [`cbf0f39`](https://github.com/kube-core/kube-core/commit/cbf0f39456ac706e233e3521490037b81c21fa75)
-- core/helmfiles: Added cluster helmfile and clusterReleases [`82c126b`](https://github.com/kube-core/kube-core/commit/82c126b8802d577becd739e477c39ba0edbc18a8)
-- release: v0.6.0 [`aa9ab8c`](https://github.com/kube-core/kube-core/commit/aa9ab8caf31609355facd6677f708dc97d0facb5)
-- cli/scripts: Fixed namespace generation to work with the new templating workflow [`7f45c7e`](https://github.com/kube-core/kube-core/commit/7f45c7ed7fdb8ed75909facf31c4204f98cf5ea3)
-- cli/scripts: Improved detection of secrets to seal/restore [`a805919`](https://github.com/kube-core/kube-core/commit/a805919c7853bcbef7a924f4cd66ec8f9e7c0a64)
-- cli/scripts: Moved namespace generation to the end, just before post-process [`523e5e4`](https://github.com/kube-core/kube-core/commit/523e5e48cf14c443dbe12381fe1e93de99f1d2d0)
-- cli/scripts: Reduced verbosity of build while looping over helmfiles [`b867eea`](https://github.com/kube-core/kube-core/commit/b867eea11a3f84fe8baaa66ea7cd63a5b3d7c19e)
+- core/templates: Added forceNamespace, templatedValues & Various fixes/improvements in core templates [`172c30c`](https://github.com/kube-core/kube-core/commit/172c30c0ed123757c7216922aa337e566d99c203)
+- cli/scripts: Reworked build to use a single helmfile template process instead of one for each release [`7fa8622`](https://github.com/kube-core/kube-core/commit/7fa8622947489c2ec1c3eef4e436d4ec800fd3ae)
+- core/helmfiles: Added cluster helmfile and clusterReleases [`3fdd8da`](https://github.com/kube-core/kube-core/commit/3fdd8da7771ec9f6a5b79f4890e99f26287a3cc9)
+- release: v0.6.0 [`88eb94a`](https://github.com/kube-core/kube-core/commit/88eb94a4225f532d0713fe333a1d0f81365c7141)
+- cli/scripts: Fixed namespace generation to work with the new templating workflow [`5577591`](https://github.com/kube-core/kube-core/commit/5577591d983dbcdc36acbe1a309ba70c670e1d96)
+- cli/scripts: Improved detection of secrets to seal/restore [`07938a2`](https://github.com/kube-core/kube-core/commit/07938a2c6a5eb7288021b0f58c615db495f83c0f)
+- cli/scripts: Moved namespace generation to the end, just before post-process [`8f572ed`](https://github.com/kube-core/kube-core/commit/8f572ed44f3660e63f77cbc2e87e13580b2e17a5)
+- cli/scripts: Reduced verbosity of build while looping over helmfiles [`f6ded0f`](https://github.com/kube-core/kube-core/commit/f6ded0f85ac90f49eb2aa9db76ea75121a94c1fd)
 
 #### [v0.5.7](https://github.com/kube-core/kube-core/compare/v0.5.6...v0.5.7)
 
 > 14 October 2022
 
-- release: v0.5.7 [`0ab7bbe`](https://github.com/kube-core/kube-core/commit/0ab7bbe764f041dfdc877b824a7df6c4775227fb)
-- docker: Upgraded helmfile to v0.147.0 [`ffefbd1`](https://github.com/kube-core/kube-core/commit/ffefbd104ae9ab340e8d9ca84240af05fc515046)
+- release: v0.5.7 [`87446fe`](https://github.com/kube-core/kube-core/commit/87446fea76f8408fac0df20fffd3088fbe3fed0e)
+- docker: Upgraded helmfile to v0.147.0 [`946b0da`](https://github.com/kube-core/kube-core/commit/946b0da4fa105645b325d01c7dab6a4cce604e7c)
 
 #### [v0.5.6](https://github.com/kube-core/kube-core/compare/v0.5.5...v0.5.6)
 
 > 14 October 2022
 
-- release: v0.5.6 [`1adeae3`](https://github.com/kube-core/kube-core/commit/1adeae31e60c3089546b11f2fc97c61707643970)
-- cli/scripts: Updated helmfile-template.sh logic to improve performance when looping over all helmfiles and releases [`bc4433d`](https://github.com/kube-core/kube-core/commit/bc4433d97c319819f1dd361ebea0e41525efc867)
-- core/templates: Removed release-helm-metadata template [`7c2f1ee`](https://github.com/kube-core/kube-core/commit/7c2f1ee7d0fa94898e22d0073567927d10efcdfa)
-- core/templates: Merged helm labels/annotation patches with existing ones to improve performance [`fc006e6`](https://github.com/kube-core/kube-core/commit/fc006e6fa2dea702024a68f9451f7539fe62551a)
-- core/envs: Fixed duplicate keys in some layers [`80b9b32`](https://github.com/kube-core/kube-core/commit/80b9b32b3d1930729e3836a52e7f36580f106583)
+- release: v0.5.6 [`e7f9d85`](https://github.com/kube-core/kube-core/commit/e7f9d852fb0b5c6257766dbd3ac36897d99f6f6e)
+- cli/scripts: Updated helmfile-template.sh logic to improve performance when looping over all helmfiles and releases [`2679743`](https://github.com/kube-core/kube-core/commit/2679743a2246db01fdc38d83d0e6f8a7e6259bb9)
+- core/templates: Removed release-helm-metadata template [`e436afd`](https://github.com/kube-core/kube-core/commit/e436afdfad9e8f1c7d747d088dfba327f04c7e3a)
+- core/templates: Merged helm labels/annotation patches with existing ones to improve performance [`5611bd1`](https://github.com/kube-core/kube-core/commit/5611bd1c63ff6fc8268653f36e6d5b6c929493db)
+- core/envs: Fixed duplicate keys in some layers [`74dfe95`](https://github.com/kube-core/kube-core/commit/74dfe95bdb41f5833f842359381f944dc2fd4ce4)
 
 #### [v0.5.5](https://github.com/kube-core/kube-core/compare/v0.5.4...v0.5.5)
 
 > 14 October 2022
 
-- core/releases: Added dex & rework oauth2-proxy [`c6d5ad3`](https://github.com/kube-core/kube-core/commit/c6d5ad3f9820d4cc55ae1e29103b709e572c90ba)
-- release: v0.5.5 [`6858061`](https://github.com/kube-core/kube-core/commit/68580618a8b6037bb5ad925649ece01fc2fb07f4)
-- core/envs: Added new options to enable Oauth2 on ingress & to disable ingress access operator [`5bfb689`](https://github.com/kube-core/kube-core/commit/5bfb6894190be98f824a3b7f741b5c480a24e904)
-- core/envs: Added possibility to generate dynamically secrets for each releases [`68e4925`](https://github.com/kube-core/kube-core/commit/68e492515c59a55d2b9f77d99ba725c14d79074b)
-- core/values: Homogenized values format to set ingressClass [`bec6421`](https://github.com/kube-core/kube-core/commit/bec642113220361e1ec7ff5e4dc0deaa794d9df2)
-- core/envs: Force quote on metadata values in release secrets [`1dc847c`](https://github.com/kube-core/kube-core/commit/1dc847c089d490a096988f0c66eb20bf69b40e60)
+- core/releases: Added dex & rework oauth2-proxy [`b56fca4`](https://github.com/kube-core/kube-core/commit/b56fca4bb741dfe9c10097fa60b3ef95c4561a47)
+- release: v0.5.5 [`4369d9c`](https://github.com/kube-core/kube-core/commit/4369d9c4b47721d51afea6b195aa538b5be91f89)
+- core/envs: Added new options to enable Oauth2 on ingress & to disable ingress access operator [`d5592ed`](https://github.com/kube-core/kube-core/commit/d5592edd04d76cfe8c87e3b39308fdd5afef8227)
+- core/envs: Added possibility to generate dynamically secrets for each releases [`2b26885`](https://github.com/kube-core/kube-core/commit/2b26885b254c5895e70736160b5914f6512af525)
+- core/values: Homogenized values format to set ingressClass [`0aa6f2e`](https://github.com/kube-core/kube-core/commit/0aa6f2ef9cb3a7739395f90fd0ff1b7648622680)
+- core/envs: Force quote on metadata values in release secrets [`752bfb9`](https://github.com/kube-core/kube-core/commit/752bfb9d78777ad56d6d90b9dac67deeeacf29bb)
 
 #### [v0.5.4](https://github.com/kube-core/kube-core/compare/v0.5.3...v0.5.4)
 
 > 13 October 2022
 
-- releases/flux-repository: Updated values templates and release [`451e21f`](https://github.com/kube-core/kube-core/commit/451e21f320dcae9ce8974004aa1998312862cf1a)
-- releases: Added flux-repository [`9f5ac2d`](https://github.com/kube-core/kube-core/commit/9f5ac2daf99ba152a47bcd3240400cbe192cb535)
-- releases/crossplane-buckets: Updated version to v0.3.1 [`4a1fde5`](https://github.com/kube-core/kube-core/commit/4a1fde5cd069dbc8bf2c25757ba26dcf46719c68)
-- releases/kyverno-policies: Set failurePolicy to Ignore by default & Rebuilt chart [`2d33159`](https://github.com/kube-core/kube-core/commit/2d331599d5c44b26ddad099930548011a072702c)
-- core/releases: Cleaned up releases definitions [`b3a61c1`](https://github.com/kube-core/kube-core/commit/b3a61c13cc059960cee6598388b52fa0ec070ac8)
-- core/envs: Added core.globalHelmMetadataEnabled to force rendering Helm labels/annotations on manifests [`1119ec7`](https://github.com/kube-core/kube-core/commit/1119ec7786d788fa4d2586dd5806ab72ded9c4df)
-- release: v0.5.4 [`670a4cf`](https://github.com/kube-core/kube-core/commit/670a4cf05df71e459ac3993610bd73e7f389b3ca)
-- core/envs: Added secret for flux-repository in release-secrets [`4334138`](https://github.com/kube-core/kube-core/commit/433413815b006b52b1dfb084f8fbecb8f2f073c5)
-- core/values: Added condition to handle using raw as a service [`51e152d`](https://github.com/kube-core/kube-core/commit/51e152d59c91c8b701a57c1aa1beeaeb0ba4bbfe)
-- cli/scripts: Activated ytt overlays by default, with toggle via cluster-config [`4088d79`](https://github.com/kube-core/kube-core/commit/4088d79796e5effc40b7918aacb347f68bdbe716)
-- core/templates: Improved kube-core chart and values layering over applications/services and added toggles [`fabd046`](https://github.com/kube-core/kube-core/commit/fabd0465453163caaad423c3ae657f3933fc35d0)
-- core/values: Improved n9-api default values template [`2e07e58`](https://github.com/kube-core/kube-core/commit/2e07e58462e4bc744d4bcb3cac6582afcb5bda39)
-- cli/scripts: Moved overlays at the end of kube-core build [`2aa4c6c`](https://github.com/kube-core/kube-core/commit/2aa4c6cddf999c9f7899e8f5a9ef68979efd60e7)
-- cli/scripts: Improved logging on gitops_overlay [`e1a6ea3`](https://github.com/kube-core/kube-core/commit/e1a6ea31b34fce6ba5081c843414e3ee49b477b3)
-- cli/scripts: Added some extra cleanup after building kube-core charts [`132dd78`](https://github.com/kube-core/kube-core/commit/132dd7818d4a1e7d82f17a39ee63fb76c1fc5ee8)
-- cli/scripts: Fixed overlays applied on actual config instead of staging area [`bdb4050`](https://github.com/kube-core/kube-core/commit/bdb40503d8c7540a8dce77586f115864c78cfc2e)
-- core/templates: Improved support of applications and services with injectClusterLoggingLabel [`fea6dc0`](https://github.com/kube-core/kube-core/commit/fea6dc03cd0b89c979050d168cc60c5b958b1ca7)
+- releases/flux-repository: Updated values templates and release [`8acd329`](https://github.com/kube-core/kube-core/commit/8acd3290a9dc3161fa484cfa867b49ed49981a8d)
+- releases: Added flux-repository [`c3ed984`](https://github.com/kube-core/kube-core/commit/c3ed9845dc58b2719696b8e848ea5e6e89582163)
+- releases/crossplane-buckets: Updated version to v0.3.1 [`f8ee019`](https://github.com/kube-core/kube-core/commit/f8ee019f8b419b44ea410c236f4546a277c22b80)
+- releases/kyverno-policies: Set failurePolicy to Ignore by default & Rebuilt chart [`1376d86`](https://github.com/kube-core/kube-core/commit/1376d86ba1535be1a35b35420fa351127c47a874)
+- core/releases: Cleaned up releases definitions [`ae822fa`](https://github.com/kube-core/kube-core/commit/ae822fab18d961498db0ddb9fe4c26cd9b755fb7)
+- core/envs: Added core.globalHelmMetadataEnabled to force rendering Helm labels/annotations on manifests [`6948dd6`](https://github.com/kube-core/kube-core/commit/6948dd667ee2ace1406db11649792b80925e691e)
+- release: v0.5.4 [`11024f9`](https://github.com/kube-core/kube-core/commit/11024f9a64c7a73a1f589114de53c7520770ca9e)
+- core/envs: Added secret for flux-repository in release-secrets [`eceaeb3`](https://github.com/kube-core/kube-core/commit/eceaeb384b2ef603174c6952b72bab3a097395ef)
+- core/values: Added condition to handle using raw as a service [`76a305e`](https://github.com/kube-core/kube-core/commit/76a305ee6790a56135085258665880a265fc6dfb)
+- cli/scripts: Activated ytt overlays by default, with toggle via cluster-config [`e623fcf`](https://github.com/kube-core/kube-core/commit/e623fcfb575bb6ec3d2af1ea702d45e13b985905)
+- core/templates: Improved kube-core chart and values layering over applications/services and added toggles [`b15da33`](https://github.com/kube-core/kube-core/commit/b15da3313f25899d96e88bcbe67b53ee737db5ff)
+- core/values: Improved n9-api default values template [`ea44dba`](https://github.com/kube-core/kube-core/commit/ea44dbaa038aee64faa4eada78a6c3de073e0bfe)
+- cli/scripts: Moved overlays at the end of kube-core build [`4243f47`](https://github.com/kube-core/kube-core/commit/4243f471cfaeabab9e63a650087cf161d62b8627)
+- cli/scripts: Improved logging on gitops_overlay [`901794a`](https://github.com/kube-core/kube-core/commit/901794ac3dfe1e50029ebcea1a055ce2bf1c2661)
+- cli/scripts: Added some extra cleanup after building kube-core charts [`aba3c93`](https://github.com/kube-core/kube-core/commit/aba3c93e378c987a12154adc977873d5488721cc)
+- cli/scripts: Fixed overlays applied on actual config instead of staging area [`803f245`](https://github.com/kube-core/kube-core/commit/803f24593c67491e977a29e3884579e3bbe85234)
+- core/templates: Improved support of applications and services with injectClusterLoggingLabel [`9c15b3e`](https://github.com/kube-core/kube-core/commit/9c15b3ec1c3fa4477808e726807cd6d091eaa83e)
 
 #### [v0.5.3](https://github.com/kube-core/kube-core/compare/v0.5.2...v0.5.3)
 
 > 11 October 2022
 
-- core/templates: Removed label injection on custom releases [`457a373`](https://github.com/kube-core/kube-core/commit/457a373ecb8ff1c8f37634cf1d37b3e21faddd00)
-- release: v0.5.3 [`c835425`](https://github.com/kube-core/kube-core/commit/c83542533a9fe15d08b0b3e053eb091119654f10)
+- core/templates: Removed label injection on custom releases [`41220d3`](https://github.com/kube-core/kube-core/commit/41220d3351d48b44564c362bb1067f944b821016)
+- release: v0.5.3 [`d9c3abb`](https://github.com/kube-core/kube-core/commit/d9c3abbce625dd7a80b31c911ea6e1b17fc25706)
 
 #### [v0.5.2](https://github.com/kube-core/kube-core/compare/v0.5.1...v0.5.2)
 
 > 11 October 2022
 
-- core/envs: Added integrations between Core, Applications and Services for mongodb-managed and rabbitmq-managed [`9c122e5`](https://github.com/kube-core/kube-core/commit/9c122e5d77f12d56961e2e3645a0fe21efc44820)
-- cli/scripts: Reimplemented ytt Overlays [`b146bcb`](https://github.com/kube-core/kube-core/commit/b146bcb673150ceec7d7d4d759c51acff7ca7590)
-- release: v0.5.2 [`8831d3b`](https://github.com/kube-core/kube-core/commit/8831d3b13ef6c2f2cd1946b75883143ef9b2fb11)
+- core/envs: Added integrations between Core, Applications and Services for mongodb-managed and rabbitmq-managed [`4358e16`](https://github.com/kube-core/kube-core/commit/4358e16b2a323e25408aa096956d179bc077906c)
+- cli/scripts: Reimplemented ytt Overlays [`79b2b03`](https://github.com/kube-core/kube-core/commit/79b2b03ec5c9cd1743c02b9d30e2c9a7be01d5ba)
+- release: v0.5.2 [`8bafeef`](https://github.com/kube-core/kube-core/commit/8bafeef1d5e3f491d5ea4c9a9e1e89520028928d)
 
 #### [v0.5.1](https://github.com/kube-core/kube-core/compare/v0.5.0...v0.5.1)
 
 > 7 October 2022
 
-- core/templates: Added release-labels template to easily inject global labels in any relase [`ed2f7cd`](https://github.com/kube-core/kube-core/commit/ed2f7cd592c11b865688921318ff8de323243740)
-- release: v0.5.1 [`4e05db9`](https://github.com/kube-core/kube-core/commit/4e05db987935eee98859c7120c80f9be805ebc27)
+- core/templates: Added release-labels template to easily inject global labels in any relase [`712b79d`](https://github.com/kube-core/kube-core/commit/712b79d300f9d4138ba683ffb9bef0d727229140)
+- release: v0.5.1 [`90c1ef2`](https://github.com/kube-core/kube-core/commit/90c1ef2235f578a0d23b091b18e51d1772efa3b9)
 
 #### [v0.5.0](https://github.com/kube-core/kube-core/compare/v0.4.5...v0.5.0)
 
 > 7 October 2022
 
-- core/templates: Reworked templates to allow for environments, applications and services generation [`e9880ef`](https://github.com/kube-core/kube-core/commit/e9880ef5f989038c7fbe66922aa5aafc5cec794d)
-- releases: Added node-problem-detector [`6712757`](https://github.com/kube-core/kube-core/commit/6712757130732b7efc4536d542de1dd199249c02)
-- core/envs: Reworked core values to allow for environments, applications and services generation [`9694041`](https://github.com/kube-core/kube-core/commit/9694041de235041e3691da08104cb3a6bbe82348)
-- core/values: Reworked values templates to allow for environments, applications and services generation [`262e926`](https://github.com/kube-core/kube-core/commit/262e92682d47424dede14eb33575404e48d68542)
-- releases/n9-api: Updated to v1.3.2 [`ecc4725`](https://github.com/kube-core/kube-core/commit/ecc47254775480a6f9754f764ff0644ef75d8731)
-- core: Reworked core helmfiles to allow for environments, applications and services generation [`0185750`](https://github.com/kube-core/kube-core/commit/0185750c26165a51056eee1d33d89412630880a5)
-- release: v0.5.0 [`0fb0e17`](https://github.com/kube-core/kube-core/commit/0fb0e176792a4bb9bbb1764dcd67692ab164325a)
-- cli/workspace: Updated open command documentation [`cea2e2c`](https://github.com/kube-core/kube-core/commit/cea2e2c675d36e7b252ee0d964f843bc95ba2244)
+- core/templates: Reworked templates to allow for environments, applications and services generation [`d62295d`](https://github.com/kube-core/kube-core/commit/d62295ddf8f2b24397e0b8df697155ddb28733f1)
+- releases: Added node-problem-detector [`f9fe353`](https://github.com/kube-core/kube-core/commit/f9fe353eb8e4b7237ea434ac5b4142dc61e09e96)
+- core/envs: Reworked core values to allow for environments, applications and services generation [`a4e0a3c`](https://github.com/kube-core/kube-core/commit/a4e0a3ceeb524d32106394397575e3aa0552bc9a)
+- core/values: Reworked values templates to allow for environments, applications and services generation [`2196952`](https://github.com/kube-core/kube-core/commit/2196952cfea5472232c3953dfdba89f4cec9944e)
+- releases/n9-api: Updated to v1.3.2 [`d693fbe`](https://github.com/kube-core/kube-core/commit/d693fbe01b2d7de1169abe2937561cc4b8134f58)
+- core: Reworked core helmfiles to allow for environments, applications and services generation [`fabbfd2`](https://github.com/kube-core/kube-core/commit/fabbfd25bdec1d7205e743b3b1ea499e9090539d)
+- release: v0.5.0 [`44db325`](https://github.com/kube-core/kube-core/commit/44db325e42ce13b0c6962b1511465520dcc41313)
+- cli/workspace: Updated open command documentation [`a78f0f3`](https://github.com/kube-core/kube-core/commit/a78f0f346f0bcffac3358cd0a873aec999b9188e)
 
 #### [v0.4.5](https://github.com/kube-core/kube-core/compare/v0.4.4...v0.4.5)
 
 > 4 October 2022
 
-- cli: Added workspace:open command [`1fea9c4`](https://github.com/kube-core/kube-core/commit/1fea9c4d4538f9ec54d97d48c34af663e285bcc0)
-- release: v0.4.5 [`fe25d1f`](https://github.com/kube-core/kube-core/commit/fe25d1ff6ef62c86e3bd31c59204098981cc82f0)
+- cli: Added workspace:open command [`46c50af`](https://github.com/kube-core/kube-core/commit/46c50af952461887079261d33df28f64db770c9b)
+- release: v0.4.5 [`e2074b5`](https://github.com/kube-core/kube-core/commit/e2074b548be957795114fcc07a0f30a71ef841af)
 
 #### [v0.4.4](https://github.com/kube-core/kube-core/compare/v0.4.3...v0.4.4)
 
 > 3 October 2022
 
-- releases: Rebuilt all releases [`b1c44f6`](https://github.com/kube-core/kube-core/commit/b1c44f68d12810d93c3cc402974759195e53e6df)
-- releases/mongodb-operator: Removed local chart and migrated to official one [`27c969a`](https://github.com/kube-core/kube-core/commit/27c969aad58469147b3e7729aba1c489a15330bc)
-- releases/cluster-policies: Disabeled fail safe mode by default & Updated some policies [`66a8aab`](https://github.com/kube-core/kube-core/commit/66a8aab039c923c6996541503a8c8d6641870230)
-- releases/rabbitmq-operator: Removed hooks and improved resource naming [`85def91`](https://github.com/kube-core/kube-core/commit/85def915d464e2babe43c49ba85f7ec72f080cd9)
-- release: v0.4.4 [`e322f05`](https://github.com/kube-core/kube-core/commit/e322f0534a2c19f0b09e25d30d7678379c0d8350)
-- releases/logging-stack: Changed fluentd minReplicaCount to 3 [`facc14e`](https://github.com/kube-core/kube-core/commit/facc14e754864be1b0e20e18d80d53b3c6654aa0)
+- releases: Rebuilt all releases [`c3add63`](https://github.com/kube-core/kube-core/commit/c3add63d61f398a5fb4e498142b488164e0bb46d)
+- releases/mongodb-operator: Removed local chart and migrated to official one [`9e35c97`](https://github.com/kube-core/kube-core/commit/9e35c974f41acab1c81a1a33b304c166281bc410)
+- releases/cluster-policies: Disabeled fail safe mode by default & Updated some policies [`2a375da`](https://github.com/kube-core/kube-core/commit/2a375da230d81df17bd169a5ae9255575e5ecd4f)
+- releases/rabbitmq-operator: Removed hooks and improved resource naming [`5d4138f`](https://github.com/kube-core/kube-core/commit/5d4138fb50bff464b975fa4efb658e966df839d6)
+- release: v0.4.4 [`cb64517`](https://github.com/kube-core/kube-core/commit/cb645173f485113012b6fc83ae5779988e67419b)
+- releases/logging-stack: Changed fluentd minReplicaCount to 3 [`cd1efd3`](https://github.com/kube-core/kube-core/commit/cd1efd3c5258be89121811f849ba355f1f6600b3)
 
 #### [v0.4.3](https://github.com/kube-core/kube-core/compare/v0.4.2...v0.4.3)
 
 > 30 September 2022
 
-- releases/cluster-policies: Disabled all mutations by default [`a233d75`](https://github.com/kube-core/kube-core/commit/a233d757102dae884a66a777908f6aa9eae73018)
-- release: v0.4.3 [`4aa7ec2`](https://github.com/kube-core/kube-core/commit/4aa7ec267a02fd9162ee2fba619939bf53c33ba1)
+- releases/cluster-policies: Disabled all mutations by default [`7b10bfd`](https://github.com/kube-core/kube-core/commit/7b10bfdd55df5bdb7a4341f8e5c4c98bcc2993db)
+- release: v0.4.3 [`3c28edb`](https://github.com/kube-core/kube-core/commit/3c28edb5d6dfd396d4e9430cf9926cd2c717ea74)
 
 #### [v0.4.2](https://github.com/kube-core/kube-core/compare/v0.4.1...v0.4.2)
 
 > 30 September 2022
 
-- releases/cluster-policies: Reworked default configuration [`82d8daa`](https://github.com/kube-core/kube-core/commit/82d8daa199d3470a67c1e2c1e645ba48a215dfaf)
-- release: v0.4.2 [`0908378`](https://github.com/kube-core/kube-core/commit/0908378626dc3dabc7b26d03ddcdef64d4ba3e9a)
-- core/releases: Removed ingress upgrade options for tekton [`ff39a6b`](https://github.com/kube-core/kube-core/commit/ff39a6b80e24b362577121a612d42a32e78227b8)
+- releases/cluster-policies: Reworked default configuration [`e2d56c1`](https://github.com/kube-core/kube-core/commit/e2d56c156a28702395514a0caabcb37c55ff89b9)
+- release: v0.4.2 [`e6f23a3`](https://github.com/kube-core/kube-core/commit/e6f23a348f18f0396cd28cbb1659de684882fdfc)
+- core/releases: Removed ingress upgrade options for tekton [`3c88808`](https://github.com/kube-core/kube-core/commit/3c88808b16e83a47cb58be8e8f6fad53d1ce7fe8)
 
 #### [v0.4.1](https://github.com/kube-core/kube-core/compare/v0.4.0...v0.4.1)
 
 > 29 September 2022
 
-- releases/tekton: Updated Ingress resources to v1 [`79a3dce`](https://github.com/kube-core/kube-core/commit/79a3dceecc6e795ee3b1fda65be42701cfd01a51)
-- releases/cluster-policies: Fixed default values [`97968c9`](https://github.com/kube-core/kube-core/commit/97968c961a8b1fb3e4f21973fd44f18e3f250a9e)
-- release: v0.4.1 [`24a1716`](https://github.com/kube-core/kube-core/commit/24a17162c9c91437c76f584a28715131ed7672f3)
+- releases/tekton: Updated Ingress resources to v1 [`d3f46bf`](https://github.com/kube-core/kube-core/commit/d3f46bf72f22912d10c07b86310455873b7da00a)
+- releases/cluster-policies: Fixed default values [`42879c6`](https://github.com/kube-core/kube-core/commit/42879c6e6a1256689b60627aad89dde1173b65c4)
+- release: v0.4.1 [`f7e4065`](https://github.com/kube-core/kube-core/commit/f7e40653cbe66a72ad3d46c7f0e619834a37105f)
 
 #### [v0.4.0](https://github.com/kube-core/kube-core/compare/v0.3.27...v0.4.0)
 
 > 29 September 2022
 
-- releases: Rebuilt dist folder [`6d5d818`](https://github.com/kube-core/kube-core/commit/6d5d818ae83ee10967f095832510d1b8ef65c830)
-- releases/policies: Added kube-core base policies [`295acb5`](https://github.com/kube-core/kube-core/commit/295acb57db9cbeb552225aff212407e8ac5971b3)
-- core/releases: Reworked layers and some defaults [`8b86e74`](https://github.com/kube-core/kube-core/commit/8b86e74cffba08db517ef4116fc1f5cbba160d9e)
-- releases/kyverno-policies: Added kyverno-policies with default values [`0e9db60`](https://github.com/kube-core/kube-core/commit/0e9db604e71618a2005d119c568fb11a86ff5ef4)
-- releases/kube-cleanup-operator: Updated values and switched source from local chart to remote [`333dfad`](https://github.com/kube-core/kube-core/commit/333dfadffab472d9772e9146aad6eb9c75e258b1)
-- releases: Added cluster-rbac [`56bc42d`](https://github.com/kube-core/kube-core/commit/56bc42da32a6469f84a8ebfa5cf88e7b9cb5a2f9)
-- cli/releases: Added script to generate a local release [`6f8b9d8`](https://github.com/kube-core/kube-core/commit/6f8b9d8db4bab8695dcd2874bd0d2985416f46ff)
-- releases/logging-stack: Reworked logging-stack Ingress [`162fc7b`](https://github.com/kube-core/kube-core/commit/162fc7b6816ef1fffbfe420b6bd1c301502d9c44)
-- release: v0.4.0 [`2df2827`](https://github.com/kube-core/kube-core/commit/2df28270653bf85b98390a32dbcdcd4fdc21feb0)
-- releases/kyverno: Switched to HA and increased resource limits for kyverno [`c37fdb2`](https://github.com/kube-core/kube-core/commit/c37fdb2a4c5ec2ec057d91fa7edd11db42f01241)
-- releases/logging-stack: Updated app and events dashboard [`81b2b24`](https://github.com/kube-core/kube-core/commit/81b2b243b8d82578cb32f26ebdb2a7f4c969ec4d)
+- releases: Rebuilt dist folder [`1b73b70`](https://github.com/kube-core/kube-core/commit/1b73b70dc6ed647fbbf13b7fdf349b5c1dac2525)
+- releases/policies: Added kube-core base policies [`5128123`](https://github.com/kube-core/kube-core/commit/51281233a8786b896291c1f5d794f805185d474a)
+- core/releases: Reworked layers and some defaults [`fc14066`](https://github.com/kube-core/kube-core/commit/fc140661adf37b3bcb9d37f02a91204b2d3bf1ee)
+- releases/kyverno-policies: Added kyverno-policies with default values [`23ac9da`](https://github.com/kube-core/kube-core/commit/23ac9da7e897ec89c0a98d1eb15c6b51fde97044)
+- releases/kube-cleanup-operator: Updated values and switched source from local chart to remote [`c3e6010`](https://github.com/kube-core/kube-core/commit/c3e6010d82eb15441f964ee2b46fa84eaeb2c832)
+- releases: Added cluster-rbac [`d4e16cb`](https://github.com/kube-core/kube-core/commit/d4e16cb05e500af9b1b0a0d3cfa4fca97fe04d14)
+- cli/releases: Added script to generate a local release [`4d17a02`](https://github.com/kube-core/kube-core/commit/4d17a02c82c94787bde74d3418d1d5f324b23f63)
+- releases/logging-stack: Reworked logging-stack Ingress [`8777c3a`](https://github.com/kube-core/kube-core/commit/8777c3ae5422e4bcdaa6327028c48e8e0fc5df1e)
+- release: v0.4.0 [`4b78b5d`](https://github.com/kube-core/kube-core/commit/4b78b5d598857eefd9c46a9ecaacea554b8e1a28)
+- releases/kyverno: Switched to HA and increased resource limits for kyverno [`234ae22`](https://github.com/kube-core/kube-core/commit/234ae22f97311fce22f0ce44e8f626f06683e27a)
+- releases/logging-stack: Updated app and events dashboard [`bb190f8`](https://github.com/kube-core/kube-core/commit/bb190f80c3db2cc57a2526d66890dc266e5ecfbb)
 
 #### [v0.3.27](https://github.com/kube-core/kube-core/compare/v0.3.26...v0.3.27)
 
 > 23 September 2022
 
-- releases: Added kyverno [`8a7998d`](https://github.com/kube-core/kube-core/commit/8a7998d038f63b11a411d243dd319313cf9e3bff)
-- release: v0.3.27 [`17a5a5d`](https://github.com/kube-core/kube-core/commit/17a5a5d0591b3f9f8c90778cace7f764b294d601)
+- releases: Added kyverno [`581c911`](https://github.com/kube-core/kube-core/commit/581c9117d5faa7fd9e756baa288e8eeee1acd953)
+- release: v0.3.27 [`32d73a8`](https://github.com/kube-core/kube-core/commit/32d73a8f7341a780068db973086f7fafb2ffc764)
 
 #### [v0.3.26](https://github.com/kube-core/kube-core/compare/v0.3.25...v0.3.26)
 
 > 22 September 2022
 
-- cli/scripts: Cleaned up some scripts and regenerated scripts-config with more docs [`09f033d`](https://github.com/kube-core/kube-core/commit/09f033de8ab50371e9bc32f0887b648be88e8f26)
-- release: v0.3.26 [`972204d`](https://github.com/kube-core/kube-core/commit/972204de4ca136a7e6c623729e25e8e93590afe5)
-- core/releases: Adds the possibility to inject labels for logging in core releases [`b2e8c63`](https://github.com/kube-core/kube-core/commit/b2e8c639c17cf409fc2d11705ec14708841fb2d6)
-- releases/kps: Fixed wrong URL for mongodb_percona dashboard [`8ee31fa`](https://github.com/kube-core/kube-core/commit/8ee31fa9e301bc7686fa1679e12d828cf9615b4e)
-- core/releases: Added logging on nginx-ingress releases by default [`dbd087b`](https://github.com/kube-core/kube-core/commit/dbd087b2026ada5ab9c7a2ccac505971e0a8d429)
-- releases/tekton: Sets default SA for triggers to tekton [`ddea2ca`](https://github.com/kube-core/kube-core/commit/ddea2ca11156441c71e95a9838bdddd9a903cfbf)
-- core/releases: Fixed typo on logging LabelTransformer [`04607dc`](https://github.com/kube-core/kube-core/commit/04607dc7cd752cfd818684f420f5aef0b176ad87)
-- cli/scripts: Fixed typo in cloud_gcp_setup_tekton_sf [`ec11666`](https://github.com/kube-core/kube-core/commit/ec116661cb752171d21ae65f01a80bc6a3eb9e4c)
+- cli/scripts: Cleaned up some scripts and regenerated scripts-config with more docs [`d9fc28e`](https://github.com/kube-core/kube-core/commit/d9fc28e407dc5e9af58f1047d35efcc62a969799)
+- release: v0.3.26 [`8bcac4a`](https://github.com/kube-core/kube-core/commit/8bcac4a9c769866f7fc97d372c9869f213dcc6f8)
+- core/releases: Adds the possibility to inject labels for logging in core releases [`1a66aab`](https://github.com/kube-core/kube-core/commit/1a66aab90caa50bb42c7d58decb4e4f264451c91)
+- releases/kps: Fixed wrong URL for mongodb_percona dashboard [`bcf5fa3`](https://github.com/kube-core/kube-core/commit/bcf5fa353b4655da49f539ee74a5a6a49b89b8d9)
+- core/releases: Added logging on nginx-ingress releases by default [`379c571`](https://github.com/kube-core/kube-core/commit/379c5715096a9f3903eb2bef7768ab8602359c37)
+- releases/tekton: Sets default SA for triggers to tekton [`00e57a5`](https://github.com/kube-core/kube-core/commit/00e57a5ae9d862be93d9c90a7a11aecd0882c00f)
+- core/releases: Fixed typo on logging LabelTransformer [`5ebc9b7`](https://github.com/kube-core/kube-core/commit/5ebc9b7082a7b3b3be18d677b4ec923ca48ad1d8)
+- cli/scripts: Fixed typo in cloud_gcp_setup_tekton_sf [`e6a68d5`](https://github.com/kube-core/kube-core/commit/e6a68d5d8a4052b739aaa949114b9c667afdbfbb)
 
 #### [v0.3.25](https://github.com/kube-core/kube-core/compare/v0.3.24...v0.3.25)
 
 > 20 September 2022
 
-- releases/chaos: Removed litmus-chaos and introduced chaos-mesh [`3163fc4`](https://github.com/kube-core/kube-core/commit/3163fc4f3f44f90b7b4646e9eb6d99309ebb9e1c)
-- releases: Updated releases/dist [`b7d4a04`](https://github.com/kube-core/kube-core/commit/b7d4a043f4410f02d4b0b40224d0f7206cec7523)
-- releases/mongodb-atlas-operator: Added mongodb-atlas-operator release [`114b6d0`](https://github.com/kube-core/kube-core/commit/114b6d00fa80e75f796b07e5608922864b7e80df)
-- cli/generators: Adds terraform generator [`91bdfac`](https://github.com/kube-core/kube-core/commit/91bdfacd1e723fb7ce5dcb1b682f32810a2a467a)
-- releases/logging: Improved logging-stack and cluster-logging default configuration, scaling and performance [`f824375`](https://github.com/kube-core/kube-core/commit/f824375bed32e0781ec209a12b004ba648f5d873)
-- core/config: Reformatted some files [`093f13d`](https://github.com/kube-core/kube-core/commit/093f13d9c888cf213e8711bd5b1b5ea3a48717ac)
-- releases/kps: Added some Grafana dashbords and reorganized some folders [`8a85c41`](https://github.com/kube-core/kube-core/commit/8a85c417306f138d50d56e0663d7e173ff4eb680)
-- cli/generators: Fixes path in cli plopfile [`f701e3f`](https://github.com/kube-core/kube-core/commit/f701e3f5ba314f301db88f98df4e15baefecbc70)
-- release: v0.3.25 [`3b79e42`](https://github.com/kube-core/kube-core/commit/3b79e428b2bb7c5d541d845da522f806f13031ec)
-- releases/kps: Updated mongodb and external-dns dashboards [`8bf3d87`](https://github.com/kube-core/kube-core/commit/8bf3d87d9f89ebbfa1f3d811acf48e8d10c8c461)
+- releases/chaos: Removed litmus-chaos and introduced chaos-mesh [`bb68c95`](https://github.com/kube-core/kube-core/commit/bb68c957c123a7b98a629e790d8f9c8558c2023d)
+- releases: Updated releases/dist [`feb8859`](https://github.com/kube-core/kube-core/commit/feb8859428eee322036767eeffa47de8107b1ea0)
+- releases/mongodb-atlas-operator: Added mongodb-atlas-operator release [`c708a74`](https://github.com/kube-core/kube-core/commit/c708a74de0f27e97c121385d057730c2af6d5630)
+- cli/generators: Adds terraform generator [`7227c56`](https://github.com/kube-core/kube-core/commit/7227c5612e63f770ac97410a42cf7d62cf40d86d)
+- releases/logging: Improved logging-stack and cluster-logging default configuration, scaling and performance [`27a93b4`](https://github.com/kube-core/kube-core/commit/27a93b41024453e8f6b5d336199dc2e51af6196d)
+- core/config: Reformatted some files [`09c8ded`](https://github.com/kube-core/kube-core/commit/09c8ded322facd1b5a8c9e487aab7db65175cfbf)
+- releases/kps: Added some Grafana dashbords and reorganized some folders [`b484d69`](https://github.com/kube-core/kube-core/commit/b484d691f708c573e59a8c5d38ce45b92bc550b3)
+- cli/generators: Fixes path in cli plopfile [`b58c7a1`](https://github.com/kube-core/kube-core/commit/b58c7a16c7935a676a135b6b553ba13c813bd645)
+- release: v0.3.25 [`d5923cd`](https://github.com/kube-core/kube-core/commit/d5923cdaefa0c521349d6c99106fd51eb052c7b2)
+- releases/kps: Updated mongodb and external-dns dashboards [`618716c`](https://github.com/kube-core/kube-core/commit/618716cdfe44dd990de6bb2e7944be42c303b2b8)
 
 #### [v0.3.24](https://github.com/kube-core/kube-core/compare/v0.3.23...v0.3.24)
 
 > 16 September 2022
 
-- releases/logging-stack: Added Kibana dashboard auto-provisionning [`d0de066`](https://github.com/kube-core/kube-core/commit/d0de066646533e94efdd3aee95ff655935ee1c9d)
-- releases/cluster-logging: Allows to inject extra shared filters for all flows [`cec64d0`](https://github.com/kube-core/kube-core/commit/cec64d078a79814023aba8400b0587af864d660b)
-- releases/cluster-logging: Added output integrations on tekton default flow [`023ad4d`](https://github.com/kube-core/kube-core/commit/023ad4de6a1b5cc0a4eac5eb828f6694a5f8fb73)
-- release: v0.3.24 [`8ccfe2c`](https://github.com/kube-core/kube-core/commit/8ccfe2ccabee25a3b8792fa01b1861d062bbd2b0)
-- core/releases: Added kube-core logging labels on nginx-ingress-controller [`67d7f4a`](https://github.com/kube-core/kube-core/commit/67d7f4a08a9c57ecdd0ef22f80952fb08986635c)
-- releases/logging-stack: Changed min fluentd replicas to 1 by default [`4c033ca`](https://github.com/kube-core/kube-core/commit/4c033ca5ec8c0c0b050aacd51edb4f0ac011faaa)
+- releases/logging-stack: Added Kibana dashboard auto-provisionning [`dc6afdf`](https://github.com/kube-core/kube-core/commit/dc6afdf7d7f4f891e875092db17917f19af9f707)
+- releases/cluster-logging: Allows to inject extra shared filters for all flows [`11ce7bc`](https://github.com/kube-core/kube-core/commit/11ce7bc3982389392a036b1b1d82c3a785454d6c)
+- releases/cluster-logging: Added output integrations on tekton default flow [`1248866`](https://github.com/kube-core/kube-core/commit/1248866a48cd93a04e67fcba40622449891135b6)
+- release: v0.3.24 [`c1e2cea`](https://github.com/kube-core/kube-core/commit/c1e2ceaa8805c5fbbba21aa4a27f33249758b65b)
+- core/releases: Added kube-core logging labels on nginx-ingress-controller [`a4979c8`](https://github.com/kube-core/kube-core/commit/a4979c8095437641b0a3aa5d191b8085a4527134)
+- releases/logging-stack: Changed min fluentd replicas to 1 by default [`c1b5c50`](https://github.com/kube-core/kube-core/commit/c1b5c50a71bc9ec87ee635240b229aab80cfc114)
 
 #### [v0.3.23](https://github.com/kube-core/kube-core/compare/v0.3.22...v0.3.23)
 
 > 15 September 2022
 
-- releases/kps: Adds multiple dashboards [`3c51326`](https://github.com/kube-core/kube-core/commit/3c513261c7fc9811a1ffdc5c7004e31710d78311)
-- releases/logging-stack: Added possibility to control min/max fluentd replicas [`3d8bd2c`](https://github.com/kube-core/kube-core/commit/3d8bd2c3c49c5c89cbfff57f353b8ab6fdea2f55)
-- release: v0.3.23 [`cbb58a9`](https://github.com/kube-core/kube-core/commit/cbb58a95af96f8ec3ef12b00b767d01c69548c7d)
-- core/cluster: Removed some namespaces that were included in log streams by default [`d2a7507`](https://github.com/kube-core/kube-core/commit/d2a7507e16f24d98f79480e709152040ee0f67ef)
+- releases/kps: Adds multiple dashboards [`069bfa8`](https://github.com/kube-core/kube-core/commit/069bfa8c20472c033a8fb3e6bcddd6e63a39d2ba)
+- releases/logging-stack: Added possibility to control min/max fluentd replicas [`569ee1c`](https://github.com/kube-core/kube-core/commit/569ee1c4f0b17a20c330ab38507c0e8d3c5c8537)
+- release: v0.3.23 [`d3af48c`](https://github.com/kube-core/kube-core/commit/d3af48c6d51129aab8fc5d8c143d1558c661d977)
+- core/cluster: Removed some namespaces that were included in log streams by default [`be2dc7e`](https://github.com/kube-core/kube-core/commit/be2dc7e77a281c417d6b7a1dd5370d8075aeac51)
 
 #### [v0.3.22](https://github.com/kube-core/kube-core/compare/v0.3.21...v0.3.22)
 
 > 15 September 2022
 
-- releases/cluster-logging: Changed default buffer parameters to have better AWS S3 support [`65a42de`](https://github.com/kube-core/kube-core/commit/65a42de5b878d9a61c6f7aab2c637b142f0fb6f3)
-- release: v0.3.22 [`6b9511b`](https://github.com/kube-core/kube-core/commit/6b9511bca9bf52ef88c27b72ec9dcc04958273f4)
+- releases/cluster-logging: Changed default buffer parameters to have better AWS S3 support [`e3ea2ec`](https://github.com/kube-core/kube-core/commit/e3ea2ec9f8d1c2c7a0568b2f0b037ddede70f057)
+- release: v0.3.22 [`fd4a04f`](https://github.com/kube-core/kube-core/commit/fd4a04f01066e2b2dcdb770a5955507903920960)
 
 #### [v0.3.21](https://github.com/kube-core/kube-core/compare/v0.3.20...v0.3.21)
 
 > 15 September 2022
 
-- releases/cluster-logging: Fixed some unsafe conditions [`f133cd7`](https://github.com/kube-core/kube-core/commit/f133cd733a66dd7b3558c1617ff361d46320da67)
-- release: v0.3.21 [`53becf5`](https://github.com/kube-core/kube-core/commit/53becf5466520b96d06366d5de5ca3450b42de5c)
+- releases/cluster-logging: Fixed some unsafe conditions [`5f9a553`](https://github.com/kube-core/kube-core/commit/5f9a5533920ac7dac98cf08c79a4078314bb4261)
+- release: v0.3.21 [`8224cd0`](https://github.com/kube-core/kube-core/commit/8224cd0fd43e4948279a000e929c9f75e8c49b18)
 
 #### [v0.3.20](https://github.com/kube-core/kube-core/compare/v0.3.19...v0.3.20)
 
 > 15 September 2022
 
-- release: v0.3.20 [`04a9814`](https://github.com/kube-core/kube-core/commit/04a9814cea2aa6acc5ec781ab8d709207a7cb60c)
-- releases/cluster-logging: Disabled events integration by default [`21e9bd0`](https://github.com/kube-core/kube-core/commit/21e9bd06b70c2c96e9ae62662b9787f370baeaf0)
+- release: v0.3.20 [`d12044c`](https://github.com/kube-core/kube-core/commit/d12044c8f32bba42e5f832f5f8fb7543d423981a)
+- releases/cluster-logging: Disabled events integration by default [`42c4acc`](https://github.com/kube-core/kube-core/commit/42c4acc498f6b8b3b0d52a23dfc077d589178b49)
 
 #### [v0.3.19](https://github.com/kube-core/kube-core/compare/v0.3.18...v0.3.19)
 
 > 14 September 2022
 
-- releases/eck-operator: Upgrades to v2.4.0 and adds logic for autoscaling [`417973f`](https://github.com/kube-core/kube-core/commit/417973f037d594a0ca19d2f011cc4dd9bda81a9e)
-- releases: Rebuilt releases [`7c9a844`](https://github.com/kube-core/kube-core/commit/7c9a8441ef3aa2636d6b65615191cb54430f8045)
-- releases/logging: Improved default values [`06e7682`](https://github.com/kube-core/kube-core/commit/06e7682a021919c5e32776b916cd63f6bf2b36ec)
-- core/packages: Fixed test-logging package [`7cc283d`](https://github.com/kube-core/kube-core/commit/7cc283d7d339734612d9148581246512de2dc6fe)
-- release: v0.3.19 [`d8c1865`](https://github.com/kube-core/kube-core/commit/d8c18651b367576c255c485396789ad6f67018be)
-- releases/logging-stack: Improved fluentbit default configuration [`29e2dfb`](https://github.com/kube-core/kube-core/commit/29e2dfb8cd7be9a9aedac988a73a2c83a8c398a4)
+- releases/eck-operator: Upgrades to v2.4.0 and adds logic for autoscaling [`f76a4f6`](https://github.com/kube-core/kube-core/commit/f76a4f6ac3bc3674597c119fe0ab2c944aa61f8a)
+- releases: Rebuilt releases [`f4f9d29`](https://github.com/kube-core/kube-core/commit/f4f9d29df2443e502cfcc539fa77462b453c9dda)
+- releases/logging: Improved default values [`ea12ae2`](https://github.com/kube-core/kube-core/commit/ea12ae2612044c3fb1f8d19a3def996e050b6057)
+- core/packages: Fixed test-logging package [`88f03c4`](https://github.com/kube-core/kube-core/commit/88f03c4f314111179df12e6e4c7b99759685388d)
+- release: v0.3.19 [`25c68cd`](https://github.com/kube-core/kube-core/commit/25c68cd7e980ecba524d3245d5febdabf61ec654)
+- releases/logging-stack: Improved fluentbit default configuration [`9e0a5c4`](https://github.com/kube-core/kube-core/commit/9e0a5c4380b403d54755fc086edf13cddeb3b40c)
 
 #### [v0.3.18](https://github.com/kube-core/kube-core/compare/v0.3.17...v0.3.18)
 
 > 12 September 2022
 
-- releases: Added test-logging package [`07ead6c`](https://github.com/kube-core/kube-core/commit/07ead6c22c2560f4218204ff29870a57a1db85fd)
-- release: v0.3.18 [`1bf17a7`](https://github.com/kube-core/kube-core/commit/1bf17a7accd8044bedcb99617623836903f25169)
+- releases: Added test-logging package [`fd5364d`](https://github.com/kube-core/kube-core/commit/fd5364dba120c5fa2783db47b593aaa7862509c7)
+- release: v0.3.18 [`4045d94`](https://github.com/kube-core/kube-core/commit/4045d949e701501da9d352fd26b0fb054c3f2460)
 
 #### [v0.3.17](https://github.com/kube-core/kube-core/compare/v0.3.16...v0.3.17)
 
 > 11 September 2022
 
-- releases: Added prometheus-adapter & KEDA [`b81c30c`](https://github.com/kube-core/kube-core/commit/b81c30c73da4b966fc157c2e1db7df37da67183a)
-- releases: Rebuilt releases [`fee0bfb`](https://github.com/kube-core/kube-core/commit/fee0bfbd03bbe30da2ebf1c184625a66c0ae1555)
-- releases/cluster-logging: Added events integration that allows to parse and forward Kubernetes Events [`debe60c`](https://github.com/kube-core/kube-core/commit/debe60c9d387d91d78b67d0f9255eafd3334985e)
-- releases/cluster-logging: Improved buffer and flush configuration to have more resilient and scalable event streams [`b8d44d1`](https://github.com/kube-core/kube-core/commit/b8d44d1cb844bcd25057d8fe23ba4698ff99746d)
-- releases/logging-stack: Improved scalability, observability and resiliency of fluentd and fluentbit [`0b18fab`](https://github.com/kube-core/kube-core/commit/0b18fab847c6a5aa531f6201fa80465b1b2a6b42)
-- core/config: Cleaned up some default values from core env as they are now in the underlying logging charts [`a8c20b0`](https://github.com/kube-core/kube-core/commit/a8c20b0d7b82d876dc83d8bacdf72022aa60cf8b)
-- release: v0.3.17 [`71c956b`](https://github.com/kube-core/kube-core/commit/71c956b2c850f6d0f7fb28f26a5152d6c4c44437)
-- releases/logging-stack: Added EventTailer resource to the stack [`1912156`](https://github.com/kube-core/kube-core/commit/19121567d14988ab7fffcc90b40badb1358356b2)
-- releases/system-jobs: Removes excessive logging in all system-jobs containers [`4f5847b`](https://github.com/kube-core/kube-core/commit/4f5847b3023d3df21ab18345ede2134dcec0052d)
-- cli/generators: Updated release template for add release command [`2be247f`](https://github.com/kube-core/kube-core/commit/2be247f14c2c1e8bfb7328d9cd2c77260bc2b22e)
+- releases: Added prometheus-adapter & KEDA [`5163d79`](https://github.com/kube-core/kube-core/commit/5163d795979a23b7c5df6d07a88597bfb4fad7ac)
+- releases: Rebuilt releases [`a57b92b`](https://github.com/kube-core/kube-core/commit/a57b92b6da05bb89c38bacf7116b151bef01fc56)
+- releases/cluster-logging: Added events integration that allows to parse and forward Kubernetes Events [`7715774`](https://github.com/kube-core/kube-core/commit/7715774c1530538e86eb8fd0b0fd1dc0dff96d3f)
+- releases/cluster-logging: Improved buffer and flush configuration to have more resilient and scalable event streams [`236f0b4`](https://github.com/kube-core/kube-core/commit/236f0b40416d6ef3be465aee7063286cc07822ae)
+- releases/logging-stack: Improved scalability, observability and resiliency of fluentd and fluentbit [`b311589`](https://github.com/kube-core/kube-core/commit/b3115897efd74b936df56d7db6c6506f8fd660c0)
+- core/config: Cleaned up some default values from core env as they are now in the underlying logging charts [`08f45db`](https://github.com/kube-core/kube-core/commit/08f45db04416513e5227a15dd3dcd38106edd4a7)
+- release: v0.3.17 [`0d5973d`](https://github.com/kube-core/kube-core/commit/0d5973dfdcb11a8aa559ea1ed13967179041e5b4)
+- releases/logging-stack: Added EventTailer resource to the stack [`00f4201`](https://github.com/kube-core/kube-core/commit/00f4201d0a9293665da3d68e5c293db770d8cc7d)
+- releases/system-jobs: Removes excessive logging in all system-jobs containers [`184e57c`](https://github.com/kube-core/kube-core/commit/184e57cb454a97c822ccf3c7711d11b470ba88f0)
+- cli/generators: Updated release template for add release command [`1a94aea`](https://github.com/kube-core/kube-core/commit/1a94aea247f9974cfbdba7b649b43f8f64bc8ddd)
 
 #### [v0.3.16](https://github.com/kube-core/kube-core/compare/v0.3.15...v0.3.16)
 
 > 6 September 2022
 
-- cli/scripts: Adds more checks in branch detection before applying in auto-pr [`39b8960`](https://github.com/kube-core/kube-core/commit/39b896047cb0852fafd13476a855da4e70f5e9b2)
-- release: v0.3.16 [`7f3aeba`](https://github.com/kube-core/kube-core/commit/7f3aeba2831ba9d68d318880886f6fb3cac1789f)
+- cli/scripts: Adds more checks in branch detection before applying in auto-pr [`3dc94b1`](https://github.com/kube-core/kube-core/commit/3dc94b1908814d269d1b692b5f648d791b776012)
+- release: v0.3.16 [`7eb556d`](https://github.com/kube-core/kube-core/commit/7eb556daa303daaaeb935d70360635ff1341833d)
 
 #### [v0.3.15](https://github.com/kube-core/kube-core/compare/v0.3.14...v0.3.15)
 
 > 6 September 2022
 
-- releases/tekton: Fixes apply & auto-merge logic in core-tag and cluster-push [`696210c`](https://github.com/kube-core/kube-core/commit/696210c8de77ff1381d53c4b8f2128c74477a538)
-- release: v0.3.15 [`ea28d5b`](https://github.com/kube-core/kube-core/commit/ea28d5b7fbc4e81e0ae821e8a4b37db1efe072ca)
+- releases/tekton: Fixes apply & auto-merge logic in core-tag and cluster-push [`2c203b6`](https://github.com/kube-core/kube-core/commit/2c203b606c7051e6ec674d1c9094cc50b004a54d)
+- release: v0.3.15 [`efcfce0`](https://github.com/kube-core/kube-core/commit/efcfce0ceb0bfaaa4e9eed728208f8d3568c5c70)
 
 #### [v0.3.14](https://github.com/kube-core/kube-core/compare/v0.3.13...v0.3.14)
 
 > 6 September 2022
 
-- releases/tekton: Makes kube-core image in CI variable [`c1cad49`](https://github.com/kube-core/kube-core/commit/c1cad4906218ba05c6a438c60acaad840066e583)
-- release: v0.3.14 [`2b79f3b`](https://github.com/kube-core/kube-core/commit/2b79f3b9dc88410a36632a931c1ddb8356b656f0)
+- releases/tekton: Makes kube-core image in CI variable [`67851d4`](https://github.com/kube-core/kube-core/commit/67851d47ff82f776b6792c8422837e92fd90051b)
+- release: v0.3.14 [`99f1ba8`](https://github.com/kube-core/kube-core/commit/99f1ba878d39ac7c4c8d55c078683baebab235d9)
 
 #### [v0.3.13](https://github.com/kube-core/kube-core/compare/v0.3.12...v0.3.13)
 
 > 6 September 2022
 
-- policies: Adds possibility to toggle kube-core policies and cluster policies [`cb4dad4`](https://github.com/kube-core/kube-core/commit/cb4dad429e06ece9f84959ef405360664d8921ec)
-- release: v0.3.13 [`0d8c123`](https://github.com/kube-core/kube-core/commit/0d8c1230697b4e66d5e0d02d72c4cf23d9694c12)
+- policies: Adds possibility to toggle kube-core policies and cluster policies [`31ebf21`](https://github.com/kube-core/kube-core/commit/31ebf21160c78babec3455bc7c273c127a93b344)
+- release: v0.3.13 [`1a29e8f`](https://github.com/kube-core/kube-core/commit/1a29e8fd955cabf44e9e70403fc0467a3b9ba1c5)
 
 #### [v0.3.12](https://github.com/kube-core/kube-core/compare/v0.3.11...v0.3.12)
 
 > 5 September 2022
 
-- gitops: Adds apply logic on gitops pipelines [`5f0af48`](https://github.com/kube-core/kube-core/commit/5f0af48f6ea5fd8475b7634502321c02bb2e8952)
-- release: v0.3.12 [`ffba14f`](https://github.com/kube-core/kube-core/commit/ffba14ff5fcab3f1f87eddfd3a7123f37e23fb77)
+- gitops: Adds apply logic on gitops pipelines [`7138a98`](https://github.com/kube-core/kube-core/commit/7138a98b839468188f3f8395a27aeca71740d612)
+- release: v0.3.12 [`9f1cfb4`](https://github.com/kube-core/kube-core/commit/9f1cfb4985dc99b63a7b827f15a704a8e01f56b2)
 
 #### [v0.3.11](https://github.com/kube-core/kube-core/compare/v0.3.10...v0.3.11)
 
 > 5 September 2022
 
-- release: v0.3.11 [`e4a886b`](https://github.com/kube-core/kube-core/commit/e4a886b19043114ddda14a3213a4e4ce5f27e80a)
-- cli/scripts: Fixes detection of changes in auto-pr if all files are targeted instead of gitops config only [`fb85448`](https://github.com/kube-core/kube-core/commit/fb854486238647d1c807a0f6d8198ce163fddb12)
+- release: v0.3.11 [`fc55f1b`](https://github.com/kube-core/kube-core/commit/fc55f1b00608e7dd80b4ea109b12ab9f5b7ddaa3)
+- cli/scripts: Fixes detection of changes in auto-pr if all files are targeted instead of gitops config only [`901633f`](https://github.com/kube-core/kube-core/commit/901633f5a4ee05ea1a8cd7b7d5817748172bf22d)
 
 #### [v0.3.10](https://github.com/kube-core/kube-core/compare/v0.3.9...v0.3.10)
 
 > 5 September 2022
 
-- cli/scripts: Forced secrets namespace generation to avoid CI builds deleting it [`f4a4905`](https://github.com/kube-core/kube-core/commit/f4a490583187066a45072e9d0a5482a05f80496f)
-- release: v0.3.10 [`98a5c7a`](https://github.com/kube-core/kube-core/commit/98a5c7a9f9d33d02cd3ee315fd44a168a5f4cbe8)
+- cli/scripts: Forced secrets namespace generation to avoid CI builds deleting it [`569ce37`](https://github.com/kube-core/kube-core/commit/569ce37558f8596b5d7242e3acd999ad41d40523)
+- release: v0.3.10 [`f36b73f`](https://github.com/kube-core/kube-core/commit/f36b73f65b2adf137a041eaedd0716652e929cf0)
 
 #### [v0.3.9](https://github.com/kube-core/kube-core/compare/v0.3.8...v0.3.9)
 
 > 5 September 2022
 
-- releases: Removed base folder as it is not used anymore [`8713fad`](https://github.com/kube-core/kube-core/commit/8713fadf7ab97ceb0794a205592700bbcdb1a576)
-- cli/scripts: Updates flux install & Various fixes and improvements [`396e7e5`](https://github.com/kube-core/kube-core/commit/396e7e56aa2dfc6f253d54ba5fd1554b069b344f)
-- releases: Adds flux-config to manage default flux resources [`c710131`](https://github.com/kube-core/kube-core/commit/c71013169f5d13ab8ce3f2816445d9e9faeb04ce)
-- core/templates: Moved namespace field on the kube-core release wrapper [`c06541a`](https://github.com/kube-core/kube-core/commit/c06541a9dbaa33afbfd2f0944af4216808cc512d)
-- releases/flux: Adds podmonitor config to monitor all flux controllers [`15d9d88`](https://github.com/kube-core/kube-core/commit/15d9d88f4d8c5124d29c15f5721ec016a909fdd9)
-- release: v0.3.9 [`1e65f06`](https://github.com/kube-core/kube-core/commit/1e65f06b95bec14d0485551ed2c80c0ad6444d0e)
-- releases/schema: Updated schema to include new releases [`2df0dea`](https://github.com/kube-core/kube-core/commit/2df0deae34f7ea901078311274f9535f1804c805)
+- releases: Removed base folder as it is not used anymore [`9d73a04`](https://github.com/kube-core/kube-core/commit/9d73a047c0b0fe8286ddd34134a95e6e47a262c9)
+- cli/scripts: Updates flux install & Various fixes and improvements [`8c58ee2`](https://github.com/kube-core/kube-core/commit/8c58ee29b3febe9961214a5390b5c8e423f0f815)
+- releases: Adds flux-config to manage default flux resources [`575cda9`](https://github.com/kube-core/kube-core/commit/575cda958c0ccd917ac498a375988c4785998b4b)
+- core/templates: Moved namespace field on the kube-core release wrapper [`5971189`](https://github.com/kube-core/kube-core/commit/5971189c8d42ab638428709835b806b298bbe4ab)
+- releases/flux: Adds podmonitor config to monitor all flux controllers [`af8c9bd`](https://github.com/kube-core/kube-core/commit/af8c9bdc8a2d30befca8555e6d6d44c6b9f015d4)
+- release: v0.3.9 [`9ae4719`](https://github.com/kube-core/kube-core/commit/9ae4719a4bbd1f87b2da43a0559d9d06d8008c40)
+- releases/schema: Updated schema to include new releases [`6c05646`](https://github.com/kube-core/kube-core/commit/6c05646dcd2871c7603d2a86eeaa8de5a7f0ed5e)
 
 #### [v0.3.8](https://github.com/kube-core/kube-core/compare/v0.3.7...v0.3.8)
 
 > 3 September 2022
 
-- releases/tekton: Updates core-tag & PR workflow [`3448b1e`](https://github.com/kube-core/kube-core/commit/3448b1e6338f99c3be9ea17bed715b8bd68f258c)
-- release: v0.3.8 [`db3442d`](https://github.com/kube-core/kube-core/commit/db3442d77b985884f9ae1210fc09f68f9b5c0ab5)
+- releases/tekton: Updates core-tag & PR workflow [`2102c25`](https://github.com/kube-core/kube-core/commit/2102c253966b0afad092c61becd3e0548b8a8195)
+- release: v0.3.8 [`6f275f0`](https://github.com/kube-core/kube-core/commit/6f275f0c0c0a14ac0b0d004cc2607cae3bd1e9c1)
 
 #### [v0.3.7](https://github.com/kube-core/kube-core/compare/v0.3.6...v0.3.7)
 
 > 3 September 2022
 
-- releases: Adds container-registry-config to allow easy use of GCR in the cluster [`12b527f`](https://github.com/kube-core/kube-core/commit/12b527f8e94adae8bf22ba06c90de9cd5d0ff42c)
-- releases/tekton: Fixes core-tag pipeline & Makes kube-core image variable [`47fd50f`](https://github.com/kube-core/kube-core/commit/47fd50f5723a9a0e5a3905b244181a6da3603dd2)
-- release: v0.3.7 [`4acfba1`](https://github.com/kube-core/kube-core/commit/4acfba10e436d24572cb7324bafcd79676e37cfb)
+- releases: Adds container-registry-config to allow easy use of GCR in the cluster [`1fa0df9`](https://github.com/kube-core/kube-core/commit/1fa0df96383d252454b6a4ad1e4c3b5d53c02480)
+- releases/tekton: Fixes core-tag pipeline & Makes kube-core image variable [`6d69f36`](https://github.com/kube-core/kube-core/commit/6d69f36207dcb7ae1ce452c6f4817e040426ee72)
+- release: v0.3.7 [`2e6294c`](https://github.com/kube-core/kube-core/commit/2e6294c9b724d52b52872182050f571897c33190)
 
 #### [v0.3.6](https://github.com/kube-core/kube-core/compare/v0.3.5...v0.3.6)
 
 > 2 September 2022
 
-- releases/tekton: Updates core-tag pipeline to use kube-core [`3ab343a`](https://github.com/kube-core/kube-core/commit/3ab343ac8036951ffa8be797e1fc228567389acd)
-- release: v0.3.6 [`d7b1960`](https://github.com/kube-core/kube-core/commit/d7b1960ccfafa436235f2da95e6c008e0c4751a3)
+- releases/tekton: Updates core-tag pipeline to use kube-core [`6e9ea00`](https://github.com/kube-core/kube-core/commit/6e9ea003cb85579f051f7a2fd6efea16171d71bf)
+- release: v0.3.6 [`95d0d49`](https://github.com/kube-core/kube-core/commit/95d0d494639b175cedf650088867d68f1a0295ff)
 
 #### [v0.3.5](https://github.com/kube-core/kube-core/compare/v0.3.4...v0.3.5)
 
 > 2 September 2022
 
-- releases/tekton: Improves secret configuration [`94724e4`](https://github.com/kube-core/kube-core/commit/94724e472bab651e5ef9dc3c523e8303f8773131)
-- cli/scripts: Adds tekton & SF setup script [`dfd4435`](https://github.com/kube-core/kube-core/commit/dfd443571888d02aa25eb97809eb103cd31c6fe2)
-- cli/scripts: Adds option to delete PR source branch by default on cluster auto PR [`eaf159e`](https://github.com/kube-core/kube-core/commit/eaf159eb91bff24b45058ec9c241342109178cb8)
-- cli/scripts: Adds variable for local keys path [`d46277f`](https://github.com/kube-core/kube-core/commit/d46277ff0ab302f9c84e8c416c96c72db5e91f3b)
-- release: v0.3.5 [`c98a1d2`](https://github.com/kube-core/kube-core/commit/c98a1d248b3bdd8849232d1c3c1e28bceb830b62)
+- releases/tekton: Improves secret configuration [`f35347c`](https://github.com/kube-core/kube-core/commit/f35347c5a3ade975859c36bd65d9477023af55b6)
+- cli/scripts: Adds tekton & SF setup script [`30fe0b1`](https://github.com/kube-core/kube-core/commit/30fe0b1b114c390ffaaf1b5eb21d2a8bcdfa1fee)
+- cli/scripts: Adds option to delete PR source branch by default on cluster auto PR [`7c359a3`](https://github.com/kube-core/kube-core/commit/7c359a3173397b0434b74bba2d0986e6896bcf11)
+- cli/scripts: Adds variable for local keys path [`12ddfa1`](https://github.com/kube-core/kube-core/commit/12ddfa1345c6fc6efc87dd2e9c8e1c39c94cc982)
+- release: v0.3.5 [`03a5484`](https://github.com/kube-core/kube-core/commit/03a548424918a5148f137bc1aa2a30236038dc59)
 
 #### [v0.3.4](https://github.com/kube-core/kube-core/compare/v0.3.3...v0.3.4)
 
 > 1 September 2022
 
-- releases/tekton: Changes default run timeout and makes it configurable [`8671825`](https://github.com/kube-core/kube-core/commit/86718250db19ba9d4804575c8bc83c6820bf093e)
-- release: v0.3.4 [`3a43101`](https://github.com/kube-core/kube-core/commit/3a431017105c3b7049b8ae31c1e1267cc51e42d2)
+- releases/tekton: Changes default run timeout and makes it configurable [`43eb76c`](https://github.com/kube-core/kube-core/commit/43eb76c2694088b059295cef3e05cfba5aed8c8e)
+- release: v0.3.4 [`24ffde8`](https://github.com/kube-core/kube-core/commit/24ffde8683b254941024a46cbb36ddda5c50a211)
 
 #### [v0.3.3](https://github.com/kube-core/kube-core/compare/v0.3.2...v0.3.3)
 
 > 1 September 2022
 
-- releases/tekton: Renamed and removed some resources [`c1e16b6`](https://github.com/kube-core/kube-core/commit/c1e16b608fee6b2b51e39decc3b1d5aeab976d43)
-- release: v0.3.3 [`0fa958c`](https://github.com/kube-core/kube-core/commit/0fa958c76a90a531e8b84e0ce1db0f9c8ce0c1eb)
+- releases/tekton: Renamed and removed some resources [`489601c`](https://github.com/kube-core/kube-core/commit/489601c4cb9bea21d8fae20e6bec19a4e3f7ff36)
+- release: v0.3.3 [`d396425`](https://github.com/kube-core/kube-core/commit/d396425ca1864a4ef6c297553fe75fbc905e2011)
 
 #### [v0.3.2](https://github.com/kube-core/kube-core/compare/v0.3.1...v0.3.2)
 
 > 1 September 2022
 
-- releases/tekton: Reintroduces core-tag pipeline [`72f18e0`](https://github.com/kube-core/kube-core/commit/72f18e044c0bf7999a9d8e9de2c8ba2c25a335b4)
-- releases/tekton: Improves resource name templating and brings more variables in hooks [`23c718a`](https://github.com/kube-core/kube-core/commit/23c718af68caba98aaf96832909f8d13d295f5a5)
-- release: v0.3.2 [`0e4aab4`](https://github.com/kube-core/kube-core/commit/0e4aab4bd3bb0ae3ce457f0300b4734fd0f34149)
-- cli/scripts: Updated bump script to automatically patch cli version [`50008bc`](https://github.com/kube-core/kube-core/commit/50008bcac37186d71f3b01960cfc20e57f0ed97e)
-- releases/tekton: Fixes app-hooks git-webhooks-token reference missing [`4043d41`](https://github.com/kube-core/kube-core/commit/4043d41bb31f9b04ab0a7be3293271d4b7c098e5)
+- releases/tekton: Reintroduces core-tag pipeline [`2a48d6f`](https://github.com/kube-core/kube-core/commit/2a48d6fa0d0cf5ae495764f3c17e95a023bef84a)
+- releases/tekton: Improves resource name templating and brings more variables in hooks [`15b05f4`](https://github.com/kube-core/kube-core/commit/15b05f47e09ee5f4903a390acaa284453bc6bc70)
+- release: v0.3.2 [`fd7f3d7`](https://github.com/kube-core/kube-core/commit/fd7f3d7ca87c6d8d3c8aa53321b691ffdd60845d)
+- cli/scripts: Updated bump script to automatically patch cli version [`ce0d14b`](https://github.com/kube-core/kube-core/commit/ce0d14bca2d14632c19248bb6791ece415e9cd05)
+- releases/tekton: Fixes app-hooks git-webhooks-token reference missing [`30dc586`](https://github.com/kube-core/kube-core/commit/30dc5869ef0f6e05d0c702d3ff51a2b22f8a50c1)
 
 #### [v0.3.1](https://github.com/kube-core/kube-core/compare/v0.3.0...v0.3.1)
 
 > 30 August 2022
 
-- release: v0.3.1 [`58f4d99`](https://github.com/kube-core/kube-core/commit/58f4d99c6195e1aaee7b55018cee25e1dca3c808)
-- cli: Fixes corePath in scripts [`e44ce5a`](https://github.com/kube-core/kube-core/commit/e44ce5a20987f1b2ae8172bf9d153dd3b9adbd68)
-- scripts: Moved scripts in cli folder to package them together [`013e61f`](https://github.com/kube-core/kube-core/commit/013e61fd716e36fdd865c1e61fc5c530e83723a2)
-- repo: Fixes .gitignore ignoring some files that should not be ignored [`7a5a62e`](https://github.com/kube-core/kube-core/commit/7a5a62e9696597bec4e40171b1572ef99812363a)
-- cli: Reintroduced .helmignore files in releases/dist [`5d8a385`](https://github.com/kube-core/kube-core/commit/5d8a385d52c6722273653e48a89ff7fe4e0690d1)
-- ci: Updated GitHub Actions Workflows [`435de98`](https://github.com/kube-core/kube-core/commit/435de9875aed3b42b333aac1a2e26bc75240628c)
-- cli: Adds basic install instructions in README [`4fe45f0`](https://github.com/kube-core/kube-core/commit/4fe45f0118097fb8a0c8847c228f21e634886188)
-- repo: Fixes scripts line endings for npm release packaging [`461e59a`](https://github.com/kube-core/kube-core/commit/461e59a003b346c1d75d34813ca11239404fa575)
-- cli: Bumps version to v0.1.6 [`a5e51f0`](https://github.com/kube-core/kube-core/commit/a5e51f0cc3fac89d814f404866946614176ca692)
-- release-it: Fixes changelog generation [`568a4c8`](https://github.com/kube-core/kube-core/commit/568a4c81a491492b296fbef3fd20321511390f2c)
-- cli: Adds proper chmod on scripts [`4e48a2e`](https://github.com/kube-core/kube-core/commit/4e48a2eeeaf3393b3be59518e4d08245ffbd873e)
+- release: v0.3.1 [`42d34d3`](https://github.com/kube-core/kube-core/commit/42d34d338ddc262adc2dc9b060e3411c33577f80)
+- cli: Fixes corePath in scripts [`9f40d5a`](https://github.com/kube-core/kube-core/commit/9f40d5a6588624db3e2de57ddd3d911168c1bdd4)
+- scripts: Moved scripts in cli folder to package them together [`71e988d`](https://github.com/kube-core/kube-core/commit/71e988dde54d246a2baa8cfc32540f5e80c979aa)
+- repo: Fixes .gitignore ignoring some files that should not be ignored [`890b99b`](https://github.com/kube-core/kube-core/commit/890b99bae2f7fd37942ec7362e02051e888294fe)
+- cli: Reintroduced .helmignore files in releases/dist [`82518ff`](https://github.com/kube-core/kube-core/commit/82518ff041391c8d36d7da62f2c403e0428f8d85)
+- ci: Updated GitHub Actions Workflows [`337d717`](https://github.com/kube-core/kube-core/commit/337d717a9db717d54b1e7a53c7494034c98034d7)
+- cli: Adds basic install instructions in README [`dbf204b`](https://github.com/kube-core/kube-core/commit/dbf204b998fc1c9645e71905f3e7f61322260e33)
+- repo: Fixes scripts line endings for npm release packaging [`6a78e71`](https://github.com/kube-core/kube-core/commit/6a78e71cc3ae29abbd2b0b6d0db276a66bd185b6)
+- cli: Bumps version to v0.1.6 [`8b60f11`](https://github.com/kube-core/kube-core/commit/8b60f11d86bdfa5dff2d8e3cd57fdab4939cbb63)
+- release-it: Fixes changelog generation [`0ae3980`](https://github.com/kube-core/kube-core/commit/0ae3980ec6f565ce9e68883c63780b8c5ce42806)
+- cli: Adds proper chmod on scripts [`2fed94b`](https://github.com/kube-core/kube-core/commit/2fed94b12df275027a99c13b56bd2af4d140d493)
 
 #### [v0.3.0](https://github.com/kube-core/kube-core/compare/v0.2.1...v0.3.0)
 
 > 30 August 2022
 
-- release: v0.3.0 [`4bb93cc`](https://github.com/kube-core/kube-core/commit/4bb93ccdec08884763cc7458153cdd1940054c70)
+- release: v0.3.0 [`f6b3ea8`](https://github.com/kube-core/kube-core/commit/f6b3ea8520a461a15e5b39d2c28fac7f6af4bb7d)
 
 #### [v0.2.1](https://github.com/kube-core/kube-core/compare/v0.2.0...v0.2.1)
 
 > 23 August 2022
 
-- core: Added the possibility to deploy Patches with .release.patches [`186bb4d`](https://github.com/kube-core/kube-core/commit/186bb4dac26eee3b7d5e0663f8364c3fde91741e)
-- release: v0.2.1 [`c72fd9a`](https://github.com/kube-core/kube-core/commit/c72fd9aede7e4eb235f7e28e6a024c866bc5e23c)
-- scripts: Fixes kube-core apply & template commands [`d42c41f`](https://github.com/kube-core/kube-core/commit/d42c41fe2d44e9d2ffb1827e479404939a8c5f73)
-- cli: Fixed .gitignore breaking dev cli [`5b5980d`](https://github.com/kube-core/kube-core/commit/5b5980d8bfbcd2ab03a7c1b87a6df57dd49c459e)
+- core: Added the possibility to deploy Patches with .release.patches [`ba4be28`](https://github.com/kube-core/kube-core/commit/ba4be289fa18f00c4c3e19c61b2f718c505d8d00)
+- release: v0.2.1 [`6696bfa`](https://github.com/kube-core/kube-core/commit/6696bfa6d78b655593ddacc0684157fcb2099d2e)
+- scripts: Fixes kube-core apply & template commands [`2c7d38e`](https://github.com/kube-core/kube-core/commit/2c7d38e5db982ef3b2682c5047520966bdb6ff02)
+- cli: Fixed .gitignore breaking dev cli [`c0612f7`](https://github.com/kube-core/kube-core/commit/c0612f7619097bb59c5b566a1400010618ec07a8)
 
 #### [v0.2.0](https://github.com/kube-core/kube-core/compare/v0.1.0...v0.2.0)
 
 > 23 August 2022
 
-- release: v0.2.0 [`15d4b88`](https://github.com/kube-core/kube-core/commit/15d4b88f822ce5b1f0aa747475322cc64baeef11)
+- release: v0.2.0 [`1ebe8a2`](https://github.com/kube-core/kube-core/commit/1ebe8a2ba62520cf7ba3e002065918f481311e83)
 
 #### v0.1.0
 
 > 23 August 2022
 
-- release: v0.1.0 [`a3d3d5b`](https://github.com/kube-core/kube-core/commit/a3d3d5b5b0efbda94741b42df98a80284b39b5f8)
+- release: v0.1.0 [`a08500b`](https://github.com/kube-core/kube-core/commit/a08500b2a3fd027364d13e7e766efd0111ea1a39)
 - Initial commit [`ba3977a`](https://github.com/kube-core/kube-core/commit/ba3977a0c9d8bf8817a58b32213fe906b33b0da1)
