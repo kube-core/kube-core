@@ -65,8 +65,31 @@ check_context "${cluster_config_context}"
 
 if [[ "${cloud_provider}" == "gcp" ]]; then
 
- echo "TODO"
+serviceAccountsConfig="$(cat <<EOF
+serviceAccounts:
+  - name: crossplane
+    roles:
+      - roles/iam.serviceAccountUser
+      - roles/iam.serviceAccountAdmin
+      - roles/iam.serviceAccountKeyAdmin
+      - roles/cloudsql.admin
+      - roles/container.admin
+      - roles/redis.admin
+      - roles/compute.networkAdmin
+      - roles/storage.admin
+      - roles/resourcemanager.projectIamAdmin
+      - roles/dns.admin
+      - roles/iam.roleAdmin
+EOF
+)"
+
+# gcloud_prepare_sa_roles
+gcloud_generate_sa_config
+# gcloud_setup_velero_bucket
+# gcloud_setup_thanos_bucket
+# gcloud_setup_tekton_bucket
+# gcloud_setup_generate_thanos_secret
 
 else
-  log_warn "Only GCP is supported for now."
+  log_warn "Scripted setup only works with GCP / GKE for now."
 fi

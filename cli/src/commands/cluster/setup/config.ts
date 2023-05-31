@@ -3,7 +3,7 @@ import BaseCommand from "../../../base";
 
 export default class ClusterSetupConfig extends BaseCommand {
   static description = "Generates cluster-config.yaml from core values.";
-
+  static aliases = ["generate:cluster-config"]
   static examples = [`$ kube-core cluster setup config`];
 
   static flags = {};
